@@ -1,0 +1,278 @@
+/* Wrapper */
+.caution-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* Button */
+.caution-btn {
+  position: relative;
+  /* padding: 5px 5px; */
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+  /* background: linear-gradient(to right, #f43f5e, #ec4899); */
+  color: white;
+  font-weight: 600;
+  overflow: hidden;
+  /* box-shadow: 0 10px 25px rgba(244, 63, 94, 0.2); */
+}
+
+.caution-btn:hover {
+  /* background: linear-gradient(to right, #e11d48, #db2777); */
+}
+
+.btn-glow {
+  position: absolute;
+  inset: 0;
+  /* background: linear-gradient(to right, rgba(234,179,8,0.2), rgba(244,63,94,0.2)); */
+  filter: blur(24px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.caution-wrapper:hover .btn-glow {
+  opacity: 1;
+}
+
+.btn-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  top: 120%;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  width: 380px;
+  z-index: 50;
+}
+
+.caution-wrapper:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Tooltip box */
+.tooltip-box {
+  position: relative;
+  padding: 24px;
+  border-radius: 16px;
+  background: linear-gradient(to bottom right, #111827, #1f2933, #111827);
+  border: 1px solid rgba(244, 63, 94, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+}
+
+.tooltip-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: linear-gradient(to right, rgba(244,63,94,0.1), rgba(236,72,153,0.1), rgba(234,179,8,0.1));
+  filter: blur(32px);
+  opacity: 0.5;
+}
+
+/* Header */
+.tooltip-header {
+  position: relative;
+  display: flex;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(75, 85, 99, 0.5);
+  margin-bottom: 16px;
+}
+
+.tooltip-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom right, rgba(244,63,94,0.2), rgba(236,72,153,0.2));
+}
+
+.info-icon {
+  width: 24px;
+  height: 24px;
+  color: #ff0011;
+}
+
+.tooltip-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: red;
+}
+
+.tooltip-header p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+/* Features */
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  background: rgba(31, 41, 55, 0.5);
+  border: 1px solid rgba(75, 85, 99, 0.5);
+  transition: background 0.3s ease;
+}
+
+.feature-item:hover {
+  background: rgba(31, 41, 55, 0.7);
+}
+
+.feature-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(63, 244, 72, 0.164);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.check-icon {
+  width: 16px;
+  height: 16px;
+  color: rgb(3, 197, 3);
+}
+
+.feature-item span {
+  font-size: 14px;
+  color: #d1d5db;
+}
+
+/* Footer */
+.tooltip-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(75, 85, 99, 0.5);
+}
+
+.tooltip-footer span {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.tooltip-footer a {
+  z-index: 10;
+  font-size: 12px;
+  color: green;
+  text-decoration: none;
+}
+
+.tooltip-footer a:hover {
+  color: rgb(1, 234, 1);
+  cursor: pointer;
+}
+
+/* Arrow */
+.tooltip-arrow {
+  position: absolute;
+  top: -6px;
+  right: 46.5%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(to bottom right, #111827, #1f2933);
+  border-right: 1px solid rgba(244, 63, 94, 0.2);
+  border-bottom: 1px solid rgba(244, 63, 94, 0.2);
+}
+
+
+
+
+/* Separate component */
+/* From Uiverse.io by Cksunandh */ 
+/* Basic reset and styling */
+
+/* Tooltip container */
+.tooltip-container {
+  background-color: transparent;
+  position: relative;
+  display: inline-block;
+  margin: 10px;
+}
+
+/* Icon styling */
+.icon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition:
+    transform 0.3s ease,
+    filter 0.3s ease;
+}
+
+/* SVG Animation: Rotate and scale effect */
+.icon svg {
+  transition: transform 0.5s ease-in-out;
+  fill: red;
+}
+
+.icon:hover svg {
+  transform: rotate(360deg) scale(1.2);
+}
+
+/* Show tooltip on hover */
+.tooltip-container:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-30px);
+  }
+  60% {
+    transform: translateY(-15px);
+  }
+}
+
+.tooltip-container:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+  animation: bounce 0.6s ease;
+}
+

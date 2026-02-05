@@ -161,12 +161,12 @@ html {
 /* LogIn Background */
 .Login {
   position: relative;
-  padding: 30px;
+  padding: 70px 30px 30px 30px;
 }
 
 .LogIn-BG {
   position: absolute;
-  background: linear-gradient( -45deg, #000000 50%, #ffffff00 50%);
+  background: linear-gradient( -45deg, #000000 50%, #ffffff51 50%);
   background-attachment: fixed;
   background-position: center;
   z-index: 0;
