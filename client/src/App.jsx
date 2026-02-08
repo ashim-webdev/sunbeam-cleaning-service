@@ -1,5 +1,9 @@
+import { Transition } from "@headlessui/react";
+import { Fragment, useRef } from "react";
 import { useState } from 'react'
 import { Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom'
+import { useDispatch, useSelector } from "react-redux";
+import { setOpenSidebar,  } from "./redux/slices/authSlice";
 import { Toaster } from 'sonner' // Notification library
 import Login from './pages/Login'
 import TaskDetails from './pages/TaskDetails'
@@ -7,23 +11,39 @@ import Dashboard from './pages/Dashboard'
 import Tasks from './pages/Tasks'
 import Users from './pages/Users'
 import Trash from './pages/Trash'
+import Sidebar from './components/Sidebar'
+import Navbar from './components/Navbar'
+
+
+
+
 
 
 function Layout() {
-  const user = "";
+  const { LightMode } = useSelector((state) => state.auth);
+
+  // const { user } = useSelector((state) => state.auth);
+
+  const user = true;
 
   const location = useLocation()
 
   return user ? (
-    <div className='w-full h-screen flex flex-col md:flex-row'>
-      <div className='w-1/5 h-screen bg-white sticky top-0 hidden md:block'>
-        {/* <Sidebar /> */}
+    <div className={`
+      ${LightMode 
+        ? "bg-white/10"
+        : "bg-[#3D3D3D]"
+      }
+      w-full h-screen flex flex-col md:flex-row transition-colors ease-in-out duration-300
+    `}>
+      <div className='w-1/5 h-screen sticky top-0 hidden lg:block'>
+        <Sidebar />
       </div>
 
-      {/* <MobileSidebar /> */}
+      <MobileSidebar />
 
       <div className='flex-1 overflow-y-auto'>
-        {/* <Navbar /> */}
+        <Navbar />
 
         <div className='p-4 2xl:px-10'>
           <Outlet />
@@ -35,6 +55,77 @@ function Layout() {
   )
 }
 
+
+const MobileSidebar = () => {
+  const { isSidebarOpen } = useSelector((state) => state.auth);
+  const { LightMode } = useSelector((state) => state.auth);
+  
+  const mobileMenuRef = useRef(null);
+  const dispatch = useDispatch();
+
+
+  // Sidebar Smooth Delay Timeout
+  const closeSidebar = () => {
+    setTimeout(() => {
+      dispatch(setOpenSidebar(false));
+    }, 50);
+  };
+  // End
+
+  return (
+    <>
+      <Transition
+        show={isSidebarOpen}
+        as={Fragment}
+        enter="transition-all duration-500 ease-out"
+        enterFrom="opacity-0 -translate-x-full"
+        enterTo="opacity-100 translate-x-0"
+        leave="transition-all duration-500 ease-in"
+        leaveFrom="opacity-100 translate-x-0"
+        leaveTo="opacity-0 -translate-x-full"
+      >
+        {(ref) => (
+          <div
+            ref={(node) => (mobileMenuRef.current = node)}
+            onClick={() => closeSidebar()}
+            
+          >
+            <div className={`
+                ${LightMode 
+                  ? "bg-white/10"
+                  : "bg-[#3D3D3D]"
+                }
+                lg:hidden w-full h-full overflow-hidden transition-colors ease-in-out duration-300 
+              `}>
+              <div className='w-3/4 h-full'>
+                <div className='w-full flex justify-end px-5 pt-4'>
+                  <button
+                    onClick={() => closeSidebar()}
+                    className='flex justify-end items-end'
+                  >
+                    <i className={`
+                        ${LightMode 
+                          ? "text-gray-500 hover:text-gray-600"
+                          : "text-white"
+                        }
+                        fa-solid fa-x text-2xl cursor-pointer transition-transform ease-in-out duration-200 hover:scale-105 z-10`
+                      }></i>
+                  </button>
+                </div>
+
+                <div className='-mt-10'>
+                  <Sidebar />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </Transition>
+    </>
+  );
+};
+
+
 function App() {
 
   return (
@@ -42,7 +133,7 @@ function App() {
       <main className="w-full min-h-screen bg-[#f3f4f6]">
         <Routes>
           <Route element={<Layout />}>
-            <Route path="/" element={<Navigate to='/dashboard' />} />
+            <Route index path="/" element={<Navigate to='/dashboard' />} />
 
             <Route path="/dashboard" element={<Dashboard />} />
 

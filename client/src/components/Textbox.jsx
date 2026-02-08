@@ -3,11 +3,11 @@ import clsx from "clsx";
 
 const Textbox = React.forwardRef(
   (
-    { type, placeholder, label, className, labelClass, register, name, error },
+    { type, placeholder, label, className, labelClass, register, name, error, },
     ref
   ) => {
     return (
-      <div className='w-full flex flex-col gap-1'>
+      <div className='relative w-full flex flex-col gap-1'>
         {label && (
           <span
             htmlFor={name}
@@ -19,12 +19,12 @@ const Textbox = React.forwardRef(
 
         <div>
           <input
-            type={type || "text"}
+            type={type}
             name={name}
             placeholder={placeholder}
             ref={ref}
             className={clsx(
-              "input border border-gray-300 dark:border-gray-600 placeholder-gray-300 dark:placeholder-gray-700 text-gray-900 dark:text-white outline-none text-base focus:ring-2 ring-blue-300",
+              "LoginInput border border-gray-300 dark:border-gray-600 placeholder-gray-300 dark:placeholder-gray-700 text-gray-900 dark:text-white outline-none text-base focus:ring-2 ring-blue-300",
               className
             )}
             {...register}

@@ -2,17 +2,24 @@ import { useEffect, useState } from 'react'
 import React from 'react'
 import { toast } from 'sonner'
 import Lottie from 'lottie-react'
-import SuccessLogIn from '../LottieFiles/SuccessLogIn.json'
-import ErrorLogIn from '../LottieFiles/ErrorLogIn.json'
-import Blob from '../LottieFiles/Blob.json'
+import SuccessLogIn from '../LottieFiles/success.json'
+import ErrorLogIn from '../LottieFiles/error.json'
+import Blob from '../LottieFiles/blob.json'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import Textbox from '../components/Textbox'
 import Button from '../components/button'
 import CautionBtn from '../components/CautionBtn'
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false)
+  const [passwordShow, setPasswordShow] = useState(false)
+
+  // Handle Password Show button
+  const showPassword = () => {
+    setPasswordShow(prev => !prev)
+  }
   
   // Shake Animation for Form errors
   const [shake, setShake] = useState(false)
@@ -48,22 +55,25 @@ const Login = () => {
   // END
 
 
-  // Form Handling
+  // Form Handling {For each user}
+  const { user } = useSelector((state) => state.auth);
   const { 
     register, 
     handleSubmit, 
     formState: { errors } 
   } = useForm()
 
+  const navigate = useNavigate()
+
   const submitHandler = () => {
     console.log("submit")
   }
 
-  const navigate = useNavigate()
+  console.log(user)
 
-  // useEffect(() => {
-  //   user && navigate('/dashboard')
-  // }, [user]);
+  useEffect(() => {
+    user && navigate('/dashboard')
+  }, [user]);
 
   
   return (
@@ -107,19 +117,29 @@ const Login = () => {
                 })}
                 error={errors.email ? errors.email.message : ""}
               />
-              <Textbox
-                placeholder="password"
-                type="password"
-                name="password"
-                label="Password"
-                className={`w-full rounded-full border ${
-                  errors.password ? `border-2 border-red-500 focus:border-red-500 ${shake ? "animate-shake" : ""}` : "border-gray-300 focus:border-blue-500"
-                }`}
-                register={register("password", {
-                  required: "Password is required!",
-                })}
-                error={errors.password ? errors.password.message : ""}
-              />
+              <div className='relative'>
+                <Textbox
+                  placeholder="password"
+                  type={`${passwordShow ? "text" : "password"}`}
+                  name="password"
+                  label="Password"
+                  className={`w-full rounded-full border ${
+                    errors.password ? `border-2 border-red-500 focus:border-red-500 ${shake ? "animate-shake" : ""}` : "border-gray-300 focus:border-blue-500"
+                  }`}
+                  register={register("password", {
+                    required: "Password is required!",
+                  })}
+                  error={errors.password ? errors.password.message : ""}
+                />
+                <span onClick={showPassword} className={`${shake ? "animate-shake" : ""} absolute top-9 right-5 cursor-pointer transition-transform ease-in-out duration-200`}>
+                  { passwordShow
+                    ?
+                    <i className="fa-solid fa-eye text-[#0049E5] hover:text-[#0547d5]"></i>
+                    :
+                    <i className="fa-solid fa-eye-slash text-gray-400 hover:text-gray-500"></i>
+                  }
+                </span>
+              </div>
               <span className='text-sm text-gray-600 hover:text-blue-700 hover:underline cursor-pointer'>
                 Forget Password?
               </span>
@@ -130,7 +150,7 @@ const Login = () => {
               <Button
                 type='submit'
                 label='Log in'
-                className='w-full h-10 bg-blue-700 hover:bg-blue-800 transition-colors ease-in-out duration-200 text-white rounded-full'
+                className={`${shake ? "animate-shake bg-red-500 hover:bg-red-500" : "bg-blue-700"} w-full h-10  hover:bg-blue-800 transition-colors ease-in-out duration-200 text-white rounded-full`}
               />
             )}
 

@@ -1,5 +1,5 @@
 import React from "react";
-import "./CautionBtn.css";
+import "./components.css";
 
 const CautionBtn = () => {
   return (
