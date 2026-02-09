@@ -160,7 +160,13 @@ const Sidebar = () => {
           onClick={(e) => e.stopPropagation()}
           className="flex justify-center items-center pb-3 pt-5 pl-6 pr-2 bg-blue-600 rounded-tl-full sm:hidden"
         >
-          <span className="">
+          <span className={`
+            ${LightMode 
+              ? "border-2 border-amber-300 shadow-black/80"
+              : "border-2 border-white shadow-white/60"
+            }
+            flex justify-center items-center rounded-full transition-colors ease-in-out duration-300 shadow-md 
+          `}>
             <Dark_Light_Btn />
           </span>
         </div>

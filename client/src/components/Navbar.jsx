@@ -93,10 +93,10 @@ const Navbar = () => {
           <div className="sm:block hidden mr-5 ">
             <span className={`
                 ${LightMode 
-                  ? "border-2 border-amber-300"
-                  : "border-2 border-white"
+                  ? "border-2 border-amber-300 shadow-black/80"
+                  : "border-2 border-white shadow-white/60"
                 }
-                flex justify-center items-center rounded-full transition-colors ease-in-out duration-300
+                flex justify-center items-center rounded-full transition-colors ease-in-out duration-300 shadow-md 
               `}><Dark_Light_Btn /></span>
           </div>
         <NotificationPanel />

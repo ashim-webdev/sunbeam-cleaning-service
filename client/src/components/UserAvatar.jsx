@@ -55,7 +55,7 @@ const UserAvatar = () => {
             <Menu.Items className={`
                 ${LightMode 
                   ? "bg-white"
-                  : "bg-black/80 border border-white text-white"
+                  : "bg-black/90 border border-white text-white"
                 }
                 absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md dark:bg-[#1f1f1f] shadow-2xl ring-1 ring-black/5 focus:outline-none transition-colors ease-in-out duration-300
               `}>

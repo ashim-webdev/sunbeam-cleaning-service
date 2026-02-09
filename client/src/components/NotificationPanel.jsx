@@ -125,7 +125,7 @@ export default function NotificationPanel() {
                 <div className={`
                   ${LightMode 
                     ? "bg-white"
-                    : "bg-black/80 border border-white text-white"
+                    : "bg-black/90 border border-white text-white"
                   }
                   w-screen max-w-md flex-auto overflow-hidden rounded-3xl text-sm leading-6 shadow-lg ring-1 ring-gray-900/5 transition-colors ease-in-out duration-300
                 `}>
