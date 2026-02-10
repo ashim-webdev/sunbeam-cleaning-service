@@ -81,7 +81,7 @@ const Dashboard = () => {
                 ? "text-gray-600"
                 : "text-white"
               }
-              text-base font-semibold transition-colors ease-in-out duration-300 whitespace-nowrap
+              text-base md:text-sm lg:text-base font-semibold transition-colors ease-in-out duration-300 whitespace-nowrap
             `}>{label}</p>
           <span className={clsx("text-2xl font-semibold" , tx)}>{count}</span>
           <span className='text-sm text-blue-800 -mb-1'>
@@ -100,10 +100,29 @@ const Dashboard = () => {
     );
   };
 
+
+
+
+
+
+
+
+
   const UserTable = ({ users }) => {
     const TableHeader = () => (
-      <thead className='border-b border-gray-300 dark:border-gray-600'>
-        <tr className='text-black dark:text-white text-left'>
+      <thead className={`
+        ${LightMode 
+          ? "border-gray-400"
+          : "border-gray-600"
+        }
+        border-b transition-colors ease-in-out duration-300
+      `}>
+        <tr className={`
+            ${LightMode 
+                ? "text-black"
+                : "text-white"
+            } text-left transition-colors ease-in-out duration-300
+          `}>
           <th className='py-2 pl-4'>Full Name</th>
           <th className='py-2'>Status</th>
           <th className='py-2 hidden sm:block'>Created At</th>
@@ -112,7 +131,13 @@ const Dashboard = () => {
     );
 
     const TableRow = ({ user }) => (
-      <tr className='tableRow border border-gray-200 text-gray-600 hover:bg-gray-300/50 cursor-pointer transition-colors ease-in-out duration-200'>
+      <tr className={`
+          ${LightMode 
+            ? "border-gray-300 text-gray-600 hover:bg-gray-300/50 hover:shadow-dark"
+            : "border-gray-600 text-white hover:bg-white/30 hover:shadow-light"
+          }
+          tableRow border hover:bg-gray-300/50  transition-colors ease-in-out duration-300
+        `}>
         <td className='py-2 px-6'>
           <div className='flex items-center gap-3'>
             <div className='w-9 h-9 rounded-full text-white flex items-center justify-center text-sm bg-violet-700'>
@@ -120,20 +145,27 @@ const Dashboard = () => {
             </div>
             <div>
               <p> {user.name}</p>
-              <span className='text-xs text-black'>{user?.role}</span>
+              <span className={`
+                ${LightMode 
+                    ? "text-black"
+                    : "text-white"
+                }
+                text-xs text-black
+              `}>{user?.role}</span>
             </div>
           </div>
         </td>
 
         <td>
-          <p
+          <button
+            onClick={(e) => e.stopPropagation()}
             className={clsx(
-              "w-fit px-3 py-1 rounded-full text-sm",
-              user?.isActive ? "bg-blue-200" : "bg-yellow-100"
+              "w-fit px-3 py-1 rounded-full transition-transform ease-in-out duration-300 text-sm  cursor-pointer",
+              user?.isActive ? "bg-green-500 text-white hover:bg-green-700 hover:scale-105" : "bg-red-500 text-whits hover:bg-red-700 hover:scale-110"
             )}
           >
             {user?.isActive ? "Active" : "Disabled"}
-          </p>
+          </button>
         </td>
         <td className='pt-5 pl-1 text-sm hidden sm:block'>{moment(user?.createdAt).fromNow()}</td>
       </tr>
@@ -141,7 +173,13 @@ const Dashboard = () => {
 
     return (
       <div className="md:px-30 py-5">
-        <div className='w-full bg-white h-fit px-2 md:px-6 py-4 shadow-md rounded'>
+        <div className={`
+            ${LightMode 
+              ? "bg-white shadow-md shadow-black/30"
+              : "bg-black/90 shadow-md shadow-white/30"
+            }
+            w-full h-fit px-2 md:px-6 py-4 shadow-md rounded transition-colors ease-in-out duration-300
+          `}>
           <table className='w-full mb-5'>
             <TableHeader />
             <tbody>
@@ -155,6 +193,12 @@ const Dashboard = () => {
     );
   };
 
+
+
+
+
+
+
   const TaskTable = ({ tasks }) => {
     // const { user } = useSelector((state) => state.auth);
 
@@ -165,8 +209,19 @@ const Dashboard = () => {
     };
 
     const TableHeader = () => (
-      <thead className='border-b border-gray-300 dark:border-gray-600'>
-        <tr className='text-black dark:text-white  text-left'>
+      <thead className={`
+        ${LightMode 
+          ? "border-gray-400"
+          : "border-gray-600"
+        }
+        border-b transition-colors ease-in-out duration-300
+      `}>
+        <tr className={`
+            ${LightMode 
+                ? "text-black"
+                : "text-white"
+            } text-left transition-colors ease-in-out duration-300
+          `}>
           <th className='py-2'>Task Title</th>
           <th className='py-2'>Priority</th>
           <th className='py-2'>Team</th>
@@ -179,16 +234,34 @@ const Dashboard = () => {
       const text = task?.title;
       const shortText = text.split(" ").slice(0, 2).join(" ") + "...";
       return (
-        <tr className='tableRow border border-gray-200 text-gray-600 hover:bg-gray-300/50 cursor-pointer transition-colors ease-in-out duration-200'>
+        <tr className={`
+          ${LightMode 
+            ? "border-gray-300 text-gray-600 hover:bg-gray-300/50 hover:shadow-dark"
+            : "border-gray-600 text-white hover:bg-white/30 hover:shadow-light"
+          }
+          tableRow border hover:bg-gray-300/50 cursor-pointer transition-colors ease-in-out duration-300
+        `}>
             <td className='py-2 pl-4'>
               <div className='flex items-center gap-2'>
                 <div
                   className={clsx("w-4 h-4 rounded-full", TASK_TYPE[task.stage])}
                 />
-                <p className='sm:hidden text-base text-black dark:text-gray-400'>
+                <p className={`
+                    ${LightMode 
+                      ? "text-black"
+                      : "text-white"
+                    }
+                    sm:hidden text-base transition-colors ease-in-out duration-300 
+                  `}>
                   {shortText}
                 </p>
-                <p className='hidden sm:block text-base text-black dark:text-gray-400'>
+                <p className={`
+                    ${LightMode 
+                      ? "text-black"
+                      : "text-white"
+                    }
+                    hidden sm:block text-base transition-colors ease-in-out duration-300 
+                  `}>
                   {task?.title}
                 </p>
               </div>
@@ -222,7 +295,13 @@ const Dashboard = () => {
             </td>
 
             <td className='py-2 hidden md:block'>
-              <span className='text-base text-gray-600'>
+              <span className={`
+                  ${LightMode 
+                      ? "text-black/50"
+                      : "text-white/60"
+                  }
+                  text-base transition-colors ease-in-out duration-300
+                `}>
                 {moment(task?.date).fromNow()}
               </span>
             </td>
@@ -234,7 +313,10 @@ const Dashboard = () => {
       <>
         <div
           className={clsx(
-            "w-full bg-white dark:bg-[#1f1f1f] px-2 md:px-4 pt-4 pb-4 shadow-md rounded",
+            "w-full px-2 md:px-4 pt-4 pb-4 shadow-md rounded transition-colors ease-in-out duration-300",
+            LightMode 
+              ? "bg-white shadow-md shadow-black/30"
+              : "bg-black/90 shadow-md shadow-white/30",
             // user?.isAdmin ? "md:w-2/3" : ""
           )}
         >
@@ -250,6 +332,12 @@ const Dashboard = () => {
       </>
     );
   };
+
+
+
+
+
+
 
 
   return (
