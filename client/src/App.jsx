@@ -36,7 +36,7 @@ function Layout() {
       }
       w-full h-screen flex flex-col md:flex-row transition-colors ease-in-out duration-300
     `}>
-      <div className='w-1/5 h-screen sticky top-0 hidden lg:block'>
+      <div className='w-1/5 lg:w-3.5/4 h-screen sticky top-0 hidden lg:block'>
         <Sidebar />
       </div>
 
@@ -97,7 +97,7 @@ const MobileSidebar = () => {
                 }
                 lg:hidden w-full h-full overflow-hidden transition-colors ease-in-out duration-300 
               `}>
-              <div className='w-3/4 h-full'>
+              <div className='w-3/4 md:w-screen h-full'>
                 <div className='w-full flex justify-end px-5 pt-4'>
                   <button
                     onClick={() => closeSidebar()}

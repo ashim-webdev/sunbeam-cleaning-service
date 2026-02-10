@@ -276,3 +276,12 @@ html {
     transform: translateY(calc(-50% - 5px)) scale(1.1);
   }
 }
+
+.tableRow {
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.tableRow:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+

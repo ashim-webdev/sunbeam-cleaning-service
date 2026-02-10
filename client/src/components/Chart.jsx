@@ -149,7 +149,7 @@ const Chart = () => {
                   offset: (ctx) =>
                     ctx.dataIndex === 0 || ctx.dataIndex === 3 ? 20 : 0,
 
-                  borderColor: LightMode ? "#fff" : "#ffffff",
+                  borderColor: LightMode ? "#D9D9D0" : "#ffffff",
                   borderWidth: 2,
                 },
               ],

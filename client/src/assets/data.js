@@ -16,7 +16,7 @@ export const summary = {
       _id: "65c5f12ab5204a81bde866a9",
       title: "Test task",
       date: "2024-02-09T00:00:00.000Z",
-      priority: "high",
+      priority: "low",
       stage: "todo",
       assets: [
         "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707471138863original-a005132062ca5bafc505c4c74f0e1865.jpg?alt=media&token=55f909f2-7f05-42f3-af4f-dc7f87cdea1d",

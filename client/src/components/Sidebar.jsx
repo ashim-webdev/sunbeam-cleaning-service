@@ -99,7 +99,7 @@ const Sidebar = () => {
       <div
         onClick={() => handleNavClick(el.link)}
         className={clsx(
-          "w-full lg:w-3.5/4 flex gap-2 px-5 py-1.25 rounded-full items-center text-base cursor-pointer transition-colors ease-in-out duration-300",
+          "w-full  flex gap-2 px-5 py-1.25 rounded-full items-center text-base cursor-pointer transition-colors ease-in-out duration-300",
           LightMode 
             ? "text-gray-800  dark:text-gray-400"
             : "text-white "
