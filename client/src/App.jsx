@@ -1,5 +1,5 @@
 import { Transition } from "@headlessui/react";
-import { Fragment, useRef } from "react";
+import { Fragment, useRef, useEffect } from "react";
 import { useState } from 'react'
 import { Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +20,7 @@ import Navbar from './components/Navbar'
 
 
 function Layout() {
+  const [isScrolled, setIsScrolled] = useState(false);
   const { LightMode } = useSelector((state) => state.auth);
 
   // const { user } = useSelector((state) => state.auth);
@@ -27,6 +28,21 @@ function Layout() {
   const user = true;
 
   const location = useLocation()
+
+  // Navbar Scroll Color Change
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+
+    const handleScroll = () => {
+      setIsScrolled(container.scrollTop > 50);
+    };
+
+    container.addEventListener("scroll", handleScroll);
+
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return user ? (
     <div className={`
@@ -42,8 +58,8 @@ function Layout() {
 
       <MobileSidebar />
 
-      <div className='flex-1 overflow-y-auto'>
-        <Navbar />
+      <div ref={containerRef} className='flex-1 overflow-y-auto'>
+        <Navbar isScrolled={isScrolled}/>
 
         <div className='p-4 2xl:px-10'>
           <Outlet />

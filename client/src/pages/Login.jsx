@@ -131,7 +131,7 @@ const Login = () => {
                   })}
                   error={errors.password ? errors.password.message : ""}
                 />
-                <span onClick={showPassword} className={`${shake ? "animate-shake" : ""} absolute top-9 right-5 cursor-pointer transition-transform ease-in-out duration-200`}>
+                <span onClick={showPassword} className={`${shake ? "animate-shake" : ""} ClickAnimationNoti absolute top-9 right-5 cursor-pointer transition-transform ease-in-out duration-200`}>
                   { passwordShow
                     ?
                     <i className="fa-solid fa-eye text-[#0049E5] hover:text-[#0547d5]"></i>

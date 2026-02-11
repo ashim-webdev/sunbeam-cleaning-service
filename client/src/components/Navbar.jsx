@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { MdOutlineSearch } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { setOpenSidebar  } from "../redux/slices/authSlice";
@@ -8,7 +8,7 @@ import NotificationPanel from "./NotificationPanel";
 import UserAvatar from "./UserAvatar";
 import Dark_Light_Btn from "./Dark_Light_Btn";
 
-const Navbar = () => {
+const Navbar = ({ isScrolled }) => {
   const { LightMode } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
@@ -33,8 +33,8 @@ const Navbar = () => {
     <>
       <div className={`
           ${LightMode 
-            ? "bg-white "
-            : "bg-black/90"
+            ? `${isScrolled ? 'bg-white/90 backdrop-blur-xs ' : 'bg-white'}`
+            : `${isScrolled ? 'bg-black/90 backdrop-blur-[2px]' : 'bg-black/90'}`
           }
           flex justify-between items-center px-6 py-3 2xl:py-4 sticky z-50 top-0 transition-colors ease-in-out duration-300
         `}>
@@ -67,8 +67,8 @@ const Navbar = () => {
                 name="text" 
                 className={`
                     ${LightMode 
-                      ? "border border-gray-300"
-                      : "border border-white placeholder-white/40 text-white"
+                      ? "border border-gray-300 bg-white"
+                      : "bg-black/90 border border-white placeholder-white/40 text-white"
                     }
                     input_nav w-full md:w-60 lg:w-70 transition-colors ease-in-out duration-300
                   `} 

@@ -17,7 +17,7 @@ const Textbox = React.forwardRef(
           </span>
         )}
 
-        <div>
+        <div className="ClickAnimationNoti">
           <input
             type={type}
             name={name}
@@ -32,7 +32,7 @@ const Textbox = React.forwardRef(
           />
         </div>
         {error && (
-          <span className='text-xs text-[#f64949fe] mt-0.5 '>{error}</span>
+          <span className='text-xs text-[#f64949fe] mt-0.5 italic'>{error}</span>
         )}
       </div>
     );

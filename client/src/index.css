@@ -35,6 +35,10 @@
 
     --shadow-innerWH: inset 0 4px 6px rgba(233, 233, 233, 0.369);
 
+    --shadow-innerGRN: inset 0 4px 6px rgba(121, 255, 11, 0.464);
+
+
+
   }
 
   @layer utilities {
@@ -243,6 +247,19 @@ html {
 
 .animate-shake {
   animation: shake 1s ease-in-out;
+}
+
+
+@keyframes vibrate {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-3px); }
+  40% { transform: translateX(3px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+.animate-vibrate {
+  animation: vibrate 0.4s ease-in-out infinite;
 }
 
 
