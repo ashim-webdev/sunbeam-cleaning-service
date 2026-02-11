@@ -1,5 +1,7 @@
 import clsx from "clsx";
 import moment from "moment";
+import { Popover, Transition } from "@headlessui/react";
+import { Fragment } from "react";
 import React, { useEffect } from "react";
 import { Tilt } from "react-tilt"
 import { useDispatch, useSelector } from "react-redux";
@@ -8,7 +10,7 @@ import { FaArrowsToDot } from "react-icons/fa6";
 import { LuClipboardCheck } from "react-icons/lu";
 import { MdOutlineTimer, MdTimer } from "react-icons/md";
 import {
-  MdAdminPanelSettings,
+  MdKeyboardDoubleArrowDown,
   MdKeyboardArrowDown,
   MdKeyboardArrowUp,
   MdKeyboardDoubleArrowUp,
@@ -84,13 +86,13 @@ const Dashboard = () => {
               text-base md:text-sm lg:text-base font-semibold transition-colors ease-in-out duration-300 whitespace-nowrap
             `}>{label}</p>
           <span className={clsx("text-2xl font-semibold" , tx)}>{count}</span>
-          <span className='text-sm text-blue-800 -mb-1'>
+          <span className='text-sm text-[#0061FA] -mb-1'>
             <i className="fa-solid fa-chart-simple"></i> {lastMonth} <span className="text-gray-500 ">last month</span>
           </span>
         </div>
         <div
           className={clsx(
-            "w-10 h-10 rounded-full flex items-center justify-center text-white",
+            "w-10 h-10 rounded-full flex items-center justify-center shadow-inner text-white",
             bg
           )}
         >
@@ -140,7 +142,7 @@ const Dashboard = () => {
         `}>
         <td className='py-2 px-6'>
           <div className='flex items-center gap-3'>
-            <div className='w-9 h-9 rounded-full text-white flex items-center justify-center text-sm bg-violet-700'>
+            <div className='w-9 h-9 rounded-full text-white flex items-center justify-center text-sm shadow-inner bg-violet-700'>
               <span className='text-center'>{getInitials(user?.name)}</span>
             </div>
             <div>
@@ -160,7 +162,7 @@ const Dashboard = () => {
           <button
             onClick={(e) => e.stopPropagation()}
             className={clsx(
-              "w-fit px-3 py-1 rounded-full transition-transform ease-in-out duration-300 text-sm  cursor-pointer",
+              "ClickAnimation w-fit px-3 py-1 rounded-full transition-transform ease-in-out duration-300 text-sm shadow-inner hover:shadow-innerWH  cursor-pointer",
               user?.isActive ? "bg-green-500 text-white hover:bg-green-700 hover:scale-105" : "bg-red-500 text-whits hover:bg-red-700 hover:scale-110"
             )}
           >
@@ -205,7 +207,8 @@ const Dashboard = () => {
     const ICONS = {
       high: <MdKeyboardDoubleArrowUp />,
       medium: <MdKeyboardArrowUp />,
-      low: <MdKeyboardArrowDown />,
+      low: <MdKeyboardDoubleArrowDown />,
+      normal: <MdKeyboardArrowDown />
     };
 
     const TableHeader = () => (
@@ -231,8 +234,13 @@ const Dashboard = () => {
     );
 
     const TableRow = ({ task }) => {
+      // console.log(task)
       const text = task?.title;
+      const textPriority = task?.priority;
+
       const shortText = text.split(" ").slice(0, 2).join(" ") + "...";
+      const veryShortText = text.split(" ").slice(0, 1).join(" ") + "...";
+      const TextPriShort = textPriority.slice(0, 4) + "...";
       return (
         <tr className={`
           ${LightMode 
@@ -244,7 +252,7 @@ const Dashboard = () => {
             <td className='py-2 pl-4'>
               <div className='flex items-center gap-2'>
                 <div
-                  className={clsx("w-4 h-4 rounded-full", TASK_TYPE[task.stage])}
+                  className={clsx("w-4 h-4 rounded-full shadow-inner", TASK_TYPE[task.stage])}
                 />
                 <p className={`
                     ${LightMode 
@@ -253,6 +261,15 @@ const Dashboard = () => {
                     }
                     sm:hidden text-base transition-colors ease-in-out duration-300 
                   `}>
+                  {veryShortText}
+                </p>
+                <p className={`
+                    ${LightMode 
+                      ? "text-black"
+                      : "text-white"
+                    }
+                    hidden sm:block md:hidden text-base transition-colors ease-in-out duration-300 
+                  `}>
                   {shortText}
                 </p>
                 <p className={`
@@ -260,14 +277,20 @@ const Dashboard = () => {
                       ? "text-black"
                       : "text-white"
                     }
-                    hidden sm:block text-base transition-colors ease-in-out duration-300 
+                    hidden md:block text-base transition-colors ease-in-out duration-300 
                   `}>
                   {task?.title}
                 </p>
               </div>
             </td>
             <td className='py-2'>
-              <div className={"flex gap-1 items-center"}>
+              <div className={"flex sm:hidden gap-1 items-center"}>
+                <span className={clsx("text-lg", PRIORITY_STYLES[task?.priority])}>
+                  {ICONS[task?.priority]}
+                </span>
+                <span className='capitalize'>{TextPriShort}</span>
+              </div>
+              <div className={"hidden sm:flex gap-1 items-center"}>
                 <span className={clsx("text-lg", PRIORITY_STYLES[task?.priority])}>
                   {ICONS[task?.priority]}
                 </span>
@@ -276,21 +299,10 @@ const Dashboard = () => {
             </td>
 
             <td className='py-2'>
-              <div className='flex'>
-                {task?.team.map((team, index) => (
-                  <div
-                    key={index}
-                    onClick={(e) => e.stopPropagation()}
-                    className={clsx(
-                      "relative w-9 h-9 rounded-full text-white flex items-center justify-center text-sm border border-black -m-1",
-                      BGS[index % BGS?.length]
-                    )}
-                  >
-                    <span className="absolute top-0">
-                      <UserInfo team={team} index={index} />
-                    </span>
-                  </div>
-                ))}
+              <div className=' flex flex-row justify-start items-center mr-6'>
+                <div className="relative flex flex-row justify-center items-center">
+                  <UserInfo task={task} />
+                </div>
               </div>
             </td>
 

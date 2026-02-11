@@ -36,7 +36,7 @@ const Navbar = () => {
             ? "bg-white "
             : "bg-black/90"
           }
-          flex justify-between items-center px-6 py-3 2xl:py-4 sticky z-10 top-0 transition-colors ease-in-out duration-300
+          flex justify-between items-center px-6 py-3 2xl:py-4 sticky z-50 top-0 transition-colors ease-in-out duration-300
         `}>
       <div className='flex gap-4'>
         <div className='flex justify-center items-center'>
@@ -96,7 +96,7 @@ const Navbar = () => {
                   ? "border-2 border-amber-300 shadow-black/80"
                   : "border-2 border-white shadow-white/60"
                 }
-                flex justify-center items-center rounded-full transition-colors ease-in-out duration-300 shadow-md 
+                ClickAnimationNoti flex justify-center items-center rounded-full transition-colors ease-in-out duration-300 shadow-md 
               `}><Dark_Light_Btn /></span>
           </div>
         <NotificationPanel />

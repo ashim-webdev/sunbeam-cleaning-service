@@ -14,7 +14,7 @@ import { getInitials } from "../utils";
 const UserAvatar = () => {
   const [open, setOpen] = useState(false);
   const [openPassword, setOpenPassword] = useState(false);
-    const { LightMode } = useSelector((state) => state.auth);
+  const { LightMode } = useSelector((state) => state.auth);
   const { user } = useSelector((state) => state.auth);
   // const [logoutUser] = useLogoutMutation();
   const dispatch = useDispatch();
@@ -35,8 +35,8 @@ const UserAvatar = () => {
     <>
       <div className=''>
         <Menu as='div' className='relative inline-block text-left'>
-          <div>
-            <Menu.Button className='border-2 border-white w-10 h-10 2xl:w-12 2xl:h-12 items-center justify-center rounded-full bg-blue-600 hover:bg-blue-800 cursor-pointer transition-transform hover:scale-105 ease-in-out duration-200'>
+          <div className="ClickAnimationNoti">
+            <Menu.Button className=' border-2 border-white w-10 h-10 2xl:w-12 2xl:h-12 items-center justify-center rounded-full bg-blue-600 hover:bg-blue-800 hover:shadow-innerWH cursor-pointer transition-transform hover:scale-105 ease-in-out duration-200 shadow-inner'>
               <span className='text-white font-semibold'>
                 {getInitials('Ashimonye Gabriel')}
               </span>
@@ -90,7 +90,7 @@ const UserAvatar = () => {
                       onClick={logoutHandler}
                       className={`text-red-500 group flex w-full items-center rounded-md px-2 py-2 text-base transition-transform hover:scale-105 ease-in-out duration-200 cursor-pointer`}
                     >
-                      <IoLogOutOutline className='mr-2' aria-hidden='true' />
+                      <IoLogOutOutline className='mr-2 text-lg' aria-hidden='true' />
                       Logout
                     </button>
                   )}

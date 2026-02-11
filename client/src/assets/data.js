@@ -29,6 +29,7 @@ export const summary = {
           title: "Administrator",
           role: "Admin",
           email: "admin@gmail.com",
+          isLeader: true
         },
         {
           _id: "65c30b96e639681a13def0b5",
@@ -36,13 +37,23 @@ export const summary = {
           title: "Product Manager",
           role: "Manager",
           email: "jane.smith@example.com",
+          isLeader: false
         },
         {
-          _id: "65c317360fd860f958baa08e",
+          _id: "65c3173613230fd860f958baa08e",
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
           email: "alex.johnson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c317360f6566d860f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
         },
       ],
       isTrashed: false,
@@ -68,11 +79,12 @@ export const summary = {
       assets: [],
       team: [
         {
-          _id: "65c317360fd860f958baa08e",
+          _id: "65c317360f9787860f958baa08e",
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
           email: "alex.johnson@example.com",
+          isLeader: false
         },
         {
           _id: "65c3176a0fd860f958baa099",
@@ -80,6 +92,23 @@ export const summary = {
           title: "Data Analyst",
           role: "Analyst",
           email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c317360fde343d860f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: true
+        },
+        {
+          _id: "65c317360fd09887860f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
         },
       ],
       isTrashed: false,
@@ -136,6 +165,7 @@ export const summary = {
           title: "Administrator",
           role: "Admin",
           email: "admin@gmail.com",
+          isLeader: false
         },
         {
           _id: "65c27a0e18c0a1b750ad5cad",
@@ -143,6 +173,7 @@ export const summary = {
           title: "Software Engineer",
           role: "Developer",
           email: "john.doe@example.com",
+          isLeader: false
         },
         {
           _id: "65c30b96e639681a13def0b5",
@@ -150,6 +181,23 @@ export const summary = {
           title: "Product Manager",
           role: "Manager",
           email: "jane.smith@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c317360f345d860f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c317360f908887860f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: true
         },
       ],
       isTrashed: false,
@@ -213,11 +261,12 @@ export const summary = {
       ],
       team: [
         {
-          _id: "65c317360fd860f958baa08e",
+          _id: "65c317387877998fd860f958baa08e",
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
           email: "alex.johnson@example.com",
+          isLeader: false
         },
         {
           _id: "65c3176a0fd860f958baa099",
@@ -225,6 +274,23 @@ export const summary = {
           title: "Data Analyst",
           role: "Analyst",
           email: "emily.wilson@example.com",
+          isLeader: true
+        },
+        {
+          _id: "65c3173665688860f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c317360fd8989f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
         },
       ],
       isTrashed: false,
@@ -269,6 +335,7 @@ export const summary = {
           title: "Product Manager",
           role: "Manager",
           email: "jane.smith@example.com",
+          isLeader: false
         },
         {
           _id: "65c202d4aa62f32ffd1303cc",
@@ -276,13 +343,31 @@ export const summary = {
           title: "Administrator",
           role: "Admin",
           email: "admin@gmail.com",
+          isLeader: false
         },
         {
-          _id: "65c317360fd860f958baa08e",
+          _id: "65c31736778860f958baa08e",
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
           email: "alex.johnson@example.com",
+          isLeader: true
+        },
+        {
+          _id: "65c317369898d860f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c31736087979d860f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
         },
       ],
       isTrashed: false,
@@ -321,6 +406,7 @@ export const summary = {
           title: "Administrator",
           role: "Admin",
           email: "admin@gmail.com",
+          isLeader: false
         },
         {
           _id: "65c27a0e18c0a1b750ad5cad",
@@ -328,6 +414,7 @@ export const summary = {
           title: "Software Engineer",
           role: "Developer",
           email: "john.doe@example.com",
+          isLeader: true
         },
         {
           _id: "65c30b96e639681a13def0b5",
@@ -335,6 +422,23 @@ export const summary = {
           title: "Product Manager",
           role: "Manager",
           email: "jane.smith@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c317360fd860f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c3178780fd860f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
         },
       ],
       isTrashed: false,
@@ -366,11 +470,12 @@ export const summary = {
       assets: [],
       team: [
         {
-          _id: "65c317360fd860f958baa08e",
+          _id: "65c317360fd8yt7t655f958baa08e",
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
           email: "alex.johnson@example.com",
+          isLeader: true
         },
         {
           _id: "65c3176a0fd860f958baa099",
@@ -378,6 +483,23 @@ export const summary = {
           title: "Data Analyst",
           role: "Analyst",
           email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c317667t0fd860f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c31736fg8g0d860f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
         },
       ],
       isTrashed: false,
@@ -408,6 +530,7 @@ export const summary = {
           title: "Administrator",
           role: "Admin",
           email: "admin@gmail.com",
+          isLeader: false
         },
         {
           _id: "65c27a0e18c0a1b750ad5cad",
@@ -415,6 +538,7 @@ export const summary = {
           title: "Software Engineer",
           role: "Developer",
           email: "john.doe@example.com",
+          isLeader: true
         },
         {
           _id: "65c30b96e639681a13def0b5",
@@ -422,6 +546,23 @@ export const summary = {
           title: "Product Manager",
           role: "Manager",
           email: "jane.smith@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c317360fdy676t76f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c317360fd860f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
         },
       ],
       isTrashed: false,
@@ -458,6 +599,7 @@ export const summary = {
           title: "UX Designer",
           role: "Designer",
           email: "alex.johnson@example.com",
+          isLeader: false
         },
         {
           _id: "65c3176a0fd860f958baa099",
@@ -465,6 +607,23 @@ export const summary = {
           title: "Data Analyst",
           role: "Analyst",
           email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c317ff70fd860f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c31736556fd860f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: true
         },
       ],
       isTrashed: false,
@@ -495,6 +654,7 @@ export const summary = {
           title: "Administrator",
           role: "Admin",
           email: "admin@gmail.com",
+          isLeader: true
         },
         {
           _id: "65c27a0e18c0a1b750ad5cad",
@@ -502,6 +662,7 @@ export const summary = {
           title: "Software Engineer",
           role: "Developer",
           email: "john.doe@example.com",
+          isLeader: false
         },
         {
           _id: "65c30b96e639681a13def0b5",
@@ -509,6 +670,23 @@ export const summary = {
           title: "Product Manager",
           role: "Manager",
           email: "jane.smith@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c31736fgf5860f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c317360fd860f958baa08e",
+          name: "Alex Johnson",
+          title: "UX Designer",
+          role: "Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
         },
       ],
       isTrashed: false,

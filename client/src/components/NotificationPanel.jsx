@@ -99,7 +99,7 @@ export default function NotificationPanel() {
                 ? "text-gray-800 dark:text-white"
                 : "text-white"
               }
-              w-8 h-8 flex items-center justify-center  relative cursor-pointer  transition-transform hover:scale-105 ease-in-out duration-300
+              ClickAnimationNoti w-8 h-8 flex items-center justify-center  relative cursor-pointer  transition-transform hover:scale-105 ease-in-out duration-300
             `}>
             <IoIosNotificationsOutline className='text-2xl' />
             {data?.length > 0 && (
@@ -186,7 +186,7 @@ export default function NotificationPanel() {
                         ? "bg-gray-50"
                         : "text-white/60 border border-t-gray-500/50"
                       }
-                      grid grid-cols-2 divide-x   divide-gray-500/50 transition-colors ease-in-out duration-300
+                      grid grid-cols-2 divide-x  divide-gray-500/90 transition-colors ease-in-out duration-300
                     `}>
                     {callsToAction.map((item) => (
                       <Link
@@ -197,9 +197,9 @@ export default function NotificationPanel() {
                         className={`
                             ${LightMode 
                               ? "hover:bg-gray-100"
-                              : "hover:bg-[#474646c2]"
+                              : "hover:bg-[#65646472]"
                             }
-                            flex items-center justify-center gap-x-2.5 p-3 font-semibold text-blue-600 transition-colors ease-in-out duration-300 
+                            ClickAnimationNoti flex items-center hover:shadow-innerWH justify-center gap-x-2.5 p-3 font-semibold text-blue-600 transition-colors ease-in-out duration-300 
                           `}
                       >
                         {item.name}

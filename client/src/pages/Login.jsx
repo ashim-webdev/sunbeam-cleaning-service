@@ -77,7 +77,7 @@ const Login = () => {
 
   
   return (
-    <div className='Login w-full min-h-screen flex items-center justify-center flex-col lg:flex-row'>
+    <div className='Login w-full min-h-screen flex items-center justify-center flex-col lg:flex-row shadow-inner'>
       <div className='relative z-10 w-full md:w-auto flex gap-15 md:gap-10 lg:gap-30 flex-col lg:flex-row xl:gap-70 items-center justify-center'>
         <div className='h-full w-full lg:w-2/3 flex flex-col items-center justify-center'>
           <div className=' w-full md:max-w-lg 2xl:max-w-3xl flex flex-col items-center justify-center gap-5 md:gap-y-10 2xl:-mt-20'>
@@ -96,7 +96,7 @@ const Login = () => {
             className={`form-container relative ${shake ? 'shadow-red' : 'shadow-blue' } w-full md:w-100 flex flex-col gap-y-8 bg-white dark:bg-slate-900 pt-14 pb-14`}
           >
             <div>
-              <p className='text-blue-600 text-3xl font-bold text-center'>
+              <p className='LoginHeader text-blue-600 text-3xl font-bold text-center text-shadow-lg'>
                 Welcome back!
               </p>
               <p className='text-center text-base text-gray-700 dark:text-gray-500'>
@@ -150,7 +150,7 @@ const Login = () => {
               <Button
                 type='submit'
                 label='Log in'
-                className={`${shake ? "animate-shake bg-red-500 hover:bg-red-500" : "bg-blue-700"} w-full h-10  hover:bg-blue-800 transition-colors ease-in-out duration-200 text-white rounded-full`}
+                className={`${shake ? "animate-shake bg-red-500 hover:bg-red-500" : "bg-blue-700"} w-full h-10  hover:bg-blue-800 transition-colors ease-in-out duration-200 text-white rounded-full ClickAnimation shadow-inner hover:shadow-innerWH`}
               />
             )}
 

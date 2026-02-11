@@ -1,58 +1,70 @@
-import clsx from "clsx";
 import { Popover, Transition } from "@headlessui/react";
+import { useSelector } from "react-redux";
 import { Fragment } from "react";
+import clsx from "clsx";
 import { getInitials, BGS } from "../utils";
+import GroupedTeam from "./GroupedTeam";
 
-export default function UserInfo({ team, index }) {
+export default function UserInfo({ task }) {
+  const { LightMode } = useSelector((state) => state.auth);
+  
+  const team = task.team ?? [];
+
+  // Displaying the remaining team members
+  const visibleCount = 3;
+  const remainingItems = team.slice(visibleCount);
+
   return (
-    <div className='text-center font-bold m-0.5 w-9 h-9 rounded-full text-white flex items-center justify-center text-sm  border border-black'>
-      <Popover className='relative'>
-        {({ open }) => (
+    <div className="relative flex items-center -mr-6 ml-4">
+      {/* Show first 2 avatars */}
+      {team.slice(0, 3).map((member, index) => (
+        <div
+          key={member._id}
+          className={clsx(
+            "w-9 h-9 rounded-full flex items-center justify-center text-white text-sm border-2 border-black -ml-4 shadow-inner",
+            BGS[index % BGS.length]
+          )}
+        >
+          {getInitials(member.name)}
+        </div>
+      ))}
+
+      {/* PLUS BUTTON */}
+      {team.length > 2 && (
+        <Popover className="relative ml-1">
           <>
-            <Popover.Button
-              className={`hover:scale-110 transition-transform ease-in-out duration-200 group inline-flex items-center outline-none`}
-            >
-              <span
-                className="text-center font-bold p-2 cursor-pointer  
-                ">
-                {getInitials(team?.name)}
-              </span>
+            <Popover.Button className="ClickAnimation w-9 h-9 -ml-5.5 rounded-full text-[10px] bg-gray-400 hover:bg-gray-500 text-white border border-black flex items-center justify-center hover:scale-105 transition cursor-pointer shadow-inner hover:shadow-innerWH">
+              {remainingItems.length > 0 && (
+                <>
+                  <i className="fa-solid fa-plus" />
+                  <span className="text-[16px]">{remainingItems.length}</span>
+                </>
+              )}
             </Popover.Button>
+
             <Transition
               as={Fragment}
-              enter='transition ease-out duration-200'
-              enterFrom='opacity-0 translate-y-1'
-              enterTo='opacity-100 translate-y-0'
-              leave='transition ease-in duration-150'
-              leaveFrom='opacity-100 translate-y-0'
-              leaveTo='opacity-0 translate-y-1'
+              enter="transition ease-out duration-200"
+              enterFrom="opacity-0 translate-y-1"
+              enterTo="opacity-100 translate-y-0"
+              leave="transition ease-in duration-150"
+              leaveFrom="opacity-100 translate-y-0"
+              leaveTo="opacity-0 translate-y-1"
             >
-              <Popover.Panel className='absolute -left-27 mt-3 z-10 w-80 max-w-sm -translate-x-1/2 transform px-4 sm:px-0 '>
-                <div className='flex items-center gap-4 rounded-lg shadow-lg bg-white p-4'>
-                  
-                  <div className={clsx(
-                    "w-16 h-16 rounded-full text-white flex items-center justify-center text-2xl ",
-                    BGS[index % BGS?.length]
-                  )}>
-                    <span className='text-center font-bold'>
-                      {getInitials(team?.name)}
-                    </span>
-                  </div>
-                  <div className='flex flex-col gap-y-1'>
-                    <p className='text-black text-xl font-bold'>{team?.name}</p>
-                    <span className='text-base text-gray-500'>
-                      {team?.title}
-                    </span>
-                    <span className='text-blue-500'>
-                      {team?.email ?? "email@example.com"}
-                    </span>
-                  </div>
-                </div>
+              <Popover.Panel onMouseOver={(e) => e.stopPropagation()} className={`
+                  ${LightMode 
+                    ? "bg-white shadow-dark"
+                    : "bg-black/90 shadow-light"
+                  }
+                  absolute -right-5 mt-3 z-20 rounded p-2 cursor-pointer transition-colors ease-in-out duration-300
+                `}>
+                <GroupedTeam team={team} />
               </Popover.Panel>
             </Transition>
           </>
-        )}
-      </Popover>
+        </Popover>
+      )}
+
     </div>
   );
 }

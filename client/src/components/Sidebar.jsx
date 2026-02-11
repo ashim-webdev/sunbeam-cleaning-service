@@ -99,12 +99,12 @@ const Sidebar = () => {
       <div
         onClick={() => handleNavClick(el.link)}
         className={clsx(
-          "w-full  flex gap-2 px-5 py-1.25 rounded-full items-center text-base cursor-pointer transition-colors ease-in-out duration-300",
+          "ClickAnimationNoti w-full flex gap-2 px-5 py-1.25 rounded-full items-center text-base cursor-pointer transition-colors ease-in-out duration-300 hover:shadow-inner",
           LightMode 
             ? "text-gray-800  dark:text-gray-400"
             : "text-white "
           ,
-          path === el.link.split("/")[0] ? "transition-colors ease-in-out bg-[#005FFB] text-white duration-75" : "transition-colors ease-in-out duration-75 hover:bg-[#0004fc4e]"
+          path === el.link.split("/")[0] ? " ClickAnimationNoti transition-colors ease-in-out bg-[#005FFB] text-white duration-75" : "transition-colors ease-in-out duration-75 hover:bg-[#0004fc4e] hover:shadow-inner"
         )}
       >
         {el.icon}
@@ -123,7 +123,7 @@ const Sidebar = () => {
         w-full  h-screen flex flex-col gap-6 p-5 transition-colors ease-in-out duration-300
     `}>
       <h1 className='flex gap-1 items-center'>
-        <p className='p-2 bg-blue-600 rounded-full'>
+        <p className='p-2 bg-blue-600 shadow-inner rounded-full'>
           <MdOutlineAddTask className='text-white text-2xl font-black' />
         </p>
         <span className={`text-2xl font-bold transition-colors ease-in-out duration-300 ${LightMode ? " text-black dark:text-white" : "text-white"} `}>
@@ -165,7 +165,7 @@ const Sidebar = () => {
               ? "border-2 border-amber-300 shadow-black/80"
               : "border-2 border-white shadow-white/60"
             }
-            flex justify-center items-center rounded-full transition-colors ease-in-out duration-300 shadow-md 
+            ClickAnimationNoti flex justify-center items-center rounded-full transition-colors ease-in-out duration-300 shadow-md 
           `}>
             <Dark_Light_Btn />
           </span>

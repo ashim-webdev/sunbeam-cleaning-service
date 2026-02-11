@@ -574,3 +574,8 @@
 }
 
 
+/* MembersTable on hover to display Leader */
+.MembersTable:hover .LeaderTable {
+  display: block;
+  transition: transform 0.4s ease;
+}
