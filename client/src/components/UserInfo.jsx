@@ -26,42 +26,51 @@ export default function UserInfo({ task }) {
           )}
         >
           {getInitials(member.name)}
+
+          <div className={`${member.isLeader ? "block" : "hidden"} absolute -top-0.75 w-2.5 h-2.5 rounded-full bg-green-500 shadow-inner animate-pulse`} />
         </div>
       ))}
 
       {/* PLUS BUTTON */}
       {team.length > 2 && (
         <Popover className="relative ml-1">
-          <>
-            <Popover.Button className="ClickAnimation w-9 h-9 -ml-5.5 rounded-full text-[10px] bg-gray-400 hover:bg-gray-500 text-white border border-black flex items-center justify-center hover:scale-105 transition cursor-pointer shadow-inner hover:shadow-innerWH">
-              {remainingItems.length > 0 && (
-                <>
-                  <i className="fa-solid fa-plus" />
-                  <span className="text-[16px]">{remainingItems.length}</span>
-                </>
-              )}
-            </Popover.Button>
+          {({ open }) => (
+            <div className={clsx("relative", open && "z-50")}>
+              {team.length > 3 
+                ?
+                <Popover.Button className="ClickAnimation z-10 w-9 h-9 -ml-5.5 rounded-full text-[10px] bg-gray-400 hover:bg-gray-500 text-white border border-black flex items-center justify-center hover:scale-105 transition cursor-pointer shadow-inner hover:shadow-innerWH">
+                  {remainingItems.length > 0 && (
+                    <>
+                      <i className="fa-solid fa-plus" />
+                      <span className="text-[16px]">{remainingItems.length}</span>
+                    </>
+                  )}
+                </Popover.Button>
+                : 
+                null
+              }
 
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-200"
-              enterFrom="opacity-0 translate-y-1"
-              enterTo="opacity-100 translate-y-0"
-              leave="transition ease-in duration-150"
-              leaveFrom="opacity-100 translate-y-0"
-              leaveTo="opacity-0 translate-y-1"
-            >
-              <Popover.Panel onMouseOver={(e) => e.stopPropagation()} className={`
-                  ${LightMode 
-                    ? "bg-white shadow-dark"
-                    : "bg-black/90 shadow-light"
-                  }
-                  absolute -right-5 mt-3 z-20 rounded p-2 cursor-pointer transition-colors ease-in-out duration-300
-                `}>
-                <GroupedTeam team={team} />
-              </Popover.Panel>
-            </Transition>
-          </>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-200"
+                  enterFrom="opacity-0 translate-y-1"
+                  enterTo="opacity-100 translate-y-0"
+                  leave="transition ease-in duration-150"
+                  leaveFrom="opacity-100 translate-y-0"
+                  leaveTo="opacity-0 translate-y-1"
+                >
+                  <Popover.Panel onMouseOver={(e) => e.stopPropagation()} className={`
+                      ${LightMode 
+                        ? "bg-white shadow-dark"
+                        : "bg-black/90 shadow-light"
+                      }
+                      absolute -right-5 mt-3 rounded p-2 cursor-pointer transition-colors ease-in-out duration-300
+                    `}>
+                    <GroupedTeam team={team} />
+                  </Popover.Panel>
+                </Transition>
+            </div>
+          )}
         </Popover>
       )}
 

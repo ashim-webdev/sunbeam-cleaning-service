@@ -5,9 +5,13 @@ import { useSelector } from "react-redux";
 export default function GroupedTeam({ team = [] }) {
   const { LightMode } = useSelector((state) => state.auth);
 
+  // const shortEmail = team.email;
+  // const  = shortEmail.slice(0, 4) + "...";
+
+
   return (
     <div className="">
-      <table className="min-w-[320px]">
+      <table className="min-w-[320px] ">
         <tbody>
           {team.map((member, index) => (
             <tr
@@ -22,8 +26,8 @@ export default function GroupedTeam({ team = [] }) {
               <td className={`
                   py-2 px-4
                 `}>
-                <div className="flex items-center gap-3">
-                  <div className={clsx(
+                <span className="flex items-center gap-3">
+                  <span className={clsx(
                       LightMode
                       ? "text-white"
                       : "text-white",
@@ -31,8 +35,8 @@ export default function GroupedTeam({ team = [] }) {
                       BGS[index % BGS.length]
                     )}>
                     {getInitials(member.name)}
-                  </div>
-                  <div>
+                  </span>
+                  <span>
                     <p className={`
                         ${LightMode
                           ? "text-gray-700"
@@ -46,34 +50,38 @@ export default function GroupedTeam({ team = [] }) {
                         }
                         text-xs font-bold transition-colors ease-in-out duration-300
                       `}>{member.title}</span>
-                  </div>
-                </div>
+                  </span>
+                </span>
               </td>
 
               <td className={`
                   ${LightMode
-                    ? "text-gray-800"
+                    ? "text-gray-900"
                     : "text-white/80"
                   }
                   hidden pt-5 sm:block px-4 text-sm text-center transition-colors ease-in-out duration-300
                 `}>
-                {member.email ?? "email@example.com"}
+                {member.email.slice(0, 1) + "......@......com" ?? "email@example.com"}
               </td>
               
-              <span className={`
-                  ${ member.isLeader 
-                    ? "text-green-600" 
-                    : "text-blue-600/60"
-                  }
-                  text-lg absolute -top-2.5 left-7.5
-                `}><i className="fa-solid fa-flag"></i></span>
-              <span className={`
-                  ${ member.isLeader 
-                    ? "text-green-600" 
-                    : "text-blue-600"
-                  }
-                  LeaderTable font-bold sm:hidden italic text-sm absolute bottom-5 right-6 sm:bottom-0 sm:right-20.5
-                `}>{member.isLeader ? "Leader" : "Crew"}</span>
+              <td>
+                <span className={`
+                    ${ member.isLeader 
+                      ? "text-green-600" 
+                      : "text-blue-600/60"
+                    }
+                    text-lg absolute -top-2.5 left-7.5
+                  `}><i className="fa-solid fa-flag"></i></span>
+                <span className={`
+                    ${ member.isLeader 
+                      ? "text-green-600 bg-green-500/50 shadow-inner right-4 sm:right-24 sm:bottom-14" 
+                      : "text-blue-600 bg-blue-500/50 shadow-inner right-6 sm:right-26 sm:bottom-12"
+                    }
+                    LeaderTable font-bold p-2 rounded-tl-3xl rounded-br-3xl  italic text-sm absolute bottom-3 sm:hidden   
+                  `}>
+                    {member.isLeader ? "Leader" : "Crew"}
+                </span>
+              </td>
             </tr>
           ))}
         </tbody>

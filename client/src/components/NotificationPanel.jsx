@@ -59,7 +59,7 @@ const ICONS = {
   ),
 };
 
-export default function NotificationPanel() {
+export function NotificationPanel() {
   const { LightMode } = useSelector((state) => state.auth);
 
   const [open, setOpen] = useState(false);
