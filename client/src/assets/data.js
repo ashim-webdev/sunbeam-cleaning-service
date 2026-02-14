@@ -706,6 +706,7 @@ export const summary = {
     {
       _id: "65c5f27fb5204a81bde86833",
       name: "New User",
+      email: "user@gmail.com",
       title: "Designer",
       role: "Developer",
       isActive: true,
@@ -714,6 +715,7 @@ export const summary = {
     {
       _id: "65c3176a0fd860f958baa099",
       name: "Emily Wilson",
+      email: "emilyWilson@gmail.com",
       title: "Data Analyst",
       role: "Analyst",
       isActive: true,
@@ -722,6 +724,7 @@ export const summary = {
     {
       _id: "65c317360fd860f958baa08e",
       name: "Alex Johnson",
+      email: "alexJohnson@gmail.com",
       title: "UX Designer",
       role: "Designer",
       isActive: true,
@@ -730,6 +733,7 @@ export const summary = {
     {
       _id: "65c30b96e639681a13def0b5",
       name: "Jane Smith",
+      email: "janeSmith@gmail.com",
       title: "Product Manager",
       role: "Manager",
       isActive: true,
@@ -738,6 +742,7 @@ export const summary = {
     {
       _id: "65c202d4aa62f32ffd1303cc",
       name: "Codewave Asante",
+      email: "codeAsa@gmail.com",
       title: "Administrator",
       role: "Admin",
       createdAt: "2024-02-06T09:58:44.794Z",

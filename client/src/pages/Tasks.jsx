@@ -9,7 +9,7 @@ import Tabs from "../components/Tabs"
 import Title from "../components/Title"
 import Table from "../components/Table";
 import TaskTitle from "../components/TaskComponents/TaskTitle"
-import BoardView from "../components/TaskComponents/BoardView";
+import BoardView from "../components/TaskComponents/BoardView"; 
 import { tasks } from "../assets/data";
 
 import { TASK_TYPE } from "../utils";
@@ -40,7 +40,7 @@ const Tasks = () => {
   ) : (
     <div className='w-full'>
       <div className='flex items-center justify-between mb-4'>
-        <Title title={status ? `${status} Tasks` : "Tasks"} />
+        <Title title={status ? `${status}` : "Tasks"} />
 
         {!status && (
           <Button
@@ -68,8 +68,7 @@ const Tasks = () => {
           {selected === 0 ? (
             <BoardView tasks={tasks} />
           ) : (
-            // <Table tasks={tasks} />
-            <h2>hello</h2>
+            <Table tasks={tasks} />
           )}
         </Tabs>
       </div>

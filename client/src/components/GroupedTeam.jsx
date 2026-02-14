@@ -20,7 +20,7 @@ export default function GroupedTeam({ team = [] }) {
                 ${LightMode
                   ? "border-gray-300 text-gray-600 hover:bg-gray-300/50 hover:shadow-dark duration-300"
                   : "border-gray-600 text-white hover:bg-white/30 hover:shadow-light duration-300"}
-                MembersTable relative border-b transition-colors transform hover:scale-105 duration-200
+                MembersTable relative border-b transition-colors transform hover:scale-102 duration-200
               `}
             >
               <td className={`
@@ -74,10 +74,10 @@ export default function GroupedTeam({ team = [] }) {
                   `}><i className="fa-solid fa-flag"></i></span>
                 <span className={`
                     ${ member.isLeader 
-                      ? "text-green-600 bg-green-500/50 shadow-inner right-4 sm:right-24 sm:bottom-14" 
-                      : "text-blue-600 bg-blue-500/50 shadow-inner right-6 sm:right-26 sm:bottom-12"
+                      ? "text-green-600 bg-green-500/50 shadow-inner right-4 sm:right-24 sm:bottom-5" 
+                      : "text-blue-600 bg-blue-500/50 shadow-inner right-6 sm:right-26 sm:bottom-5"
                     }
-                    LeaderTable font-bold p-2 rounded-tl-3xl rounded-br-3xl  italic text-sm absolute bottom-3 sm:hidden   
+                    LeaderTable font-bold p-2 rounded-tl-3xl rounded-br-3xl  italic text-sm absolute bottom-3 sm:hidden  
                   `}>
                     {member.isLeader ? "Leader" : "Crew"}
                 </span>

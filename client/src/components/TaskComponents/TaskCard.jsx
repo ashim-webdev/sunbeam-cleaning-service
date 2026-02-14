@@ -2,6 +2,7 @@ import clsx from "clsx";
 import React, { useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import {
+  MdKeyboardDoubleArrowDown,
   MdKeyboardArrowDown,
   MdKeyboardArrowUp,
   MdKeyboardDoubleArrowUp,
@@ -15,14 +16,15 @@ import {
   TASK_TYPE,
   formatDate,
 } from "../../utils/index.js";
-import UserInfo from "../UserInfo.jsx";
+import UserInfoTask from "../UserInfoTask.jsx";
 // import { AddSubTask, TaskAssets, TaskColor, TaskDialog } from "./index";
 import TaskAssets from "./TaskAssets.jsx";
 
 const ICONS = {
   high: <MdKeyboardDoubleArrowUp />,
   medium: <MdKeyboardArrowUp />,
-  low: <MdKeyboardArrowDown />,
+  low: <MdKeyboardDoubleArrowDown />,
+  normal: <MdKeyboardArrowDown />
 };
 
 const TaskCard = ({ task }) => {
@@ -70,7 +72,7 @@ const TaskCard = ({ task }) => {
           <div className='flex flex-row-reverse'>
             <div className=' flex flex-row justify-start items-center mr-6'>
               <div className=" z-20 relative flex flex-row justify-center items-center">
-                <UserInfo task={task} />
+                <UserInfoTask task={task} />
               </div>
             </div>
           </div>

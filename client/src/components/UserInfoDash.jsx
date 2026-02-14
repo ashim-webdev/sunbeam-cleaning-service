@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { getInitials, BGS } from "../utils";
 import GroupedTeam from "./GroupedTeam";
 
-export default function UserInfo({ task }) {
+export default function UserInfoDash({ task }) {
   const { LightMode } = useSelector((state) => state.auth);
   
   const team = task.team ?? [];
@@ -21,13 +21,13 @@ export default function UserInfo({ task }) {
         <div
           key={member._id}
           className={clsx(
-            "w-9 h-9 rounded-full flex items-center justify-center text-white text-sm border-2 border-black -ml-4 shadow-inner",
+            "relative w-9 h-9 rounded-full flex items-center justify-center text-white text-sm border-2 border-black -ml-4 shadow-inner",
             BGS[index % BGS.length]
           )}
         >
           {getInitials(member.name)}
 
-          <div className={`${member.isLeader ? "block" : "hidden"} absolute -top-0.75 w-2.5 h-2.5 rounded-full bg-green-500 shadow-inner animate-pulse`} />
+          <div className={`absolute ${member.isLeader ? "block" : "hidden"} -top-1 left-2.5 w-2.5 h-2.5 rounded-full bg-green-500 shadow-inner animate-spin`}></div>
         </div>
       ))}
 
@@ -64,7 +64,7 @@ export default function UserInfo({ task }) {
                         ? "bg-white shadow-dark"
                         : "bg-black/90 shadow-light"
                       }
-                      absolute -right-5 mt-3 rounded p-2 cursor-pointer transition-colors ease-in-out duration-300
+                      absolute -right-6 mt-3 rounded p-2 cursor-pointer transition-colors ease-in-out duration-300
                     `}>
                     <GroupedTeam team={team} />
                   </Popover.Panel>

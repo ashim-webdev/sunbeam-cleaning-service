@@ -19,7 +19,7 @@ import { BGS, PRIORITY_STYLES, TASK_TYPE, getInitials } from "../utils";
 
 import { summary } from "../assets/data";
 import Chart from "../components/Chart"
-import UserInfo from "../components/UserInfo"
+import UserInfoDash from "../components/UserInfoDash"
 
 
 
@@ -301,7 +301,7 @@ const Dashboard = () => {
             <td className='py-2'>
               <div className=' flex flex-row justify-start items-center mr-6'>
                 <div className="relative flex flex-row justify-center items-center">
-                  <UserInfo task={task} />
+                  <UserInfoDash task={task} />
                 </div>
               </div>
             </td>
