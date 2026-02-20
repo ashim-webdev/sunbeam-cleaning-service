@@ -126,7 +126,7 @@ const Dashboard = () => {
             } text-left transition-colors ease-in-out duration-300
           `}>
           <th className='py-2 pl-4'>Full Name</th>
-          <th className='py-2'>Status</th>
+          <th className='py-2 pl-2 text-start'>Status</th>
           <th className='py-2 hidden sm:block'>Created At</th>
         </tr>
       </thead>
@@ -146,7 +146,7 @@ const Dashboard = () => {
               <span className='text-center'>{getInitials(user?.name)}</span>
             </div>
             <div>
-              <p> {user.name}</p>
+              <p className="whitespace-nowrap"> {user.name}</p>
               <span className={`
                 ${LightMode 
                     ? "text-black"
@@ -162,7 +162,7 @@ const Dashboard = () => {
           <button
             onClick={(e) => e.stopPropagation()}
             className={clsx(
-              "ClickAnimation w-fit px-3 py-1 rounded-full transition-transform ease-in-out duration-300 text-sm shadow-inner hover:shadow-innerWH  cursor-pointer",
+              "ClickAnimation w-fit px-3 mr-4 sm:mr-0 py-1 rounded-full transition-transform ease-in-out duration-300 text-sm shadow-inner hover:shadow-innerWH  cursor-pointer",
               user?.isActive ? "bg-green-500 text-white hover:bg-green-700 hover:scale-105" : "bg-red-500 text-whits hover:bg-red-700 hover:scale-110"
             )}
           >
@@ -259,7 +259,7 @@ const Dashboard = () => {
                       ? "text-black"
                       : "text-white"
                     }
-                    sm:hidden text-base transition-colors ease-in-out duration-300 
+                    sm:hidden transition-colors ease-in-out duration-300 
                   `}>
                   {veryShortText}
                 </p>
@@ -268,7 +268,7 @@ const Dashboard = () => {
                       ? "text-black"
                       : "text-white"
                     }
-                    hidden sm:block md:hidden text-base transition-colors ease-in-out duration-300 
+                    hidden sm:block md:hidden transition-colors ease-in-out duration-300 
                   `}>
                   {shortText}
                 </p>
@@ -277,7 +277,7 @@ const Dashboard = () => {
                       ? "text-black"
                       : "text-white"
                     }
-                    hidden md:block text-base transition-colors ease-in-out duration-300 
+                    hidden md:block transition-colors ease-in-out duration-300 
                   `}>
                   {task?.title}
                 </p>
@@ -285,13 +285,13 @@ const Dashboard = () => {
             </td>
             <td className='py-2'>
               <div className={"flex sm:hidden gap-1 items-center"}>
-                <span className={clsx("text-lg", PRIORITY_STYLES[task?.priority])}>
+                <span className={clsx("text-lg animate-UpDown", PRIORITY_STYLES[task?.priority])}>
                   {ICONS[task?.priority]}
                 </span>
                 <span className='capitalize'>{TextPriShort}</span>
               </div>
               <div className={"hidden sm:flex gap-1 items-center"}>
-                <span className={clsx("text-lg", PRIORITY_STYLES[task?.priority])}>
+                <span className={clsx("text-lg animate-UpDown", PRIORITY_STYLES[task?.priority])}>
                   {ICONS[task?.priority]}
                 </span>
                 <span className='capitalize'>{task?.priority}</span>
@@ -299,14 +299,14 @@ const Dashboard = () => {
             </td>
 
             <td className='py-2'>
-              <div className=' flex flex-row justify-start items-center mr-6'>
+              <div className=' flex flex-row justify-start items-center mr-0 sm:mr-6'>
                 <div className="relative flex flex-row justify-center items-center">
                   <UserInfoDash task={task} />
                 </div>
               </div>
             </td>
 
-            <td className='py-2 hidden md:block'>
+            <td className='py-2 hidden sm:block'>
               <span className={`
                   ${LightMode 
                       ? "text-black/50"

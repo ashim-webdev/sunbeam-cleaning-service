@@ -15,10 +15,13 @@ import {
   PRIORITY_STYLES,
   TASK_TYPE,
   formatDate,
+  TASK_ICON
 } from "../../utils/index.js";
 import UserInfoTask from "../UserInfoTask.jsx";
 // import { AddSubTask, TaskAssets, TaskColor, TaskDialog } from "./index";
 import TaskAssets from "./TaskAssets.jsx";
+import TaskColor from "./TaskColor.jsx";
+import { tasks } from "../../assets/data.js";
 
 const ICONS = {
   high: <MdKeyboardDoubleArrowUp />,
@@ -34,7 +37,7 @@ const TaskCard = ({ task }) => {
 
   return (
     <>
-      <div className='w-full h-fit bg-white dark:bg-[#1f1f1f] shadow-md p-4 rounded'>
+      <div className='relative w-full h-fit bg-white dark:bg-[#1f1f1f] shadow-md p-4 rounded'>
         <div className='w-full flex justify-between'>
           <div
             className={clsx(
@@ -50,7 +53,7 @@ const TaskCard = ({ task }) => {
         <>
           <Link to={`/task/${task._id}`}>
             <div className='flex items-center gap-2'>
-              {/* <TaskColor className={TASK_TYPE[task.stage]} /> */}
+              <TaskColor className={TASK_TYPE[task.stage]} />
               <h4 className='text- line-clamp-1 text-black dark:text-white'>
                 {task?.title}
               </h4>
@@ -111,6 +114,11 @@ const TaskCard = ({ task }) => {
             <IoMdAdd className='text-lg' />
             <span>ADD SUBTASK</span>
           </button>
+        </div>
+
+
+        <div className={`absolute top-0 right-0 py-2 px-4 capitalize text-center  whitespace-nowrap`}>
+          <i className={`animate-UpDown ${TASK_ICON[task?.stage].icon} ${TASK_ICON[task?.stage].color}`}></i>
         </div>
       </div>
 

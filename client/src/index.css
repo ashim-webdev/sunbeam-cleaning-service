@@ -37,7 +37,21 @@
 
     --shadow-innerGRN: inset 0 4px 6px rgba(121, 255, 11, 0.464);
 
+    --shadow-innerBLU: inset 0 4px 6px rgba(0, 95, 251, 1);
 
+
+
+    --animate-UpDown: UpDown 3s ease-in-out infinite;
+
+    @keyframes UpDown {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-4px);
+      }
+    }
 
   }
 
@@ -123,8 +137,8 @@ html {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  
+  width: 6px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -267,6 +281,8 @@ html {
 
 
 
+
+
 /* Nav Input Field */
 /* From Uiverse.io by boryanakrasteva */ 
 .input-container {
@@ -333,7 +349,6 @@ html {
 
 
 
-
 /* Active Button */
 .ClickAnimation {
   outline: none;
@@ -378,7 +393,7 @@ html {
 }
 
 .ClickAnimationNoti:active {
-  transform: scale(0.94);
+  transform: scale(0.90);
   /* box-shadow:
     inset 0 6px 12px rgba(0,0,0,0.25),
     0 2px 8px rgba(99,102,241,0.3); */

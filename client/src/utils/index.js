@@ -47,6 +47,27 @@ export const TASK_TYPE = {
   completed: "bg-green-600",
 };
 
+export const TASK_ICON = {
+  todo: {
+    icon: "fa-solid fa-folder-open",
+    color: "text-blue-600"
+  },
+  "in progress": {
+    icon: "fa-solid fa-alarm-clock",
+    color: "text-yellow-600"
+  },
+  completed: {
+    icon: "fa-solid fa-check-double",
+    color: "text-green-600"
+  },
+};
+
+// export const TASK_ICON = {
+//   todo: "hate",
+//   "in progress": "heart",
+//   completed: "love",
+// };
+
 export const BGS = [
   "bg-blue-600",
   "bg-yellow-600",

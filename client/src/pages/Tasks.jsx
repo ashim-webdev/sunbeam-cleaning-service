@@ -22,7 +22,7 @@ const TABS = [
 
 const Tasks = () => {
   const params = useParams();
-  const { user } = useSelector((state) => state.auth);
+  // const { user } = useSelector((state) => state.auth);
 
   const [selected, setSelected] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,7 +46,7 @@ const Tasks = () => {
           <Button
             label='Create Task'
             icon={<IoMdAdd className='text-lg' />}
-            className='flex flex-row-reverse gap-1 items-center bg-blue-600 text-white rounded-md py-2 2xl:py-2.5'
+            className='ClickAnimation flex flex-row-reverse gap-1 items-center bg-blue-600 text-white rounded-md py-2 2xl:py-2.5 shadow-inner hover:shadow-innerWH transition-all duration-300 ease-in-out'
             onClick={() => setOpen(true)}
           />
         )}

@@ -17,6 +17,8 @@ import UserInfoDash from "./UserInfoDash.jsx";
 import Button from "./button.jsx";
 import TaskColor from "./TaskComponents/TaskColor.jsx";
 import TaskAssets from "./TaskComponents/TaskAssets.jsx";
+import DeleteBtn from "./DeleteBtn.jsx";
+import EditBtn from "./EditBtn.jsx"; 
 // import { AddTask, TaskAssets, TaskColor } from "./tasks";
 import { Link } from "react-router-dom";
 
@@ -68,13 +70,19 @@ const Table = ({ tasks }) => {
 
   const TableHeader = () => (
     <thead className='w-full border-b border-gray-300 dark:border-gray-600'>
-      <tr className='w-full text-black dark:text-white  text-left'>
-        <th className='py-2 pl-2'>Task Title</th>
-        <th className='py-2'>Priority</th>
-        <th className='py-2 -ml-1 line-clamp-1 whitespace-nowrap'>Created At</th>
-        <th className='py-2 xl:pl-2 pl-5'>Assets</th>
-        <th className='py-2'>Team</th>
-        <th className='text-center'>Actions</th>
+      <tr className={`
+          ${LightMode 
+            ? "text-black"
+            : "text-white"
+          }
+          w-full  text-left
+        `}>
+        <th className='py-2 pl-3'>Task Title</th>
+        <th className='py-2 '>Priority</th>
+        <th className='py-2 text-center line-clamp-1 whitespace-nowrap'>Created At</th>
+        <th className='py-2 text-center'>Assets</th>
+        <th className='py-2 text-center'>Team</th>
+        <th className='py-2 text-center'>Actions</th>
       </tr>
     </thead>
   );
@@ -94,19 +102,31 @@ const Table = ({ tasks }) => {
           <Link to={`/task/${task._id}`}>
             <div className='flex items-center gap-2'>
               <TaskColor className={TASK_TYPE[task.stage]} />
-              <p className='w-full hidden xl:block line-clamp-2 text-base text-black whitespace-nowrap'>
+              <p className={`
+                  ${LightMode 
+                    ? "text-black"
+                    : "text-white"
+                  }
+                  w-full hidden xl:block line-clamp-2 whitespace-nowrap transition-colors ease-in-out duration-300
+                `}>
                 {task.title}
               </p>
-              <p className='w-full xl:hidden line-clamp-2 text-base text-black whitespace-nowrap'>
+              <p className={`
+                  ${LightMode 
+                    ? "text-black"
+                    : "text-white"
+                  }
+                  w-full xl:hidden line-clamp-2 text-base text-black whitespace-nowrap transition-colors ease-in-out duration-300 
+                `}>
                 {shortText}
               </p>
             </div>
           </Link>
         </td>
 
-        <td className='py-2 pr-2'>
+        <td className='py-2'>
           <div className={"flex gap-1 items-center"}>
-            <span className={clsx("text-lg ", PRIORITY_STYLES[task?.priority])}>
+            <span className={clsx("text-lg animate-UpDown", PRIORITY_STYLES[task?.priority])}>
               {ICONS[task?.priority]}
             </span>
             <span className='capitalize line-clamp-1'>
@@ -115,13 +135,19 @@ const Table = ({ tasks }) => {
           </div>
         </td>
 
-        <td className='py-2'>
-          <span className='text-sm text-gray-600 whitespace-nowrap'>
+        <td className='py-2 px-5 text-center'>
+          <span className={`
+              ${LightMode 
+                ? "text-gray-600"
+                : "text-gray-300"
+              }
+              text-sm whitespace-nowrap transition-colors ease-in-out duration-300
+            `}>
             {formatDate(new Date(task?.date))}
           </span>
         </td>
 
-        <td className='py-2 xl:px-2 px-5'>
+        <td className='py-2 px-5 flex justify-center items-center'>
           <TaskAssets
             activities={task?.activities?.length}
             subTasks={task?.subTasks}
@@ -129,8 +155,8 @@ const Table = ({ tasks }) => {
           />
         </td>
 
-        <td className='py-2 xl:pl-6 pr-2 px-5'>
-          <div className='flex flex-row justify-start items-center mr-6'>
+        <td className='py-2'>
+          <div className=' px-8 w-fit flex flex-row justify-center items-center'>
             <div
               className={clsx(
                 "w-7 h-7 rounded-full text-white flex items-center justify-center text-sm -mr-1",
@@ -141,28 +167,23 @@ const Table = ({ tasks }) => {
           </div>
         </td>
 
-        {/* <td className='py-2'>
-          <div className=' flex flex-row justify-start items-center mr-6'>
-            <div className="relative flex flex-row justify-center items-center">
-              <UserInfoDash task={task} />
-            </div>
-          </div>
-        </td> */}
-
-        <td className='py-2 px-6 flex gap-2 md:gap-4 justify-end'>
-          <Button
+        <td className='py-2 ml-8 pl-2 sm:ml-9 md:ml-7 lg:ml-5 pr-2 flex justify-center items-center gap-2 md:gap-3'>
+          {/* <Button
             className='text-blue-600 hover:text-blue-500 sm:px-0 text-sm md:text-base'
             label='Edit'
             type='button'
-            // onClick={() => editClickHandler(task)}
-          />
+            onClick={() => editClickHandler(task)}
+          /> */}
+          <EditBtn />
 
-          <Button
+          {/* <Button
             className='text-red-700 hover:text-red-500 sm:px-0 text-sm md:text-base'
             label='Delete'
             type='button'
-            // onClick={() => deleteClicks(task._id)}
-          />
+            onClick={() => deleteClicks(task._id)}
+          /> */}
+
+          <DeleteBtn />
         </td>
       </tr>
     );
@@ -170,8 +191,14 @@ const Table = ({ tasks }) => {
 
   return (
     <>
-      <div className='bg-white  px-2 xl:px-4 pt-4 pb-9 shadow-md rounded'>
-        <div className='overflow-x-auto'>
+      <div className={`
+          ${LightMode 
+            ? "bg-white"
+            : "bg-black/90"
+          }
+          px-2 xl:px-4 pt-4 pb-9 shadow-md rounded transition-colors ease-in-out duration-300
+        `}>
+        <div className='overflow-x-auto md:overflow-x-visible'>
           <table className='w-full '>
             <TableHeader />
             <tbody>
