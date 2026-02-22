@@ -62,11 +62,6 @@ export const TASK_ICON = {
   },
 };
 
-// export const TASK_ICON = {
-//   todo: "hate",
-//   "in progress": "heart",
-//   completed: "love",
-// };
 
 export const BGS = [
   "bg-blue-600",

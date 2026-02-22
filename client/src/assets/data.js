@@ -794,6 +794,24 @@ export const chartData = [
   },
 ];
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+import img1 from "../img/image.png"
+import img2 from "../img/neco.jpeg"
+
+
+
 export const tasks = [
   {
     _id: "65c5f12ab5204a81bde866a9",
@@ -802,8 +820,11 @@ export const tasks = [
     priority: "low",
     stage: "todo",
     assets: [
-      "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707471138863original-a005132062ca5bafc505c4c74f0e1865.jpg?alt=media&token=55f909f2-7f05-42f3-af4f-dc7f87cdea1d",
-      "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707471144712PsZch9E1_400x400.jpg?alt=media&token=7ce62c7e-c240-4032-83c6-bb6c9cdc0d4b",
+      img1,
+      img2,
+      img2,
+      img2,
+      img2,
     ],
     team: [
       {
@@ -927,7 +948,7 @@ export const tasks = [
     title: "Website Project Proposal Review",
     date: "2024-02-07T00:00:00.000Z",
     priority: "high",
-    stage: "todo",
+    stage: "completed",
     assets: [
       "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707410130023hand-holding-writing-checklist-application-form-document-clipboard-white-background-3d-illustration.jpg?alt=media&token=08de4848-517f-48ca-a9b4-624744d5ddb0",
       "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707412301523image_processing20220706-26930-ktfgon.png?alt=media&token=6cd185c1-9fc3-4f52-bb0b-0d4a29e65b85",

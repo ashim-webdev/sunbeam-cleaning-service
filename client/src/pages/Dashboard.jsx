@@ -15,7 +15,7 @@ import {
   MdKeyboardArrowUp,
   MdKeyboardDoubleArrowUp,
 } from "react-icons/md";
-import { BGS, PRIORITY_STYLES, TASK_TYPE, getInitials } from "../utils";
+import { PRIORITY_STYLES, TASK_TYPE, getInitials } from "../utils";
 
 import { summary } from "../assets/data";
 import Chart from "../components/Chart"
@@ -299,7 +299,7 @@ const Dashboard = () => {
             </td>
 
             <td className='py-2'>
-              <div className=' flex flex-row justify-start items-center mr-0 sm:mr-6'>
+              <div className=' flex flex-row justify-start items-center mr-7 sm:mr-6'>
                 <div className="relative flex flex-row justify-center items-center">
                   <UserInfoDash task={task} />
                 </div>

@@ -15,13 +15,12 @@ import {
   PRIORITY_STYLES,
   TASK_TYPE,
   formatDate,
-  TASK_ICON
+  TASK_ICON,
 } from "../../utils/index.js";
 import UserInfoTask from "../UserInfoTask.jsx";
 // import { AddSubTask, TaskAssets, TaskColor, TaskDialog } from "./index";
 import TaskAssets from "./TaskAssets.jsx";
 import TaskColor from "./TaskColor.jsx";
-import { tasks } from "../../assets/data.js";
 
 const ICONS = {
   high: <MdKeyboardDoubleArrowUp />,
@@ -52,9 +51,9 @@ const TaskCard = ({ task }) => {
         </div>
         <>
           <Link to={`/task/${task._id}`}>
-            <div className='flex items-center gap-2'>
+            <div className='CardTextColor flex items-center gap-2 hover:scale-105 transition-transform duration-200 ease-in-out'>
               <TaskColor className={TASK_TYPE[task.stage]} />
-              <h4 className='text- line-clamp-1 text-black dark:text-white'>
+              <h4 className={`line-clamp-1 text-black dark:text-white transition-colors duration-200 ease-in-out`}>
                 {task?.title}
               </h4>
             </div>
