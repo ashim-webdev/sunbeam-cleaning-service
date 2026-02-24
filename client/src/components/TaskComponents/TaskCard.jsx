@@ -7,7 +7,8 @@ import {
   MdKeyboardArrowUp,
   MdKeyboardDoubleArrowUp,
 } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+
 import { Link } from "react-router-dom";
 
 import {
@@ -16,9 +17,11 @@ import {
   TASK_TYPE,
   formatDate,
   TASK_ICON,
+  TASK_HEADER
 } from "../../utils/index.js";
 import UserInfoTask from "../UserInfoTask.jsx";
 // import { AddSubTask, TaskAssets, TaskColor, TaskDialog } from "./index";
+import AddSubTask from "./AddSubTask.jsx";
 import TaskAssets from "./TaskAssets.jsx";
 import TaskColor from "./TaskColor.jsx";
 
@@ -31,16 +34,24 @@ const ICONS = {
 
 const TaskCard = ({ task }) => {
   // const { user } = useSelector((state) => state.auth);
+  const { LightMode } = useSelector((state) => state.auth);
+  
   const user = true
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <div className='relative w-full h-fit bg-white dark:bg-[#1f1f1f] shadow-md p-4 rounded'>
+      <div className={`
+          ${LightMode 
+            ? "bg-white"
+            : "bg-black/90"
+          }
+          relative w-full h-fit  shadow-md p-4 mt-15 rounded transition-colors duration-300 ease-in-out
+        `}>
         <div className='w-full flex justify-between'>
           <div
             className={clsx(
-              "flex flex-1 gap-1 items-center text-sm font-medium",
+              "flex flex-1 gap-1 mt-2 items-center text-sm font-medium",
               PRIORITY_STYLES[task?.priority]
             )}
           >
@@ -51,19 +62,37 @@ const TaskCard = ({ task }) => {
         </div>
         <>
           <Link to={`/task/${task._id}`}>
-            <div className='CardTextColor flex items-center gap-2 hover:scale-105 transition-transform duration-200 ease-in-out'>
+            <div className='CardTextColor mt-1 mb-1 pl-1.5 flex items-center gap-2 hover:scale-105 transition-transform duration-300 ease-in-out'>
               <TaskColor className={TASK_TYPE[task.stage]} />
-              <h4 className={`line-clamp-1 text-black dark:text-white transition-colors duration-200 ease-in-out`}>
+              <h4 className={`
+                  ${LightMode 
+                    ? "text-black"
+                    : "text-white"
+                  }
+                  line-clamp-1 transition-colors duration-300 ease-in-out
+                `}>
                 {task?.title}
               </h4>
             </div>
           </Link>
-          <span className='text-sm text-gray-600 dark:text-gray-400'>
+          <span className={`
+              ${LightMode 
+                ? "text-gray-600"
+                : "text-gray-400"
+              }
+              text-sm pl-2 transition-colors duration-300 ease-in-out
+            `}>
             {formatDate(new Date(task?.date))}
           </span>
         </>
 
-        <div className='w-full border-t border-gray-200 dark:border-gray-700 my-2' />
+        <div className={`
+            ${LightMode 
+              ? "border-gray-300"
+              : "border-gray-500"
+            }
+            w-full border-t my-2 transition-colors duration-300 ease-in-out`
+          } />
         <div className='flex items-center justify-between mb-2'>
           <TaskAssets
             activities={task?.activities?.length}
@@ -82,16 +111,40 @@ const TaskCard = ({ task }) => {
 
         {/* subtasks */}
         {task?.subTasks?.length > 0 ? (
-          <div className='py-4 border-t border-gray-200 dark:border-gray-700'>
-            <h5 className='text-base line-clamp-1 text-black dark:text-gray-400'>
+          <div className={`
+            ${LightMode 
+              ? "border-gray-300"
+              : "border-gray-500"
+            }
+            py-4 border-t transition-colors duration-300 ease-in-out
+          `}>
+            <h5 className={`
+                ${LightMode 
+                  ? "text-black"
+                  : "text-white/80"
+                }
+                text-base line-clamp-1 transition-colors duration-300 ease-in-out
+              `}>
               {task?.subTasks[0].title}
             </h5>
 
             <div className='p-4 space-x-8'>
-              <span className='text-sm text-gray-600 dark:text-gray-500'>
+              <span className={`
+                ${LightMode 
+                  ? "text-gray-600"
+                  : "text-gray-400"
+                }
+                text-sm transition-colors duration-300 ease-in-out
+              `}>
                 {formatDate(new Date(task?.subTasks[0]?.date))}
               </span>
-              <span className='bg-blue-600/10 px-3 py-1 rounded-full text-blue-700 font-medium'>
+              <span className={`
+                  ${LightMode 
+                    ? "bg-blue-600/10 shadow-inner"
+                    : "bg-white/20 shadow-innerWH"
+                  }
+                  px-3 py-1 rounded-full text-blue-600 font-medium transition-colors duration-300 ease-in-out
+                `}>
                 {task?.subTasks[0]?.tag}
               </span>
             </div>
@@ -116,12 +169,37 @@ const TaskCard = ({ task }) => {
         </div>
 
 
-        <div className={`absolute top-0 right-0 py-2 px-4 capitalize text-center  whitespace-nowrap`}>
+        <div className={`absolute top-4 right-0 py-2 px-4 capitalize text-center  whitespace-nowrap`}>
           <i className={`animate-UpDown ${TASK_ICON[task?.stage].icon} ${TASK_ICON[task?.stage].color}`}></i>
+        </div>
+
+        <div className={`absolute -top-16 left-0 w-full h-auto p-2 pointer-events-none }`}>
+          <div className={`shadow-lg rounded-tr-[50px] rounded-tl-[20px]`}>
+            <div className={`${TASK_HEADER[task.stage]} p-2 rounded-tr-[50px] rounded-tl-[20px]`}>
+              <div className={`
+                  ${LightMode 
+                    ? "text-black border-gray-500"
+                    : "text-white border-gray-300"
+                  }
+                  transition-colors duration-300 ease-in-out pl-2 pb-0.5 text-md font-semibold border-b 
+                `}>
+                {task?.clientName}
+              </div>
+              <div className={`
+                    ${LightMode 
+                      ? "text-black"
+                      : "text-gray-200"
+                    }
+                    pr-2 pt-0.5 text-sm text-end transition-colors duration-300 ease-in-out
+                  `}>
+                {task?.address}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* <AddSubTask open={open} setOpen={setOpen} id={task._id} /> */}
+      <AddSubTask open={open} setOpen={setOpen} id={task._id} />
     </>
   );
 };

@@ -16,7 +16,7 @@ const Tabs = ({ tabs, setSelected, children }) => {
       <Tab.Group>
         <Tab.List className='flex space-x-6 rounded-xl p-1'>
           {tabs.map((tab, index) => (
-            <div className="ClickAnimationNoti">
+            <div key={index} className="ClickAnimationNoti">
               <Tab
                 key={tab.title}
                 onClick={() => setSelected(index)}

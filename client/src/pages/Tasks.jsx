@@ -9,7 +9,8 @@ import Tabs from "../components/Tabs"
 import Title from "../components/Title"
 import Table from "../components/Table";
 import TaskTitle from "../components/TaskComponents/TaskTitle"
-import BoardView from "../components/TaskComponents/BoardView"; 
+import BoardView from "../components/TaskComponents/BoardView";
+import AddTask from "../components/TaskComponents/AddTask";
 import { tasks } from "../assets/data";
 
 import { TASK_TYPE } from "../utils";
@@ -72,7 +73,7 @@ const Tasks = () => {
           )}
         </Tabs>
       </div>
-      {/* <AddTask open={open} setOpen={setOpen} /> */}
+      <AddTask open={open} setOpen={setOpen} />
     </div>
   );
 };

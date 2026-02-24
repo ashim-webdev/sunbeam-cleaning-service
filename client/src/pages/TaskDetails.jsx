@@ -105,29 +105,30 @@ const act_types = [
 ];
 
 const Activities = ({ activity, id, refetch }) => {
+  const [isLoading, setIsLoading] = useState(false)
   const [selected, setSelected] = useState("Started");
   const [text, setText] = useState("");
 
   // const [postActivity, { isLoading }] = usePostTaskActivityMutation();
 
-  // const handleSubmit = async () => {
-  //   try {
-  //     const data = {
-  //       type: selected?.toLowerCase(),
-  //       activity: text,
-  //     };
-  //     const res = await postActivity({
-  //       data,
-  //       id,
-  //     }).unwrap();
-  //     setText("");
-  //     toast.success(res?.message);
-  //     refetch();
-  //   } catch (err) {
-  //     console.log(err);
-  //     toast.error(err?.data?.message || err.error);
-  //   }
-  // };
+  const handleSubmit = async () => {
+    // try {
+    //   const data = {
+    //     type: selected?.toLowerCase(),
+    //     activity: text,
+    //   };
+    //   const res = await postActivity({
+    //     data,
+    //     id,
+    //   }).unwrap();
+    //   setText("");
+    //   toast.success(res?.message);
+    //   refetch();
+    // } catch (err) {
+    //   console.log(err);
+    //   toast.error(err?.data?.message || err.error);
+    // }
+  };
 
   const Card = ({ item }) => {
     return (
@@ -174,23 +175,38 @@ const Activities = ({ activity, id, refetch }) => {
         </h4>
         <div className='w-full flex flex-wrap gap-5'>
           {act_types.map((item, index) => (
-            <div key={item} className='flex gap-2 items-center'>
-              <input
+            <div key={item} className='flex gap-0.5 justify-center items-center'>
+              {/* <input
                 type='checkbox'
                 className='w-4 h-4'
                 checked={selected === item ? true : false}
                 onChange={(e) => setSelected(item)}
-              />
+              /> */}
+
+
+              {/* Uiverse CheckBox */}
+              <label className="checkbox-container ClickAnimationNoti">
+                  <input 
+                    className="custom-checkbox shadow-inner hover:shadow-innerWH"
+                    checked={selected === item ? true : false}
+                    type="checkbox" 
+                    onChange={(e) => setSelected(item)}
+                  />
+                  <span className="checkmark"></span>
+              </label>
+
               <p>{item}</p>
             </div>
           ))}
+
           <textarea
             rows={10}
             value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder='Type ......'
-            className='bg-white w-full mt-10 border border-gray-300 outline-none p-4 rounded-md focus:ring-2 ring-blue-500'
+            onChange={(e) => setText(e.target.value)}        
+            placeholder='Type.....'
+            className=' bg-white w-full mt-10 border border-gray-300 outline-none p-4 rounded-md focus:ring-2 ring-blue-500 shadow-lg'
           ></textarea>
+
           {isLoading ? (
             <Loading />
           ) : (
@@ -198,7 +214,7 @@ const Activities = ({ activity, id, refetch }) => {
               type='button'
               label='Submit'
               onClick={handleSubmit}
-              className='bg-blue-600 text-white rounded'
+              className='ClickAnimationNoti bg-blue-600 text-white rounded shadow-inner hover:shadow-innerWH transition-colors duration-200 ease-in-out'
             />
           )}
         </div>
@@ -216,7 +232,7 @@ const TaskDetail = () => {
   const [isSubmitting, setIsSubmitting] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [selected, setSelected] = useState(0);
-  const task = tasks[0];
+  const task = tasks[3];
 
   // const handleSubmitAction = async (el) => {
   //   try {
@@ -247,10 +263,13 @@ const TaskDetail = () => {
   //     ? 0
   //     : (getCompletedSubTasks(task?.subTasks) / task?.subTasks?.length) * 100;
 
+  const title = task?.title;
+  const titleShort = title.split(" ").length > 3 ? title.split(" ").slice(0, 3).join(" ") + "..." : title;
+
   return (
     <div className='w-full flex flex-col gap-3 mb-4 overflow-y-hidden'>
       {/* task detail */}
-      <h1 className='text-2xl text-gray-600 font-bold'>{task?.title}</h1>
+      <h1 className='text-2xl text-gray-600 font-bold '>{titleShort}</h1>
       <Tabs tabs={TABS} setSelected={setSelected}>
         {selected === 0 ? (
           <>
@@ -453,7 +472,8 @@ const TaskDetail = () => {
           </>
         ) : (
           <>
-            {/* <Activities activity={task?.activities} refetch={refetch} id={id} /> */}
+            <Activities activity={task?.activities}  id={id} />
+            {/* refetch={refetch} */}
           </>
         )}
       </Tabs>
