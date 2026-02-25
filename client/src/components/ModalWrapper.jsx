@@ -1,7 +1,11 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 
 const ModalWrapper = ({ open, setOpen, children }) => {
+  const { LightMode } = useSelector((state) => state.auth);
+  
   const cancelButtonRef = useRef(null);
 
   return (
@@ -21,7 +25,13 @@ const ModalWrapper = ({ open, setOpen, children }) => {
           leaveFrom='opacity-100'
           leaveTo='opacity-0'
         >
-          <div className='fixed inset-0 bg-black/80 bg-opacity-60 transition-opacity' />
+          <div className={`
+              ${LightMode 
+                ? "bg-black/80"
+                : "bg-white/80"
+              }
+              fixed inset-0 transition-all duration-300 ease-in-out  bg-opacity-60 
+            `} />
         </Transition.Child>
 
         <div className='fixed inset-0 z-10 w-screen overflow-y-auto'>
@@ -35,8 +45,20 @@ const ModalWrapper = ({ open, setOpen, children }) => {
               leaveFrom='opacity-100 translate-y-0 sm:scale-100'
               leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
             >
-              <Dialog.Panel className='w-full relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all pb-0 sm:my-8 sm:w-full sm:max-w-lg'>
-                <div className='bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4'>
+              <Dialog.Panel className={`
+                  ${LightMode 
+                    ? "bg-white"
+                    : "bg-black/80"
+                  }
+                  w-full relative transform overflow-hidden rounded-lg  text-left shadow-xl transition-all duration-300 ease-in-out pb-0 sm:my-8 sm:w-full sm:max-w-lg
+                `}>
+                <div className={`
+                    ${LightMode 
+                      ? "bg-white"
+                      : "bg-black/80"
+                    }
+                    px-4 pb-4 pt-5 sm:p-6 sm:pb-4 transition-colors duration-300 ease-in-out
+                  `}>
                   <div className='sm:flex sm:items-start'>
                     <div className='w-full mt-3  sm:ml-4 sm:mt-0 sm:text-left'>
                       {children}

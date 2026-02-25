@@ -17,7 +17,7 @@ import {
 } from "react-icons/md";
 import { PRIORITY_STYLES, TASK_TYPE, getInitials } from "../utils";
 
-import { summary } from "../assets/data";
+import { summary, tasks } from "../assets/data";
 import Chart from "../components/Chart"
 import UserInfoDash from "../components/UserInfoDash"
 
@@ -75,7 +75,7 @@ const Dashboard = () => {
           ? "bg-white shadow-md shadow-black/30"
           : "bg-black/90 shadow-md shadow-white/30"
         }
-        cursor-pointer w-full h-32 p-5 rounded-md flex items-center justify-between hover:scale-105 sm:hover:scale-102 lg:hover:scale-105  transition-transform-color ease-in-out duration-300
+        transition-all ease-in-out duration-300 cursor-pointer w-full h-32 p-5 rounded-md flex items-center justify-between hover:scale-105 sm:hover:scale-102 lg:hover:scale-105  
       `}>
         <div className='h-full flex flex-1 flex-col justify-between'>
           <p className={`
@@ -152,7 +152,7 @@ const Dashboard = () => {
                     ? "text-black"
                     : "text-white"
                 }
-                text-xs text-black
+                text-xs transition-colors ease-in-out duration-300
               `}>{user?.role}</span>
             </div>
           </div>
@@ -204,6 +204,7 @@ const Dashboard = () => {
   const TaskTable = ({ tasks }) => {
     // const { user } = useSelector((state) => state.auth);
 
+
     const ICONS = {
       high: <MdKeyboardDoubleArrowUp />,
       medium: <MdKeyboardArrowUp />,
@@ -225,22 +226,24 @@ const Dashboard = () => {
                 : "text-white"
             } text-left transition-colors ease-in-out duration-300
           `}>
-          <th className='py-2'>Task Title</th>
-          <th className='py-2'>Priority</th>
-          <th className='py-2'>Team</th>
-          <th className='py-2 hidden md:block'>Created At</th>
+          <th className='py-2 whitespace-nowrap pl-4'>Task Title</th>
+          <th className='py-2 px-6 whitespace-nowrap'>Client Names</th>
+          <th className='py-2 px-4'>Address</th>
+          <th className='py-2 px-6.5'>Priority</th>
+          <th className='py-2 text-center'>Team</th>
+          <th className='py-2 whitespace-nowrap text-center'>Created At</th>
         </tr>
       </thead>
     );
 
     const TableRow = ({ task }) => {
-      // console.log(task)
-      const text = task?.title;
+      // console.log(taskInfo)
       const textPriority = task?.priority;
-
-      const shortText = text.split(" ").slice(0, 2).join(" ") + "...";
-      const veryShortText = text.split(" ").slice(0, 1).join(" ") + "...";
       const TextPriShort = textPriority.slice(0, 4) + "...";
+      const titleShort = task.title.split(" ").length > 4 ? task.title.split(" ").slice(0, 5).join(" ") + "..." : task.title;
+      const nameShort = task.clientName.split(" ").length > 2 ? task.clientName.split(" ").slice(0, 2).join(" ") + "..." : task.clientName;
+      const addressShort = task.address.split(" ").length > 2 ? task.address.split(" ").slice(0, 2).join(" ") + "..." : task.address;
+
       return (
         <tr className={`
           ${LightMode 
@@ -259,31 +262,47 @@ const Dashboard = () => {
                       ? "text-black"
                       : "text-white"
                     }
-                    sm:hidden transition-colors ease-in-out duration-300 
+                    hidden xl:block whitespace-nowrap transition-colors ease-in-out duration-300 
                   `}>
-                  {veryShortText}
+                  {task.title}
                 </p>
                 <p className={`
                     ${LightMode 
                       ? "text-black"
                       : "text-white"
                     }
-                    hidden sm:block md:hidden transition-colors ease-in-out duration-300 
+                    xl:hidden whitespace-nowrap transition-colors ease-in-out duration-300 
                   `}>
-                  {shortText}
-                </p>
-                <p className={`
-                    ${LightMode 
-                      ? "text-black"
-                      : "text-white"
-                    }
-                    hidden md:block transition-colors ease-in-out duration-300 
-                  `}>
-                  {task?.title}
+                  {titleShort}
                 </p>
               </div>
             </td>
-            <td className='py-2'>
+            
+            <td className="py-2 px-6">
+              <p className={`
+                  ${LightMode 
+                    ? "text-black/70"
+                    : "text-white/70"
+                  }
+                  whitespace-nowrap font-mono transition-colors ease-in-out duration-300 capitalize 
+                `}>
+                {nameShort || "N/A"}
+              </p>
+            </td>
+
+            <td className="py-2 px-4">
+              <p className={`
+                  ${LightMode 
+                    ? "text-black/70"
+                    : "text-white/70"
+                  }
+                  whitespace-nowrap transition-colors ease-in-out duration-300 capitalize
+                `}>
+                {addressShort || "N/A"}
+              </p>
+            </td>
+
+            <td className='py-2 px-6'>
               <div className={"flex sm:hidden gap-1 items-center"}>
                 <span className={clsx("text-lg animate-UpDown", PRIORITY_STYLES[task?.priority])}>
                   {ICONS[task?.priority]}
@@ -298,21 +317,21 @@ const Dashboard = () => {
               </div>
             </td>
 
-            <td className='py-2'>
-              <div className=' flex flex-row justify-start items-center mr-7 sm:mr-6'>
+            <td className='py-2 px-6  flex justify-center items-center'>
+              <div className=' flex flex-row justify-start items-center mr-4'>
                 <div className="relative flex flex-row justify-center items-center">
                   <UserInfoDash task={task} />
                 </div>
               </div>
             </td>
 
-            <td className='py-2 hidden sm:block'>
+            <td className='py-2 px-4 text-center'>
               <span className={`
                   ${LightMode 
                       ? "text-black/50"
                       : "text-white/60"
                   }
-                  text-base transition-colors ease-in-out duration-300
+                  whitespace-nowrap text-base transition-colors ease-in-out duration-300
                 `}>
                 {moment(task?.date).fromNow()}
               </span>
@@ -332,14 +351,16 @@ const Dashboard = () => {
             // user?.isAdmin ? "md:w-2/3" : ""
           )}
         >
-          <table className='w-full '>
-            <TableHeader />
-            <tbody className=''>
-              {tasks.map((task, id) => (
-                <TableRow key={task?._id + id} task={task} />
-              ))}
-            </tbody>
-          </table>
+          <div className='overflow-x-auto '>
+            <table className='w-full '>
+              <TableHeader />
+              <tbody className=''>
+                {tasks.map((task, id) => (
+                  <TableRow key={task?._id + id} task={task} />
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </>
     );

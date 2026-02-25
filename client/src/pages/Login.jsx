@@ -109,7 +109,8 @@ const Login = () => {
                 type="email"
                 name="email"
                 label="Email"
-                className={`w-full rounded-full border ${
+                springClass="ClickAnimationNoti"
+                className={`w-full rounded-full shadow-[-5px_-5px_0px_rgba(124,124,124,0.147)] border ${
                   errors.email ? `border-2 border-red-500 focus:border-red-500 ${shake ? "animate-shake" : ""}` : "border-gray-300 focus:border-blue-500"
                 }`}
                 register={register("email", {
@@ -123,7 +124,8 @@ const Login = () => {
                   type={`${passwordShow ? "text" : "password"}`}
                   name="password"
                   label="Password"
-                  className={`w-full rounded-full border ${
+                  springClass="ClickAnimationNoti"
+                  className={`w-full rounded-full shadow-[-5px_-5px_0px_rgba(124,124,124,0.147)] border ${
                     errors.password ? `border-2 border-red-500 focus:border-red-500 ${shake ? "animate-shake" : ""}` : "border-gray-300 focus:border-blue-500"
                   }`}
                   register={register("password", {

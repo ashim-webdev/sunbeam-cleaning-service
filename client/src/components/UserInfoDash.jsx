@@ -27,7 +27,7 @@ export default function UserInfoDash({ task }) {
         >
           {getInitials(member.name)}
 
-          <div className={`absolute ${member.isLeader ? "block" : "hidden"} -top-1 left-2.5 w-2.5 h-2.5 rounded-full bg-green-500 shadow-inner animate-spin`}></div>
+          <div className={`absolute ${member.isLeader ? "block" : "hidden"} -top-1 left-2.5 w-2.5 h-2.5 rounded-full bg-green-500 shadow-inner animate-spin`} />
         </div>
       ))}
 

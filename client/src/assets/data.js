@@ -15,6 +15,8 @@ export const summary = {
     {
       _id: "65c5f12ab5204a81bde866a9",
       title: "Test task",
+      clientName: "Jasmine Ajamogha Edirin",
+      address: "Jikwoyi phase 2 extention, Abuja",
       date: "2024-02-09T00:00:00.000Z",
       priority: "low",
       stage: "todo",
@@ -65,6 +67,8 @@ export const summary = {
     {
       _id: "65c5d547660756f6fd453a7a",
       title: "Duplicate - Duplicate - Review Code Changes",
+      clientName: "Favour Peter Asiwaju",
+      address: "Kuje tipper garage, 1000 unit, Abuja",
       date: "2024-02-09T00:00:00.000Z",
       priority: "medium",
       stage: "in progress",
@@ -142,6 +146,8 @@ export const summary = {
     {
       _id: "65c46026af6ec0118be9407a",
       title: "Website Project Proposal Review",
+      clientName: "Jennifer smith",
+      address: "Karu abuja clinic estate, Abuja",
       date: "2024-02-07T00:00:00.000Z",
       priority: "high",
       stage: "todo",
@@ -244,6 +250,8 @@ export const summary = {
     {
       _id: "65c45fb6af6ec0118be94052",
       title: "Task Manager Youtube Video",
+      clientName: "Ashimonye Gabriel Ndubuisi",
+      address: "Jikwoyi phase 2 extention, Abuja",
       date: "2024-02-11T00:00:00.000Z",
       priority: "medium",
       stage: "completed",
@@ -310,6 +318,8 @@ export const summary = {
     {
       _id: "65c4586f0548279012f8c256",
       title: "Bug Fixing",
+      clientName: "Paul Salama",
+      address: "Gwagwalada, Abuja",
       date: "2024-02-07T00:00:00.000Z",
       priority: "high",
       stage: "todo",
@@ -387,6 +397,8 @@ export const summary = {
     {
       _id: "65c3c457fb9c6768ce4bc31a",
       title: "Duplicate - Website Project Proposal",
+      clientName: "Francis Emmanuel",
+      address: "Gwarimpa Third Gate Lapo, Abuja",
       date: "2024-02-07T17:55:13.218Z",
       priority: "high",
       stage: "todo",
@@ -456,6 +468,8 @@ export const summary = {
     {
       _id: "65c3c439fb9c6768ce4bc308",
       title: "Duplicate - Review Code Changes",
+      clientName: "Harvest Suliman",
+      address: "Kurudu barracks, Abuja",
       date: "2024-02-07T17:55:13.218Z",
       priority: "medium",
       stage: "in progress",
@@ -511,6 +525,8 @@ export const summary = {
     {
       _id: "65c3c21f55ae9b2f7666e86c",
       title: "Duplicate - Website Project Proposal",
+      clientName: "Sam Smith",
+      address: "Nyanya PopoLa, Abuja",
       date: "2024-02-07T17:46:56.040Z",
       priority: "normal",
       stage: "todo",
@@ -580,6 +596,8 @@ export const summary = {
     {
       _id: "65c352b376ed5c48f9440955",
       title: "Review Code Changes",
+      clientName: "Samuel Johnson",
+      address: "Giri Junction, Abuja",
       date: "2024-02-05T00:00:00.000Z",
       priority: "medium",
       stage: "in progress",
@@ -635,6 +653,8 @@ export const summary = {
     {
       _id: "65c351b976ed5c48f9440947",
       title: "Website Project Proposal",
+      clientName: "Michael Brown",
+      address: "Karimu Police Station, Abuja",
       date: "2024-02-07T00:00:00.000Z",
       priority: "high",
       stage: "todo",

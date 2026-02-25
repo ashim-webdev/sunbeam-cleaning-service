@@ -139,6 +139,8 @@ const Trash = () => {
           } text-left transition-colors ease-in-out duration-300
         `}>
         <th className='py-2 pl-4 whitespace-nowrap'>Task Title</th>
+        <th className='py-2 px-6 whitespace-nowrap'>Client Names</th>
+        <th className='py-2 px-6'>Address</th>
         <th className='py-2 pl-6.5 whitespace-nowrap text-start'>Priority</th>
         <th className='py-2 pr-1 whitespace-nowrap text-center'>Stage</th>
         <th className='py-2 line-clamp-1 whitespace-nowrap text-center'>Modified On</th>
@@ -150,8 +152,10 @@ const Trash = () => {
   const TableRow = ({ item }) => {
   const title = item?.title;
   const textPriority = item?.priority;
-  const titleShort = title.split(" ").length > 5 ? title.split(" ").slice(0, 5).join(" ") + "..." : title;
+  const titleShort = title.split(" ").length > 4 ? title.split(" ").slice(0, 5).join(" ") + "..." : title;
   const TextPriShort = textPriority.slice(0, 4) + "...";
+  const nameShort = item.clientName.split(" ").length > 2 ? item.clientName.split(" ").slice(0, 2).join(" ") + "..." : item.clientName;
+  const addressShort = item.address.split(" ").length > 2 ? item.address.split(" ").slice(0, 2).join(" ") + "..." : item.address;
 
     return (
     <tr className={`
@@ -169,14 +173,47 @@ const Trash = () => {
                 ? "text-black"
                 : "text-white"
               }
-              whitespace-nowrap transition-colors ease-in-out duration-300 
+              hidden xl:block whitespace-nowrap transition-colors ease-in-out duration-300 
+            `}>
+            {item.title}
+          </p>
+          <p className={`
+              ${LightMode 
+                ? "text-black"
+                : "text-white"
+              }
+              xl:hidden whitespace-nowrap transition-colors ease-in-out duration-300 
             `}>
             {titleShort}
           </p>
         </div>
       </td>
 
-      <td className='py-2 capitalize pr-4 pl-6'>
+      <td className="py-2 px-6">
+        <p className={`
+            ${LightMode 
+              ? "text-black/70"
+              : "text-white/70"
+            }
+            whitespace-nowrap font-mono transition-colors ease-in-out duration-300 capitalize 
+          `}>
+          {nameShort || "N/A"}
+        </p>
+      </td>
+
+      <td className="py-2 px-4">
+        <p className={`
+            ${LightMode 
+              ? "text-black/70"
+              : "text-white/70"
+            }
+            whitespace-nowrap transition-colors ease-in-out duration-300 capitalize
+          `}>
+          {addressShort || "N/A"}
+        </p>
+      </td>
+
+      <td className='py-2 capitalize px-6'>
         <div className={"flex flex-nowrap sm:hidden gap-1 items-center"}>
           <span className={clsx("text-lg", PRIORITY_STYLES[item?.priority])}>
             {ICONS[item?.priority]}
@@ -191,7 +228,7 @@ const Trash = () => {
         </div>
       </td>
 
-      <td className={`py-2 px-4 capitalize text-center  whitespace-nowrap`}>
+      <td className={`py-2 px-6 capitalize text-center  whitespace-nowrap`}>
         {item?.stage}
         &nbsp;
         <i className={`animate-UpDown ${TASK_ICON[item?.stage].icon} ${TASK_ICON[item?.stage].color}`}></i>
@@ -202,10 +239,10 @@ const Trash = () => {
             ? "text-black/50"
             : "text-white/60"
           }
-          py-2 pl-4 pr-6 text-sm whitespace-nowrap text-center transition-colors ease-in-out duration-300 
+          py-2  px-4 text-sm whitespace-nowrap text-center transition-colors ease-in-out duration-300 
         `}>{new Date(item?.date).toDateString()}</td>
 
-      <td className='py-2 pr-4 flex flex-nowrap gap-3 justify-center'>
+      <td className='py-2  px-6 flex flex-nowrap gap-3 justify-center'>
         {/* <Button
           icon={<MdOutlineRestore className='text-xl text-gray-500' />}
           onClick={() => restoreClick(item._id)}
@@ -362,7 +399,7 @@ const Trash = () => {
               }
               px-6 py-4 shadow-md rounded transition-colors ease-in-out duration-300
             `}>
-            <div className=' overflow-x-auto'>
+            <div className='overflow-x-auto'>
               <table className='w-full mb-5'>
                 <TableHeader />
                 <tbody>

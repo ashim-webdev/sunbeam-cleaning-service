@@ -37,8 +37,8 @@ export function getInitials(fullName) {
 export const PRIORITY_STYLES = {
   high: "text-red-600",
   medium: "text-yellow-600",
-  low: "text-blue-600",
-  normal: "text-blue-600"
+  low: "text-[#4CAF50]",
+  normal: "text-[#0004ff]"
 };
 
 export const TASK_TYPE = {

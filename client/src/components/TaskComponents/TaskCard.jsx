@@ -40,15 +40,15 @@ const TaskCard = ({ task }) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <>
+    <div className='relative'>
       <div className={`
           ${LightMode 
             ? "bg-white"
             : "bg-black/90"
           }
-          relative w-full h-fit  shadow-md p-4 mt-15 rounded transition-colors duration-300 ease-in-out
+          relative z-10 w-full h-fit shadow-md p-4 mt-15 rounded transition-colors duration-300 ease-in-out
         `}>
-        <div className='w-full flex justify-between'>
+        <div className='w-full z-1 flex justify-between'>
           <div
             className={clsx(
               "flex flex-1 gap-1 mt-2 items-center text-sm font-medium",
@@ -172,35 +172,53 @@ const TaskCard = ({ task }) => {
         <div className={`absolute top-4 right-0 py-2 px-4 capitalize text-center  whitespace-nowrap`}>
           <i className={`animate-UpDown ${TASK_ICON[task?.stage].icon} ${TASK_ICON[task?.stage].color}`}></i>
         </div>
-
-        <div className={`absolute -top-16 left-0 w-full h-auto p-2 pointer-events-none }`}>
-          <div className={`shadow-lg rounded-tr-[50px] rounded-tl-[20px]`}>
-            <div className={`${TASK_HEADER[task.stage]} p-2 rounded-tr-[50px] rounded-tl-[20px]`}>
+      </div>
+      
+      <div className={`FileDesign absolute inset-0 -top-1 left-0 w-full h-auto p-2 pointer-events-none }`}>
+          <div className={`shadow-2xl`}>
+            <div className={`relative ${TASK_HEADER[task.stage]} shadow-inner rounded-tr-[50px] pt-1 pb-2 px-2`}>
               <div className={`
-                  ${LightMode 
-                    ? "text-black border-gray-500"
-                    : "text-white border-gray-300"
-                  }
-                  transition-colors duration-300 ease-in-out pl-2 pb-0.5 text-md font-semibold border-b 
+                  text-white border-white/50 pl-2 pb-0.5 font-mono text-md font-semibold border-b capitalize 
                 `}>
                 {task?.clientName}
               </div>
               <div className={`
                     ${LightMode 
-                      ? "text-black"
+                      ? "text-gray-200"
                       : "text-gray-200"
                     }
-                    pr-2 pt-0.5 text-sm text-end transition-colors duration-300 ease-in-out
+                    pr-2 pt-0.5 text-sm text-end font-cursive italic transition-colors duration-300 ease-in-out
                   `}>
                 {task?.address}
               </div>
+
+              <div className={`
+                  ${LightMode 
+                    ? "bg-[#F3F4F6]"
+                    : "bg-[#3C3C3C]"
+                  }
+                  absolute -top-2 -left-2 w-4 h-4.5 rotate-45 transition-colors duration-300 ease-in-out
+                `} />
+              <div className={`
+                  ${LightMode 
+                    ? "bg-[#F3F4F6]"
+                    : "bg-[#3C3C3C]"
+                  }
+                  absolute border-white/80 -top-[0.5px] -left-[0.5px] w-3.5 h-3.5 border ${TASK_HEADER[task.stage]}
+                `} />
+              <div className={`
+                  ${LightMode 
+                    ? "bg-[#F3F4F6]"
+                    : "bg-[#3C3C3C]"
+                  }
+                  absolute -top-2 -left-2 w-4 h-4.5 rotate-45 transition-colors duration-300 ease-in-out
+                `} />
             </div>
           </div>
         </div>
-      </div>
 
       <AddSubTask open={open} setOpen={setOpen} id={task._id} />
-    </>
+    </div>
   );
 };
 

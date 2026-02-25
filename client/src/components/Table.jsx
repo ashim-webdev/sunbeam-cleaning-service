@@ -78,7 +78,9 @@ const Table = ({ tasks }) => {
           w-full  text-left
         `}>
         <th className='py-2 pl-3'>Task Title</th>
-        <th className='py-2 '>Priority</th>
+        <th className='py-2 px-6 whitespace-nowrap'>Client Names</th>
+        <th className='py-2 px-4'>Address</th>
+        <th className='py-2 px-6.5'>Priority</th>
         <th className='py-2 text-center line-clamp-1 whitespace-nowrap'>Created At</th>
         <th className='py-2 text-center'>Assets</th>
         <th className='py-2 text-center'>Team</th>
@@ -88,7 +90,11 @@ const Table = ({ tasks }) => {
   );
 
   const TableRow = ({ task }) => {
-    const shortText = task?.title.split(" ").slice(0, 2).join(" ") + "...";
+    // const shortText = task?.title.split(" ").slice(0, 2).join(" ") + "...";
+  const titleShort = task.title.split(" ").length > 4 ? task.title.split(" ").slice(0, 5).join(" ") + "..." : task.title;
+  const nameShort = task.clientName.split(" ").length > 2 ? task.clientName.split(" ").slice(0, 2).join(" ") + "..." : task.clientName;
+  const addressShort = task.address.split(" ").length > 2 ? task.address.split(" ").slice(0, 2).join(" ") + "..." : task.address;
+
 
     return(
       <tr className={`
@@ -98,7 +104,7 @@ const Table = ({ tasks }) => {
           }
           tableRow border hover:bg-gray-300/50 cursor-pointer transition-colors ease-in-out duration-300
         `}>
-        <td className='py-2 pl-2'>
+        <td className='py-2 pl-4'>
           <Link to={`/task/${task._id}`}>
             <div className='flex items-center gap-2'>
               <TaskColor className={TASK_TYPE[task.stage]} />
@@ -118,13 +124,37 @@ const Table = ({ tasks }) => {
                   }
                   w-full xl:hidden line-clamp-2 text-base text-black whitespace-nowrap transition-colors ease-in-out duration-300 
                 `}>
-                {shortText}
+                {titleShort}
               </p>
             </div>
           </Link>
         </td>
 
-        <td className='py-2'>
+        <td className="py-2 px-6">
+          <p className={`
+              ${LightMode 
+                ? "text-black/70"
+                : "text-white/70"
+              }
+              whitespace-nowrap font-mono transition-colors ease-in-out duration-300 capitalize 
+            `}>
+            {nameShort || "N/A"}
+          </p>
+        </td>
+
+        <td className="py-2 px-4">
+          <p className={`
+              ${LightMode 
+                ? "text-black/70"
+                : "text-white/70"
+              }
+              whitespace-nowrap transition-colors ease-in-out duration-300 capitalize
+            `}>
+            {addressShort || "N/A"}
+          </p>
+        </td>
+
+        <td className='py-2 px-4'>
           <div className={"flex gap-1 items-center"}>
             <span className={clsx("text-lg animate-UpDown", PRIORITY_STYLES[task?.priority])}>
               {ICONS[task?.priority]}
@@ -135,7 +165,7 @@ const Table = ({ tasks }) => {
           </div>
         </td>
 
-        <td className='py-2 px-5 text-center'>
+        <td className='py-2 px-6 text-center'>
           <span className={`
               ${LightMode 
                 ? "text-gray-600"
@@ -147,7 +177,7 @@ const Table = ({ tasks }) => {
           </span>
         </td>
 
-        <td className='py-2 px-5 flex justify-center items-center'>
+        <td className='py-2 px-6 flex justify-center items-center'>
           <TaskAssets
             activities={task?.activities?.length}
             subTasks={task?.subTasks}
@@ -155,7 +185,7 @@ const Table = ({ tasks }) => {
           />
         </td>
 
-        <td className='py-2'>
+        <td className='py-2 pr-4 pl-0'>
           <div className=' px-8 w-fit flex flex-row justify-center items-center'>
             <div
               className={clsx(
@@ -167,7 +197,7 @@ const Table = ({ tasks }) => {
           </div>
         </td>
 
-        <td className='py-2 ml-8 pl-2 sm:ml-9 md:ml-7 lg:ml-5 pr-2 flex justify-center items-center gap-2 md:gap-3'>
+        <td className='py-2 pr-6 pl-8 flex justify-center items-center gap-2 md:gap-3'>
           {/* <Button
             className='text-blue-600 hover:text-blue-500 sm:px-0 text-sm md:text-base'
             label='Edit'
@@ -198,7 +228,7 @@ const Table = ({ tasks }) => {
           }
           px-2 xl:px-4 pt-4 pb-9 shadow-md rounded transition-colors ease-in-out duration-300
         `}>
-        <div className='overflow-x-auto md:overflow-x-visible'>
+        <div className='overflow-x-auto'>
           <table className='w-full '>
             <TableHeader />
             <tbody>

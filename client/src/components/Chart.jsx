@@ -47,7 +47,7 @@ const Chart = () => {
                 backgroundColor: [
                   "#FF4C4C",
                   "#FFA500",
-                  "#FFD700",
+                  "#0004ff",
                   "#4CAF50",
                 ],
                 borderRadius: 5,
