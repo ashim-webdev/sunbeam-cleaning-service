@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import React from "react";
 import { FaTasks, FaTrashAlt, FaUsers } from "react-icons/fa";
+import { Briefcase } from 'lucide-react';
 import {
   MdDashboard,
   MdOutlineAddTask,
@@ -62,6 +63,11 @@ const linkData = [
     link: "trashed",
     icon: <FaTrashAlt />,
   },
+  {
+    label: "Leave Request",
+    link: "leave-request",
+    icon: <Briefcase size={18} />,
+  },
 ];
 
 const Sidebar = () => {
@@ -108,7 +114,7 @@ const Sidebar = () => {
         )}
       >
         {el.icon}
-        <span className=''>{el.label}</span>
+        <span className='whitespace-nowrap'>{el.label}</span>
       </div>
     );
   };

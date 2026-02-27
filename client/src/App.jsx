@@ -13,9 +13,7 @@ import Users from './pages/Users'
 import Trash from './pages/Trash'
 import Sidebar from './components/Sidebar'
 import Navbar from './components/Navbar'
-
-
-
+import LeaveRequest from './pages/LeaveRequest'
 
 
 
@@ -160,6 +158,7 @@ function App() {
 
             <Route path="/team" element={<Users />} />
             <Route path="/trashed" element={<Trash />} />
+            <Route path="/leave-request" element={<LeaveRequest />} />
             <Route path="/task/:id" element={<TaskDetails />} />
 
           </Route>

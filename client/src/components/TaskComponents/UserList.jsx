@@ -36,8 +36,8 @@ export default function UserList({ team, setTeam }) {
     });
   }, [selectedUsers, leaderId]);
 
-  console.log("Selected Users:", selectedUsers);
-  console.log("Leader ID:", leaderId);
+  // console.log("Selected Users:", selectedUsers);
+  // console.log("Leader ID:", leaderId);
 
   // END
 

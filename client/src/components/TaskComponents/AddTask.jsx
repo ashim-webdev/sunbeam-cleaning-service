@@ -74,8 +74,10 @@ const AddTask = ({ open, setOpen, task }) => {
     links: "",
   };
   const {
+    control,
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({ defaultValues });
 
@@ -89,13 +91,39 @@ const AddTask = ({ open, setOpen, task }) => {
   const [uploading, setUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [shake, setShake] = useState(false);
 
-  // const [createTask, { isLoading }] = useCreateTaskMutation();
-  // const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
-  // const URLS = task?.assets ? [...task.assets] : [];
+  const triggerShake = () => {
+    setShake(true);
+
+    if (navigator.vibrate) {
+      navigator.vibrate(300);
+    }
+
+    setTimeout(() => {
+      setShake(false);
+    }, 1000);
+  };
+
+  const handleFormError = () => {    
+    if (errors.title && errors.description && errors.equipments) {
+      toast.error("Please fill in all required fields");
+      triggerShake()
+    } else if (errors.title) {
+      toast.error("Title field is required");
+      triggerShake()
+    } else if (errors.description) {
+      toast.error("Description field is required");
+      triggerShake()
+    } else if (errors.equipments) {
+      toast.error("Equipment field is required");
+      triggerShake()
+    }
+  };
 
   const handleOnSubmit = async (data) => {
-    // for (const file of assets) {
+    
+        // for (const file of assets) {
     //   setUploading(true);
     //   try {
     //     await uploadFile(file);
@@ -129,7 +157,20 @@ const AddTask = ({ open, setOpen, task }) => {
     //   console.log(err);
     //   toast.error(err?.data?.message || err.error);
     // }
+
+    toast.success(task ? "Task Updated Successfully!" : "Task Added Successfully!");
+
+    setTimeout(() => {
+      setOpen(false);
+    }, 800);
+
+    reset();
   };
+
+  // const [createTask, { isLoading }] = useCreateTaskMutation();
+  // const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
+  // const URLS = task?.assets ? [...task.assets] : [];
+
 
   const handleSelect = (e) => {
     setAssets(e.target.files);
@@ -138,7 +179,7 @@ const AddTask = ({ open, setOpen, task }) => {
   return (
     <>
       <ModalWrapper open={open} setOpen={setOpen}>
-        <form onSubmit={handleSubmit(handleOnSubmit)}>
+        <form onSubmit={handleSubmit(handleOnSubmit, handleFormError)}>
           <Dialog.Title
             as='h2'
             className={`text-base font-bold leading-6 ${LightMode ? "text-black" : "text-white"} mb-4 transition-colors duration-300 ease-in-out`}
@@ -152,13 +193,21 @@ const AddTask = ({ open, setOpen, task }) => {
               type='text'
               name='title'
               label='Task Title'
-              className='w-full rounded'
+                className={`w-full border rounded-md outline-0 transition-all duration-200 ${
+                errors.title
+                  ? `border-2 border-red-500 focus:border-red-500 ${
+                      shake ? "animate-shake" : ""
+                    }`
+                  : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              }`}
               register={register("title", {
                 required: "Title is required!",
               })}
               error={errors.title ? errors.title.message : ""}
             />
+
             <UserList setTeam={setTeam} team={team} />
+
             <div className='flex gap-4'>
               <SelectList
                 label='Task Stage'
@@ -176,14 +225,12 @@ const AddTask = ({ open, setOpen, task }) => {
             <div className='flex gap-4'>
               <div className='w-full'>
                 <Textbox
-                  placeholder='Date'
-                  type='date'
-                  name='date'
-                  label='Task Date'
-                  className='w-full rounded cursor-pointer'
-                  register={register("date", {
-                    required: "Date is required!",
-                  })}
+                  placeholder="Select Date"
+                  type="date"
+                  name="date"
+                  label="Task Date"
+                  control={control}
+                  rules={{ required: "Date is required!" }}
                   error={errors.date ? errors.date.message : ""}
                 />
               </div>
@@ -228,11 +275,26 @@ const AddTask = ({ open, setOpen, task }) => {
                     ? "text-black border-gray-300 placeholder-gray-300"
                     : "text-white border-gray-400 placeholder-gray-400"
                   }
-                  w-full bg-transparent px-3 py-1.5 2xl:py-3 border 
+                  ${
+                    errors.description
+                      ? `border-2 border-red-500 focus:border-red-500 ${
+                          shake ? "animate-shake" : ""
+                        }`
+                      : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  }
+                  w-full bg-transparent px-3 py-1.5 2xl:py-3 border  rounded-md outline-0
                   outline-none focus:ring-2
                   ring-blue-300 transition-colors duration-300 ease-in-out
                 `}
+                register={register("description", {
+                  required: "Description is required!",
+                })}
               ></textarea>
+              {errors.description && (
+                <p className="text-red-500 text-[12px] italic">
+                  {errors.description.message}
+                </p>
+              )}
             </div>
 
             <div className='w-full'>
@@ -252,18 +314,33 @@ const AddTask = ({ open, setOpen, task }) => {
                 </span> */}
               </p>
               <textarea
-                name='links'
-                {...register("links")}
+                name='equipments'
+                {...register("equipments")}
                 className={`
                   ${LightMode 
                     ? "text-black border-gray-300 placeholder-gray-300"
                     : "text-white border-gray-400 placeholder-gray-400"
                   }
-                  w-full bg-transparent px-3 py-1.5 2xl:py-3 border 
+                  ${
+                    errors.equipments
+                      ? `border-2 border-red-500 focus:border-red-500 ${
+                          shake ? "animate-shake" : ""
+                        }`
+                      : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  }
+                  w-full bg-transparent px-3 py-1.5 2xl:py-3 border  rounded-md outline-0
                   outline-none focus:ring-2
                   ring-blue-300 transition-colors duration-300 ease-in-out
                 `}
+                register={register("equipments", {
+                  required: "Important Equipments is required!",
+                })}
               ></textarea>
+              {errors.equipments && (
+                <p className="text-red-500 text-[12px] italic">
+                  {errors.equipments.message}
+                </p>
+              )}
             </div>
           </div>
 
@@ -299,3 +376,11 @@ const AddTask = ({ open, setOpen, task }) => {
 };
 
 export default AddTask;
+
+
+
+
+
+
+
+

@@ -12,6 +12,7 @@ import {
   MdTaskAlt,
   MdKeyboardDoubleArrowDown
 } from "react-icons/md";
+import { useSelector } from "react-redux";
 import { RxActivityLog } from "react-icons/rx";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -105,6 +106,8 @@ const act_types = [
 ];
 
 const Activities = ({ activity, id, refetch }) => {
+  const { LightMode } = useSelector((state) => state.auth);
+
   const [isLoading, setIsLoading] = useState(false)
   const [selected, setSelected] = useState("Started");
   const [text, setText] = useState("");
@@ -138,26 +141,26 @@ const Activities = ({ activity, id, refetch }) => {
             {TASKTYPEICON[item?.type]}
           </div>
           <div className='h-full flex items-center'>
-            <div className='w-0.5 bg-gray-300 h-full'></div>
+            <div className={`w-0.5 ${LightMode ? "bg-gray-600" : "bg-gray-400"} h-full transition-colors duration-300 ease-in-out`}></div>
           </div>
         </div>
 
         <div className='flex flex-col gap-y-1 mb-8'>
-          <p className='font-semibold'>{item?.by?.name}</p>
-          <div className='text-gray-500 space-x-2'>
+          <p className={`${LightMode ? "text-gray-500" : "text-gray-300"} font-semibold transition-colors duration-300 ease-in-out`}>{item?.by?.name}</p>
+          <div className={`${LightMode ? "text-gray-500" : "text-gray-400"} space-x-2 transition-colors duration-300 ease-in-out`}>
             <span className='capitalize'>{item?.type}</span>
             <span className='text-sm'>{moment(item?.date).fromNow()}</span>
           </div>
-          <div className='text-gray-700'>{item?.activity}</div>
+          <div className={`${LightMode ? "text-gray-700" : "text-gray-500"} transition-colors duration-300 ease-in-out`}>{item?.activity}</div>
         </div>
       </div>
     );
   };
 
   return (
-    <div className='w-full flex gap-10 2xl:gap-20 min-h-screen px-10 py-8 bg-white shadow rounded-md justify-between overflow-y-auto'>
+    <div className={`${LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM"} w-full flex  flex-col md:flex-row gap-40 md:gap-10 2xl:gap-20 min-h-screen px-10 py-8 shadow rounded-md justify-between overflow-y-auto transition-colors duration-300 ease-in-out`}>
       <div className='w-full md:w-1/2'>
-        <h4 className='text-gray-600 font-semibold text-lg mb-5'>Activities</h4>
+        <h4 className={`${LightMode ? "text-gray-600" : "text-white"} font-semibold text-lg mb-5 transition-colors duration-300 ease-in-out`}>Activities</h4>
         <div className='w-full space-y-0'>
           {activity?.map((item, index) => (
             <Card
@@ -169,8 +172,8 @@ const Activities = ({ activity, id, refetch }) => {
         </div>
       </div>
 
-      <div className='w-full md:w-1/3'>
-        <h4 className='text-gray-600 font-semibold text-lg mb-5'>
+      <div className='w-full md:w-1/2'>
+        <h4 className={`${LightMode ? "text-gray-600" : "text-white"} font-semibold text-lg mb-5 transition-colors duration-300 ease-in-out`}>
           Add Activity
         </h4>
         <div className='w-full flex flex-wrap gap-5'>
@@ -192,10 +195,10 @@ const Activities = ({ activity, id, refetch }) => {
                     type="checkbox" 
                     onChange={(e) => setSelected(item)}
                   />
-                  <span className="checkmark"></span>
+                  <span className={`checkmark transition-colors duration-300 ease-in-out ${LightMode ? "bg-[#eee] shadow-[0_2px_5px_rgba(0,0,0,0.2)]" : "bg-black/20 shadow-[0_2px_5px_rgba(139,138,138,0.2)]"}`}></span>
               </label>
 
-              <p>{item}</p>
+              <p className={`${LightMode ? "text-gray-600" : "text-gray-200"}  transition-colors duration-300 ease-in-out`}>{item}</p>
             </div>
           ))}
 
@@ -204,7 +207,7 @@ const Activities = ({ activity, id, refetch }) => {
             value={text}
             onChange={(e) => setText(e.target.value)}        
             placeholder='Type.....'
-            className=' bg-white w-full mt-10 border border-gray-300 outline-none p-4 rounded-md focus:ring-2 ring-blue-500 shadow-lg'
+            className={`${LightMode ? "placeholder-black/40 text-black border-gray-200 shadow-darkSM" : "placeholder-white/40 text-white border-gray-100 shadow-lightSM"} w-full mt-10 border  outline-none p-4 rounded-md focus:ring-2 ring-blue-500 shadow transition-colors duration-300 ease-in-out`}
           ></textarea>
 
           {isLoading ? (
@@ -224,6 +227,8 @@ const Activities = ({ activity, id, refetch }) => {
 };
 
 const TaskDetail = () => {
+  const { LightMode } = useSelector((state) => state.auth);
+
   const { id } = useParams();
   // const { data, isLoading, refetch } = useGetSingleTaskQuery(id);
   // const [subTaskAction, { isLoading: isSubmitting }] =
@@ -232,7 +237,7 @@ const TaskDetail = () => {
   const [isSubmitting, setIsSubmitting] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [selected, setSelected] = useState(0);
-  const task = tasks[3];
+  const task = tasks[0];
 
   // const handleSubmitAction = async (el) => {
   //   try {
@@ -269,11 +274,14 @@ const TaskDetail = () => {
   return (
     <div className='w-full flex flex-col gap-3 mb-4 overflow-y-hidden'>
       {/* task detail */}
-      <h1 className='text-2xl text-gray-600 font-bold '>{titleShort}</h1>
+      <h1 className={`
+          ${LightMode ? "text-gray-700" : "text-gray-300"} 
+          text-2xl font-bold transition-colors duration-300 ease-in-out
+        `}>{titleShort}</h1>
       <Tabs tabs={TABS} setSelected={setSelected}>
         {selected === 0 ? (
           <>
-            <div className='w-full flex flex-col md:flex-row gap-5 2xl:gap-8 bg-white shadow rounded-md px-8 py-8 overflow-y-auto'>
+            <div className={`${LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM"} w-full flex flex-col md:flex-row gap-5 2xl:gap-8 shadow rounded-md px-8 py-8 overflow-y-auto`}>
               <div className='relative w-full md:w-1/2 space-y-8'>
                 <div className='flex flex-col sm:flex-row items-start sm:items-center gap-5'>
                   <div
@@ -289,35 +297,35 @@ const TaskDetail = () => {
 
                   <div className={clsx("flex items-center gap-2")}>
                     <TaskColor className={TASK_TYPE[task?.stage]} />
-                    <span className='text-black uppercase'>{task?.stage}</span>
+                    <span className={`${LightMode ? "text-black" : "text-white"} uppercase transition-colors duration-300 ease-in-out`}>{task?.stage}</span>
                   </div>
                 </div>
 
-                <p className='text-gray-500'>
+                <p className={`${LightMode ? "text-gray-500" : "text-gray-400"} transition-colors duration-300 ease-in-out`}>
                   Created At: {new Date(task?.date).toDateString()}
                 </p>
 
-                <div className='flex items-center gap-8 p-4 border-y border-gray-200'>
+                <div className={`${LightMode ? "text-gray-500 border-gray-400" : "text-gray-400 border-gray-200"} transition-colors duration-300 ease-in-out flex items-center gap-8 p-4 border-y`}>
                   <div className='space-x-2'>
-                    <span className='font-semibold'>Assets :</span>
-                    <span>{task?.assets?.length}</span>
+                    <span className={`${LightMode ? "text-black" : "text-white"} font-semibold transition-colors duration-300 ease-in-out`}>Assets <span className={`${LightMode ? "text-gray-500" : "text-gray-400"} transition-colors duration-300 ease-in-out`}>:</span></span>
+                    <span className={`${LightMode ? "text-black" : "text-white"} transition-colors duration-300 ease-in-out`}>{task?.assets?.length}</span>
                   </div>
-                  <span className='text-gray-400'>|</span>
+                  <span className={`${LightMode ? "border-gray-400" : "border-gray-200"} border-l h-6 transition-colors duration-300 ease-in-out`}></span>
                   <div className='space-x-2'>
-                    <span className='font-semibold'>Sub-Task :</span>
-                    <span>{task?.subTasks?.length}</span>
+                    <span className={`${LightMode ? "text-black" : "text-white"} font-semibold transition-colors duration-300 ease-in-out`}>Sub-Task <span className={`${LightMode ? "text-gray-500" : "text-gray-400"} transition-colors duration-300 ease-in-out`}>:</span></span>
+                    <span className={`${LightMode ? "text-black" : "text-white"} transition-colors duration-300 ease-in-out`}>{task?.subTasks?.length}</span>
                   </div>
                 </div>
 
                 <div className='space-y-4 py-6'>
-                  <p className='text-gray-500 font-semibold text-sm'>
+                  <p className={`${LightMode ? "text-gray-600" : "text-white"} font-semibold text-sm transition-colors duration-300 ease-in-out`}>
                     TASK TEAM
                   </p>
                   <div className='space-y-3'>
                     {task?.team?.map((m, index) => (
                       <div
                         key={index + m?._id}
-                        className='flex gap-4 py-2 items-center border-t border-gray-200'
+                        className={`${LightMode ? "border-gray-400" : "border-gray-200"} flex gap-4 py-2 items-center border-t transition-colors duration-300 ease-in-out`}
                       >
                         <div
                           className={
@@ -329,8 +337,8 @@ const TaskDetail = () => {
                           </span>
                         </div>
                         <div>
-                          <p className='text-lg font-semibold'>{m?.name}</p>
-                          <span className='text-gray-500'>{m?.title}</span>
+                          <p className={`${LightMode ? "text-black/80" : "text-white/80"} text-lg font-semibold transition-colors duration-300 ease-in-out`}>{m?.name}</p>
+                          <span className={`${LightMode ? "text-gray-500" : "text-gray-400"} transition-colors duration-300 ease-in-out`}>{m?.title}</span>
                         </div>
                       </div>
                     ))}
@@ -339,7 +347,7 @@ const TaskDetail = () => {
                 {task?.subTasks?.length > 0 && (
                   <div className='space-y-4 py-6'>
                     <div className='flex items-center gap-5'>
-                      <p className='text-gray-500 font-semibold text-sm'>
+                      <p className={`${LightMode ? "text-black" : "text-white"} font-semibold text-sm transition-colors duration-300 ease-in-out`}>
                         SUB-TASKS
                       </p>
                       {/* <div
@@ -363,7 +371,7 @@ const TaskDetail = () => {
 
                           <div className='space-y-1'>
                             <div className='flex gap-2 items-center '>
-                              <span className='text-sm text-gray-500 -mt-6 sm:mt-0'>
+                              <span className={`${LightMode ? "text-gray-800" : "text-gray-200"} text-sm -mt-6 sm:mt-0 transition-colors duration-300 ease-in-out`}>
                                 {new Date(el?.date).toDateString()}
                               </span>
 
@@ -383,12 +391,12 @@ const TaskDetail = () => {
                                 </span>
                               </div>
                             </div>
-                            <p className='text-gray-700 pb-2'>{el?.title}</p>
+                            <p className={`${LightMode ? "text-gray-600" : "text-gray-400"} pb-2 transition-colors duration-300 ease-in-out`}>{el?.title}</p>
 
                             <>
                               <button
                                 // disabled={isSubmitting}
-                                className={`text-sm outline-none bg-gray-100 text-gray-800 p-1 rounded ${
+                                className={`${LightMode ? "bg-black/20 " : "bg-gray-100"} text-sm outline-none  text-gray-800 p-1 rounded transition-colors duration-300 ease-in-out ${
                                   el?.isCompleted
                                     ? "hover:bg-rose-100 hover:text-rose-800"
                                     : "hover:bg-emerald-100 hover:text-emerald-800"
@@ -402,7 +410,7 @@ const TaskDetail = () => {
                                 // }
                               >
                                 {isSubmitting ? (
-                                  <FaSpinner className='animate-spin' />
+                                  <FaSpinner className={`animate-spin transition-colors duration-300 ease-in-out ${LightMode ? "text-black" : "text-black"}`} />
                                 ) : el?.isCompleted ? (
                                   " Mark as Undone"
                                 ) : (
@@ -431,14 +439,14 @@ const TaskDetail = () => {
 
                 {task?.assets?.length > 0 ? (
                   <div className='pb-10'>
-                    <p className='text-lg font-semibold mb-5'>ASSETS</p>
+                    <p className={`${LightMode ? "text-black" : "text-white"} text-lg font-semibold mb-5 transition-colors duration-300 ease-in-out`}>ASSETS</p>
                     <div className='w-full grid grid-cols-1 md:grid-cols-2 gap-4'>
                       {task?.assets?.map((el, index) => (
                         <img
                           key={index}
                           src={el}
                           alt={index}
-                          className='w-full shadow-2xl rounded h-auto md:h-44 2xl:h-52 cursor-pointer transition-all duration-700 md:hover:scale-125 hover:z-50'
+                          className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} w-full rounded h-auto md:h-44 2xl:h-52 cursor-pointer transition-all duration-300 ease-in-out md:hover:scale-125 hover:z-50`}
                         />
                       ))}
                     </div>
@@ -446,7 +454,7 @@ const TaskDetail = () => {
                 )
                 :
                 ( <div className="flex justify-center items-center">
-                    <p className='text-lg font-semibold'>NO AVAILABLE ASSETS</p>
+                    <p className={`${LightMode ? "text-black" : "text-white"} transition-colors duration-300 ease-in-out text-lg font-semibold`}>NO AVAILABLE ASSETS</p>
                   </div>)
                 }
 

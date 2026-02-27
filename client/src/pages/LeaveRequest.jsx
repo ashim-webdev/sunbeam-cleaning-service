@@ -1,0 +1,91 @@
+import { useState } from 'react';
+// import { LeaveRequest } from './lib/supabase';
+import { useSelector } from "react-redux";
+import { RoleToggle } from '../components/LeaveComponent/RoleToggle';
+import { LeaveForm } from '../components/LeaveComponent/LeaveForm';
+import { LeaveList } from '../components/LeaveComponent/LeaveList';
+import { LeaveDetailModal } from '../components/LeaveComponent/LeaveDetailModal';
+import { Briefcase } from 'lucide-react';
+
+const LeaveRequest = () => {
+  const { LightMode } = useSelector((state) => state.auth);
+  
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [userEmail, setUserEmail] = useState('employee@company.com');
+  const [requests, setRequests] = useState([]);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+
+  const handleToggleRole = () => {
+    setIsAdmin(!isAdmin);
+  };
+
+  const handleSubmitRequest = (newRequest) => {
+    setRequests([newRequest, ...requests]);
+  };
+
+  const handleRequestClick = (request) => {
+    setSelectedRequest(request);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedRequest(null);
+  };
+
+  const handleUpdateRequest = (updatedRequest) => {
+    setRequests(requests.map(req => req.id === updatedRequest.id ? updatedRequest : req));
+    setSelectedRequest(updatedRequest);
+  };
+
+  return (
+    <div className={`${LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM"} min-h-screen bg-linear-to-br transition-colors duration-300 ease-in-out`}>
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="mb-8 text-center">
+          <div className="flex items-center justify-center gap-3 mb-1">
+            <Briefcase className="text-blue-600" size={35} />
+            <h1 className={`text-3xl font-bold ${LightMode ? "text-black" : "text-white"} line-clamp-1 transition-colors duration-300 ease-in-out`}>Leave Management System</h1>
+          </div>
+          <p className={`${LightMode ? "text-gray-600" : "text-gray-400"}`}>
+            {isAdmin
+              ? 'Review and manage employee leave requests'
+              : 'Submit and track your leave requests'}
+          </p>
+        </div>
+
+        <RoleToggle
+          isAdmin={isAdmin}
+          onToggle={handleToggleRole}
+          userEmail={userEmail}
+          onEmailChange={setUserEmail}
+        />
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {!isAdmin && (
+            <div>
+              <LeaveForm userEmail={userEmail} onSubmitSuccess={handleSubmitRequest} />
+            </div>
+          )}
+
+          <div className={isAdmin ? 'lg:col-span-2' : ''}>
+            <LeaveList
+              requests={requests}
+              isAdmin={isAdmin}
+              userEmail={userEmail}
+              onRequestClick={handleRequestClick}
+            />
+          </div>
+        </div>
+
+        {selectedRequest && (
+          <LeaveDetailModal
+            request={selectedRequest}
+            isAdmin={isAdmin}
+            onClose={handleCloseModal}
+            onUpdate={handleUpdateRequest}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default LeaveRequest;

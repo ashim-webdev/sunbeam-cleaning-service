@@ -11,6 +11,7 @@ import Textbox from "../Textbox";
 
 const AddSubTask = ({ open, setOpen, id }) => {
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
@@ -18,6 +19,35 @@ const AddSubTask = ({ open, setOpen, id }) => {
 
   // const [addSbTask, { isLoading }] = useCreateSubTaskMutation();
   const [isLoading, setIsLoading] = useState(false)
+  const [shake, setShake] = useState(false);
+
+  const triggerShake = () => {
+    setShake(true);
+
+    if (navigator.vibrate) {
+      navigator.vibrate(300);
+    }
+
+    setTimeout(() => {
+      setShake(false);
+    }, 1000);
+  };
+
+  const handleFormError = () => {    
+    if (errors.title && errors.date && errors.tag) {
+      toast.error("Please fill in all required fields");
+      triggerShake()
+    } else if (errors.title) {
+      toast.error("Title field is required");
+      triggerShake()
+    } else if (errors.date) {
+      toast.error("Date field is required");
+      triggerShake()
+    } else if (errors.tag) {
+      toast.error("Tag field is required");
+      triggerShake()
+    }
+  };
 
   const handleOnSubmit = async (data) => {
     // try {
@@ -32,12 +62,20 @@ const AddSubTask = ({ open, setOpen, id }) => {
     //   console.log(err);
     //   toast.error(err?.data?.message || err.error);
     // }
+
+    toast.success(task ? "Task Updated Successfully!" : "Task Added Successfully!");
+
+    setTimeout(() => {
+      setOpen(false);
+    }, 800);
+
+    reset();
   };
 
   return (
     <>
       <ModalWrapper open={open} setOpen={setOpen}>
-        <form onSubmit={handleSubmit(handleOnSubmit)} className=''>
+        <form onSubmit={handleSubmit(handleOnSubmit, handleFormError)} className=''>
           <Dialog.Title
             as='h2'
             className='text-base font-bold leading-6 text-gray-900 mb-4'
@@ -50,20 +88,35 @@ const AddSubTask = ({ open, setOpen, id }) => {
               type='text'
               name='title'
               label='Title'
-              className='w-full rounded'
-              register={register("title", {
-                required: "Title is required!",
-              })}
-              error={errors.title ? errors.title.message : ""}
+              className={`w-full border rounded-md outline-0 transition-all duration-200 ${
+                  errors.title
+                    ? `border-2 border-red-500 focus:border-red-500 ${
+                        shake ? "animate-shake" : ""
+                      }`
+                    : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                }`}
+                rules={{ required: "title is required!" }}
+                register={register("title", {
+                  required: "Title is required!",
+                })}
+                error={errors.title ? errors.title.message : ""}
             />
 
             <div className='flex items-center gap-4'>
               <Textbox
-                placeholder='Date'
-                type='date'
-                name='date'
-                label='Task Date'
-                className='w-full rounded'
+                placeholder="Select Date"
+                type="date"
+                name="date"
+                label="Task Date"
+                control={control}
+                className={`w-full border rounded-md outline-0 transition-all duration-200 ${
+                  errors.date
+                    ? `border-2 border-red-500 focus:border-red-500 ${
+                        shake ? "animate-shake" : ""
+                      }`
+                    : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                }`}
+                rules={{ required: "Date is required!" }}
                 register={register("date", {
                   required: "Date is required!",
                 })}
@@ -74,7 +127,14 @@ const AddSubTask = ({ open, setOpen, id }) => {
                 type='text'
                 name='tag'
                 label='Tag'
-                className='w-full rounded'
+                className={`w-full border rounded-md outline-0 transition-all duration-200 ${
+                  errors.tag
+                    ? `border-2 border-red-500 focus:border-red-500 ${
+                        shake ? "animate-shake" : ""
+                      }`
+                    : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                }`}
+                rules={{ required: "Tag is required!" }}
                 register={register("tag", {
                   required: "Tag is required!",
                 })}

@@ -1,0 +1,66 @@
+/* ================= LIGHT MODE ================= */
+
+.light-calendar {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.light-calendar .react-datepicker__header {
+  color: white;
+  background-color: #3673f8;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.light-calendar .react-datepicker__current-month,
+.light-calendar .react-datepicker__day-name,
+.light-calendar .react-datepicker__day {
+  color: #111827;
+}
+
+.light-calendar .react-datepicker__day:hover {
+  background-color: #3673f8;
+  color: white;
+}
+
+.light-calendar .react-datepicker__day--selected {
+  background-color: #3673f8;
+  color: white;
+}
+
+
+/* ================= DARK MODE ================= */
+
+.dark-calendar {
+  background-color: #100f0f;
+  border: 1px solid #444;
+}
+
+.dark-calendar .react-datepicker__header {
+  color: #111827;
+  background-color: #032a7e;
+  border-bottom: 1px solid #6c6b6b;
+}
+
+.dark-calendar .react-datepicker__current-month,
+.dark-calendar .react-datepicker__day-name,
+.dark-calendar .react-datepicker__day {
+  color: white;
+}
+
+.dark-calendar .react-datepicker__day:hover {
+  background-color: #032a7e;
+  color: white;
+}
+
+/* Selected Day */
+.dark-calendar .react-datepicker__day--selected {
+  background-color: #032a7e;
+  color: white;
+}
+
+/* Disabled (past) days */
+.dark-calendar .react-datepicker__day--disabled,
+.light-calendar .react-datepicker__day--disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}

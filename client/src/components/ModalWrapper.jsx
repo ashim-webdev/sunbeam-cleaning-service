@@ -12,9 +12,9 @@ const ModalWrapper = ({ open, setOpen, children }) => {
     <Transition.Root show={open} as={Fragment}>
       <Dialog
         as='div'
-        className='relative z-60 w-full'
+        className='relative z-80 w-full'
         initialFocus={cancelButtonRef}
-        onClose={() => setOpen(false)}
+        onClose={() => {}}
       >
         <Transition.Child
           as={Fragment}
@@ -50,14 +50,14 @@ const ModalWrapper = ({ open, setOpen, children }) => {
                     ? "bg-white"
                     : "bg-black/80"
                   }
-                  w-full relative transform overflow-hidden rounded-lg  text-left shadow-xl transition-all duration-300 ease-in-out pb-0 sm:my-8 sm:w-full sm:max-w-lg
+                  w-full relative transform rounded-lg  text-left shadow-xl transition-all duration-300 ease-in-out pb-0 sm:my-8 sm:w-full sm:max-w-lg
                 `}>
                 <div className={`
                     ${LightMode 
-                      ? "bg-white"
-                      : "bg-black/80"
+                      ? "bg-white shadow-inner"
+                      : "bg-black/80 shadow-innerWH"
                     }
-                    px-4 pb-4 pt-5 sm:p-6 sm:pb-4 transition-colors duration-300 ease-in-out
+                    px-4 pb-4 pt-5 sm:p-6 sm:pb-4 rounded-lg transition-colors duration-300 ease-in-out
                   `}>
                   <div className='sm:flex sm:items-start'>
                     <div className='w-full mt-3  sm:ml-4 sm:mt-0 sm:text-left'>
