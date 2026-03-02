@@ -14,7 +14,7 @@ import Trash from './pages/Trash'
 import Sidebar from './components/Sidebar'
 import Navbar from './components/Navbar'
 import LeaveRequest from './pages/LeaveRequest'
-import EventLog from './pages/EventLogPage'
+import SchedulerPage from "./pages/SchedulerPage";
 
 
 
@@ -161,7 +161,7 @@ function App() {
             <Route path="/trashed" element={<Trash />} />
             <Route path="/leave-request" element={<LeaveRequest />} />
             <Route path="/task/:id" element={<TaskDetails />} />
-            <Route path="/events-logs" element={<EventLog />} />
+            <Route path="/scheduler" element={<SchedulerPage />} />
 
           </Route>
 

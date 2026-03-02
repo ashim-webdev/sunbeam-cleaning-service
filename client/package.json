@@ -12,6 +12,12 @@
   "dependencies": {
     "@headlessui/react": "^2.2.9",
     "@reduxjs/toolkit": "^2.11.2",
+    "@syncfusion/ej2": "^32.2.7",
+    "@syncfusion/ej2-base": "^32.2.6",
+    "@syncfusion/ej2-react-buttons": "^32.2.7",
+    "@syncfusion/ej2-react-inputs": "^32.2.7",
+    "@syncfusion/ej2-react-popups": "^32.2.7",
+    "@syncfusion/ej2-react-schedule": "^32.2.3",
     "@tailwindcss/vite": "^4.1.18",
     "chart.js": "^4.5.1",
     "chartjs-plugin-datalabels": "^2.2.0",

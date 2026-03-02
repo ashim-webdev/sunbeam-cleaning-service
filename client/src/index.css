@@ -1,5 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,200;6..12,300;6..12,400;6..12,500;6..12,600;6..12,700;6..12,800;6..12,900;6..12,1000&display=swap");
 
+/* Smooth color transition for entire scheduler */
+.scheduler-wrapper .e-schedule,
+.scheduler-wrapper .e-schedule {
+  transition:
+    background-color 300ms ease-in-out,
+    color 300ms ease-in-out,
+    border-color 300ms ease-in-out;
+}
+
 @import "tailwindcss";
 
 
@@ -78,7 +87,6 @@
 }
 
 
-@import "tailwindcss";
 
 
 * {

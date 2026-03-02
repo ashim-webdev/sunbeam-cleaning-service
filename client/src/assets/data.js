@@ -1600,3 +1600,81 @@ export const initialMockEvents = [
     endTime: '12:30',
   },
 ];
+
+
+
+
+export const dummyEvents = [
+  {
+    Id: 1,
+    Subject: 'Staff Vacation Week',
+    Description: 'Annual company-wide vacation period. Office will be operating with minimal staff.',
+    StartTime: new Date(2026, 2, 10, 9, 0),
+    EndTime: new Date(2026, 2, 14, 18, 0),
+    Location: 'Company-wide',
+    Color: '#4F46E5'
+  },
+  {
+    Id: 2,
+    Subject: 'Company All-Hands Meeting',
+    Description: 'Quarterly review and planning session. All team members required to attend.',
+    StartTime: new Date(2026, 2, 5, 10, 0),
+    EndTime: new Date(2026, 2, 5, 12, 0),
+    Location: 'Conference Room A',
+    Color: '#10B981'
+  },
+  {
+    Id: 3,
+    Subject: 'Project Alpha Deadline',
+    Description: 'Final deliverable due for Project Alpha. All development work must be completed.',
+    StartTime: new Date(2026, 2, 15, 17, 0),
+    EndTime: new Date(2026, 2, 15, 18, 0),
+    Location: 'Development Team',
+    Color: '#EF4444'
+  },
+  {
+    Id: 4,
+    Subject: 'Server Maintenance',
+    Description: 'Scheduled maintenance window. Systems may be temporarily unavailable.',
+    StartTime: new Date(2026, 2, 20, 22, 0),
+    EndTime: new Date(2026, 2, 21, 2, 0),
+    Location: 'Data Center',
+    Color: '#F59E0B'
+  },
+  {
+    Id: 5,
+    Subject: 'Team Building Event',
+    Description: 'Annual team building activities. Casual dress code. Lunch provided.',
+    StartTime: new Date(2026, 2, 25, 11, 0),
+    EndTime: new Date(2026, 2, 25, 16, 0),
+    Location: 'City Park Pavilion',
+    Color: '#8B5CF6'
+  },
+  {
+    Id: 6,
+    Subject: 'Product Launch Review',
+    Description: 'Review meeting for upcoming product launch. Marketing and Sales teams to present.',
+    StartTime: new Date(2026, 2, 3, 14, 0),
+    EndTime: new Date(2026, 2, 3, 16, 0),
+    Location: 'Conference Room B',
+    Color: '#06B6D4'
+  },
+  {
+    Id: 7,
+    Subject: 'Client Presentation',
+    Description: 'Quarterly business review with top tier client. Executive attendance required.',
+    StartTime: new Date(2026, 2, 8, 13, 30),
+    EndTime: new Date(2026, 2, 8, 15, 30),
+    Location: 'Client Office',
+    Color: '#EC4899'
+  },
+  {
+    Id: 8,
+    Subject: 'Training Workshop',
+    Description: 'Professional development workshop on new technologies and best practices.',
+    StartTime: new Date(2026, 2, 18, 9, 0),
+    EndTime: new Date(2026, 2, 18, 13, 0),
+    Location: 'Training Room',
+    Color: '#14B8A6'
+  }
+];

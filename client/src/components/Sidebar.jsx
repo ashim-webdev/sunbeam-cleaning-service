@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import React from "react";
 import { FaTasks, FaTrashAlt, FaUsers } from "react-icons/fa";
-import { Briefcase } from 'lucide-react';
+import { Briefcase, AlarmClock } from 'lucide-react';
 import {
   MdDashboard,
   MdOutlineAddTask,
@@ -64,9 +64,9 @@ const linkData = [
     icon: <FaTrashAlt />,
   },
   {
-    label: "Events Logs",
-    link: "events-logs",
-    icon: <FaTrashAlt />,
+    label: "Scheduler",
+    link: "scheduler",
+    icon: <AlarmClock size={18} />,
   },
   {
     label: "Leave Request",
