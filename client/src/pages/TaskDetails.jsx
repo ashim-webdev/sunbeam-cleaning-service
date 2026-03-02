@@ -60,7 +60,7 @@ const bgColor = {
 
 const TABS = [
   { title: "Task Detail", icon: <FaTasks /> },
-  { title: "Timeline", icon: <RxActivityLog /> },
+  { title: "Activities", icon: <RxActivityLog /> },
 ];
 
 const TASKTYPEICON = {
@@ -75,13 +75,13 @@ const TASKTYPEICON = {
     </div>
   ),
   assigned: (
-    <div className='w-6 h-6 flex items-center justify-center rounded-full bg-gray-500 text-white'>
+    <div className='w-9 h-9 p-2 flex items-center justify-center rounded-full bg-gray-500 text-white'>
       <FaUser size={14} />
     </div>
   ),
   bug: (
     <div className='text-red-600'>
-      <FaBug size={24} />
+      <FaBug size={30} />
     </div>
   ),
   completed: (
@@ -90,7 +90,7 @@ const TASKTYPEICON = {
     </div>
   ),
   "in progress": (
-    <div className='w-8 h-8 flex items-center justify-center rounded-full bg-violet-600 text-white'>
+    <div className='w-9 h-9 flex items-center justify-center rounded-full bg-violet-600 text-white'>
       <GrInProgress size={16} />
     </div>
   ),
@@ -283,7 +283,7 @@ const TaskDetail = () => {
           <>
             <div className={`${LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM"} w-full flex flex-col md:flex-row gap-5 2xl:gap-8 shadow rounded-md px-8 py-8 overflow-y-auto`}>
               <div className='relative w-full md:w-1/2 space-y-8'>
-                <div className='flex flex-col sm:flex-row items-start sm:items-center gap-5'>
+                <div className='flex flex-col xl:flex-row items-start xl:items-center gap-5'>
                   <div
                     className={clsx(
                       "flex gap-1 items-center text-base font-semibold px-3 py-1 rounded-full",
@@ -396,7 +396,7 @@ const TaskDetail = () => {
                             <>
                               <button
                                 // disabled={isSubmitting}
-                                className={`${LightMode ? "bg-black/20 " : "bg-gray-100"} text-sm outline-none  text-gray-800 p-1 rounded transition-colors duration-300 ease-in-out ${
+                                className={`${LightMode ? " " : ""} text-sm outline-none  text-gray-800 p-1 rounded transition-colors duration-300 ease-in-out ${
                                   el?.isCompleted
                                     ? "hover:bg-rose-100 hover:text-rose-800"
                                     : "hover:bg-emerald-100 hover:text-emerald-800"
@@ -410,7 +410,16 @@ const TaskDetail = () => {
                                 // }
                               >
                                 {isSubmitting ? (
-                                  <FaSpinner className={`animate-spin transition-colors duration-300 ease-in-out ${LightMode ? "text-black" : "text-black"}`} />
+                                  <div className={`${LightMode ? "dot-spinner" : "dot-spinnerDark"} transition-colors duration-300 ease-in-out animate-UpDown`}>
+                                    <div className="dot-spinner__dot"></div>
+                                    <div className="dot-spinner__dot"></div>
+                                    <div className="dot-spinner__dot"></div>
+                                    <div className="dot-spinner__dot"></div>
+                                    <div className="dot-spinner__dot"></div>
+                                    <div className="dot-spinner__dot"></div>
+                                    <div className="dot-spinner__dot"></div>
+                                    <div className="dot-spinner__dot"></div>
+                                </div>
                                 ) : el?.isCompleted ? (
                                   " Mark as Undone"
                                 ) : (

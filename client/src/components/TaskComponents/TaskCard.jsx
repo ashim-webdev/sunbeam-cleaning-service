@@ -40,13 +40,13 @@ const TaskCard = ({ task }) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className='relative'>
+    <div className='relative '>
       <div className={`
           ${LightMode 
             ? "bg-white"
             : "bg-black/90"
           }
-          relative z-10 w-full h-fit shadow-md p-4 mt-15 rounded transition-colors duration-300 ease-in-out
+          relative w-full h-fit shadow-md p-4 mt-15 rounded transition-colors duration-300 ease-in-out
         `}>
         <div className='w-full z-1 flex justify-between'>
           <div
@@ -174,8 +174,14 @@ const TaskCard = ({ task }) => {
         </div>
       </div>
       
-      <div className={`FileDesign absolute inset-0 -top-1 left-0 w-full h-auto p-2 pointer-events-none }`}>
-          <div className={`shadow-2xl`}>
+      <div className={`FileDesign absolute inset-0 top-0 left-0 w-full h-auto p-2 pointer-events-none }`}>
+          <div className={`
+              ${LightMode 
+                ? "border-gray-400"
+                : "border-gray-500"
+              }
+              shadow-2xl border-b-2 px-2 transition-colors duration-300 ease-in-out
+            `}>
             <div className={`relative ${TASK_HEADER[task.stage]} shadow-inner rounded-tr-[50px] pt-1 pb-2 px-2`}>
               <div className={`
                   text-white border-white/50 pl-2 pb-0.5 font-mono text-md font-semibold border-b capitalize 

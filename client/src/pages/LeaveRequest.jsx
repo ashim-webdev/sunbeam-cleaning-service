@@ -11,7 +11,7 @@ const LeaveRequest = () => {
   const { LightMode } = useSelector((state) => state.auth);
   
   const [isAdmin, setIsAdmin] = useState(false);
-  const [userEmail, setUserEmail] = useState('employee@company.com');
+  const [userEmail, setUserEmail] = useState('ashimgab@gmail.com');
   const [requests, setRequests] = useState([]);
   const [selectedRequest, setSelectedRequest] = useState(null);
 
@@ -37,7 +37,7 @@ const LeaveRequest = () => {
   };
 
   return (
-    <div className={`${LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM"} min-h-screen bg-linear-to-br transition-colors duration-300 ease-in-out`}>
+    <div className={`${LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM"} h-full bg-linear-to-br transition-colors duration-300 ease-in-out`}>
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center gap-3 mb-1">

@@ -64,6 +64,11 @@ const linkData = [
     icon: <FaTrashAlt />,
   },
   {
+    label: "Events Logs",
+    link: "events-logs",
+    icon: <FaTrashAlt />,
+  },
+  {
     label: "Leave Request",
     link: "leave-request",
     icon: <Briefcase size={18} />,

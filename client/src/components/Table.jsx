@@ -136,7 +136,7 @@ const Table = ({ tasks }) => {
                 ? "text-black/70"
                 : "text-white/70"
               }
-              whitespace-nowrap font-mono transition-colors ease-in-out duration-300 capitalize 
+              whitespace-nowrap transition-colors ease-in-out duration-300 capitalize 
             `}>
             {nameShort || "N/A"}
           </p>

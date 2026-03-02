@@ -1515,3 +1515,88 @@ export const activitiesData = [
     by: "Akwasi Asante",
   },
 ];
+
+
+
+export const initialMockEvents = [
+  {
+    id: '1',
+    title: 'Team Standup',
+    description: 'Daily team synchronization meeting to discuss progress and blockers.',
+    date: '2026-03-05',
+    startTime: '09:00',
+    endTime: '09:30',
+  },
+  {
+    id: '2',
+    title: 'Product Launch',
+    description: 'Official launch of our new product line. All hands on deck!',
+    date: '2026-03-15',
+    startTime: '14:00',
+    endTime: '16:00',
+  },
+  {
+    id: '3',
+    title: 'Client Presentation',
+    description: 'Present Q1 results and roadmap to key stakeholders.',
+    date: '2026-03-20',
+    startTime: '10:00',
+    endTime: '11:30',
+  },
+  {
+    id: '4',
+    title: 'Sprint Planning',
+    description: 'Plan the next sprint with the development team.',
+    date: '2026-03-10',
+    startTime: '13:00',
+    endTime: '15:00',
+  },
+  {
+    id: '5',
+    title: 'Team Building Event',
+    description: 'Company-wide team building activities and networking.',
+    date: '2026-03-28',
+    startTime: '12:00',
+    endTime: '17:00',
+  },
+  {
+    id: '6',
+    title: 'Design Review',
+    description: 'Review new UI/UX designs for the mobile app.',
+    date: '2026-03-12',
+    startTime: '15:00',
+    endTime: '16:00',
+  },
+  {
+    id: '7',
+    title: 'Board Meeting',
+    description: 'Quarterly board meeting with investors and executives.',
+    date: '2026-03-25',
+    startTime: '09:00',
+    endTime: '12:00',
+  },
+  {
+    id: '8',
+    title: 'Training Session',
+    description: 'New employee onboarding and training program.',
+    date: '2026-03-18',
+    startTime: '10:00',
+    endTime: '12:00',
+  },
+  {
+    id: '9',
+    title: 'Code Review',
+    description: 'Weekly code review session with senior developers.',
+    date: '2026-03-05',
+    startTime: '14:00',
+    endTime: '15:00',
+  },
+  {
+    id: '10',
+    title: 'Marketing Campaign Kickoff',
+    description: 'Launch our new marketing campaign across all channels.',
+    date: '2026-03-22',
+    startTime: '11:00',
+    endTime: '12:30',
+  },
+];

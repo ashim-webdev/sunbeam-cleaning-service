@@ -69,18 +69,17 @@ export function LeaveList({ requests, isAdmin, userEmail, onRequestClick }) {
           <div
             key={request.id}
             onClick={() => onRequestClick(request)}
-            className="border border-gray-200 rounded-lg p-4 hover:border-blue-400 hover:shadow-md transition-all duration-300 cursor-pointer"
+            className="ListHB border border-gray-200 rounded-lg my-6 p-4 hover:shadow-md transition-all duration-300 cursor-pointer"
           >
-            <div className="flex items-start justify-between">
+            <div className="relative flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex flex-col md:flex-row gap-2 mb-2">
                   <div>
-                    <h3 className={`${LightMode ? "text-black/90" : "text-white/90"} sm:hidden font-cursive text-lg font-semibold transition-colors duration-300 ease-in-out`}>{request.reason.split(" ").slice(0, 2).join(" ") + "..."}</h3>
-                    <h3 className={`${LightMode ? "text-black/90" : "text-white/90"} sm:block hidden font-cursive text-lg font-semibold text-gray-800 transition-colors duration-300 ease-in-out`}>{request.reason.split(" ").slice(0, 4).join(" ") + "..."}</h3>
+                    <h3 className={`${LightMode ? "text-black/90" : "text-white/90"} line-clamp-1 pt-2 font-cursive text-lg font-semibold text-gray-800 transition-colors duration-300 ease-in-out`}>{request.reason}</h3>
                   </div>
                   {isAdmin && (
                     <>
-                      <span className={`${LightMode ? "text-gray-700 bg-gray-100 shadow-darkSM" : "text-gray-200 bg-black/70 shadow-lightSM"} w-fit px-2 text-center text-sm  py-1 rounded transition-colors duration-300 ease-in-out`}>
+                      <span className={`${LightMode ? "text-gray-700 bg-gray-100 shadow-darkSM" : "text-gray-200 bg-black/70 shadow-lightSM"} w-fit px-2 flex justify-center items-center text-sm  py-1 rounded transition-colors duration-300 ease-in-out`}>
                         {request.user_email}
                       </span>
                     </>
@@ -99,11 +98,26 @@ export function LeaveList({ requests, isAdmin, userEmail, onRequestClick }) {
                 </div>
 
                 <p className={`${LightMode ? "text-gray-800" : "text-gray-300"} text-sm line-clamp-2 transition-colors duration-300 ease-in-out`}>{request.description}</p>
+
+                {request.message && (
+                  
+                <div className="mt-6 pt-2.5 border-t border-blue-600">
+                  <div className="flex items-center gap-2 ">
+                    <CheckCircle className="text-blue-700 animate-UpDown" size={20} />
+                    <h4 className={`${LightMode ? "text-gray-600" : "text-gray-200"} text-xs uppercase tracking-wide transition-colors duration-300 ease-in-out font-semibold`}>
+                      Management Commented
+                    </h4>
+                  </div>
+                </div>
+                )}
+
               </div>
 
-              <div className={`sm:ml-4 -ml-14 -mt-1 px-2 sm:px-3  py-1 rounded-full border font-medium text-sm flex items-center gap-2 whitespace-nowrap shadow-inner ${getStatusColor(request.status)}`}>
-                {getStatusIcon(request.status)}
-                {getStatusText(request.status)}
+              <div className={`ListStats ${LightMode ? "bg-white border-gray-200" : "bg-black/90 border-gray-200"} absolute -top-9.5 right-0  border-b-2  p-1 rounded-full transition-colors duration-300 ease-in-out`}>
+                <div className={`px-2 py-1 rounded-full border-2 font-medium text-sm flex items-center justify-center gap-2 whitespace-nowrap shadow-inner ${getStatusColor(request.status)}`}>
+                  {getStatusIcon(request.status)}
+                  {getStatusText(request.status)}
+                </div>
               </div>
             </div>
           </div>
