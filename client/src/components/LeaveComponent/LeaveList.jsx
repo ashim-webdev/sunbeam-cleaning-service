@@ -46,7 +46,7 @@ export function LeaveList({ requests, isAdmin, userEmail, onRequestClick }) {
 
   if (filteredRequests.length === 0) {
     return (
-      <div className={`${LightMode ? "bg-white" : "bg-black/90"} rounded-lg shadow-md p-8 text-center transition-colors duration-300 ease-in-out`}>
+      <div className={`${LightMode ? "bg-white shadow-darkSM" : "shadow-lightSM bg-black/90"} rounded-lg p-8 text-center transition-colors duration-300 ease-in-out`}>
         <div className={` ${LightMode ? "text-gray-400" : "text-gray-300"} mb-4 transition-colors duration-300 ease-in-out`}>
           <Calendar size={64} className="mx-auto" />
         </div>
@@ -59,7 +59,7 @@ export function LeaveList({ requests, isAdmin, userEmail, onRequestClick }) {
 
 
   return (
-    <div className={`${LightMode ? "bg-white" : "bg-black/90"} rounded-lg shadow-md p-6 transition-colors duration-300 ease-in-out`}>
+    <div className={`${LightMode ? "bg-white shadow-darkSM" : "shadow-lightSM bg-black/90"} rounded-lg p-6 transition-colors duration-300 ease-in-out`}>
       <h2 className={`${LightMode ? "text-black" : "text-white"} text-[22px] font-semibold font-sans text-gray-800 mb-6 transition-colors duration-300 ease-in-out`}>
         {isAdmin ? 'All Leave Requests' : 'My Leave Requests'}
       </h2>

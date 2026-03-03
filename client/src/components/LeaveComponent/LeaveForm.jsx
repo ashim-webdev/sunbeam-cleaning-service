@@ -75,7 +75,7 @@ export function LeaveForm({ userEmail, onSubmitSuccess }) {
   };
 
   return (
-    <div className={`${LightMode ? "bg-white" : "bg-black/90"} rounded-lg shadow-md p-6 transition-colors duration-300 ease-in-out`}>
+    <div className={`${LightMode ? "bg-white shadow-darkSM" : "bg-black/90 shadow-lightSM"} rounded-lg p-6 transition-colors duration-300 ease-in-out`}>
       <h2 className={`text-2xl font-semibold ${LightMode ? "text-black" : "text-white"} mb-6 transition-colors duration-300 ease-in-out`}>
         Request Leave
       </h2>

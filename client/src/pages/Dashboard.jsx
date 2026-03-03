@@ -351,7 +351,7 @@ const Dashboard = () => {
             // user?.isAdmin ? "md:w-2/3" : ""
           )}
         >
-          <div className='overflow-x-auto '>
+          <div className='overflow-x-auto overflow-y-visible'>
             <table className='w-full '>
               <TableHeader />
               <tbody className=''>

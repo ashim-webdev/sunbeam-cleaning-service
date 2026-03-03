@@ -14,7 +14,7 @@ export const summary = {
   last10Task: [
     {
       _id: "65c5f12ab5204a81bde866a9",
-      title: "Test task",
+      title: "Office Clean Up",
       clientName: "Jasmine Ajamogha Edirin",
       address: "Jikwoyi phase 2 extention, Abuja",
       date: "2024-02-09T00:00:00.000Z",
@@ -26,27 +26,52 @@ export const summary = {
       ],
       team: [
         {
-          _id: "65c202d4aa62f32ffd1303cc",
-          name: "Codewave Asante",
-          title: "Administrator",
-          role: "Admin",
-          email: "admin@gmail.com",
-          isLeader: true
-        },
-        {
-          _id: "65c30b96e639681a13def0b5",
-          name: "Jane Smith",
-          title: "Product Manager",
-          role: "Manager",
-          email: "jane.smith@example.com",
+          _id: "65c317360fd860f958baa08e",
+          name: "Alex Johnson",
+          title: "Sanitation Specialist",
+          email: "alex.johnson@example.com",
           isLeader: false
         },
         {
-          _id: "65c3173613230fd860f958baa08e",
-          name: "Alex Johnson",
-          title: "UX Designer",
-          role: "Designer",
-          email: "alex.johnson@example.com",
+          _id: "65c3176a0fd860f958baa099",
+          name: "Ashimo Stephen",
+          title: "Home Care Technician",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c317980fd860f958baa099",
+          name: "Emily Wilson",
+          title: "Carpet Expert",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c31798099d860f958baa099",
+          name: "Emily Wilson",
+          title: "Residential Cleaning Specialist",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c3179809906860f958baa099",
+          name: "Emily Wilson",
+          title: "Office Sanitation Expert",
+          email: "emily.wilson@example.com",
+          isLeader: true
+        },
+        {
+          _id: "65c3179809978860f958baa099",
+          name: "Emily Wilson",
+          title: "Window Cleaning Specialist",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c3179809906860f958baa099",
+          name: "Emily Wilson",
+          title: "Floor Care Technician",
+          email: "emily.wilson@example.com",
           isLeader: false
         },
       ],
@@ -66,7 +91,7 @@ export const summary = {
     },
     {
       _id: "65c5d547660756f6fd453a7a",
-      title: "Duplicate - Duplicate - Review Code Changes",
+      title: "Home renovation clean up",
       clientName: "Favour Peter Asiwaju",
       address: "Kuje tipper garage, 1000 unit, Abuja",
       date: "2024-02-09T00:00:00.000Z",
@@ -145,7 +170,7 @@ export const summary = {
     },
     {
       _id: "65c46026af6ec0118be9407a",
-      title: "Website Project Proposal Review",
+      title: "Backyard Cleaning up",
       clientName: "Jennifer smith",
       address: "Karu abuja clinic estate, Abuja",
       date: "2024-02-07T00:00:00.000Z",
@@ -829,13 +854,17 @@ export const chartData = [
 
 import img1 from "../img/image.png"
 import img2 from "../img/neco.jpeg"
+import office1 from "../img/office1.jpg"
+import office2 from "../img/office2.jpg"
+import office3 from "../img/office3.jpg"
+import office4 from "../img/office4.jpg"
 
 
 
 export const tasks = [
   {
     _id: "65c5f12ab5204a81bde866a9",
-    title: "Test task",
+    title: "Office Clean Up",
     clientName: "Jasmine Ajamogha Edirin",
     address: "Jikwoyi phase 2 extention, Abuja",
     date: "2024-02-09T00:00:00.000Z",
@@ -850,38 +879,52 @@ export const tasks = [
     ],
     team: [
       {
-        _id: "65c202d4aa62f32ffd1303cc",
-        name: "Codewave Asante",
-        title: "Administrator",
-        email: "admin@gmail.com",
+        _id: "65c317360fd860f958baa08e",
+        name: "Alex Johnson",
+        title: "Sanitation Specialist",
+        email: "alex.johnson@example.com",
         isLeader: false
       },
       {
-        _id: "65c30b96e639681a13def0b5",
-        name: "Jane Smith",
-        title: "Product Manager",
-        email: "jane.smith@example.com",
+        _id: "65c3176a0fd860f958baa099",
+        name: "Ashimo Stephen",
+        title: "Home Care Technician",
+        email: "emily.wilson@example.com",
+        isLeader: false
+      },
+      {
+        _id: "65c317980fd860f958baa099",
+        name: "Emily Wilson",
+        title: "Carpet Expert",
+        email: "emily.wilson@example.com",
+        isLeader: false
+      },
+      {
+        _id: "65c31798099d860f958baa099",
+        name: "Emily Wilson",
+        title: "Residential Cleaning Specialist",
+        email: "emily.wilson@example.com",
+        isLeader: false
+      },
+      {
+        _id: "65c3179809906860f958baa099",
+        name: "Emily Wilson",
+        title: "Office Sanitation Expert",
+        email: "emily.wilson@example.com",
         isLeader: true
       },
       {
-        _id: "65c317360fd860f958baa08e",
-        name: "Alex Johnson",
-        title: "UX Designer",
-        email: "alex.johnson@example.com",
+        _id: "65c3179809978860f958baa099",
+        name: "Emily Wilson",
+        title: "Window Cleaning Specialist",
+        email: "emily.wilson@example.com",
         isLeader: false
       },
       {
-        _id: "65c31736sff0fd860f958baa08e",
-        name: "Alex Johnson",
-        title: "UX Designer",
-        email: "alex.johnson@example.com",
-        isLeader: false
-      },
-      {
-        _id: "65c317360fsfsfd860f958baa08e",
-        name: "Alex Johnson",
-        title: "UX Designer",
-        email: "alex.johnson@example.com",
+        _id: "65c3179809906860f958baa099",
+        name: "Emily Wilson",
+        title: "Floor Care Technician",
+        email: "emily.wilson@example.com",
         isLeader: false
       },
     ],
@@ -889,9 +932,9 @@ export const tasks = [
     activities: [],
     subTasks: [
       {
-        title: "Task manager youtube tutorial",
+        title: "Roof and solar panel cleaning",
         date: "2024-02-09T00:00:00.000Z",
-        tag: "tutorial",
+        tag: "House cleaning",
         _id: "65c5f153b5204a81bde866c8",
       },
     ],
@@ -901,7 +944,7 @@ export const tasks = [
   },
   {
     _id: "65c5d547660756f6fd453a7a",
-    title: "Duplicate - Duplicate - Review Code Changes",
+    title: "Home renovation clean up",
     clientName: "Favour Peter Asiwaju",
     address: "Kuje tipper garage, 1000 unit, Abuja",
     date: "2024-02-09T00:00:00.000Z",
@@ -957,9 +1000,9 @@ export const tasks = [
     ],
     subTasks: [
       {
-        title: "Blog App Admin Dashboard",
+        title: "Garden cleaning up",
         date: "2024-02-08T00:00:00.000Z",
-        tag: "Website App",
+        tag: "Renovation",
         _id: "65c3535476ed5c48f9440973",
       },
     ],
@@ -969,7 +1012,7 @@ export const tasks = [
   },
   {
     _id: "65c46026af6ec0118be9407a",
-    title: "Website Project Proposal Review",
+    title: "Backyard Cleaning up",
     clientName: "Jennifer smith",
     address: "Karu abuja clinic estate, Abuja",
     date: "2024-02-07T00:00:00.000Z",
@@ -1043,9 +1086,9 @@ export const tasks = [
     ],
     subTasks: [
       {
-        title: "Blog App Dashboard",
+        title: "Children play ground cleaning up",
         date: "2024-02-06T00:00:00.000Z",
-        tag: "Design",
+        tag: "Play ground",
         _id: "65c352e776ed5c48f944095c",
       },
       {
@@ -1061,63 +1104,65 @@ export const tasks = [
   },
   {
     _id: "65c45fb6af6ec0118be94052",
-    title: "Task Manager Youtube Video",
+    title: "Office Clean Up",
     clientName: "Ashimonye Gabriel Ndubuisi",
     address: "Jikwoyi phase 2 extention, Abuja",
     date: "2024-02-11T00:00:00.000Z",
     priority: "medium",
     stage: "completed",
     assets: [
-      "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707412043078report.jpg?alt=media&token=41d02b42-c25c-4fbb-90a9-340a45f4bbe1",
-      "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707412052287hand-holding-writing-checklist-application-form-document-clipboard-white-background-3d-illustration.jpg?alt=media&token=98b360b4-954c-47e3-8283-8228a54a327c",
+      office1,
+      office2,
+      office3,
+      office4,
     ],
     team: [
       {
         _id: "65c317360fd860f958baa08e",
         name: "Alex Johnson",
-        title: "UX Designer",
+        title: "Sanitation Specialist",
         email: "alex.johnson@example.com",
         isLeader: false
       },
       {
         _id: "65c3176a0fd860f958baa099",
-        name: "Emily Wilson",
-        title: "Data Analyst",
+        name: "Ashimo Stephen",
+        title: "Home Care Technician",
         email: "emily.wilson@example.com",
-        isLeader: true
+        isLeader: false
       },
       {
         _id: "65c317980fd860f958baa099",
         name: "Emily Wilson",
-        title: "Data Analyst",
+        title: "Carpet Expert",
         email: "emily.wilson@example.com",
         isLeader: false
       },
       {
         _id: "65c31798099d860f958baa099",
         name: "Emily Wilson",
-        title: "Data Analyst",
+        title: "Residential Cleaning Specialist",
         email: "emily.wilson@example.com",
         isLeader: false
       },
       {
         _id: "65c3179809906860f958baa099",
         name: "Emily Wilson",
-        title: "Data Analyst",
+        title: "Office Sanitation Expert",
         email: "emily.wilson@example.com",
-        isLeader: false
+        isLeader: true
       },
       {
         _id: "65c3179809978860f958baa099",
         name: "Emily Wilson",
-        title: "Data Analyst",
+        title: "Window Cleaning Specialist",
         email: "emily.wilson@example.com",
         isLeader: false
       },
       {
         _id: "65c3179809906860f958baa099",
         name: "Emily Wilson",
-        title: "Data Analyst",
+        title: "Floor Care Technician",
         email: "emily.wilson@example.com",
         isLeader: false
       },

@@ -1,4 +1,12 @@
+import { useState } from "react";
 import { Popover, Transition } from "@headlessui/react";
+import {
+  useFloating,
+  offset,
+  flip,
+  shift,
+  autoUpdate
+} from '@floating-ui/react'
 import { useSelector } from "react-redux";
 import { Fragment } from "react";
 import clsx from "clsx";
@@ -8,11 +16,28 @@ import GroupedTeam from "./GroupedTeam";
 export default function UserInfoDash({ task }) {
   const { LightMode } = useSelector((state) => state.auth);
   
-  const team = task.team ?? [];
+  const team = task.team;
 
   // Displaying the remaining team members
   const visibleCount = 3;
   const remainingItems = team.slice(visibleCount);
+
+
+
+  const [open, setOpen] = useState(false)
+
+  const { refs, floatingStyles } = useFloating({
+    open,
+    onOpenChange: setOpen,
+    placement: "top-end",
+    strategy: "fixed",
+    middleware: [
+      offset(0),   // spacing from button
+      flip(),      // 👈 this makes it open top if bottom has no space
+      shift(),     // keeps it inside screen
+    ],
+    whileElementsMounted: autoUpdate,
+  })
 
   return (
     <div className="relative flex items-center -mr-6 ml-4">
@@ -38,7 +63,11 @@ export default function UserInfoDash({ task }) {
             <div className={clsx("relative", open && "z-50")}>
               {team.length > 3 
                 ?
-                <Popover.Button className="ClickAnimation z-10 w-9 h-9 -ml-5.5 rounded-full text-[10px] bg-gray-400 hover:bg-gray-500 text-white border border-black flex items-center justify-center hover:scale-105 transition cursor-pointer shadow-inner hover:shadow-innerWH">
+                <Popover.Button 
+                  ref={refs.setReference}
+                  onClick={() => setOpen(!open)}
+                  className="ClickAnimation z-10 w-9 h-9 -ml-5.5 rounded-full text-[10px] bg-gray-400 hover:bg-gray-500 text-white border border-black flex items-center justify-center hover:scale-105 transition cursor-pointer shadow-inner hover:shadow-innerWH"
+                >
                   {remainingItems.length > 0 && (
                     <>
                       <i className="fa-solid fa-plus" />
@@ -58,13 +87,17 @@ export default function UserInfoDash({ task }) {
                   leave="transition ease-in duration-150"
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 translate-y-1"
+                  onClose={() => {}}
                 >
-                  <Popover.Panel onMouseOver={(e) => e.stopPropagation()} className={`
+                  <Popover.Panel
+                    ref={refs.setFloating}
+                    style={floatingStyles}
+                    onMouseOver={(e) => e.stopPropagation()} className={`
                       ${LightMode 
                         ? "bg-white shadow-dark"
                         : "bg-black/90 shadow-light"
                       }
-                      absolute z-90 -right-6 mt-3 rounded p-2 cursor-pointer transition-colors ease-in-out duration-300
+                      absolute w-fit z-90 -right-6 mt-3 rounded p-2 cursor-pointer transition-colors ease-in-out duration-300
                     `}>
                     <GroupedTeam team={team} />
                   </Popover.Panel>

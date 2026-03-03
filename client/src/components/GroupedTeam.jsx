@@ -5,9 +5,6 @@ import { useSelector } from "react-redux";
 export default function GroupedTeam({ team = [] }) {
   const { LightMode } = useSelector((state) => state.auth);
 
-  // const shortEmail = team.email;
-  // const  = shortEmail.slice(0, 4) + "...";
-
 
   return (
     <div className="">
@@ -15,7 +12,7 @@ export default function GroupedTeam({ team = [] }) {
         <tbody>
           {team.map((member, index) => (
             <tr
-              key={member._id}
+              key={index}
               className={`
                 ${LightMode
                   ? "border-gray-300 text-gray-600 hover:bg-gray-300/50 hover:shadow-dark duration-300"
@@ -49,7 +46,7 @@ export default function GroupedTeam({ team = [] }) {
                           : "text-white"
                         }
                         text-xs font-bold transition-colors ease-in-out duration-300
-                      `}>{member.title}</span>
+                      `}>{member.title.split(" ").length > 2 ? member.title.split(" ").slice(0, 1).join(" ") + "..." : member.title}</span>
                   </span>
                 </span>
               </td>

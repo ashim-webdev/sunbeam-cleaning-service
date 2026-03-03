@@ -42,8 +42,8 @@ export default function SchedulerPage() {
       <div
         className={`min-h-screen rounded-xl p-6 transition-colors duration-300 ease-in-out ${
           LightMode
-            ? 'bg-linear-to-br from-gray-50 via-blue-50 to-indigo-500 shadow-dark'
-            : 'bg-linear-to-br from-gray-500 via-gray-800 to-gray-950 shadow-light'
+            ? 'bg-white/80 shadow-dark'
+            : 'bg-black/80 shadow-light'
         }`}
       >
         <div className="max-w-7xl mx-auto">
@@ -65,7 +65,7 @@ export default function SchedulerPage() {
                     LightMode ? 'text-gray-600' : 'text-gray-300'
                   }`}
                 >
-                  Manage team events and schedules
+                  {isAdmin ? "Manage team events and schedules" : "See assigned events and company schedules"}
                 </p>
               </div>
             </div>
@@ -74,12 +74,12 @@ export default function SchedulerPage() {
           </div>
 
           <div
-            className={`${LightMode ? 'shadow-darkSM' : 'shadow-lightSM'} overflow-x-auto pb-2 pt-1 px-2 transition-colors duration-300 ease-in-out`}
+            className={`${LightMode ? 'bg-gray-300/90 shadow-darkSM' : 'bg-gray-600/90 shadow-lightSM'} overflow-x-auto py-2 px-2 transition-colors duration-300 ease-in-out`}
           >
             <div className={`h-[calc(100vh-160px)] lg:w-full min-w-275  shadow-xl border overflow-x-auto transition-colors duration-300 ease-in-out ${
               LightMode
-                ? 'bg-white border-gray-100'
-                : 'bg-gray-800 border-gray-700'
+                ? 'bg-white border-gray-100 shadow-darkSM'
+                : 'bg-gray-800 border-gray-700 shadow-lightSM'
             }`}>
               <ScheduleComponent
               height="100%"
