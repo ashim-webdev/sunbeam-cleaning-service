@@ -40,28 +40,28 @@ export default function SchedulerPage() {
   return (
     <div className={`scheduler-wrapper ${LightMode ? 'light' : 'dark'}`}>
       <div
-        className={`min-h-screen p-6 transition-colors duration-300 ease-in-out ${
+        className={`min-h-screen rounded-xl p-6 transition-colors duration-300 ease-in-out ${
           LightMode
             ? 'bg-linear-to-br from-gray-50 via-blue-50 to-indigo-500 shadow-dark'
             : 'bg-linear-to-br from-gray-500 via-gray-800 to-gray-950 shadow-light'
         }`}
       >
         <div className="max-w-7xl mx-auto">
-          <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="mb-6 flex flex-col items-center justify-center gap-4">
             <div className="flex items-center gap-3">
               <div className="p-3 bg-linear-to-br from-indigo-500 to-blue-600 rounded-xl shadow-lg">
                 <CalendarDays className={`${LightMode ? 'text-gray-900' : 'text-white'} w-8 h-8 transition-colors duration-300 ease-in-out`} />
               </div>
               <div>
                 <h1
-                  className={`text-3xl font-bold   transition-colors duration-300 ease-in-out ${
+                  className={`md:text-3xl text-2xl whitespace-nowrap font-bold   transition-colors duration-300 ease-in-out ${
                     LightMode ? 'text-gray-900' : 'text-white' 
                   }`}
                 >
                   Company Scheduler
                 </h1>
                 <p
-                  className={`text-sm transition-colors duration-300 ease-in-out ${
+                  className={`text-sm text-center transition-colors duration-300 ease-in-out ${
                     LightMode ? 'text-gray-600' : 'text-gray-300'
                   }`}
                 >
@@ -74,15 +74,16 @@ export default function SchedulerPage() {
           </div>
 
           <div
-            className={`rounded-2xl shadow-xl overflow-hidden border transition-colors duration-300 ease-in-out ${
+            className={`${LightMode ? 'shadow-darkSM' : 'shadow-lightSM'} overflow-x-auto pb-2 pt-1 px-2 transition-colors duration-300 ease-in-out`}
+          >
+            <div className={`h-[calc(100vh-160px)] lg:w-full min-w-275  shadow-xl border overflow-x-auto transition-colors duration-300 ease-in-out ${
               LightMode
                 ? 'bg-white border-gray-100'
                 : 'bg-gray-800 border-gray-700'
-            }`}
-          >
-            <ScheduleComponent
-              // key={LightMode ? 'light' : 'dark'} // 👈 force re-render
-              height="750px"
+            }`}>
+              <ScheduleComponent
+              height="100%"
+              enableAdaptiveUI={true}
               selectedDate={new Date(2026, 2, 2)}
               eventSettings={{
                 dataSource: events,
@@ -106,7 +107,8 @@ export default function SchedulerPage() {
                 <ViewDirective option="Agenda" />
               </ViewsDirective>
               <Inject services={[Day, Week, Month, Agenda, Resize, DragAndDrop]} />
-            </ScheduleComponent>
+              </ScheduleComponent>
+            </div>
           </div>
         </div>
 
