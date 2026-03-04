@@ -40,7 +40,7 @@ const TaskCard = ({ task }) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className='relative '>
+    <div className='relative transition-transform duration-200 ease-in-out'>
       <div className={`
           ${LightMode 
             ? "bg-white"
@@ -48,76 +48,79 @@ const TaskCard = ({ task }) => {
           }
           relative w-full h-fit shadow-md p-4 mt-15 rounded transition-colors duration-300 ease-in-out
         `}>
-        <div className='w-full z-1 flex justify-between'>
-          <div
-            className={clsx(
-              "flex flex-1 gap-1 mt-2 items-center text-sm font-medium",
-              PRIORITY_STYLES[task?.priority]
-            )}
-          >
-            <span className='text-lg'>{ICONS[task?.priority]}</span>
-            <span className='uppercase'>{task?.priority} Priority</span>
-          </div>
-          {/* <TaskDialog task={task} /> */}
-        </div>
-        <>
-          <Link to={`/task/${task._id}`}>
-            <div className='CardTextColor mt-1 mb-1 pl-1.5 flex items-center gap-2 hover:scale-105 transition-transform duration-300 ease-in-out'>
-              <TaskColor className={TASK_TYPE[task.stage]} />
-              <h4 className={`
-                  ${LightMode 
-                    ? "text-black"
-                    : "text-white"
-                  }
-                  line-clamp-1 transition-colors duration-300 ease-in-out
-                `}>
-                {task?.title}
-              </h4>
-            </div>
-          </Link>
-          <span className={`
-              ${LightMode 
-                ? "text-gray-600"
-                : "text-gray-400"
-              }
-              text-sm pl-2 transition-colors duration-300 ease-in-out
-            `}>
-            {formatDate(new Date(task?.date))}
-          </span>
-        </>
-
-        <div className={`
+        <Link to={`/task/${task._id}`}>
+          <div className={`
             ${LightMode 
-              ? "border-gray-300"
-              : "border-gray-500"
+              ? "border-gray-300 hover:shadow-darkSM"
+              : "border-gray-500 hover:shadow-lightSM"
             }
-            w-full border-t my-2 transition-colors duration-300 ease-in-out`
-          } />
-        <div className='flex items-center justify-between mb-2'>
-          <TaskAssets
-            activities={task?.activities?.length}
-            subTasks={task?.subTasks}
-            assets={task?.assets?.length}
-          />
+            mt-1 py-0.5 px-1 border-b transition-transform duration-200 ease-in-out
+          `}>
+            <div className='w-full z-1 flex justify-between'>
+              <div
+                className={clsx(
+                  "flex flex-1 gap-1 mt-2 items-center text-sm font-medium",
+                  PRIORITY_STYLES[task?.priority]
+                )}
+              >
+                <span className='text-lg'>{ICONS[task?.priority]}</span>
+                <span className='uppercase'>{task?.priority} Priority</span>
+              </div>
+              {/* <TaskDialog task={task} /> */}
+            </div>
+            <>
+                <div className='CardTextColor mt-1 mb-1 pl-1.5 flex items-center gap-2'>
+                  <TaskColor className={TASK_TYPE[task.stage]} />
+                  <h4 className={`
+                      ${LightMode 
+                        ? "text-black"
+                        : "text-white"
+                      }
+                      line-clamp-1 transition-colors duration-300 ease-in-out
+                    `}>
+                    {task?.title}
+                  </h4>
+                </div>
+              <span className={`
+                  ${LightMode 
+                    ? "text-gray-600"
+                    : "text-gray-400"
+                  }
+                  text-sm pl-2 transition-colors duration-300 ease-in-out
+                `}>
+                {formatDate(new Date(task?.date))}
+              </span>
+            </>
 
-          <div className='flex flex-row-reverse'>
-            <div className=' flex flex-row justify-start items-center mr-6'>
-              <div className=" z-20 relative flex flex-row justify-center items-center">
-                <UserInfoTask task={task} />
+            <div className={`
+                ${LightMode 
+                  ? "border-gray-300"
+                  : "border-gray-500"
+                }
+                w-full border-t my-2 transition-colors duration-300 ease-in-out`
+              } />
+            <div className='flex items-center justify-between mb-2'>
+              <TaskAssets
+                activities={task?.activities?.length}
+                subTasks={task?.subTasks}
+                assets={task?.assets?.length}
+              />
+
+              <div className='flex flex-row-reverse'>
+                <div className=' flex flex-row justify-start items-center mr-6'>
+                  <div className=" z-20 relative flex flex-row justify-center items-center">
+                    <UserInfoTask task={task} />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </Link>
+
 
         {/* subtasks */}
         {task?.subTasks?.length > 0 ? (
-          <div className={`
-            ${LightMode 
-              ? "border-gray-300"
-              : "border-gray-500"
-            }
-            py-4 border-t transition-colors duration-300 ease-in-out
-          `}>
+          <div className="py-4">
             <h5 className={`
                 ${LightMode 
                   ? "text-black"
@@ -160,7 +163,11 @@ const TaskCard = ({ task }) => {
         <div className='w-full pb-2'>
           <button
             disabled={user ? false : true}
-            onClick={() => setOpen(true)}
+            onClick={(e) => {
+              setOpen(true);
+              e.stopPropagation
+
+            }}
             className='w-full flex gap-4 items-center text-sm text-gray-500 font-semibold disabled:cursor-not-allowed disabled:text-gray-300'
           >
             <IoMdAdd className='text-lg' />

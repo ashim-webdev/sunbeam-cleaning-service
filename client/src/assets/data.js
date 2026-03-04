@@ -1470,6 +1470,20 @@ export const tasks = [
         isLeader: false
       },
       {
+        _id: "65c27a0e18c0a1b750ad5cad",
+        name: "John Doe",
+        title: "Software Engineer",
+        email: "john.doe@example.com",
+        isLeader: false
+      },
+      {
+        _id: "65c27a0e18c0a1b750ad5cad",
+        name: "John Doe",
+        title: "Software Engineer",
+        email: "john.doe@example.com",
+        isLeader: false
+      },
+      {
         _id: "65c30b96e639681a13def0b5",
         name: "Jane Smith",
         title: "Product Manager",

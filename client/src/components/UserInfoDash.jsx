@@ -97,7 +97,8 @@ export default function UserInfoDash({ task }) {
                         ? "bg-white shadow-dark"
                         : "bg-black/90 shadow-light"
                       }
-                      absolute w-fit z-90 -right-6 mt-3 rounded p-2 cursor-pointer transition-colors ease-in-out duration-300
+                      ${remainingItems.length > 3 ? "overflow-y-auto h-60" : "h-fit" }
+                      absolute w-fit  z-90 -right-6 mt-3 rounded p-2 cursor-pointer transition-colors ease-in-out duration-300
                     `}>
                     <GroupedTeam team={team} />
                   </Popover.Panel>

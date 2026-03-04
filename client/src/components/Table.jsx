@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   MdKeyboardDoubleArrowDown,
   MdKeyboardArrowDown,
@@ -35,6 +36,8 @@ const Table = ({ tasks }) => {
   const [openEdit, setOpenEdit] = useState(false);
 
   const { LightMode } = useSelector((state) => state.auth);
+
+  const navigate = useNavigate();
   
 
   // const [deleteTask] = useTrashTastMutation();
@@ -97,7 +100,9 @@ const Table = ({ tasks }) => {
 
 
     return(
-      <tr className={`
+      <tr 
+        onClick={() => navigate(`/task/${task._id}`)}
+        className={`
           ${LightMode 
             ? "border-gray-300 text-gray-600 hover:bg-gray-300/50 hover:shadow-dark"
             : "border-gray-600 text-white hover:bg-white/30 hover:shadow-light"
@@ -105,29 +110,27 @@ const Table = ({ tasks }) => {
           tableRow border hover:bg-gray-300/50 cursor-pointer transition-colors ease-in-out duration-300
         `}>
         <td className='py-2 pl-4'>
-          <Link to={`/task/${task._id}`}>
-            <div className='flex items-center gap-2'>
-              <TaskColor className={TASK_TYPE[task.stage]} />
-              <p className={`
-                  ${LightMode 
-                    ? "text-black"
-                    : "text-white"
-                  }
-                  w-full hidden xl:block line-clamp-2 whitespace-nowrap transition-colors ease-in-out duration-300
-                `}>
-                {task.title}
-              </p>
-              <p className={`
-                  ${LightMode 
-                    ? "text-black"
-                    : "text-white"
-                  }
-                  w-full xl:hidden line-clamp-2 text-base text-black whitespace-nowrap transition-colors ease-in-out duration-300 
-                `}>
-                {titleShort}
-              </p>
-            </div>
-          </Link>
+          <div className='flex items-center gap-2'>
+            <TaskColor className={TASK_TYPE[task.stage]} />
+            <p className={`
+                ${LightMode 
+                  ? "text-black"
+                  : "text-white"
+                }
+                w-full hidden xl:block line-clamp-2 whitespace-nowrap transition-colors ease-in-out duration-300
+              `}>
+              {task.title}
+            </p>
+            <p className={`
+                ${LightMode 
+                  ? "text-black"
+                  : "text-white"
+                }
+                w-full xl:hidden line-clamp-2 text-base text-black whitespace-nowrap transition-colors ease-in-out duration-300 
+              `}>
+              {titleShort}
+            </p>
+          </div>
         </td>
 
         <td className="py-2 px-6">
@@ -226,10 +229,10 @@ const Table = ({ tasks }) => {
             ? "bg-white"
             : "bg-black/90"
           }
-          px-2 xl:px-4 pt-4 pb-9 shadow-md rounded transition-colors ease-in-out duration-300
+          px-2 h-fit xl:px-4 pt-4 pb-9 my-2 shadow-md rounded transition-colors ease-in-out duration-300
         `}>
         <div className='overflow-x-auto'>
-          <table className='w-full '>
+          <table className='w-full'>
             <TableHeader />
             <tbody>
               {tasks.map((task, index) => (

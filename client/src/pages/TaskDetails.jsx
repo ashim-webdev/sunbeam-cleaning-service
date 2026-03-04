@@ -112,9 +112,40 @@ const Activities = ({ activity, id, refetch }) => {
   const [selected, setSelected] = useState("Started");
   const [text, setText] = useState("");
 
+  // 3 Image Upload 
+  const [images, setImages] = useState([]);
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+
+    // Optional: filter only images
+    const imageFiles = files.filter((file) =>
+      file.type.startsWith("image/")
+    );
+
+    setImages(imageFiles);
+  };
+  // End
+
+
   // const [postActivity, { isLoading }] = usePostTaskActivityMutation();
 
   const handleSubmit = async () => {
+    if (images.length < 3) {
+      toast.error("Please upload at least 3 after-cleanup images.");
+      return;
+    }
+
+    if (!text.trim()) {
+      toast.error("Please add a comment before submitting.");
+      return;
+    }
+
+    console.log("Images:", images);
+    console.log("Comment:", text);
+
+  // Later:
+  // upload images to backend
     // try {
     //   const data = {
     //     type: selected?.toLowerCase(),
@@ -209,6 +240,47 @@ const Activities = ({ activity, id, refetch }) => {
             placeholder='Type.....'
             className={`${LightMode ? "placeholder-black/40 text-black border-gray-200 shadow-darkSM" : "placeholder-white/40 text-white border-gray-100 shadow-lightSM"} w-full mt-10 border  outline-none p-4 rounded-md focus:ring-2 ring-blue-500 shadow transition-colors duration-300 ease-in-out`}
           ></textarea>
+
+
+          {/* After Cleanup Images Upload */}
+          <div className="w-full mt-6">
+            <label className={`block mb-2 font-semibold ${
+              LightMode ? "text-gray-600" : "text-gray-200"
+            }`}>
+              Upload After-Cleanup Images (Minimum 3)
+            </label>
+
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleImageChange}
+              className={`w-full p-3 rounded-md border ${
+                LightMode
+                  ? "bg-white border-gray-300 text-black"
+                  : "bg-black/30 border-gray-500 text-white"
+              }`}
+            />
+
+            {/* Selected count */}
+            {images.length > 0 && (
+              <p className="text-sm mt-2 text-gray-500">
+                {images.length} image(s) selected
+              </p>
+            )}
+
+            {/* Preview Grid */}
+            <div className="grid grid-cols-3 gap-3 mt-4">
+              {images.map((file, index) => (
+                <img
+                  key={index}
+                  src={URL.createObjectURL(file)}
+                  alt="preview"
+                  className="w-full h-24 object-cover rounded shadow"
+                />
+              ))}
+            </div>
+          </div>
 
           {isLoading ? (
             <Loading />
