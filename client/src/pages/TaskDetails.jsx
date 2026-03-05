@@ -397,21 +397,34 @@ const TaskDetail = () => {
                     {task?.team?.map((m, index) => (
                       <div
                         key={index + m?._id}
-                        className={`${LightMode ? "border-gray-400" : "border-gray-200"} flex gap-4 py-2 items-center border-t transition-colors duration-300 ease-in-out`}
+                        className={`${LightMode ? "border-gray-400" : "border-gray-200"} relative flex gap-4 py-2 items-center border-t transition-colors duration-300 ease-in-out`}
                       >
-                        <div
-                          className={
-                            "w-10 h-10 rounded-full text-white flex items-center justify-center text-sm -mr-1 bg-blue-600"
+                        <div className={clsx(
+                          "w-10 h-10 rounded-full flex items-center justify-center text-white text-sm -ml-4 shadow-inner overflow-hidden",
+                          
+                        )}>
+                          {m?.img ? 
+                            <img src={m?.img} alt="Avatar" className="w-full h-full object-cover "/>
+                          :
+                            <span>
+                              {getInitials(m?.name)}
+                            </span>
                           }
-                        >
-                          <span className='text-center'>
-                            {getInitials(m?.name)}
-                          </span>
                         </div>
+              
+                        <div className={`absolute ${m.isLeader ? "block" : "hidden"} top-2.5 mx-auto w-2.5 h-2.5 rounded-full bg-green-500 shadow-inner animate-spin`} />
                         <div>
                           <p className={`${LightMode ? "text-black/80" : "text-white/80"} text-lg font-semibold transition-colors duration-300 ease-in-out`}>{m?.name}</p>
                           <span className={`${LightMode ? "text-gray-500" : "text-gray-400"} transition-colors duration-300 ease-in-out`}>{m?.title}</span>
                         </div>
+
+                        <span className={`
+                          ${ m?.isLeader 
+                            ? "text-green-600" 
+                            : "text-blue-600/60"
+                          }
+                          text-lg absolute my-auto right-5
+                        `}><i className="fa-solid fa-flag"></i></span>
                       </div>
                     ))}
                   </div>

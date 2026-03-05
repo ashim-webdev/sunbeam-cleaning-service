@@ -191,14 +191,18 @@ const TaskCard = ({ task }) => {
             `}>
             <div className={`relative ${TASK_HEADER[task.stage]} shadow-inner rounded-tr-[50px] pt-1 pb-2 px-2`}>
               <div className={`
-                  text-white border-white/50 pl-2 pb-0.5 font-mono text-md font-semibold border-b capitalize 
+                  ${LightMode 
+                    ? "text-black"
+                    : "text-white"
+                  }
+                  border-white/50 pl-2 pb-0.5 font-mono text-md font-semibold border-b capitalize transition-colors duration-300 ease-in-out
                 `}>
                 {task?.clientName}
               </div>
               <div className={`
                     ${LightMode 
-                      ? "text-gray-200"
-                      : "text-gray-200"
+                      ? "text-black"
+                      : "text-white"
                     }
                     pr-2 pt-0.5 text-sm text-end font-cursive italic transition-colors duration-300 ease-in-out
                   `}>

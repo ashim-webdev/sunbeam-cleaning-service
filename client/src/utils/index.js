@@ -69,10 +69,14 @@ export const TASK_ICON = {
 };
 
 
+// export const BGS = [
+//   "bg-blue-600",
+//   "bg-yellow-600",
+//   "bg-red-600",
+//   "bg-green-600",
+//   "bg-chocolate-500"
+// ];
+
 export const BGS = [
   "bg-blue-600",
-  "bg-yellow-600",
-  "bg-red-600",
-  "bg-green-600",
-  "bg-chocolate-500"
 ];

@@ -1,3 +1,21 @@
+import img1 from "../img/image.png"
+import img2 from "../img/neco.jpeg"
+import office1 from "../img/office1.jpg"
+import office2 from "../img/office2.jpg"
+import office3 from "../img/office3.jpg"
+import office4 from "../img/office4.jpg"
+
+import m1 from "../img/m1.jpg"
+import m2 from "../img/m2.jpg"
+import m3 from "../img/m3.jpg"
+import m4 from "../img/m4.jpg"
+import m5 from "../img/m5.jpg"
+import m6 from "../img/m6.jpg"
+import m7 from "../img/m7.jpg"
+
+
+
+
 export const summary = {
   totalTasks: 48,
     // 👇 NEW (dummy last month stats)
@@ -14,6 +32,7 @@ export const summary = {
   last10Task: [
     {
       _id: "65c5f12ab5204a81bde866a9",
+
       title: "Office Clean Up",
       clientName: "Jasmine Ajamogha Edirin",
       address: "Jikwoyi phase 2 extention, Abuja",
@@ -27,6 +46,7 @@ export const summary = {
       team: [
         {
           _id: "65c317360fd860f958baa08e",
+          img: m1,
           name: "Alex Johnson",
           title: "Sanitation Specialist",
           email: "alex.johnson@example.com",
@@ -34,6 +54,7 @@ export const summary = {
         },
         {
           _id: "65c3176a0fd860f958baa099",
+          img: m5,
           name: "Ashimo Stephen",
           title: "Home Care Technician",
           email: "emily.wilson@example.com",
@@ -41,6 +62,7 @@ export const summary = {
         },
         {
           _id: "65c317980fd860f958baa099",
+          img: m2,
           name: "Emily Wilson",
           title: "Carpet Expert",
           email: "emily.wilson@example.com",
@@ -48,6 +70,7 @@ export const summary = {
         },
         {
           _id: "65c31798099d860f958baa099",
+          img: m4,
           name: "Emily Wilson",
           title: "Residential Cleaning Specialist",
           email: "emily.wilson@example.com",
@@ -55,6 +78,7 @@ export const summary = {
         },
         {
           _id: "65c3179809906860f958baa099",
+          img: m6,
           name: "Emily Wilson",
           title: "Office Sanitation Expert",
           email: "emily.wilson@example.com",
@@ -62,6 +86,7 @@ export const summary = {
         },
         {
           _id: "65c3179809978860f958baa099",
+          img: m7,
           name: "Emily Wilson",
           title: "Window Cleaning Specialist",
           email: "emily.wilson@example.com",
@@ -69,6 +94,7 @@ export const summary = {
         },
         {
           _id: "65c3179809906860f958baa099",
+          img: m1,
           name: "Emily Wilson",
           title: "Floor Care Technician",
           email: "emily.wilson@example.com",
@@ -101,6 +127,7 @@ export const summary = {
       team: [
         {
           _id: "65c317360f9787860f958baa08e",
+          img: m5,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -109,6 +136,7 @@ export const summary = {
         },
         {
           _id: "65c3176a0fd860f958baa099",
+          img: m1,
           name: "Emily Wilson",
           title: "Data Analyst",
           role: "Analyst",
@@ -117,6 +145,7 @@ export const summary = {
         },
         {
           _id: "65c317360fde343d860f958baa08e",
+          img: m4,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -125,6 +154,7 @@ export const summary = {
         },
         {
           _id: "65c317360fd09887860f958baa08e",
+          img: m6,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -184,6 +214,7 @@ export const summary = {
       team: [
         {
           _id: "65c202d4aa62f32ffd1303cc",
+          img: m7,
           name: "Codewave Asante",
           title: "Administrator",
           role: "Admin",
@@ -192,6 +223,7 @@ export const summary = {
         },
         {
           _id: "65c27a0e18c0a1b750ad5cad",
+          img: m6,
           name: "John Doe",
           title: "Software Engineer",
           role: "Developer",
@@ -200,6 +232,7 @@ export const summary = {
         },
         {
           _id: "65c30b96e639681a13def0b5",
+          img: m3,
           name: "Jane Smith",
           title: "Product Manager",
           role: "Manager",
@@ -208,6 +241,7 @@ export const summary = {
         },
         {
           _id: "65c317360f345d860f958baa08e",
+          img: m2,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -216,6 +250,7 @@ export const summary = {
         },
         {
           _id: "65c317360f908887860f958baa08e",
+          img: m5,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -287,6 +322,7 @@ export const summary = {
       team: [
         {
           _id: "65c317387877998fd860f958baa08e",
+          img: m4,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -295,6 +331,7 @@ export const summary = {
         },
         {
           _id: "65c3176a0fd860f958baa099",
+          img: m5,
           name: "Emily Wilson",
           title: "Data Analyst",
           role: "Analyst",
@@ -303,6 +340,7 @@ export const summary = {
         },
         {
           _id: "65c3173665688860f958baa08e",
+          img: m1,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -311,6 +349,7 @@ export const summary = {
         },
         {
           _id: "65c317360fd8989f958baa08e",
+          img: m7,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -358,6 +397,7 @@ export const summary = {
       team: [
         {
           _id: "65c30b96e639681a13def0b5",
+          img: m3,
           name: "Jane Smith",
           title: "Product Manager",
           role: "Manager",
@@ -366,6 +406,7 @@ export const summary = {
         },
         {
           _id: "65c202d4aa62f32ffd1303cc",
+          img: m1,
           name: "Codewave Asante",
           title: "Administrator",
           role: "Admin",
@@ -374,6 +415,7 @@ export const summary = {
         },
         {
           _id: "65c31736778860f958baa08e",
+          img: m5,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -382,6 +424,7 @@ export const summary = {
         },
         {
           _id: "65c317369898d860f958baa08e",
+          img: m7,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -390,6 +433,7 @@ export const summary = {
         },
         {
           _id: "65c31736087979d860f958baa08e",
+          img: m3,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -431,6 +475,7 @@ export const summary = {
       team: [
         {
           _id: "65c202d4aa62f32ffd1303cc",
+          img: m4,
           name: "Codewave Asante",
           title: "Administrator",
           role: "Admin",
@@ -439,6 +484,7 @@ export const summary = {
         },
         {
           _id: "65c27a0e18c0a1b750ad5cad",
+          img: m1,
           name: "John Doe",
           title: "Software Engineer",
           role: "Developer",
@@ -447,6 +493,7 @@ export const summary = {
         },
         {
           _id: "65c30b96e639681a13def0b5",
+          img: m7,
           name: "Jane Smith",
           title: "Product Manager",
           role: "Manager",
@@ -455,6 +502,7 @@ export const summary = {
         },
         {
           _id: "65c317360fd860f958baa08e",
+          img: m3,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -463,6 +511,7 @@ export const summary = {
         },
         {
           _id: "65c3178780fd860f958baa08e",
+          img: m6,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -502,6 +551,7 @@ export const summary = {
       team: [
         {
           _id: "65c317360fd8yt7t655f958baa08e",
+          img: m7,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -510,6 +560,7 @@ export const summary = {
         },
         {
           _id: "65c3176a0fd860f958baa099",
+          img: m6,
           name: "Emily Wilson",
           title: "Data Analyst",
           role: "Analyst",
@@ -518,6 +569,7 @@ export const summary = {
         },
         {
           _id: "65c317667t0fd860f958baa08e",
+          img: m2,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -526,6 +578,7 @@ export const summary = {
         },
         {
           _id: "65c31736fg8g0d860f958baa08e",
+          img: m3,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -559,6 +612,7 @@ export const summary = {
       team: [
         {
           _id: "65c202d4aa62f32ffd1303cc",
+          img: m6,
           name: "Codewave Asante",
           title: "Administrator",
           role: "Admin",
@@ -567,6 +621,7 @@ export const summary = {
         },
         {
           _id: "65c27a0e18c0a1b750ad5cad",
+          img: m5,
           name: "John Doe",
           title: "Software Engineer",
           role: "Developer",
@@ -575,6 +630,7 @@ export const summary = {
         },
         {
           _id: "65c30b96e639681a13def0b5",
+          img: m4,
           name: "Jane Smith",
           title: "Product Manager",
           role: "Manager",
@@ -583,6 +639,7 @@ export const summary = {
         },
         {
           _id: "65c317360fdy676t76f958baa08e",
+          img: m3,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -591,6 +648,7 @@ export const summary = {
         },
         {
           _id: "65c317360fd860f958baa08e",
+          img: m2,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -630,6 +688,7 @@ export const summary = {
       team: [
         {
           _id: "65c317360fd860f958baa08e",
+          img: m3,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -638,6 +697,7 @@ export const summary = {
         },
         {
           _id: "65c3176a0fd860f958baa099",
+          img: m7,
           name: "Emily Wilson",
           title: "Data Analyst",
           role: "Analyst",
@@ -646,6 +706,7 @@ export const summary = {
         },
         {
           _id: "65c317ff70fd860f958baa08e",
+          img: m2,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -654,6 +715,7 @@ export const summary = {
         },
         {
           _id: "65c31736556fd860f958baa08e",
+          img: m1,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -687,6 +749,7 @@ export const summary = {
       team: [
         {
           _id: "65c202d4aa62f32ffd1303cc",
+          // img: m1,
           name: "Codewave Asante",
           title: "Administrator",
           role: "Admin",
@@ -695,6 +758,7 @@ export const summary = {
         },
         {
           _id: "65c27a0e18c0a1b750ad5cad",
+          img: m2,
           name: "John Doe",
           title: "Software Engineer",
           role: "Developer",
@@ -703,6 +767,7 @@ export const summary = {
         },
         {
           _id: "65c30b96e639681a13def0b5",
+          img: m3,
           name: "Jane Smith",
           title: "Product Manager",
           role: "Manager",
@@ -711,6 +776,7 @@ export const summary = {
         },
         {
           _id: "65c31736fgf5860f958baa08e",
+          img: m4,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -719,6 +785,7 @@ export const summary = {
         },
         {
           _id: "65c317360fd860f958baa08e",
+          img: m6,
           name: "Alex Johnson",
           title: "UX Designer",
           role: "Designer",
@@ -852,13 +919,6 @@ export const chartData = [
 
 
 
-import img1 from "../img/image.png"
-import img2 from "../img/neco.jpeg"
-import office1 from "../img/office1.jpg"
-import office2 from "../img/office2.jpg"
-import office3 from "../img/office3.jpg"
-import office4 from "../img/office4.jpg"
-
 
 
 export const tasks = [
@@ -880,6 +940,7 @@ export const tasks = [
     team: [
       {
         _id: "65c317360fd860f958baa08e",
+        img: m1,
         name: "Alex Johnson",
         title: "Sanitation Specialist",
         email: "alex.johnson@example.com",
@@ -887,6 +948,7 @@ export const tasks = [
       },
       {
         _id: "65c3176a0fd860f958baa099",
+        img: m2,
         name: "Ashimo Stephen",
         title: "Home Care Technician",
         email: "emily.wilson@example.com",
@@ -894,6 +956,7 @@ export const tasks = [
       },
       {
         _id: "65c317980fd860f958baa099",
+        img: m3,
         name: "Emily Wilson",
         title: "Carpet Expert",
         email: "emily.wilson@example.com",
@@ -901,6 +964,7 @@ export const tasks = [
       },
       {
         _id: "65c31798099d860f958baa099",
+        img: m4,
         name: "Emily Wilson",
         title: "Residential Cleaning Specialist",
         email: "emily.wilson@example.com",
@@ -908,6 +972,7 @@ export const tasks = [
       },
       {
         _id: "65c3179809906860f958baa099",
+        img: m5,
         name: "Emily Wilson",
         title: "Office Sanitation Expert",
         email: "emily.wilson@example.com",
@@ -915,6 +980,7 @@ export const tasks = [
       },
       {
         _id: "65c3179809978860f958baa099",
+        img: m6,
         name: "Emily Wilson",
         title: "Window Cleaning Specialist",
         email: "emily.wilson@example.com",
@@ -922,6 +988,7 @@ export const tasks = [
       },
       {
         _id: "65c3179809906860f958baa099",
+        img: m7,
         name: "Emily Wilson",
         title: "Floor Care Technician",
         email: "emily.wilson@example.com",
@@ -954,6 +1021,7 @@ export const tasks = [
     team: [
       {
         _id: "65c317360fd860f958baa08e",
+        img: m7,
         name: "Alex Johnson",
         title: "UX Designer",
         email: "alex.johnson@example.com",
@@ -961,6 +1029,7 @@ export const tasks = [
       },
       {
         _id: "65c3176a0fd860f958baa099",
+        img: m5,
         name: "Emily Wilson",
         title: "Data Analyst",
         email: "emily.wilson@example.com",
@@ -968,6 +1037,7 @@ export const tasks = [
       },
       {
         _id: "65c3176a0fd860f98baa099",
+        img: m2,
         name: "Emily Wilson",
         title: "Data Analyst",
         email: "emily.wilson@example.com",
@@ -1026,6 +1096,7 @@ export const tasks = [
     team: [
       {
         _id: "65c202d4aa62f32ffd1303cc",
+        img: m6,
         name: "Codewave Asante",
         title: "Administrator",
         email: "admin@gmail.com",
@@ -1033,6 +1104,7 @@ export const tasks = [
       },
       {
         _id: "65c27a0e18c0a1b750ad5cad",
+        img: m1,
         name: "John Doe",
         title: "Software Engineer",
         email: "john.doe@example.com",
@@ -1040,6 +1112,7 @@ export const tasks = [
       },
       {
         _id: "65c30b96e639681a13def0b5",
+        img: m7,
         name: "Jane Smith",
         title: "Product Manager",
         email: "jane.smith@example.com",
@@ -1047,6 +1120,7 @@ export const tasks = [
       },
       {
         _id: "65c30b96e639681rd6a13def0b5",
+        img: m4,
         name: "Jane Smith",
         title: "Product Manager",
         email: "jane.smith@example.com",
@@ -1119,6 +1193,7 @@ export const tasks = [
     team: [
       {
         _id: "65c317360fd860f958baa08e",
+        img: m1,
         name: "Alex Johnson",
         title: "Sanitation Specialist",
         email: "alex.johnson@example.com",
@@ -1126,6 +1201,7 @@ export const tasks = [
       },
       {
         _id: "65c3176a0fd860f958baa099",
+        img: m2,
         name: "Ashimo Stephen",
         title: "Home Care Technician",
         email: "emily.wilson@example.com",
@@ -1133,6 +1209,7 @@ export const tasks = [
       },
       {
         _id: "65c317980fd860f958baa099",
+        img: m3,
         name: "Emily Wilson",
         title: "Carpet Expert",
         email: "emily.wilson@example.com",
@@ -1140,6 +1217,7 @@ export const tasks = [
       },
       {
         _id: "65c31798099d860f958baa099",
+        img: m4,
         name: "Emily Wilson",
         title: "Residential Cleaning Specialist",
         email: "emily.wilson@example.com",
@@ -1147,6 +1225,7 @@ export const tasks = [
       },
       {
         _id: "65c3179809906860f958baa099",
+        img: m5,
         name: "Emily Wilson",
         title: "Office Sanitation Expert",
         email: "emily.wilson@example.com",
@@ -1154,6 +1233,7 @@ export const tasks = [
       },
       {
         _id: "65c3179809978860f958baa099",
+        img: m6,
         name: "Emily Wilson",
         title: "Window Cleaning Specialist",
         email: "emily.wilson@example.com",
@@ -1161,6 +1241,7 @@ export const tasks = [
       },
       {
         _id: "65c3179809906860f958baa099",
+        img: m7,
         name: "Emily Wilson",
         title: "Floor Care Technician",
         email: "emily.wilson@example.com",
@@ -1221,6 +1302,7 @@ export const tasks = [
     team: [
       {
         _id: "65c30b96e639681a13def0b5",
+        img: m2,
         name: "Jane Smith",
         title: "Product Manager",
         email: "jane.smith@example.com",
@@ -1228,6 +1310,7 @@ export const tasks = [
       },
       {
         _id: "65c202d4aa62f32ffd1303cc",
+        img: m4,
         name: "Codewave Asante",
         title: "Administrator",
         email: "admin@gmail.com",
@@ -1235,6 +1318,7 @@ export const tasks = [
       },
       {
         _id: "65c317360fd860f958baa08e",
+        img: m6,
         name: "Alex Johnson",
         title: "UX Designer",
         email: "alex.johnson@example.com",
@@ -1275,6 +1359,7 @@ export const tasks = [
     team: [
       {
         _id: "65c202d4aa62f32ffd1303cc",
+        img: m3,
         name: "Codewave Asante",
         title: "Administrator",
         email: "admin@gmail.com",
@@ -1282,6 +1367,7 @@ export const tasks = [
       },
       {
         _id: "65c27a0e18c0a1b750ad5cad",
+        img: m7,
         name: "John Doe",
         title: "Software Engineer",
         email: "john.doe@example.com",
@@ -1289,6 +1375,7 @@ export const tasks = [
       },
       {
         _id: "65c30b96e639681a13def0b5",
+        img: m4,
         name: "Jane Smith",
         title: "Product Manager",
         email: "jane.smith@example.com",
@@ -1327,6 +1414,7 @@ export const tasks = [
     team: [
       {
         _id: "65c317360fd860f958baa08e",
+        img: m1,
         name: "Alex Johnson",
         title: "UX Designer",
         email: "alex.johnson@example.com",
@@ -1334,6 +1422,7 @@ export const tasks = [
       },
       {
         _id: "65c3176a0fd860f958baa099",
+        img: m5,
         name: "Emily Wilson",
         title: "Data Analyst",
         email: "emily.wilson@example.com",
@@ -1366,6 +1455,7 @@ export const tasks = [
     team: [
       {
         _id: "65c202d4aa62f32ffd1303cc",
+        img: m5,
         name: "Codewave Asante",
         title: "Administrator",
         email: "admin@gmail.com",
@@ -1373,6 +1463,7 @@ export const tasks = [
       },
       {
         _id: "65c27a0e18c0a1b750ad5cad",
+        img: m4,
         name: "John Doe",
         title: "Software Engineer",
         email: "john.doe@example.com",
@@ -1380,6 +1471,7 @@ export const tasks = [
       },
       {
         _id: "65c30b96e639681a13def0b5",
+        img: m2,
         name: "Jane Smith",
         title: "Product Manager",
         email: "jane.smith@example.com",
@@ -1418,6 +1510,7 @@ export const tasks = [
     team: [
       {
         _id: "65c317360fd860f958baa08e",
+        img: m1,
         name: "Alex Johnson",
         title: "UX Designer",
         email: "alex.johnson@example.com",
@@ -1425,6 +1518,7 @@ export const tasks = [
       },
       {
         _id: "65c3176a0fd860f958baa099",
+        img: m3,
         name: "Emily Wilson",
         title: "Data Analyst",
         email: "emily.wilson@example.com",
@@ -1457,6 +1551,7 @@ export const tasks = [
     team: [
       {
         _id: "65c202d4aa62f32ffd1303cc",
+        img: m4,
         name: "Codewave Asante",
         title: "Administrator",
         email: "admin@gmail.com",
@@ -1464,6 +1559,7 @@ export const tasks = [
       },
       {
         _id: "65c27a0e18c0a1b750ad5cad",
+        img: m7,
         name: "John Doe",
         title: "Software Engineer",
         email: "john.doe@example.com",
@@ -1471,6 +1567,7 @@ export const tasks = [
       },
       {
         _id: "65c27a0e18c0a1b750ad5cad",
+        img: m6,
         name: "John Doe",
         title: "Software Engineer",
         email: "john.doe@example.com",
@@ -1478,6 +1575,7 @@ export const tasks = [
       },
       {
         _id: "65c27a0e18c0a1b750ad5cad",
+        img: m3,
         name: "John Doe",
         title: "Software Engineer",
         email: "john.doe@example.com",
@@ -1485,6 +1583,7 @@ export const tasks = [
       },
       {
         _id: "65c30b96e639681a13def0b5",
+        img: m1,
         name: "Jane Smith",
         title: "Product Manager",
         email: "jane.smith@example.com",

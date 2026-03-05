@@ -45,14 +45,22 @@ export default function UserInfoDash({ task }) {
       {team.slice(0, 3).map((member, index) => (
         <div
           key={member._id}
-          className={clsx(
-            "relative w-9 h-9 rounded-full flex items-center justify-center text-white text-sm border-2 border-black -ml-4 shadow-inner",
+          className="relative"
+        > 
+          <div className={clsx(
+            "w-9 h-9 rounded-full flex items-center justify-center text-white text-sm -ml-4 shadow-inner overflow-hidden",
             BGS[index % BGS.length]
-          )}
-        >
-          {getInitials(member.name)}
+          )}>
+            {member?.img ? 
+              <img src={member?.img} alt="Avatar" className="w-full h-full object-cover "/>
+            :
+              <span>
+                {getInitials(member?.name)}
+              </span>
+            }
+          </div>
 
-          <div className={`absolute ${member.isLeader ? "block" : "hidden"} -top-1 left-2.5 w-2.5 h-2.5 rounded-full bg-green-500 shadow-inner animate-spin`} />
+          <div className={`absolute ${member.isLeader ? "block" : "hidden"} -top-1 -left-1 w-2.5 h-2.5 rounded-full bg-green-500 shadow-inner animate-spin`} />
         </div>
       ))}
 

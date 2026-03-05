@@ -23,16 +23,26 @@ export default function GroupedTeam({ team = [] }) {
               <td className={`
                   py-2 px-4
                 `}>
-                <span className="flex items-center gap-3">
-                  <span className={clsx(
+                <div className="relative flex items-center gap-3">
+                  <div className="relative">
+                    <div className={clsx(
                       LightMode
                       ? "text-white"
                       : "text-white",
-                      "w-10 h-10 rounded-full   flex items-center justify-center shadow-inner transition-colors ease-in-out duration-300",
+                      "relative w-10 h-10 rounded-full   flex items-center justify-center shadow-inner transition-colors ease-in-out duration-300 overflow-hidden",
                       BGS[index % BGS.length]
                     )}>
-                    {getInitials(member.name)}
-                  </span>
+                      {member?.img ? 
+                        <img src={member?.img} alt="Avatar" className="w-full h-full object-cover "/>
+                      :
+                        <span>
+                          {getInitials(member?.name)}
+                        </span>
+                      }
+                    </div>
+          
+                    <div className={`absolute ${member.isLeader ? "block" : "hidden"} sm:hidden -top-1 left-3.5 w-2.5 h-2.5 rounded-full bg-green-500 shadow-inner animate-spin`} />
+                  </div>
                   <span>
                     <p className={`
                         ${LightMode
@@ -48,7 +58,7 @@ export default function GroupedTeam({ team = [] }) {
                         text-xs font-bold transition-colors ease-in-out duration-300
                       `}>{member.title.split(" ").length > 2 ? member.title.split(" ").slice(0, 1).join(" ") + "..." : member.title}</span>
                   </span>
-                </span>
+                </div>
               </td>
 
               <td className={`
@@ -67,16 +77,16 @@ export default function GroupedTeam({ team = [] }) {
                       ? "text-green-600" 
                       : "text-blue-600/60"
                     }
-                    text-lg absolute -top-2.5 left-7.5
-                  `}><i className="fa-solid fa-flag"></i></span>
+                    text-lg hidden sm:block absolute -top-2.5 left-7.5
+                  `}><i className="fa-solid fa-flag"></i>
+                </span>
                 <span className={`
                     ${ member.isLeader 
-                      ? "text-green-600 bg-green-500/50 shadow-inner right-4 sm:right-24 sm:bottom-5" 
-                      : "text-blue-600 bg-blue-500/50 shadow-inner right-6 sm:right-26 sm:bottom-5"
+                      ? "text-green-600" 
+                      : "text-blue-600/60"
                     }
-                    LeaderTable font-bold p-2 rounded-tl-3xl rounded-br-3xl  italic text-sm absolute bottom-3 sm:hidden  
-                  `}>
-                    {member.isLeader ? "Leader" : "Crew"}
+                    text-lg sm:hidden absolute top-5 right-5
+                  `}><i className="fa-solid fa-flag"></i>
                 </span>
               </td>
             </tr>

@@ -142,7 +142,7 @@ const Dashboard = () => {
         `}>
         <td className='py-2 px-6'>
           <div className='flex items-center gap-3'>
-            <div className='w-9 h-9 rounded-full text-white flex items-center justify-center text-sm shadow-inner bg-violet-700'>
+            <div className='w-9 h-9 rounded-full text-white flex items-center justify-center text-sm shadow-inner bg-blue-600'>
               <span className='text-center'>{getInitials(user?.name)}</span>
             </div>
             <div>
