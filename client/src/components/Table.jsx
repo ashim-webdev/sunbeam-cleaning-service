@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 // import { Button, ConfirmatioDialog, UserInfo } from "./index";
 import UserInfoDash from "./UserInfoDash.jsx";
-import Button from "./button.jsx";
+import Button from "./Button.jsx";
 import TaskColor from "./TaskComponents/TaskColor.jsx";
 import TaskAssets from "./TaskComponents/TaskAssets.jsx";
 import DeleteBtn from "./DeleteBtn.jsx";

@@ -10,7 +10,7 @@ import {
 } from "react-icons/md";
 import { toast } from "sonner";
 
-import Button from "../components/button";
+import Button from "../components/Button";
 import Loading from "../components/Loading";
 import Title from "../components/Title";
 import TaskColor from "../components/TaskComponents/TaskColor";

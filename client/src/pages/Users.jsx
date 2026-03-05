@@ -11,7 +11,7 @@ import { toast } from "sonner";
 //   UserAction,
 // } from "../components";
 import Loading from "../components/Loading";
-import Button from "../components/button";
+import Button from "../components/Button";
 import Title from "../components/Title";
 import DeleteBtn from "../components/DeleteBtn";
 import EditBtn from "../components/EditBtn";

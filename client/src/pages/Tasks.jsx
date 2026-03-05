@@ -3,7 +3,7 @@ import { FaList } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
 import { MdGridView } from "react-icons/md";
 import { useParams } from "react-router-dom";
-import Button from "../components/button"
+import Button from "../components/Button"
 import Loading from "../components/Loading"
 import Tabs from "../components/Tabs"
 import Title from "../components/Title"

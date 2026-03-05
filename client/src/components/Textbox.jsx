@@ -106,7 +106,7 @@ const Textbox = React.forwardRef(
               LightMode 
                 ? "text-black placeholder-gray-300 border-gray-300"
                 : "text-white placeholder-gray-400 border-gray-400",
-              "py-1.25 px-3.75 border outline-none text-base focus:ring-2 ring-blue-300 transition-colors duration-300 ease-in-out",
+              "py-1.25 px-3.75 font-normal border outline-none text-base focus:ring-2 ring-blue-300 transition-colors duration-300 ease-in-out",
               className
             )}
             {...register}

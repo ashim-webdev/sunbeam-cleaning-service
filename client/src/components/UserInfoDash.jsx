@@ -48,7 +48,7 @@ export default function UserInfoDash({ task }) {
           className="relative"
         > 
           <div className={clsx(
-            "w-9 h-9 rounded-full flex items-center justify-center text-white text-sm -ml-4 shadow-inner overflow-hidden",
+            "w-9 h-9 rounded-full border border-white flex items-center justify-center text-white text-sm -ml-4 shadow-inner overflow-hidden",
             BGS[index % BGS.length]
           )}>
             {member?.img ? 
@@ -74,7 +74,7 @@ export default function UserInfoDash({ task }) {
                 <Popover.Button 
                   ref={refs.setReference}
                   onClick={() => setOpen(!open)}
-                  className="ClickAnimation z-10 w-9 h-9 -ml-5.5 rounded-full text-[10px] bg-gray-400 hover:bg-gray-500 text-white border border-black flex items-center justify-center hover:scale-105 transition cursor-pointer shadow-inner hover:shadow-innerWH"
+                  className="outline-none z-10 w-9 h-9 border border-white -ml-5.5 rounded-full text-[10px] bg-gray-400 hover:bg-gray-500 text-white flex items-center justify-center active:scale-95 focus:border transition-all duration-200 ease-in-out hover:scale-105  cursor-pointer shadow-inner hover:shadow-innerWH"
                 >
                   {remainingItems.length > 0 && (
                     <>

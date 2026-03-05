@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import Textbox from '../components/Textbox'
-import Button from '../components/button'
+import Button from '../components/Button'
 import CautionBtn from '../components/CautionBtn'
 
 const Login = () => {

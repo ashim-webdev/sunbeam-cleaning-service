@@ -6,7 +6,10 @@ import {
   MdKeyboardArrowDown,
   MdKeyboardArrowUp,
   MdKeyboardDoubleArrowUp,
+  MdContentCopy,
+  MdCheck
 } from "react-icons/md";
+import { toast } from 'sonner'
 import { useDispatch, useSelector } from "react-redux";
 
 import { Link } from "react-router-dom";
@@ -38,6 +41,28 @@ const TaskCard = ({ task }) => {
   
   const user = true
   const [open, setOpen] = useState(false);
+  
+
+  // Copy Address Feature Function
+  const [copiedAddress, setCopiedAddress] = useState(null);
+
+  const copyAddress = async (address, e) => {
+    e.stopPropagation();
+
+    try {
+      await navigator.clipboard.writeText(address);
+      setCopiedAddress(address);
+      toast.success("copied successfully")
+
+      setTimeout(() => {
+        setCopiedAddress(null);
+      }, 2000);
+
+    } catch (err) {
+      console.error("Copy failed:", err);
+      toast.error("copy failed")
+    }
+  };
 
   return (
     <div className='relative transition-transform duration-200 ease-in-out'>
@@ -54,7 +79,7 @@ const TaskCard = ({ task }) => {
               ? "border-gray-300 hover:shadow-darkSM"
               : "border-gray-500 hover:shadow-lightSM"
             }
-            mt-1 py-0.5 px-1 border-b transition-transform duration-200 ease-in-out
+            mt-1 cursor-pointer py-0.5 px-1 border-b transition-transform duration-200 ease-in-out
           `}>
             <div className='w-full z-1 flex justify-between'>
               <div
@@ -108,7 +133,7 @@ const TaskCard = ({ task }) => {
 
               <div className='flex flex-row-reverse'>
                 <div className=' flex flex-row justify-start items-center mr-6'>
-                  <div className=" z-20 relative flex flex-row justify-center items-center">
+                  <div className="flex flex-row justify-center items-center">
                     <UserInfoTask task={task} />
                   </div>
                 </div>
@@ -181,7 +206,7 @@ const TaskCard = ({ task }) => {
         </div>
       </div>
       
-      <div className={`FileDesign absolute inset-0 top-0 left-0 w-full h-auto p-2 pointer-events-none }`}>
+      <div className={`FileDesign absolute top-0 left-0 w-full h-auto p-2 }`}>
           <div className={`
               ${LightMode 
                 ? "border-gray-400"
@@ -192,21 +217,30 @@ const TaskCard = ({ task }) => {
             <div className={`relative ${TASK_HEADER[task.stage]} shadow-inner rounded-tr-[50px] pt-1 pb-2 px-2`}>
               <div className={`
                   ${LightMode 
-                    ? "text-black"
+                    ? "text-gray-50"
                     : "text-white"
                   }
                   border-white/50 pl-2 pb-0.5 font-mono text-md font-semibold border-b capitalize transition-colors duration-300 ease-in-out
                 `}>
                 {task?.clientName}
               </div>
-              <div className={`
-                    ${LightMode 
-                      ? "text-black"
-                      : "text-white"
-                    }
-                    pr-2 pt-0.5 text-sm text-end font-cursive italic transition-colors duration-300 ease-in-out
-                  `}>
+              <div
+                className={`
+                  ${LightMode ? "text-gray-50" : "text-white"}
+                  pr-2 pt-0.5 text-sm text-end font-cursive italic flex items-center justify-end gap-2 transition-colors duration-300 ease-in-out
+                `}
+              >
                 {task?.address}
+
+                {copiedAddress === task?.address ? (
+                  <i className="fa-solid fa-check-double bg-white p-0.5 rounded-full text-green-600 text-lg cursor-pointer hover:scale-110 transition-transform"></i>
+                ) : (
+                  <MdContentCopy
+                    title="Copy address"
+                    onClick={(e) => copyAddress(task?.address, e)}
+                    className="rounded-full text-lg cursor-pointer hover:scale-110 transition-transform"
+                  />
+                )}
               </div>
 
               <div className={`

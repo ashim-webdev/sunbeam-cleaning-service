@@ -31,7 +31,7 @@ export default function UserInfo({ task }) {
           className="relative"
         > 
           <div className={clsx(
-            "w-9 h-9 rounded-full flex items-center justify-center text-white text-sm -ml-4 shadow-inner overflow-hidden",
+            "w-9 h-9 rounded-full border border-white flex items-center justify-center text-white text-sm -ml-4 shadow-inner overflow-hidden",
             BGS[index % BGS.length]
           )}>
             {member?.img ? 
@@ -49,12 +49,12 @@ export default function UserInfo({ task }) {
 
       {/* PLUS BUTTON */}
       {team.length > 2 && (
-        <div className="relative ml-1">
-            <div className={clsx("relative", open && "z-50")}>
+        <div className="ml-1">
+            <div className="relative">
               {team.length > 3 
                 ?
                 <div 
-                  className="w-9 h-9 -ml-5.5 rounded-full text-[10px] bg-gray-500 text-white flex items-center justify-center shadow-inner ">
+                  className="w-9 h-9 -ml-5.5 rounded-full text-[10px] bg-gray-500 text-white border border-white flex items-center justify-center shadow-inner ">
                   {remainingItems.length > 0 && (
                     <>
                       <i className="fa-solid fa-plus" />

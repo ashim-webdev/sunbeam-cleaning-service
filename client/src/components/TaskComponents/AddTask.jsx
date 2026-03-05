@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { dateFormatter } from "../../utils";
 import { useSelector } from "react-redux";
 // import { app } from "../../utils/firebase";
-import Button from "../button";
+import Button from "../Button";
 import Loading from "../Loading";
 import ModalWrapper from "../ModalWrapper";
 import SelectList from "../SelectList";

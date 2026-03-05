@@ -2,6 +2,7 @@ import clsx from "clsx";
 import moment from "moment";
 import React, { useState } from "react";
 import { FaBug, FaSpinner, FaTasks, FaThumbsUp, FaUser } from "react-icons/fa";
+import { UploadCloud } from "lucide-react"
 import { GrInProgress } from "react-icons/gr";
 import {
   MdKeyboardArrowDown,
@@ -16,7 +17,7 @@ import { useSelector } from "react-redux";
 import { RxActivityLog } from "react-icons/rx";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
-import Button from "../components/button";
+import Button from "../components/Button";
 import Loading from "../components/Loading";
 import Tabs from "../components/Tabs";
 import TaskColor from "../components/TaskComponents/TaskColor";
@@ -244,28 +245,55 @@ const Activities = ({ activity, id, refetch }) => {
 
           {/* After Cleanup Images Upload */}
           <div className="w-full mt-6">
-            <label className={`block mb-2 font-semibold ${
+            {/* <label className={`block mb-2 font-semibold ${
               LightMode ? "text-gray-600" : "text-gray-200"
             }`}>
               Upload After-Cleanup Images (Minimum 3)
-            </label>
+            </label> */}
+
+          <label
+            className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-xl cursor-pointer transition
+            ${
+              LightMode
+                ? "bg-gray-50 border-gray-300 hover:bg-gray-100"
+                : "bg-black/30 border-gray-600 hover:bg-black/40"
+            }`}
+          >
+            <UploadCloud
+              className={`w-10 h-10 mb-2 ${
+                LightMode ? "text-gray-500" : "text-gray-300"
+              }`}
+            />
+
+            <p
+              className={`text-sm ${
+                LightMode ? "text-gray-600" : "text-gray-300"
+              }`}
+            >
+              Click to upload images
+            </p>
+
+            <p
+              className={`text-xs ${
+                LightMode ? "text-gray-400" : "text-gray-500"
+              }`}
+            >
+              PNG, JPG, WEBP
+            </p>
 
             <input
               type="file"
               multiple
               accept="image/*"
               onChange={handleImageChange}
-              className={`w-full p-3 rounded-md border ${
-                LightMode
-                  ? "bg-white border-gray-300 text-black"
-                  : "bg-black/30 border-gray-500 text-white"
-              }`}
+              className="hidden"
             />
+          </label>
 
             {/* Selected count */}
             {images.length > 0 && (
               <p className="text-sm mt-2 text-gray-500">
-                {images.length} image(s) selected
+                {`${images.length} ${images.length >= 2 ? "images selected" : "image selected"}`}
               </p>
             )}
 
@@ -276,7 +304,7 @@ const Activities = ({ activity, id, refetch }) => {
                   key={index}
                   src={URL.createObjectURL(file)}
                   alt="preview"
-                  className="w-full h-24 object-cover rounded shadow"
+                  className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} w-full h-24 object-cover rounded shadow cursor-pointer transition-all duration-300 ease-in-out md:hover:scale-125 hover:z-50`}
                 />
               ))}
             </div>
@@ -414,7 +442,7 @@ const TaskDetail = () => {
               
                         <div className={`absolute ${m.isLeader ? "block" : "hidden"} top-2.5 mx-auto w-2.5 h-2.5 rounded-full bg-green-500 shadow-inner animate-spin`} />
                         <div>
-                          <p className={`${LightMode ? "text-black/80" : "text-white/80"} text-lg font-semibold transition-colors duration-300 ease-in-out`}>{m?.name}</p>
+                          <p className={`${LightMode ? "text-black/80" : "text-white/80"} text-lg font-normal transition-colors duration-300 ease-in-out`}>{m?.name}</p>
                           <span className={`${LightMode ? "text-gray-500" : "text-gray-400"} transition-colors duration-300 ease-in-out`}>{m?.title}</span>
                         </div>
 
