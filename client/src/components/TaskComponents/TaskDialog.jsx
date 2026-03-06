@@ -9,16 +9,16 @@ import { MdAdd, MdOutlineEdit } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import {
-  useChangeTaskStageMutation,
-  useDuplicateTaskMutation,
-  useTrashTastMutation,
-} from "../../redux/slices/api/taskApiSlice";
-import ConfirmatioDialog from "../ConfirmationDialog";
+// import {
+//   useChangeTaskStageMutation,
+//   useDuplicateTaskMutation,
+//   useTrashTastMutation,
+// } from "../../redux/slices/api/taskApiSlice";
+// import ConfirmatioDialog from "../ConfirmationDialog";
+import { useSelector } from "react-redux";
 import AddSubTask from "./AddSubTask";
 import AddTask from "./AddTask";
 import TaskColor from "./TaskColor";
-import { useSelector } from "react-redux";
 
 const CustomTransition = ({ children }) => (
   <Transition
@@ -35,25 +35,27 @@ const CustomTransition = ({ children }) => (
 );
 
 const ChangeTaskActions = ({ _id, stage }) => {
-  const [changeStage] = useChangeTaskStageMutation();
+  const { LightMode } = useSelector((state) => state.auth);
 
-  const changeHanlder = async (val) => {
-    try {
-      const data = {
-        id: _id,
-        stage: val,
-      };
-      const res = await changeStage(data).unwrap();
+  // const [changeStage] = useChangeTaskStageMutation();
 
-      toast.success(res?.message);
+  const changeHandler = async (val) => {
+    // try {
+    //   const data = {
+    //     id: _id,
+    //     stage: val,
+    //   };
+    //   const res = await changeStage(data).unwrap();
 
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
-    } catch (err) {
-      console.log(err);
-      toast.error(err?.data?.message || err.error);
-    }
+    //   toast.success(res?.message);
+
+    //   setTimeout(() => {
+    //     window.location.reload();
+    //   }, 500);
+    // } catch (err) {
+    //   console.log(err);
+    //   toast.error(err?.data?.message || err.error);
+    // }
   };
 
   const items = [
@@ -61,19 +63,19 @@ const ChangeTaskActions = ({ _id, stage }) => {
       label: "To-Do",
       stage: "todo",
       icon: <TaskColor className='bg-blue-600' />,
-      onClick: () => changeHanlder("todo"),
+      onClick: () => changeHandler("todo"),
     },
     {
       label: "In Progress",
       stage: "in progress",
       icon: <TaskColor className='bg-yellow-600' />,
-      onClick: () => changeHanlder("in progress"),
+      onClick: () => changeHandler("in progress"),
     },
     {
       label: "Completed",
       stage: "completed",
       icon: <TaskColor className='bg-green-600' />,
-      onClick: () => changeHanlder("completed"),
+      onClick: () => changeHandler("completed"),
     },
   ];
 
@@ -82,7 +84,8 @@ const ChangeTaskActions = ({ _id, stage }) => {
       <Menu as='div' className='relative inline-block text-left'>
         <Menu.Button
           className={clsx(
-            "inline-flex w-full items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300"
+            LightMode ? "text-gray-600" : "text-gray-300",
+            "inline-flex cursor-pointer w-full items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-all duration-300 ease-in-out"
           )}
         >
           <FaExchangeAlt />
@@ -118,6 +121,8 @@ const ChangeTaskActions = ({ _id, stage }) => {
 };
 
 export default function TaskDialog({ task }) {
+  const { LightMode } = useSelector((state) => state.auth);
+
   const { user } = useSelector((state) => state.auth);
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
@@ -125,46 +130,46 @@ export default function TaskDialog({ task }) {
 
   const navigate = useNavigate();
 
-  const [deleteTask] = useTrashTastMutation();
-  const [duplicateTask] = useDuplicateTaskMutation();
+  // const [deleteTask] = useTrashTastMutation();
+  // const [duplicateTask] = useDuplicateTaskMutation();
 
   const deleteClicks = () => {
     setOpenDialog(true);
   };
 
   const deleteHandler = async () => {
-    try {
-      const res = await deleteTask({
-        id: task._id,
-        isTrashed: "trash",
-      }).unwrap();
+    // try {
+    //   const res = await deleteTask({
+    //     id: task._id,
+    //     isTrashed: "trash",
+    //   }).unwrap();
 
-      toast.success(res?.message);
+    //   toast.success(res?.message);
 
-      setTimeout(() => {
-        setOpenDialog(false);
-        window.location.reload();
-      }, 500);
-    } catch (err) {
-      console.log(err);
-      toast.error(err?.data?.message || err.error);
-    }
+    //   setTimeout(() => {
+    //     setOpenDialog(false);
+    //     window.location.reload();
+    //   }, 500);
+    // } catch (err) {
+    //   console.log(err);
+    //   toast.error(err?.data?.message || err.error);
+    // }
   };
 
-  const duplicateHanlder = async () => {
-    try {
-      const res = await duplicateTask(task._id).unwrap();
+  const duplicateHandler = async () => {
+    // try {
+    //   const res = await duplicateTask(task._id).unwrap();
 
-      toast.success(res?.message);
+    //   toast.success(res?.message);
 
-      setTimeout(() => {
-        setOpenDialog(false);
-        window.location.reload();
-      }, 500);
-    } catch (err) {
-      console.log(err);
-      toast.error(err?.data?.message || err.error);
-    }
+    //   setTimeout(() => {
+    //     setOpenDialog(false);
+    //     window.location.reload();
+    //   }, 500);
+    // } catch (err) {
+    //   console.log(err);
+    //   toast.error(err?.data?.message || err.error);
+    // }
   };
 
   const items = [
@@ -186,7 +191,7 @@ export default function TaskDialog({ task }) {
     {
       label: "Duplicate",
       icon: <HiDuplicate className='mr-2 h-5 w-5' aria-hidden='true' />,
-      onClick: () => duplicateHanlder(),
+      onClick: () => duplicateHandler(),
     },
   ];
 
@@ -194,22 +199,32 @@ export default function TaskDialog({ task }) {
     <>
       <div className=''>
         <Menu as='div' className='relative inline-block text-left'>
-          <Menu.Button className='inline-flex w-full justify-center rounded-md px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300'>
+          <Menu.Button onClick={(e) => e.stopPropagation()} className={`${LightMode ? "text-gray-600" : "text-gray-100"} transition-all duration-300 ease-in-out outline-none cursor-pointer hover:scale-110 hover:text-blue-600 inline-flex w-full justify-center text-xl rounded-md px-4 py-2 font-medium `}>
             <BsThreeDots />
           </Menu.Button>
 
           <CustomTransition>
-            <Menu.Items className='absolute p-4 right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
+            <Menu.Items 
+              onMouseOver={(e) => e.stopPropagation()}
+              className={`
+                ${LightMode 
+                  ? "bg-white shadow-darkSM"
+                  : "bg-black/80 shadow-lightSM"
+                }
+                z-50 cursor-default border border-white absolute p-4 right-0 w-56 origin-top-right divide-y divide-gray-100 rounded-md ring-1 ring-black/5 focus:outline-none transition-all duration-300 ease-in-out
+              `}>
               <div className='px-1 py-1 space-y-2'>
                 {items.map((el, index) => (
                   <Menu.Item key={el.label}>
                     {({ active }) => (
                       <button
-                        disabled={index === 0 ? false : !user.isAdmin}
+                        // disabled={index === 0 ? false : !user.isAdmin}
                         onClick={el?.onClick}
                         className={`${
-                          active ? "bg-blue-500 text-white" : "text-gray-900"
-                        } group flex w-full items-center rounded-md px-2 py-2 text-sm disabled:text-gray-400`}
+                            active ? LightMode ? "bg-blue-600 text-white  hover:shadow-dark" : " text-white bg-blue-600 hover:shadow-light "  : LightMode ? "text-black" : " text-white"
+                          }
+                          hover:scale-110 group cursor-pointer flex w-full items-center rounded-md px-2 py-2 text-sm disabled:text-gray-400 transition-all duration-50 ease-in-out
+                        `}
                       >
                         {el.icon}
                         {el.label}
@@ -229,11 +244,11 @@ export default function TaskDialog({ task }) {
                 <Menu.Item>
                   {({ active }) => (
                     <button
-                      disabled={!user.isAdmin}
+                      // disabled={!user.isAdmin}
                       onClick={() => deleteClicks()}
                       className={`${
-                        active ? "bg-red-100 text-red-900" : "text-red-900"
-                      } group flex w-full items-center rounded-md px-2 py-2 text-sm disabled:text-gray-400`}
+                        active ? LightMode ? "bg-red-100 text-red-900  hover:shadow-dark" : " text-red-900 bg-red-100 hover:shadow-light"  : "text-red-600"
+                      } group hover:scale-110 transition-all duration-50 ease-in-out cursor-pointer flex w-full items-center rounded-md px-2 py-2 text-sm disabled:text-gray-400`}
                     >
                       <RiDeleteBin6Line
                         className='mr-2 h-5 w-5 text-red-600'
@@ -256,11 +271,11 @@ export default function TaskDialog({ task }) {
         key={new Date().getTime()}
       />
       <AddSubTask open={open} setOpen={setOpen} />
-      <ConfirmatioDialog
+      {/* <ConfirmatioDialog
         open={openDialog}
         setOpen={setOpenDialog}
         onClick={deleteHandler}
-      />
+      /> */}
     </>
   );
 }

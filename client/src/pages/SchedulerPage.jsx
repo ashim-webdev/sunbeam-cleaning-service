@@ -49,8 +49,8 @@ export default function SchedulerPage() {
         <div className="max-w-7xl mx-auto">
           <div className="mb-6 flex flex-col items-center justify-center gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-linear-to-br from-indigo-500 to-blue-600 rounded-xl shadow-lg">
-                <CalendarDays className={`${LightMode ? 'text-gray-900' : 'text-white'} w-8 h-8 transition-colors duration-300 ease-in-out`} />
+              <div className={`${LightMode ? 'shadow-darkSM' : 'shadow-lightSM'} bg-blue-600 p-3 rounded-xl transition-colors duration-300 ease-in-out`}>
+                <CalendarDays className={`${LightMode ? 'text-white' : 'text-white'} w-8 h-8 transition-colors duration-300 ease-in-out`} />
               </div>
               <div>
                 <h1

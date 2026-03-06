@@ -171,9 +171,21 @@ const AddTask = ({ open, setOpen, task }) => {
   // const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
   // const URLS = task?.assets ? [...task.assets] : [];
 
+  const [images, setImages] = useState([]);
+
 
   const handleSelect = (e) => {
     setAssets(e.target.files);
+    
+    const files = Array.from(e.target.files);
+
+    // Optional: filter only images
+    const imageFiles = files.filter((file) =>
+      file.type.startsWith("image/")
+    );
+
+    setImages(imageFiles);
+
   };
 
   return (
@@ -239,12 +251,13 @@ const AddTask = ({ open, setOpen, task }) => {
                     ? "text-black"
                     : "text-white"
                   }
-                  w-full flex items-center justify-center mt-4
+                  w-full flex  items-center justify-center mt-4
                 `}>
                 <label
-                  className='flex items-center gap-1 text-base text-ascent-2 hover:text-ascent-1 cursor-pointer my-4'
+                  className='flex flex-col items-center gap-1 text-base text-ascent-2 hover:text-ascent-1 cursor-pointer my-4'
                   htmlFor='imgUpload'
                 >
+                  <div className="flex flex-col items-center gap-1 text-base text-ascent-2 hover:text-ascent-1 hover:text-blue-600 transition-all duration-200 ease-in-out cursor-pointer">
                   <input
                     type='file'
                     className='hidden'
@@ -255,6 +268,28 @@ const AddTask = ({ open, setOpen, task }) => {
                   />
                   <BiImages />
                   <span>Add Assets</span>
+                  </div>
+
+                  <div>
+                    {/* Selected count */}
+                    {images.length > 0 && (
+                      <p className={`${LightMode ? "text-gray-500" : "text-gray-300"} mb-1 text-sm mt-0.5 text-center`}>
+                        {`${images.length} ${images.length >= 2 ? "images selected" : "image selected"}`}
+                      </p>
+                    )}
+
+                    {/* Preview Grid */}
+                    <div className="flex flex-wrap justify-center items-center">
+                      {images.map((file, index) => (
+                        <img
+                          key={index}
+                          src={URL.createObjectURL(file)}
+                          alt="preview"
+                          className={`${LightMode ? "shadow-darkSM border-amber-400" : "shadow-lightSM border-white"} ${index >= 1 ? "-ml-4" : "" } w-10 h-10 border  rounded-full object-cover shadow cursor-pointer transition-all duration-300 ease-in-out md:hover:scale-125 hover:z-50`}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 </label>
               </div>
             </div>

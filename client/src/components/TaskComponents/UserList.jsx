@@ -9,6 +9,7 @@ import { summary } from "../../assets/data.js";
 
 export default function UserList({ team, setTeam }) {
   const { LightMode } = useSelector((state) => state.auth);
+  const [isLoading, setIsLoading] = useState(false)
   // const { data, isLoading } = useGetTeamListsQuery({ search: "" });
   const [selectedUsers, setSelectedUsers] = useState([]);
 
@@ -45,13 +46,13 @@ export default function UserList({ team, setTeam }) {
 
 
 
-  // useEffect(() => {
-  //   if (team?.length < 1) {
-  //     data && setSelectedUsers([data[0]]);
-  //   } else {
-  //     setSelectedUsers(team);
-  //   }
-  // }, [isLoading]);
+  useEffect(() => {
+    if (team?.length < 1) {
+      data && setSelectedUsers([data[0]]);
+    } else {
+      setSelectedUsers(team);
+    }
+  }, [isLoading]);
 
   return (
     <div className=''>
@@ -118,19 +119,29 @@ export default function UserList({ team, setTeam }) {
                   {({ selected }) => (
                     <>
                       <div
-                        className={`flex items-center gap-2   truncate relative hover:scale-102 active:scale-99 transition-transform duration-200 ease-in-out ${
+                        className={`flex items-center gap-2  relative hover:scale-102 active:scale-99 transition-transform duration-200 ease-in-out ${
                           selected ? "font-medium" : "font-normal"
                         }`}
                       >
-                        <div
-                          className={`
-                            ${LightMode ? "shadow-inner" : "shadow-innerWH"}
-                            w-6 h-6 bg-purple-800 p-2 rounded-full text-white flex items-center justify-center transition-colors ease-in-out duration-300`
-                          }
-                        >
-                          <span className='text-center text-[10px]'>
-                            {getInitials(user.name)}
-                          </span>
+                        <div className="relative">
+                          <div
+                            className={`
+                              ${LightMode ? "shadow-inner" : "shadow-innerWH"}
+                              w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-inner transition-colors ease-in-out duration-300 overflow-hidden `
+                            }
+                          >
+                            {user?.img ? 
+                              <img src={user?.img} alt="Avatar" className="w-full h-full object-cover "/>
+                            :
+                              <span className='text-center text-[10px]'>
+                                {getInitials(user?.name)}
+                              </span>
+                            }
+                          </div>
+
+                          <div className={`${selected ? "block" : "hidden"} absolute -top-1 left-1.5 flex`}>
+                            <div className={`${leaderId === user._id ? "block" : "hidden"} w-2 h-2 mx-0.5 rounded-full bg-green-500 shadow-inner animate-spin`} />
+                          </div>
                         </div>
                         <span>{user.name}</span>
 

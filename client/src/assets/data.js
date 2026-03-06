@@ -32,7 +32,6 @@ export const summary = {
   last10Task: [
     {
       _id: "65c5f12ab5204a81bde866a9",
-
       title: "Office Clean Up",
       clientName: "Jasmine Ajamogha Edirin",
       address: "Jikwoyi phase 2 extention, Abuja",
@@ -817,6 +816,7 @@ export const summary = {
   users: [
     {
       _id: "65c5f27fb5204a81bde86833",
+      img: m1,
       name: "New User",
       email: "user@gmail.com",
       title: "Designer",
@@ -826,6 +826,7 @@ export const summary = {
     },
     {
       _id: "65c3176a0fd860f958baa099",
+      img: m2,
       name: "Emily Wilson",
       email: "emilyWilson@gmail.com",
       title: "Data Analyst",
@@ -835,6 +836,7 @@ export const summary = {
     },
     {
       _id: "65c317360fd860f958baa08e",
+      // img: m3,
       name: "Alex Johnson",
       email: "alexJohnson@gmail.com",
       title: "UX Designer",
@@ -844,6 +846,7 @@ export const summary = {
     },
     {
       _id: "65c30b96e639681a13def0b5",
+      img: m4,
       name: "Jane Smith",
       email: "janeSmith@gmail.com",
       title: "Product Manager",
@@ -853,6 +856,7 @@ export const summary = {
     },
     {
       _id: "65c202d4aa62f32ffd1303cc",
+      img: m5,
       name: "Codewave Asante",
       email: "codeAsa@gmail.com",
       title: "Administrator",
@@ -1611,6 +1615,12 @@ export const tasks = [
     __v: 2,
   },
 ];
+
+
+
+
+
+
 
 export const user = {
   _id: "662f32ffd1303cc",

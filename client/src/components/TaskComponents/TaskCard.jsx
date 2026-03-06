@@ -9,6 +9,7 @@ import {
   MdContentCopy,
   MdCheck
 } from "react-icons/md";
+import { HiDuplicate } from "react-icons/hi";
 import { toast } from 'sonner'
 import { useDispatch, useSelector } from "react-redux";
 
@@ -23,10 +24,10 @@ import {
   TASK_HEADER
 } from "../../utils/index.js";
 import UserInfoTask from "../UserInfoTask.jsx";
-// import { AddSubTask, TaskAssets, TaskColor, TaskDialog } from "./index";
 import AddSubTask from "./AddSubTask.jsx";
 import TaskAssets from "./TaskAssets.jsx";
 import TaskColor from "./TaskColor.jsx";
+import TaskDialog from "./TaskDialog.jsx"
 
 const ICONS = {
   high: <MdKeyboardDoubleArrowUp />,
@@ -71,9 +72,9 @@ const TaskCard = ({ task }) => {
             ? "bg-white"
             : "bg-black/90"
           }
-          relative w-full h-fit shadow-md p-4 mt-15 rounded transition-colors duration-300 ease-in-out
+          w-full h-fit shadow-md p-4 mt-15 rounded transition-colors duration-300 ease-in-out
         `}>
-        <Link to={`/task/${task._id}`}>
+        {/* <Link to={`/task/${task._id}`}> */}
           <div className={`
             ${LightMode 
               ? "border-gray-300 hover:shadow-darkSM"
@@ -90,8 +91,11 @@ const TaskCard = ({ task }) => {
               >
                 <span className='text-lg'>{ICONS[task?.priority]}</span>
                 <span className='uppercase'>{task?.priority} Priority</span>
+                <div className={`px-4 capitalize text-center text-lg  whitespace-nowrap`}>
+                  <i className={`animate-UpDown ${TASK_ICON[task?.stage].icon} ${TASK_ICON[task?.stage].color}`}></i>
+                </div>
               </div>
-              {/* <TaskDialog task={task} /> */}
+              <TaskDialog task={task} />
             </div>
             <>
                 <div className='CardTextColor mt-1 mb-1 pl-1.5 flex items-center gap-2'>
@@ -140,7 +144,7 @@ const TaskCard = ({ task }) => {
               </div>
             </div>
           </div>
-        </Link>
+        {/* </Link> */}
 
 
         {/* subtasks */}
@@ -156,7 +160,7 @@ const TaskCard = ({ task }) => {
               {task?.subTasks[0].title}
             </h5>
 
-            <div className='p-4 space-x-8'>
+            <div className='pt-4 px-4 pb-2 space-x-8'>
               <span className={`
                 ${LightMode 
                   ? "text-gray-600"
@@ -185,7 +189,7 @@ const TaskCard = ({ task }) => {
           </div>
         )}
 
-        <div className='w-full pb-2'>
+        <div className='w-full '>
           <button
             disabled={user ? false : true}
             onClick={(e) => {
@@ -193,16 +197,11 @@ const TaskCard = ({ task }) => {
               e.stopPropagation
 
             }}
-            className='w-full flex gap-4 items-center text-sm text-gray-500 font-semibold disabled:cursor-not-allowed disabled:text-gray-300'
+            className='py-2 cursor-pointer w-full flex gap-4 items-center text-sm text-gray-500 font-semibold hover:scale-103 hover:text-blue-600 transition-all duration-100 ease-in-out disabled:cursor-not-allowed disabled:text-gray-300'
           >
             <IoMdAdd className='text-lg' />
             <span>ADD SUBTASK</span>
           </button>
-        </div>
-
-
-        <div className={`absolute top-4 right-0 py-2 px-4 capitalize text-center  whitespace-nowrap`}>
-          <i className={`animate-UpDown ${TASK_ICON[task?.stage].icon} ${TASK_ICON[task?.stage].color}`}></i>
         </div>
       </div>
       
@@ -235,10 +234,10 @@ const TaskCard = ({ task }) => {
                 {copiedAddress === task?.address ? (
                   <i className="fa-solid fa-check-double bg-white p-0.5 rounded-full text-green-600 text-lg cursor-pointer hover:scale-110 transition-transform"></i>
                 ) : (
-                  <MdContentCopy
+                  <HiDuplicate
                     title="Copy address"
                     onClick={(e) => copyAddress(task?.address, e)}
-                    className="rounded-full text-lg cursor-pointer hover:scale-110 transition-transform"
+                    className="rounded-full text-xl cursor-pointer hover:scale-110 transition-transform"
                   />
                 )}
               </div>
