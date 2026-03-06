@@ -271,15 +271,8 @@ const AddTask = ({ open, setOpen, task }) => {
                   </div>
 
                   <div>
-                    {/* Selected count */}
-                    {images.length > 0 && (
-                      <p className={`${LightMode ? "text-gray-500" : "text-gray-300"} mb-1 text-sm mt-0.5 text-center`}>
-                        {`${images.length} ${images.length >= 2 ? "images selected" : "image selected"}`}
-                      </p>
-                    )}
-
                     {/* Preview Grid */}
-                    <div className="flex flex-wrap justify-center items-center">
+                    <div className="flex flex-wrap justify-center items-center mt-2">
                       {images.map((file, index) => (
                         <img
                           key={index}
@@ -289,6 +282,12 @@ const AddTask = ({ open, setOpen, task }) => {
                         />
                       ))}
                     </div>
+                    {/* Selected count */}
+                    {images.length > 0 && (
+                      <p className={`${LightMode ? "text-gray-500" : "text-gray-300"} mb-1 text-sm mt-1 text-center`}>
+                        {`${images.length} ${images.length >= 2 ? "images selected" : "image selected"}`}
+                      </p>
+                    )}
                   </div>
                 </label>
               </div>

@@ -1,26 +1,30 @@
 import React from 'react'
 
-const DeleteBtn = () => {
+const DeleteBtn = ({ onClick }) => {
   return (
-    <button onClick={(e) => e.stopPropagation()} class="bin-button shadow-inner hover:shadow-innerWH">
+    <button onClick={
+      (e) => {
+        e.stopPropagation();
+        onClick?.(e)
+      }} className="bin-button shadow-inner hover:shadow-innerWH">
       <svg
-        class="bin-top"
+        className="bin-top"
         viewBox="0 0 39 7"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <line y1="5" x2="39" y2="5" stroke="white" stroke-width="4"></line>
+        <line y1="5" x2="39" y2="5" stroke="white" strokeWidth="4"></line>
         <line
           x1="12"
           y1="1.5"
           x2="26.0357"
           y2="1.5"
           stroke="white"
-          stroke-width="3"
+          strokeWidth="3"
         ></line>
       </svg>
       <svg
-        class="bin-bottom"
+        className="bin-bottom"
         viewBox="0 0 33 39"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -35,8 +39,8 @@ const DeleteBtn = () => {
           fill="white"
           mask="url(#path-1-inside-1_8_19)"
         ></path>
-        <path d="M12 6L12 29" stroke="white" stroke-width="4"></path>
-        <path d="M21 6V29" stroke="white" stroke-width="4"></path>
+        <path d="M12 6L12 29" stroke="white" strokeWidth="4"></path>
+        <path d="M21 6V29" stroke="white" strokeWidth="4"></path>
       </svg>
     </button>
 

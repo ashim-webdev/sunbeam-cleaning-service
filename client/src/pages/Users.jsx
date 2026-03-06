@@ -2,14 +2,8 @@ import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { toast } from "sonner";
-// import {
-//   AddUser,
-//   Button,
-//   ConfirmatioDialog,
-//   Loading,
-//   Title,
-//   UserAction,
-// } from "../components";
+import ConfirmationDialog from "../components/ConfirmationDialog";
+import AddUser from "../components/AddUser";
 import Loading from "../components/Loading";
 import Button from "../components/Button";
 import Title from "../components/Title";
@@ -46,55 +40,55 @@ const Users = () => {
   const [openAction, setOpenAction] = useState(false);
   const [selected, setSelected] = useState(null);
 
-  // const deleteClick = (id) => {
-  //   setSelected(id);
-  //   setOpenDialog(true);
-  // };
+  const deleteClick = (id) => {
+    setSelected(id);
+    setOpenDialog(true);
+  };
 
-  // const editClick = (el) => {
-  //   setSelected(el);
-  //   setOpen(true);
-  // };
+  const editClick = (el) => {
+    setSelected(el);
+    setOpen(true);
+  };
 
   // const userStatusClick = (el) => {
   //   setSelected(el);
   //   setOpenAction(true);
   // };
 
-  // const deleteHandler = async () => {
-  //   try {
-  //     const res = await deleteUser(selected);
+  const deleteHandler = async () => {
+    // try {
+    //   const res = await deleteUser(selected);
 
-  //     refetch();
-  //     toast.success(res?.data?.message);
-  //     setSelected(null);
-  //     setTimeout(() => {
-  //       setOpenDialog(false);
-  //     }, 500);
-  //   } catch (error) {
-  //     console.log(err);
-  //     toast.error(err?.data?.message || err.error);
-  //   }
-  // };
+    //   refetch();
+    //   toast.success(res?.data?.message);
+    //   setSelected(null);
+    //   setTimeout(() => {
+    //     setOpenDialog(false);
+    //   }, 500);
+    // } catch (error) {
+    //   console.log(err);
+    //   toast.error(err?.data?.message || err.error);
+    // }
+  };
 
-  // const userActionHandler = async () => {
-  //   try {
-  //     const res = await userAction({
-  //       isActive: !selected?.isActive,
-  //       id: selected?._id,
-  //     });
+  const userActionHandler = async () => {
+    // try {
+    //   const res = await userAction({
+    //     isActive: !selected?.isActive,
+    //     id: selected?._id,
+    //   });
 
-  //     refetch();
-  //     toast.success(res?.data?.message);
-  //     setSelected(null);
-  //     setTimeout(() => {
-  //       setOpenAction(false);
-  //     }, 500);
-  //   } catch (error) {
-  //     console.log(err);
-  //     toast.error(err?.data?.message || err.error);
-  //   }
-  // };
+    //   refetch();
+    //   toast.success(res?.data?.message);
+    //   setSelected(null);
+    //   setTimeout(() => {
+    //     setOpenAction(false);
+    //   }, 500);
+    // } catch (error) {
+    //   console.log(err);
+    //   toast.error(err?.data?.message || err.error);
+    // }
+  };
 
   // useEffect(() => {
   //   refetch();
@@ -154,14 +148,16 @@ const Users = () => {
         </div>
         
       </td>
-      <td className='p-2 flex gap-4 justify-center'>
+      <td className='p-2 flex gap-3 justify-center'>
         {/* <Button
           className='text-blue-600 hover:text-blue-500 font-semibold sm:px-0'
           label='Edit'
           type='button'
           onClick={() => editClick(user)}
         /> */}
-        <EditBtn />
+        <EditBtn 
+          onClick={() => editClick(user)}
+        />
 
         {/* <Button
           className='text-red-700 hover:text-red-500 font-semibold sm:px-0'
@@ -169,7 +165,9 @@ const Users = () => {
           type='button'
           onClick={() => deleteClick(user?._id)}
         /> */}
-        <DeleteBtn />
+        <DeleteBtn
+          onClick={() => deleteClick(user?._id)}
+        />
       </td>
     </tr>
   );
@@ -188,7 +186,7 @@ const Users = () => {
             label='Add New User'
             icon={<IoMdAdd className='text-lg' />}
             className='ClickAnimationNoti flex flex-row-reverse gap-1 items-center bg-blue-600 text-white rounded-md 2xl:py-2.5 shadow-inner hover:shadow-innerWH transition-colors duration-300 ease-in-out'
-            // onClick={() => setOpen(true)}
+            onClick={() => setOpen(true)}
           />
         </div>
         <div className={`
@@ -211,20 +209,20 @@ const Users = () => {
         </div>
       </div>
 
-      {/* <AddUser
+      <AddUser
         open={open}
         setOpen={setOpen}
         userData={selected}
         key={new Date().getTime().toString()}
       />
 
-      <ConfirmatioDialog
+      <ConfirmationDialog
         open={openDialog}
         setOpen={setOpenDialog}
         onClick={deleteHandler}
       />
 
-      <UserAction
+      {/* <UserAction
         open={openAction}
         setOpen={setOpenAction}
         onClick={userActionHandler}

@@ -13,7 +13,7 @@ import { BGS, PRIORITY_STYLES, TASK_TYPE, formatDate } from "../utils/index.js";
 import { useDispatch, useSelector } from "react-redux";
 
 
-// import { Button, ConfirmatioDialog, UserInfo } from "./index";
+import ConfirmationDialog from "./ConfirmationDialog.jsx";
 import UserInfoDash from "./UserInfoDash.jsx";
 import Button from "./Button.jsx";
 import TaskColor from "./TaskComponents/TaskColor.jsx";
@@ -42,34 +42,34 @@ const Table = ({ tasks }) => {
 
   // const [deleteTask] = useTrashTastMutation();
 
-  // const deleteClicks = (id) => {
-  //   setSelected(id);
-  //   setOpenDialog(true);
-  // };
+  const deleteClicks = (id) => {
+    setSelected(id);
+    setOpenDialog(true);
+  };
 
   // const editClickHandler = (el) => {
   //   setSelected(el);
   //   setOpenEdit(true);
   // };
 
-  // const deleteHandler = async () => {
-  //   try {
-  //     const res = await deleteTask({
-  //       id: selected,
-  //       isTrashed: "trash",
-  //     }).unwrap();
+  const deleteHandler = async () => {
+    // try {
+    //   const res = await deleteTask({
+    //     id: selected,
+    //     isTrashed: "trash",
+    //   }).unwrap();
 
-  //     toast.success(res?.message);
+    //   toast.success(res?.message);
 
-  //     setTimeout(() => {
-  //       setOpenDialog(false);
-  //       window.location.reload();
-  //     }, 500);
-  //   } catch (err) {
-  //     console.log(err);
-  //     toast.error(err?.data?.message || err.error);
-  //   }
-  // };
+    //   setTimeout(() => {
+    //     setOpenDialog(false);
+    //     window.location.reload();
+    //   }, 500);
+    // } catch (err) {
+    //   console.log(err);
+    //   toast.error(err?.data?.message || err.error);
+    // }
+  };
 
   const TableHeader = () => (
     <thead className='w-full border-b border-gray-300 dark:border-gray-600'>
@@ -207,7 +207,9 @@ const Table = ({ tasks }) => {
             type='button'
             onClick={() => editClickHandler(task)}
           /> */}
-          <EditBtn />
+          <EditBtn 
+            onClick={() => editClickHandler(task)}
+          />
 
           {/* <Button
             className='text-red-700 hover:text-red-500 sm:px-0 text-sm md:text-base'
@@ -216,7 +218,9 @@ const Table = ({ tasks }) => {
             onClick={() => deleteClicks(task._id)}
           /> */}
 
-          <DeleteBtn />
+          <DeleteBtn
+            onClick={() => deleteClicks(task._id)}
+          />
         </td>
       </tr>
     );
@@ -243,11 +247,11 @@ const Table = ({ tasks }) => {
         </div>
       </div>
 
-      {/* <ConfirmatioDialog
+      <ConfirmationDialog
         open={openDialog}
         setOpen={setOpenDialog}
         onClick={deleteHandler}
-      /> */}
+      />
 
       {/* <AddTask
         open={openEdit}

@@ -17,6 +17,8 @@ import TaskColor from "../components/TaskComponents/TaskColor";
 import DeleteBtn from "../components/DeleteBtn";
 import Del_Res from "../components/Del_Res";
 import RestoreBtn from "../components/RestoreBtn";
+import ConfirmationDialog from "../components/ConfirmationDialog";
+import AddUser from "../components/AddUser";
 // import {
 //   useDeleteRestoreTastMutation,
 //   useGetAllTaskQuery,
@@ -56,17 +58,17 @@ const Trash = () => {
   // });
   // const [deleteRestoreTask] = useDeleteRestoreTastMutation();
 
-  // const deleteAllClick = () => {
-  //   setType("deleteAll");
-  //   setMsg("Do you want to permenantly delete all items?");
-  //   setOpenDialog(true);
-  // };
+  const deleteAllClick = () => {
+    setType("deleteAll");
+    setMsg("Do you want to permenantly delete all items?");
+    setOpenDialog(true);
+  };
 
-  // const restoreAllClick = () => {
-  //   setType("restoreAll");
-  //   setMsg("Do you want to restore all items in the trash?");
-  //   setOpenDialog(true);
-  // };
+  const restoreAllClick = () => {
+    setType("restoreAll");
+    setMsg("Do you want to restore all items in the trash?");
+    setOpenDialog(true);
+  };
 
   // const deleteClick = (id) => {
   //   setType("delete");
@@ -278,6 +280,7 @@ const Trash = () => {
                 // onClick={() => restoreAllClick()}
               /> */}
               <Del_Res
+                onClick={() => restoreAllClick()}
                 className={"bg-[#001fe5] hover:bg-[#000ecc] border border-[#000acc] active:border-[#0c00b2]"}
                 spanClass={"bg-[#1b03b6] active:bg-[#1d0298]"}
                 text="Restore All" 
@@ -306,6 +309,7 @@ const Trash = () => {
                 // onClick={() => deleteAllClick()}
               /> */}
               <Del_Res 
+                onClick={() => deleteAllClick()}
                 className={"bg-[#e50000] hover:bg-[#cc0000] border border-[#cc0000] active:border-[#b20000]"}
                 spanClass={"bg-[#cc0000] active:bg-[#b20000]"}
                 text="Delete All" 
@@ -423,9 +427,9 @@ const Trash = () => {
         )}
       </div>
 
-      {/* <AddUser open={open} setOpen={setOpen} /> */}
+      <AddUser open={open} setOpen={setOpen} />
 
-      {/* <ConfirmatioDialog
+      <ConfirmationDialog
         open={openDialog}
         setOpen={setOpenDialog}
         msg={msg}
@@ -433,7 +437,7 @@ const Trash = () => {
         type={type}
         setType={setType}
         onClick={() => deleteRestoreHandler()}
-      /> */}
+      />
     </>
   );
 };
