@@ -17,9 +17,9 @@ export default function ConfirmationDialog({
   const { LightMode } = useSelector((state) => state.auth);
   
   const closeDialog = () => {
-    setType("delete");
-    setMsg(null);
     setOpen(false);
+    setType(type);
+    setMsg(msg);
   };
 
   return (

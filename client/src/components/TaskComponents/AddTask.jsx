@@ -392,12 +392,7 @@ const AddTask = ({ open, setOpen, task }) => {
 
               <Button
                 type='button'
-                className={`
-                    ${LightMode 
-                    ? "bg-black/80 text-white shadow-innerWH hover:shadow-inner" 
-                    : "bg-white text-black shadow-inner hover:shadow-innerWH"
-                  } px-5 text-sm font-semibold sm:w-auto  transition-all active:scale-90 duration-300 ease-in-out
-                `}
+                className='bg-white px-5 text-sm font-semibold text-gray-900 sm:w-auto shadow-inner hover:scale-105 transition-all duration-150 ease-in-out'
                 onClick={() => setOpen(false)}
                 label='Cancel'
               />

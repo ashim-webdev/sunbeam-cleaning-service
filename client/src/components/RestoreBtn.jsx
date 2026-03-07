@@ -1,9 +1,14 @@
 import React from 'react'
 
-const RestoreBtn = () => {
+const RestoreBtn = ({ onClick }) => {
   return (
     <>
-      <button onClick={(e) => e.stopPropagation()} class="RestoreButton ClickAnimationNoti shadow-inner hover:shadow-innerWH transition-colors duration-200 ease-in-out">
+      <button onClick={
+          (e) => {
+            e.stopPropagation();
+            onClick?.(e)
+          }
+        } class="RestoreButton ClickAnimationNoti shadow-inner hover:shadow-innerWH transition-colors duration-200 ease-in-out">
         <svg 
           className="svgIcon"
           height="512"

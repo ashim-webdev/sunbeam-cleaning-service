@@ -57,7 +57,7 @@ const Navbar = ({ isScrolled }) => {
         {/* {location?.pathname !== "/dashboard" && ( */}
           <form
             onSubmit={handleSubmit}
-            className='w-auto 2xl:w-100 flex items-center py-2 px-3 gap-2 rounded-full  dark:bg-[#1c1c1c]'
+            className='w-auto 2xl:w-100 flex items-center py-2 px-3 gap-2 rounded-full'
           >
             <div className="input-container">
               <input

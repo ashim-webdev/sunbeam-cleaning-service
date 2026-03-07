@@ -113,7 +113,7 @@ const AddUser = ({ open, setOpen, userData }) => {
               type='text'
               name='name'
               label='Full Name'
-                className={`w-full border rounded-md outline-0 transition-all duration-200 ${
+                className={`w-full border rounded-md outline-0 ${
                 errors.name
                   ? `border-2 border-red-500 focus:border-red-500 ${
                       shake ? "animate-shake" : ""
@@ -131,7 +131,7 @@ const AddUser = ({ open, setOpen, userData }) => {
               type='text'
               name='title'
               label='Title'
-                className={`w-full border rounded-md outline-0 transition-all duration-200 ${
+                className={`w-full border rounded-md outline-0 ${
                 errors.title
                   ? `border-2 border-red-500 focus:border-red-500 ${
                       shake ? "animate-shake" : ""
@@ -149,7 +149,7 @@ const AddUser = ({ open, setOpen, userData }) => {
               type='email'
               name='email'
               label='Email Address'
-                className={`w-full border rounded-md outline-0 transition-all duration-200 ${
+                className={`w-full border rounded-md outline-0 ${
                 errors.email
                   ? `border-2 border-red-500 focus:border-red-500 ${
                       shake ? "animate-shake" : ""
@@ -168,7 +168,7 @@ const AddUser = ({ open, setOpen, userData }) => {
               type='text'
               name='role'
               label='Role'
-                className={`w-full border rounded-md outline-0 transition-all duration-200 ${
+                className={`w-full border rounded-md outline-0 ${
                 errors.role
                   ? `border-2 border-red-500 focus:border-red-500 ${
                       shake ? "animate-shake" : ""
@@ -197,7 +197,7 @@ const AddUser = ({ open, setOpen, userData }) => {
 
               <Button
                 type='button'
-                className='bg-white px-5 text-sm font-semibold text-gray-900 sm:w-auto shadow-inner hover:shadow-innerWH hover:scale-105 transition-all duration-150 ease-in-out'
+                className='bg-white px-5 text-sm font-semibold text-gray-900 sm:w-auto shadow-inner hover:scale-105 transition-all duration-150 ease-in-out'
                 onClick={() => setOpen(false)}
                 label='Cancel'
               />

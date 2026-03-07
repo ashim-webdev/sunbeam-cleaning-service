@@ -70,18 +70,18 @@ const Trash = () => {
     setOpenDialog(true);
   };
 
-  // const deleteClick = (id) => {
-  //   setType("delete");
-  //   setSelected(id);
-  //   setOpenDialog(true);
-  // };
+  const deleteClick = (id) => {
+    setType("delete");
+    setSelected(id);
+    setOpenDialog(true);
+  };
 
-  // const restoreClick = (id) => {
-  //   setSelected(id);
-  //   setType("restore");
-  //   setMsg("Do you want to restore the selected item?");
-  //   setOpenDialog(true);
-  // };
+  const restoreClick = (id) => {
+    setSelected(id);
+    setType("restore");
+    setMsg("Do you want to restore the selected item?");
+    setOpenDialog(true);
+  };
   // WE GO HERE ON RESUME
   // const deleteRestoreHandler = async () => {
   //   try {
@@ -249,13 +249,13 @@ const Trash = () => {
           icon={<MdOutlineRestore className='text-xl text-gray-500' />}
           onClick={() => restoreClick(item._id)}
         /> */}
-        <RestoreBtn />
+        <RestoreBtn onClick={() => restoreClick(item._id)}/>
 
         {/* <Button
           icon={<MdDelete className='text-xl text-red-600' />}
           onClick={() => deleteClick(item._id)}
         /> */}
-        <DeleteBtn />
+        <DeleteBtn onClick={() => deleteClick(item._id)}/>
       </td>
     </tr>
   );

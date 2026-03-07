@@ -383,10 +383,10 @@ const TaskDetail = () => {
           <>
             <div className={`${LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM"} w-full flex flex-col md:flex-row gap-5 2xl:gap-8 shadow rounded-md px-8 py-8 overflow-y-auto`}>
               <div className='relative w-full md:w-1/2 space-y-8'>
-                <div className='flex flex-col xl:flex-row items-start xl:items-center gap-5'>
+                <div className='flex flex-col xl:flex-row items-start xl:items-center gap-5 mb-12'>
                   <div
                     className={clsx(
-                      "flex gap-1 items-center text-base font-semibold px-3 py-1 rounded-full",
+                      "flex gap-1 items-center text-base font-semibold px-3 py-1 rounded-full shadow-inner",
                       PRIORITY_STYLES[task?.priority],
                       bgColor[task?.priority]
                     )}
@@ -400,9 +400,20 @@ const TaskDetail = () => {
                     <span className={`${LightMode ? "text-black" : "text-white"} uppercase transition-colors duration-300 ease-in-out`}>{task?.stage}</span>
                   </div>
                 </div>
+                
+                <p className={`${LightMode ? "text-black bg-blue-50 shadow-darkSM" : "text-white shadow-lightSM"} mt-6 border-l-10 border-blue-600 pl-2 rounded-l-lg  flex gap-2 justify-start items-center transition-colors duration-300 ease-in-out `}>
+                  <span className="font-semibold whitespace-nowrap ">Client Name:</span>
+                  <span className="font-bold text-lg line-clamp-1 italic pr-1">{task?.clientName}</span>
+                </p>
 
-                <p className={`${LightMode ? "text-gray-500" : "text-gray-400"} transition-colors duration-300 ease-in-out`}>
-                  Created At: {new Date(task?.date).toDateString()}
+                <p className={`${LightMode ? "text-black bg-blue-50 shadow-darkSM" : "text-white shadow-lightSM"} border-l-10 border-blue-600  pl-2 rounded-l-lg flex gap-2 justify-start items-center transition-colors duration-300 ease-in-out -mt-4`}>
+                  <span className="font-semibold">Location:</span>
+                  <span className="font-bold text-lg line-clamp-1 italic pr-1">{task?.address}</span>
+                </p>
+
+                <p className={`${LightMode ? "text-black bg-blue-50 shadow-darkSM" : "text-white shadow-lightSM"} border-l-10 border-blue-600 pl-2 rounded-l-lg flex gap-2 justify-start items-center -mt-4`}>
+                  <span className="font-semibold whitespace-nowrap">Created At:</span>
+                  <span className={`${LightMode ? "text-gray-500" : "text-gray-400"} font-semibold transition-colors duration-300 ease-in-out italic`}>{new Date(task?.date).toDateString()}</span>
                 </p>
 
                 <div className={`${LightMode ? "text-gray-500 border-gray-400" : "text-gray-400 border-gray-200"} transition-colors duration-300 ease-in-out flex items-center gap-8 p-4 border-y`}>

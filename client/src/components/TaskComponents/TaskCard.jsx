@@ -72,9 +72,9 @@ const TaskCard = ({ task }) => {
             ? "bg-white"
             : "bg-black/90"
           }
-          w-full h-fit shadow-md p-4 mt-15 rounded transition-colors duration-300 ease-in-out
+          relative w-full h-fit shadow-md p-4 mt-15 rounded transition-colors duration-300 ease-in-out
         `}>
-        {/* <Link to={`/task/${task._id}`}> */}
+        <Link to={`/task/${task._id}`}>
           <div className={`
             ${LightMode 
               ? "border-gray-300 hover:shadow-darkSM"
@@ -95,7 +95,6 @@ const TaskCard = ({ task }) => {
                   <i className={`animate-UpDown ${TASK_ICON[task?.stage].icon} ${TASK_ICON[task?.stage].color}`}></i>
                 </div>
               </div>
-              <TaskDialog task={task} />
             </div>
             <>
                 <div className='CardTextColor mt-1 mb-1 pl-1.5 flex items-center gap-2'>
@@ -144,7 +143,7 @@ const TaskCard = ({ task }) => {
               </div>
             </div>
           </div>
-        {/* </Link> */}
+        </Link>
 
 
         {/* subtasks */}
@@ -183,7 +182,7 @@ const TaskCard = ({ task }) => {
           </div>
         ) : (
           <div>
-            <div className='py-4 border-t border-gray-200 dark:border-gray-700'>
+            <div className='py-4 border-t border-gray-200'>
               <span className='text-gray-500'>No Sub-Task</span>
             </div>
           </div>
@@ -202,6 +201,11 @@ const TaskCard = ({ task }) => {
             <IoMdAdd className='text-lg' />
             <span>ADD SUBTASK</span>
           </button>
+        </div>
+
+        {/* Dialog Component */}
+        <div className="absolute top-7.5 right-6">
+          <TaskDialog task={task} />
         </div>
       </div>
       

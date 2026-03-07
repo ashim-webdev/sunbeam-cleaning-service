@@ -72,7 +72,7 @@ const Table = ({ tasks }) => {
   };
 
   const TableHeader = () => (
-    <thead className='w-full border-b border-gray-300 dark:border-gray-600'>
+    <thead className='w-full border-b border-gray-300'>
       <tr className={`
           ${LightMode 
             ? "text-black"

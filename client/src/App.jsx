@@ -55,7 +55,9 @@ function Layout() {
         <Sidebar />
       </div>
 
+      <div className="z-200">
       <MobileSidebar />
+      </div>
 
       <div ref={containerRef} className='flex-1 overflow-y-auto'>
         <Navbar isScrolled={isScrolled}/>
@@ -106,30 +108,33 @@ const MobileSidebar = () => {
             
           >
             <div className={`
-                ${LightMode 
-                  ? "bg-white/10"
-                  : "bg-[#3D3D3D]"
-                }
-                lg:hidden w-full h-full overflow-hidden transition-colors ease-in-out duration-300 
+                
+                fixed top-0 left-0 lg:hidden w-full h-screen transition-colors ease-in-out duration-300 overflow-x-auto 
               `}>
-              <div className='w-3/4 md:w-screen h-full'>
-                <div className='w-full flex justify-end px-5 pt-4'>
-                  <button
-                    onClick={() => closeSidebar()}
-                    className='flex justify-end items-end'
-                  >
-                    <i className={`
-                        ${LightMode 
-                          ? "text-gray-500 hover:text-gray-600"
-                          : "text-white"
-                        }
-                        fa-solid fa-x text-2xl cursor-pointer transition-transform ease-in-out duration-200 hover:scale-105 z-10`
-                      }></i>
-                  </button>
-                </div>
-
-                <div className='-mt-10'>
+              <div className=' md:w-screen h-full'>
+                <div className={`
+                    ${LightMode 
+                      ? "shadow-dark"
+                      : "shadow-light"
+                    }
+                    absolute top-0 sm:w-1/2 w-3/4
+                  `}>
                   <Sidebar />
+
+                  <div className='absolute top-2.5 right-3 w-full flex justify-end px-5 pt-4'>
+                    <button
+                      onClick={() => closeSidebar()}
+                      className='flex justify-end items-end'
+                    >
+                      <i className={`
+                          ${LightMode 
+                            ? "text-gray-500 hover:text-gray-600"
+                            : "text-white"
+                          }
+                          fa-solid fa-x text-2xl cursor-pointer transition-transform ease-in-out duration-200 hover:scale-105 z-10`
+                        }></i>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

@@ -27,7 +27,7 @@ const TaskTitle = ({ label, className }) => {
               ? "text-black"
               : "text-white"
             }
-            text-lg dark:text-gray-300 transition-colors ease-in-out duration-300
+            text-lg transition-colors ease-in-out duration-300
           `} />
       </button>
     </div>

@@ -199,7 +199,7 @@ export default function TaskDialog({ task }) {
     <>
       <div className=''>
         <Menu as='div' className='relative inline-block text-left'>
-          <Menu.Button onClick={(e) => e.stopPropagation()} className={`${LightMode ? "text-gray-600" : "text-gray-100"} transition-all duration-300 ease-in-out outline-none cursor-pointer hover:scale-110 hover:text-blue-600 inline-flex w-full justify-center text-2xl bg-amber-300 rounded-md  px-1 py-0.5 font-medium `}>
+          <Menu.Button onClick={(e) => e.stopPropagation()} className={`${LightMode ? "text-gray-600 shadow-inner" : "text-gray-100 shadow-innerWH"} transition-all duration-300 ease-in-out outline-none cursor-pointer hover:scale-110 hover:text-blue-600 inline-flex w-full justify-center sm:text-2xl text-xl rounded-md  px-1 py-0.5 font-medium `}>
             <BsThreeDots />
           </Menu.Button>
 

@@ -57,14 +57,14 @@ const UserAvatar = () => {
                   ? "bg-white"
                   : "bg-black/90 border border-white text-white"
                 }
-                absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md dark:bg-[#1f1f1f] shadow-2xl ring-1 ring-black/5 focus:outline-none transition-colors ease-in-out duration-300
+                absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md shadow-2xl ring-1 ring-black/5 focus:outline-none transition-colors ease-in-out duration-300
               `}>
               <div className='p-4'>
                 <Menu.Item>
                   {({ active }) => (
                     <button
                       onClick={() => setOpen(true)}
-                      className={` dark:text-gray-300  group flex w-full items-center rounded-md px-2 py-2 text-base transition-transform hover:scale-105 ease-in-out duration-200 cursor-pointer`}
+                      className={`group flex w-full items-center rounded-md px-2 py-2 text-base transition-transform hover:scale-105 ease-in-out duration-200 cursor-pointer`}
                     >
                       <FaUser className='mr-2' aria-hidden='true' />
                       Profile
@@ -76,7 +76,7 @@ const UserAvatar = () => {
                   {({ active }) => (
                     <button
                       onClick={() => setOpenPassword(true)}
-                      className={` dark:text-gray-300  group flex w-full items-center rounded-md px-2 py-2 text-base transition-transform hover:scale-105 ease-in-out duration-200 cursor-pointer`}
+                      className={`group flex w-full items-center rounded-md px-2 py-2 text-base transition-transform hover:scale-105 ease-in-out duration-200 cursor-pointer`}
                     >
                       <FaUserLock className='mr-2' aria-hidden='true' />
                       Change Password
