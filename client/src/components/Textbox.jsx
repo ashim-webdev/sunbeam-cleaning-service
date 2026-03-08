@@ -92,7 +92,7 @@ const Textbox = React.forwardRef(
               onClick={() => setOpen((prev) => !prev)}
               className={`
                 ${LightMode ? "text-black/70 hover:text-black" : "text-white/70 hover:text-white"}
-                fa-solid fa-calendar sm:text-xl text-lg absolute top-3 right-4 cursor-pointer shadow-2xl transition-all duration-300 ease-in-out active:scale-90
+                fa-solid fa-calendar sm:text-xl text-lg absolute top-2.75 [@media(min-width:500px)_and_(max-width:767px)]:right-4 right-2 cursor-pointer shadow-2xl transition-all duration-300 ease-in-out active:scale-90
               `}></i>
           </div>
         ) : (

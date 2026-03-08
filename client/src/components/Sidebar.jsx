@@ -131,7 +131,7 @@ const Sidebar = () => {
         ? "bg-white "
         : "bg-black/90"
       }
-        w-full  h-screen flex flex-col gap-6 p-5 transition-colors ease-in-out duration-300
+        w-full  portrait:h-dvh landscape:h-full flex flex-col gap-6 p-5 transition-colors ease-in-out duration-300
     `}>
       <h1 className='flex gap-1 items-center'>
         <p className='p-2 bg-blue-600 shadow-inner rounded-full'>

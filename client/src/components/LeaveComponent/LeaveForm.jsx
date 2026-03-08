@@ -20,6 +20,11 @@ export function LeaveForm({ userEmail, onSubmitSuccess }) {
   // Shake animation trigger
   const handleErrorAnimation = () => {
     setShake(true);
+
+    if (navigator.vibrate) {
+      navigator.vibrate(300);
+    }
+    
     setTimeout(() => {
       setShake(false);
     }, 1000);

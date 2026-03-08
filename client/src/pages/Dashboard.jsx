@@ -24,6 +24,11 @@ import UserInfoDash from "../components/UserInfoDash"
 
 
 
+import { Link } from "react-router-dom";
+
+
+
+
 const Dashboard = () => {
   const { LightMode } = useSelector((state) => state.auth);
   const totals = summary.tasks
@@ -166,7 +171,15 @@ const Dashboard = () => {
               user?.isActive ? "bg-green-500 text-white hover:bg-green-700 hover:scale-105" : "bg-red-500 text-whits hover:bg-red-700 hover:scale-110"
             )}
           >
+            
+
+
+            <Link to={`/log-in`}>
             {user?.isActive ? "Active" : "Disabled"}
+            </Link>
+
+
+
           </button>
         </td>
         <td className='pt-5 pl-1 text-sm hidden sm:block'>{moment(user?.createdAt).fromNow()}</td>

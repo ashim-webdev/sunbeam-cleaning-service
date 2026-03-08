@@ -25,6 +25,11 @@ export function LeaveDetailModal({ request, isAdmin, onClose, onUpdate }) {
   // Shake animation trigger
   const handleErrorAnimation = () => {
     setShake(true);
+
+    if (navigator.vibrate) {
+      navigator.vibrate(300);
+    }
+    
     setTimeout(() => {
       setShake(false);
     }, 1000);

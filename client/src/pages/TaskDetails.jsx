@@ -411,7 +411,7 @@ const TaskDetail = () => {
                   <span className="font-bold text-lg line-clamp-1 italic pr-1">{task?.address}</span>
                 </p>
 
-                <p className={`${LightMode ? "text-black bg-blue-50 shadow-darkSM" : "text-white shadow-lightSM"} border-l-10 border-blue-600 pl-2 rounded-l-lg flex gap-2 justify-start items-center -mt-4`}>
+                <p className={`${LightMode ? "text-black bg-blue-50 shadow-darkSM" : "text-white shadow-lightSM"} border-l-10 border-blue-600 pl-2 rounded-l-lg flex gap-2 justify-start items-center -mt-4 transition-colors duration-300 ease-in-out`}>
                   <span className="font-semibold whitespace-nowrap">Created At:</span>
                   <span className={`${LightMode ? "text-gray-500" : "text-gray-400"} font-semibold transition-colors duration-300 ease-in-out italic`}>{new Date(task?.date).toDateString()}</span>
                 </p>

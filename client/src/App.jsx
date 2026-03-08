@@ -109,9 +109,9 @@ const MobileSidebar = () => {
           >
             <div className={`
                 
-                fixed top-0 left-0 lg:hidden w-full h-screen transition-colors ease-in-out duration-300 overflow-x-auto 
+                fixed top-0 left-0 lg:hidden w-full h-screen transition-colors ease-in-out duration-300 overflow-auto
               `}>
-              <div className=' md:w-screen h-full'>
+              <div className=' md:w-full h-full'>
                 <div className={`
                     ${LightMode 
                       ? "shadow-dark"
