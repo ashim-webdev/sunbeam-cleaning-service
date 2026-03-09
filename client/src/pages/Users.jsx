@@ -123,10 +123,17 @@ const Users = () => {
         `}>
       <td className='p-2'>
         <div className='flex items-center gap-3 whitespace-nowrap'>
-          <div className='w-9 h-9 rounded-full text-white flex items-center justify-center text-sm bg-blue-600'>
-            <span className='text-xs md:text-sm text-center'>
-              {getInitials(user.name)}
-            </span>
+          <div className={clsx(
+            "w-9 h-9 rounded-full border border-white flex items-center justify-center text-white text-sm ml-2 shadow-inner overflow-hidden bg-blue-600",
+            
+          )}>
+            {user?.img ? 
+              <img src={user?.img} alt="Avatar" className="w-full h-full object-cover "/>
+            :
+              <span className='text-xs md:text-sm text-center'>
+                {getInitials(user?.name)}
+              </span>
+            }
           </div>
           {user.name}
         </div>

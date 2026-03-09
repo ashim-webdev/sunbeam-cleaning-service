@@ -239,7 +239,7 @@ html {
 }
 
 .LogIn-BG {
-  position: absolute;
+  position: fixed;
   background: linear-gradient( -45deg, #000000 50%, #ffffff51 50%);
   background-attachment: fixed;
   background-position: center;

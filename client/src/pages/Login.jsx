@@ -83,8 +83,8 @@ const Login = () => {
 
   
   return (
-    <div className='relative'>
-      <div className='Login w-full min-h-screen flex items-center justify-center flex-col lg:flex-row shadow-inner'>
+    <div className='relative overflow-hidden w-full h-full'>
+      <div className='Login w-full h-full flex items-center justify-center flex-col lg:flex-row shadow-inner'>
         <div className='overflow-x-hidden sm:overflow-x-visible z-10 w-auto md:w-auto flex gap-15 md:gap-10 lg:gap-30 flex-col lg:flex-row xl:gap-70 items-center justify-center'>
           <div className='h-full w-full lg:w-2/3 flex flex-col items-center justify-center'>
             <div className='w-full md:max-w-lg 2xl:max-w-3xl flex flex-col items-center justify-center gap-5 md:gap-y-10 mt-10 2xl:-mt-20'>
