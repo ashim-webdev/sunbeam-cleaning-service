@@ -36,7 +36,7 @@ const Navbar = ({ isScrolled }) => {
             ? `${isScrolled ? 'bg-white/90 backdrop-blur-xs ' : 'bg-white'}`
             : `${isScrolled ? 'bg-black/90 backdrop-blur-[2px]' : 'bg-black/90'}`
           }
-          flex justify-between items-center px-6 py-3 2xl:py-4 sticky z-60 top-0 transition-colors ease-in-out duration-300
+          flex justify-between items-center px-6 py-3 2xl:py-4 sticky z-50 top-0 transition-colors ease-in-out duration-300
         `}>
       <div className='flex gap-4'>
         <div className='flex justify-center items-center'>

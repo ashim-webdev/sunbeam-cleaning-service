@@ -6,7 +6,8 @@ const initialState = {
   : null,
 
   isSidebarOpen: false,
-  LightMode: true
+  LightMode: true,
+  MiniMenu: false
 };
 
 
@@ -30,11 +31,15 @@ const authSlice = createSlice ({
 
     setLightMode : (state, action) => {
       state.LightMode = !state.LightMode;
+    },
+
+    setMiniMenu : (state, action) => {
+      state.MiniMenu = !state.MiniMenu;
     }
   },
 })
 
 
-export const { setCredentials, logout, setOpenSidebar, setLightMode } = authSlice.actions
+export const { setCredentials, logout, setOpenSidebar, setLightMode, setMiniMenu } = authSlice.actions
 
 export default authSlice.reducer

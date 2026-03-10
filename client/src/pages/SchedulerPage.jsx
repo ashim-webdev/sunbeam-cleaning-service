@@ -1,127 +1,95 @@
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import {
-  ScheduleComponent,
-  Day,
-  Week,
-  Month,
-  Agenda,
-  Inject,
-  ViewsDirective,
-  ViewDirective,
-  Resize,
-  DragAndDrop
-} from '@syncfusion/ej2-react-schedule';
+import { useState } from 'react';
+import ScheduleCalendar from '../components/scheduleComponents/ScheduleCalendarProps';
+import { Shield, User, Calendar as CalendarIcon } from 'lucide-react';
 
-import { dummyEvents } from '../assets/data';
-import RoleToggle from '../components/scheduleComponents/RoleToggle';
-import EventDetailsModal from '../components/scheduleComponents/EventDetailsModal';
-import { CalendarDays } from 'lucide-react';
-
-export default function SchedulerPage() {
-  const { LightMode } = useSelector((state) => state.auth); // 👈 Redux theme
-
-  const [isAdmin, setIsAdmin] = useState(true);
-  const [events, setEvents] = useState(dummyEvents);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-
-  // 🔥 Dynamically switch Syncfusion theme
-  useEffect(() => {
-    const themeLink = document.getElementById('syncfusion-theme');
-
-    if (themeLink) {
-      themeLink.href = LightMode
-        ? 'https://cdn.syncfusion.com/ej2/material.css'
-        : 'https://cdn.syncfusion.com/ej2/material-dark.css';
-    }
-  }, [LightMode]);
+export default function App() {
+  const [role, setRole] = useState('admin');
 
   return (
-    <div className={`scheduler-wrapper ${LightMode ? 'light' : 'dark'}`}>
-      <div
-        className={`min-h-screen rounded-xl p-6 transition-colors duration-300 ease-in-out ${
-          LightMode
-            ? 'bg-white/80 shadow-dark'
-            : 'bg-black/80 shadow-light'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-6 flex flex-col items-center justify-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className={`${LightMode ? 'shadow-darkSM' : 'shadow-lightSM'} bg-blue-600 p-3 rounded-xl transition-colors duration-300 ease-in-out`}>
-                <CalendarDays className={`${LightMode ? 'text-white' : 'text-white'} w-8 h-8 transition-colors duration-300 ease-in-out`} />
-              </div>
-              <div>
-                <h1
-                  className={`md:text-3xl text-2xl whitespace-nowrap font-bold   transition-colors duration-300 ease-in-out ${
-                    LightMode ? 'text-gray-900' : 'text-white' 
-                  }`}
-                >
-                  Company Scheduler
-                </h1>
-                <p
-                  className={`text-sm text-center transition-colors duration-300 ease-in-out ${
-                    LightMode ? 'text-gray-600' : 'text-gray-300'
-                  }`}
-                >
-                  {isAdmin ? "Manage team events and schedules" : "See assigned events and company schedules"}
-                </p>
-              </div>
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
+      {/* Header */}
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-indigo-200 shadow-lg">
+              <CalendarIcon size={24} />
             </div>
-
-            <RoleToggle isAdmin={isAdmin} onToggle={setIsAdmin} />
+            <div>
+              <h1 className="text-xl font-bold tracking-tight text-slate-900">ProSchedule</h1>
+              <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Enterprise Calendar</p>
+            </div>
           </div>
 
-          <div
-            className={`${LightMode ? 'bg-gray-300/90 shadow-darkSM' : 'bg-gray-600/90 shadow-lightSM'} overflow-x-auto py-2 px-2 transition-colors duration-300 ease-in-out`}
-          >
-            <div className={`h-[calc(100vh-160px)] lg:w-full min-w-275  shadow-xl border overflow-x-auto transition-colors duration-300 ease-in-out ${
-              LightMode
-                ? 'bg-white border-gray-100 shadow-darkSM'
-                : 'bg-gray-800 border-gray-700 shadow-lightSM'
-            }`}>
-              <ScheduleComponent
-              height="100%"
-              enableAdaptiveUI={true}
-              selectedDate={new Date(2026, 2, 2)}
-              eventSettings={{
-                dataSource: events,
-                fields: {
-                  id: 'Id',
-                  subject: { name: 'Subject' },
-                  description: { name: 'Description' },
-                  startTime: { name: 'StartTime' },
-                  endTime: { name: 'EndTime' },
-                  location: { name: 'Location' }
-                }
-              }}
-              readonly={!isAdmin}
-              allowDragAndDrop={isAdmin}
-              allowResizing={isAdmin}
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full border border-slate-200">
+              <div className={`w-2 h-2 rounded-full ${role === 'admin' ? 'bg-emerald-500' : 'bg-blue-500'}`} />
+              <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
+                {role === 'admin' ? 'Admin Mode' : 'Employee Mode'}
+              </span>
+            </div>
+
+            <button
+              onClick={() => setRole(role === 'admin' ? 'employee' : 'admin')}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 transition-all shadow-sm group"
             >
-              <ViewsDirective>
-                <ViewDirective option="Day" />
-                <ViewDirective option="Week" />
-                <ViewDirective option="Month" />
-                <ViewDirective option="Agenda" />
-              </ViewsDirective>
-              <Inject services={[Day, Week, Month, Agenda, Resize, DragAndDrop]} />
-              </ScheduleComponent>
+              {role === 'admin' ? (
+                <>
+                  <User size={18} className="text-slate-500 group-hover:text-indigo-600" />
+                  <span className="text-sm font-medium text-slate-700 group-hover:text-indigo-700">Switch to Employee</span>
+                </>
+              ) : (
+                <>
+                  <Shield size={18} className="text-slate-500 group-hover:text-indigo-600" />
+                  <span className="text-sm font-medium text-slate-700 group-hover:text-indigo-700">Switch to Admin</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <h2 className="text-3xl font-bold text-slate-900">Workspace Events</h2>
+              <p className="text-slate-500 mt-1">
+                {role === 'admin' 
+                  ? 'You have full administrative access to manage the company schedule.' 
+                  : 'You are viewing the company schedule as an employee.'}
+              </p>
+            </div>
+            
+            <div className="flex gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-indigo-600" />
+                <span className="text-slate-600 font-medium">Company Events</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-slate-200" />
+                <span className="text-slate-600 font-medium">Past Events</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {showModal && (
-          <EventDetailsModal
-            event={selectedEvent}
-            onClose={() => {
-              setShowModal(false);
-              setSelectedEvent(null);
-            }}
-          />
-        )}
-      </div>
+        <ScheduleCalendar role={role} />
+      </main>
+
+      {/* Footer */}
+      <footer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-slate-200 mt-12">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-slate-500">
+            &copy; 2026 ProSchedule Enterprise. All rights reserved.
+          </p>
+          <div className="flex gap-6 text-sm font-medium text-slate-400">
+            <a href="#" className="hover:text-indigo-600 transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-indigo-600 transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-indigo-600 transition-colors">Help Center</a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

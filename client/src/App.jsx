@@ -49,7 +49,7 @@ function Layout() {
         ? "bg-white/10"
         : "bg-[#3D3D3D]"
       }
-      w-full h-screen flex flex-col md:flex-row transition-colors ease-in-out duration-300
+      w-full h-full flex flex-col md:flex-row transition-colors ease-in-out duration-300
     `}>
       <div className='w-1/5 lg:w-3.5/4 h-screen sticky top-0 hidden lg:block'>
         <Sidebar />

@@ -1,7 +1,9 @@
 import clsx from "clsx";
 import React from "react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion"
 import { FaTasks, FaTrashAlt, FaUsers } from "react-icons/fa";
-import { Briefcase, AlarmClock } from 'lucide-react';
+import { Briefcase, AlarmClock, ChevronsUp, ChevronDown, Send } from 'lucide-react';
 import {
   MdDashboard,
   MdOutlineAddTask,
@@ -10,10 +12,16 @@ import {
   MdTaskAlt,
   MdHourglassEmpty
 } from "react-icons/md";
-import { setLightMode } from "../redux/slices/authSlice";
+import {
+  useFloating,
+  offset,
+  flip,
+  shift,
+  autoUpdate
+} from '@floating-ui/react'
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { setOpenSidebar } from "../redux/slices/authSlice";
+import { setOpenSidebar, setMiniMenu } from "../redux/slices/authSlice";
 import { IoCheckmarkDoneOutline } from "react-icons/io5";
 import "./components.css";
 import Dark_Light_Btn from "./Dark_Light_Btn";
@@ -63,6 +71,10 @@ const linkData = [
     link: "trashed",
     icon: <FaTrashAlt />,
   },
+];
+
+
+const ActivityLinkData = [
   {
     label: "Scheduler",
     link: "scheduler",
@@ -71,24 +83,23 @@ const linkData = [
   {
     label: "Leave Request",
     link: "leave-request",
-    icon: <Briefcase size={18} />,
+    icon: <Send size={18} />,
   },
 ];
 
 const Sidebar = () => {
   const { user } = useSelector((state) => state.auth);
   // DarkMode Change
-  const { LightMode } = useSelector((state) => state.auth);
-  
+  const { LightMode, MiniMenu } = useSelector((state) => state.auth);
+
+
   const dispatch = useDispatch();
   const location = useLocation();
   const path = location.pathname.split("/")[1];
 
   const sidebarLinks = user?.isAdmin ? linkData.slice(0, 5) : linkData; // Links that will not be available to employees
 
-
-
-
+  const activityLinks = ActivityLinkData; // Links that will not be available to employees
 
 
   // Sidebar Smooth Slide
@@ -103,6 +114,28 @@ const Sidebar = () => {
     }, SIDEBAR_ANIMATION_MS);
   };
   // End
+
+
+  // MiniMenu
+  const modeChange = () => {
+    dispatch(setMiniMenu());
+  };
+
+
+  const [open, setOpen] = useState(false)
+
+  const { refs, floatingStyles } = useFloating({
+    open,
+    onOpenChange: setOpen,
+    placement: "top-end",
+    strategy: "fixed",
+    middleware: [
+      offset(20),   // spacing from button
+      flip(),      // 👈 this makes it open top if bottom has no space
+      shift(),     // keeps it inside screen
+    ],
+    whileElementsMounted: autoUpdate,
+  })
 
 
   const NavLink = ({ el }) => {
@@ -124,15 +157,35 @@ const Sidebar = () => {
     );
   };
 
+  const ActivityNavLink = ({ el }) => {
+    return (
+      <div
+        onClick={() => handleNavClick(el.link)}
+        className={clsx(
+          "ClickAnimationNoti w-full flex gap-2 px-5 py-1.25 rounded-full items-center text-base cursor-pointer transition-colors ease-in-out duration-300 hover:shadow-inner",
+          LightMode 
+            ? "text-black"
+            : "text-white "
+          ,
+          path === el.link.split("/")[0] ? " ClickAnimationNoti transition-colors ease-in-out bg-[#005FFB] text-white duration-75" : "transition-colors ease-in-out duration-75 hover:bg-[#0004fc4e] hover:shadow-inner"
+        )}
+      >
+        {el.icon}
+        <span className='whitespace-nowrap'>{el.label}</span>
+      </div>
+    );
+  };
+
   return (
-    <div className=
-    {`
-      ${LightMode 
-        ? "bg-white "
-        : "bg-black/90"
-      }
-        w-full  portrait:h-dvh landscape:h-full flex flex-col gap-6 p-5 transition-colors ease-in-out duration-300
-    `}>
+    <div 
+      className=
+      {`
+        ${LightMode 
+          ? "bg-white "
+          : "bg-black/90"
+        }
+          w-full portrait:h-dvh landscape:h-full flex flex-col gap-6 p-5 transition-colors ease-in-out duration-300
+      `}>
       <h1 className='flex gap-1 items-center'>
         <p className='p-2 bg-blue-600 shadow-inner rounded-full'>
           <MdOutlineAddTask className='text-white text-2xl font-black' />
@@ -146,7 +199,64 @@ const Sidebar = () => {
         {sidebarLinks.map((link) => (
           <NavLink el={link} key={link.label} />
         ))}
+
+        <div onClick={(e) => e.stopPropagation()} className="relative">
+          <div className={clsx("relative ml-0 flex-1 flex flex-col gap-y-3", open && "z-50")}>
+              <div 
+                ref={refs.setReference}
+                onClick={() => setOpen(!open)}
+                className=""
+              >
+                <div
+                  tabIndex={0}
+                  onClick={modeChange}
+                  className={clsx(
+                    "ClickAnimationNoti w-full flex gap-2 px-5 py-1.25 rounded-full items-center text-base cursor-pointer transition-all ease-in-out duration-300 hover:shadow-inner hover:bg-[#0004fc4e] focus:bg-[#0004fc4e]",
+                    LightMode 
+                      ? "text-black"
+                      : "text-white"
+                    ,
+                  )}
+                >
+                  <span className='whitespace-nowrap flex gap-2 justify-center items-center'>
+                    <Briefcase size={18} />
+                    Work Actions
+                  </span>
+
+                  <span className="w-full flex justify-end items-center transition-colors duration-300 ease-in-out">
+                    {MiniMenu ? <ChevronsUp size={25} className="font-bold animate-UpDown" /> : <ChevronDown size={25} className="font-bold" />}
+                  </span>
+                </div>
+              </div>
+
+              {MiniMenu && (
+                <div
+                  ref={refs.setFloating}
+                  style={floatingStyles}
+                  onMouseOver={(e) => e.stopPropagation()} 
+                  className={`
+                    ${LightMode 
+                      ? "bg-white shadow-darkSM"
+                      : "bg-black/90 shadow-lightSM"
+                    }
+                    absolute w-fit z-90 -right-6 mt-3 flex flex-col justify-center items-center gap-2 rounded p-2 cursor-pointer transition-colors ease-in-out duration-300
+                  `}
+                  >
+                  {activityLinks.map((link) => (
+                    <ActivityNavLink el={link} key={link.label} />
+                  ))}
+                </div>
+              )}
+          </div>
+        </div>
       </div>
+
+
+
+
+
+
+
 
       <div className={
         `
