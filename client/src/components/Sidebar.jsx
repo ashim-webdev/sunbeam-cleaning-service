@@ -116,28 +116,6 @@ const Sidebar = () => {
   // End
 
 
-  // MiniMenu
-  const modeChange = () => {
-    dispatch(setMiniMenu());
-  };
-
-
-  const [open, setOpen] = useState(false)
-
-  const { refs, floatingStyles } = useFloating({
-    open,
-    onOpenChange: setOpen,
-    placement: "top-end",
-    strategy: "fixed",
-    middleware: [
-      offset(20),   // spacing from button
-      flip(),      // 👈 this makes it open top if bottom has no space
-      shift(),     // keeps it inside screen
-    ],
-    whileElementsMounted: autoUpdate,
-  })
-
-
   const NavLink = ({ el }) => {
     return (
       <div
@@ -201,52 +179,54 @@ const Sidebar = () => {
         ))}
 
         <div onClick={(e) => e.stopPropagation()} className="relative">
-          <div className={clsx("relative ml-0 flex-1 flex flex-col gap-y-3", open && "z-50")}>
-              <div 
-                ref={refs.setReference}
-                onClick={() => setOpen(!open)}
-                className=""
+          <div className={clsx("relative ml-0 flex-1 flex flex-col gap-y-3", MiniMenu && "z-50")}>
+            <div 
+              onClick={() => dispatch(setMiniMenu())}
+              className="relative"
+            >
+              <div
+                tabIndex={0}
+                className={clsx(
+                  "ClickAnimationNoti line-clamp-1 w-full flex gap-2 px-5 py-1.25 rounded-full items-center text-base cursor-pointer transition-all ease-in-out duration-300 hover:shadow-inner hover:bg-[#0004fc4e] focus:bg-[#0004fc4e]",
+                  LightMode 
+                    ? "text-black"
+                    : "text-white"
+                  ,
+                )}
               >
-                <div
-                  tabIndex={0}
-                  onClick={modeChange}
-                  className={clsx(
-                    "ClickAnimationNoti w-full flex gap-2 px-5 py-1.25 rounded-full items-center text-base cursor-pointer transition-all ease-in-out duration-300 hover:shadow-inner hover:bg-[#0004fc4e] focus:bg-[#0004fc4e]",
-                    LightMode 
-                      ? "text-black"
-                      : "text-white"
-                    ,
-                  )}
-                >
-                  <span className='whitespace-nowrap flex gap-2 justify-center items-center'>
-                    <Briefcase size={18} />
-                    Work Actions
-                  </span>
+                <span className='whitespace-nowrap flex gap-2 justify-center items-center '>
+                  <Briefcase size={18} />
+                  Actions
+                </span>
 
-                  <span className="w-full flex justify-end items-center transition-colors duration-300 ease-in-out">
-                    {MiniMenu ? <ChevronsUp size={25} className="font-bold animate-UpDown" /> : <ChevronDown size={25} className="font-bold" />}
-                  </span>
-                </div>
+                <span className="w-full flex justify-end items-center transition-colors duration-300 ease-in-out">
+                  {MiniMenu ? <ChevronsUp size={25} className="font-bold animate-UpDown" /> : <ChevronDown size={25} className="font-bold" />}
+                </span>
               </div>
 
-              {MiniMenu && (
-                <div
-                  ref={refs.setFloating}
-                  style={floatingStyles}
-                  onMouseOver={(e) => e.stopPropagation()} 
-                  className={`
-                    ${LightMode 
-                      ? "bg-white shadow-darkSM"
-                      : "bg-black/90 shadow-lightSM"
-                    }
-                    absolute w-fit z-90 -right-6 mt-3 flex flex-col justify-center items-center gap-2 rounded p-2 cursor-pointer transition-colors ease-in-out duration-300
-                  `}
-                  >
-                  {activityLinks.map((link) => (
-                    <ActivityNavLink el={link} key={link.label} />
-                  ))}
-                </div>
-              )}
+                <AnimatePresence>
+                  {MiniMenu && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.2 }}
+                      onMouseOver={(e) => e.stopPropagation()} 
+                      className={`
+                        ${LightMode 
+                          ? "bg-white shadow-darkSM"
+                          : "bg-black/90 shadow-lightSM"
+                        }
+                        absolute -top-29 -right-10 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded p-2 cursor-pointer transition-colors ease-in-out duration-300
+                      `}
+                      >
+                      {activityLinks.map((link) => (
+                        <ActivityNavLink el={link} key={link.label} />
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+            </div>
           </div>
         </div>
       </div>

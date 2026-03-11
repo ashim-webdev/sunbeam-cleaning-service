@@ -24,7 +24,7 @@ const Tabs = ({ tabs, setSelected, children }) => {
                   classNames(
                     LightMode 
                     ? "bg-white shadow-inner text-black"
-                    : "bg-black/90 shadow-innerWH text-white hover:shadow-innerBLU",
+                    : "bg-black/90 shadow-innerWH text-white",
                     "w-fit flex items-center outline-none gap-2 px-3 py-2.5 text-base font-medium leading-5 cursor-pointer  transition-colors duration-200 ease-in-out",
                     selected
                       ? "text-blue-700 border-b-2 border-blue-600"

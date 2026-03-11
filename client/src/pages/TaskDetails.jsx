@@ -2,7 +2,7 @@ import clsx from "clsx";
 import moment from "moment";
 import React, { useState } from "react";
 import { FaBug, FaSpinner, FaTasks, FaThumbsUp, FaUser } from "react-icons/fa";
-import { UploadCloud } from "lucide-react"
+import { UploadCloud, User, MapPin, Calendar } from "lucide-react"
 import { GrInProgress } from "react-icons/gr";
 import {
   MdKeyboardArrowDown,
@@ -402,18 +402,18 @@ const TaskDetail = () => {
                 </div>
                 
                 <p className={`${LightMode ? "text-black bg-blue-50 shadow-darkSM" : "text-white shadow-lightSM"} mt-6 border-l-10 border-blue-600 pl-2 rounded-l-lg  flex gap-2 justify-start items-center transition-colors duration-300 ease-in-out `}>
-                  <span className="font-semibold whitespace-nowrap ">Client Name:</span>
+                  <span className="flex justify-center items-center gap-1 font-semibold"><i className="fa-solid fa-user text-xl text-blue-700 "></i></span>
                   <span className="font-bold text-lg line-clamp-1 italic pr-1">{task?.clientName}</span>
                 </p>
 
                 <p className={`${LightMode ? "text-black bg-blue-50 shadow-darkSM" : "text-white shadow-lightSM"} border-l-10 border-blue-600  pl-2 rounded-l-lg flex gap-2 justify-start items-center transition-colors duration-300 ease-in-out -mt-4`}>
-                  <span className="font-semibold">Location:</span>
+                  <span className="flex justify-center items-center gap-1 font-semibold"><i className="fa-solid fa-location-dot text-xl text-amber-400"></i></span>
                   <span className="font-bold text-lg line-clamp-1 italic pr-1">{task?.address}</span>
                 </p>
 
                 <p className={`${LightMode ? "text-black bg-blue-50 shadow-darkSM" : "text-white shadow-lightSM"} border-l-10 border-blue-600 pl-2 rounded-l-lg flex gap-2 justify-start items-center -mt-4 transition-colors duration-300 ease-in-out`}>
-                  <span className="font-semibold whitespace-nowrap">Created At:</span>
-                  <span className={`${LightMode ? "text-gray-500" : "text-gray-400"} font-semibold transition-colors duration-300 ease-in-out italic`}>{new Date(task?.date).toDateString()}</span>
+                  <span className="flex justify-center items-center gap-1 font-semibold"><i className="fa-solid fa-calendar text-xl text-teal-700"></i></span>
+                  <span className={`${LightMode ? "text-gray-800" : "text-gray-300"} font-semibold transition-colors duration-300 ease-in-out italic`}>{new Date(task?.date).toDateString()}</span>
                 </p>
 
                 <div className={`${LightMode ? "text-gray-500 border-gray-400" : "text-gray-400 border-gray-200"} transition-colors duration-300 ease-in-out flex items-center gap-8 p-4 border-y`}>
