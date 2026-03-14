@@ -1,128 +1,123 @@
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
 import { Fragment } from 'react';
-import { X, MapPin, Clock, AlignLeft } from 'lucide-react';
+import { X, MapPin, Clock, AlignLeft, Calendar1Icon, Calendar1 } from 'lucide-react';
+import { useSelector } from "react-redux";
 
+export default function EventViewPopover({ isOpen, onClose, event }) {
 
-export default function EventViewPopover({
-  isOpen,
-  onClose,
-  event,
-}) {
   if (!event) return null;
 
-  const formatDate = (dateStr) => {
+  const { LightMode } = useSelector((state) => state.auth);
+
+  const bg = LightMode ? "bg-white" : "bg-slate-900";
+  const text = LightMode ? "text-black" : "text-white";
+  const border = LightMode ? "border-gray-500" : "border-gray-200";
+  const blurBG = LightMode ? "bg-black/25" : "bg-white/25";
+
+
+  // Slit Date and Time
+  const getDateTime = (dateStr) => {
     const date = new Date(dateStr);
-    return date.toLocaleString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
+
+    const datePart = date.toLocaleDateString();
+    const timePart = date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
     });
+
+    return { datePart, timePart };
   };
+
+  const start = getDateTime(event.start);
+  const end = getDateTime(event.end);
+
 
   return (
     <Transition show={isOpen} as={Fragment}>
       <Dialog className="relative z-50" onClose={onClose}>
-        <TransitionChild
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-black/25 backdrop-blur-sm" />
+
+        <TransitionChild as={Fragment}>
+          <div className={`fixed inset-0 ${blurBG} backdrop-blur-sm`} />
         </TransitionChild>
 
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <TransitionChild
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
-            >
-              <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all border border-slate-100">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex-1">
-                    <div className="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">
-                      Event Details
-                    </div>
-                    <DialogTitle
-                      className="text-xl font-bold leading-6 text-slate-900"
-                    >
-                      {event.title}
-                    </DialogTitle>
+        <div className="fixed mx-2 inset-0 flex items-center justify-center">
+
+          <TransitionChild as={Fragment}>
+            <DialogPanel className={`w-full  max-w-md rounded-2xl ${bg} p-6 shadow-xl transition-colors duration-300 ease-in-out`}>
+
+              <div className="flex justify-between mb-6">
+                <DialogTitle className={`text-xl font-bold ${text} transition-colors duration-300 ease-in-out`}>
+                  {event.title}
+                </DialogTitle>
+
+                <button onClick={onClose} className={`${text} p-1 rounded-full hover:bg-slate-100 transition-colors duration-300 ease-in-out text-slate-500 hover:text-slate-600`}>
+                  <X size={25} />
+                </button>
+              </div>
+
+              <div className={`space-y-4 ${text} transition-colors duration-300 ease-in-out`}>
+                <div className="flex flex-col justify-start items-start gap-3">
+                  
+                  <span className='flex flex-col justify-center items-start mb-2'>
+                    <span className='italic'>Start Date & Time</span>
+
+                    <span className='flex justify-center items-center gap-4 text-green-600'>
+                      <span className='flex justify-center items-center gap-3 whitespace-nowrap'>
+                        <i className="fa-solid fa-calendar text-lg text-blue-600"></i>
+                        {start.datePart}
+                      </span>
+                      <span className='flex justify-center items-center gap-3 whitespace-nowrap'>
+                        <i className="fa-regular fa-clock text-lg text-blue-600"></i>
+                        {start.timePart}
+                      </span>
+                    </span>
+                    
+                  </span>
+
+                  <span className='flex flex-col justify-center items-start'>
+                    <span className='italic'>End Date & Time</span>
+
+                    <span className='flex justify-center items-center gap-4 text-red-600'>
+                      <span className='flex justify-center items-center gap-3 whitespace-nowrap'>
+                        <i className="fa-solid fa-calendar text-lg text-blue-600"></i>
+                        {end.datePart}
+                      </span>
+                      <span className='flex justify-center items-center gap-3 whitespace-nowrap'>
+                        <i className="fa-regular fa-clock text-lg text-blue-600"></i>
+                        {end.timePart}
+                      </span>
+                    </span>
+                    
+                  </span>
+                </div>
+
+                {event.location && (
+                  <div className={`flex mt-6 pt-6 justify-start items-center gap-3 border-t ${border} transition-colors duration-300 ease-in-out`}>
+                    <MapPin size={20} />
+                    <span>{event.location}</span>
                   </div>
-                  <button
-                    onClick={onClose}
-                    className="p-1 rounded-full hover:bg-slate-100 transition-colors text-slate-400 hover:text-slate-600"
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
+                )}
 
-                <div className="space-y-6">
-                  <div className="flex items-start gap-3">
-                    <div className="mt-1 text-slate-400">
-                      <Clock size={18} />
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-slate-900">Time</div>
-                      <div className="text-sm text-slate-500">
-                        {formatDate(event.start)}
-                      </div>
-                      <div className="text-sm text-slate-500">
-                        to {formatDate(event.end)}
-                      </div>
-                    </div>
+                {event.description && (
+                  <div className="flex mt-8 justify-start items-start gap-3">
+                    <span className='pl-px'><AlignLeft size={20} /></span>
+                    <span className='-mt-0.5'>{event.description}</span>
                   </div>
+                )}
+              </div>
 
-                  {event.location && (
-                    <div className="flex items-start gap-3">
-                      <div className="mt-1 text-slate-400">
-                        <MapPin size={18} />
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium text-slate-900">Location</div>
-                        <div className="text-sm text-slate-500">{event.location}</div>
-                      </div>
-                    </div>
-                  )}
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={onClose}
+                  className="ClickAnimationNoti px-4 py-2 bg-blue-600 hover:bg-blue-800 shadow-inner hover:shadow-innerWH text-white rounded-lg cursor-pointer transition-all duration-200 ease-in-out"
+                >
+                  Close
+                </button>
+              </div>
 
-                  {event.description && (
-                    <div className="flex items-start gap-3">
-                      <div className="mt-1 text-slate-400">
-                        <AlignLeft size={18} />
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium text-slate-900">Description</div>
-                        <div className="text-sm text-slate-500 whitespace-pre-wrap">
-                          {event.description}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
+            </DialogPanel>
+          </TransitionChild>
 
-                <div className="mt-8 pt-4 border-t border-slate-100 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="px-6 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-colors"
-                  >
-                    Close
-                  </button>
-                </div>
-              </DialogPanel>
-            </TransitionChild>
-          </div>
         </div>
       </Dialog>
     </Transition>

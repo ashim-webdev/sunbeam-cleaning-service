@@ -40,9 +40,12 @@ const LeaveRequest = () => {
     <div className={`${LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM"} h-full bg-linear-to-br transition-colors duration-300 ease-in-out`}>
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-8 text-center">
-          <div className="flex items-center justify-center gap-3 mb-1">
-            <Briefcase className="text-blue-600" size={35} />
-            <h1 className={`text-3xl font-bold ${LightMode ? "text-black" : "text-white"} line-clamp-1 transition-colors duration-300 ease-in-out`}>Leave Management System</h1>
+          <div className="flex justify-center items-center mb-1">
+            <h1 className={`flex justify-center items-center gap-3 text-[25px] md:text-3xl line-clamp-1 font-bold ${LightMode ? "text-black" : "text-white"} w-fit transition-colors whitespace-nowrap duration-300 ease-in-out`}>
+              <Briefcase className="text-blue-600 md:hidden" size={35} /> 
+              <Briefcase className="text-blue-600 hidden md:block" size={40} /> 
+              <span>Leave Management</span>
+            </h1>
           </div>
           <p className={`${LightMode ? "text-gray-600" : "text-gray-400"}`}>
             {isAdmin

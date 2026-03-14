@@ -27,10 +27,10 @@ const ModalWrapper = ({ open, setOpen, children }) => {
         >
           <div className={`
               ${LightMode 
-                ? "bg-black/80"
-                : "bg-white/80"
+                ? "bg-black/25"
+                : "bg-white/25"
               }
-              fixed inset-0 transition-all duration-300 ease-in-out  bg-opacity-60 
+              fixed inset-0 backdrop-blur-sm transition-all duration-300 ease-in-out  bg-opacity-60 
             `} />
         </Transition.Child>
 

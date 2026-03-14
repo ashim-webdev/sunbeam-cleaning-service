@@ -6,8 +6,8 @@
 }
 
 .light-calendar .react-datepicker__header {
-  color: white;
-  background-color: #3673f8;
+  color: white !important;
+  background-color: #3673f8 !important;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -36,7 +36,7 @@
 }
 
 .dark-calendar .react-datepicker__header {
-  color: #111827;
+  color: white !important;
   background-color: #032a7e;
   border-bottom: 1px solid #6c6b6b;
 }
@@ -63,4 +63,90 @@
 .light-calendar .react-datepicker__day--disabled {
   opacity: 0.35;
   cursor: not-allowed;
+}
+
+
+
+
+/* ================= TIME LIGHT MODE ================= */
+
+/* Time container */
+.light-calendar .react-datepicker__time-container {
+  border-left: 1px solid #e5e7eb;
+}
+
+/* Time box */
+.light-calendar .react-datepicker__time {
+  background-color: #ffffff;
+}
+
+/* Time list */
+.light-calendar .react-datepicker__time-list {
+  background-color: #ffffff;
+}
+
+/* Each time item */
+.light-calendar .react-datepicker__time-list-item {
+  color: #111827;
+}
+
+/* Hover */
+.light-calendar .react-datepicker__time-list-item:hover {
+  background-color: #adafb6 !important;
+  color: #185ef4;
+}
+
+/* Selected time */
+.light-calendar .react-datepicker__time-list-item--selected {
+  background-color: #3673f8 !important;
+  color: white;
+}
+
+
+/* Light mode time header */
+.light-calendar .react-datepicker__time-container .react-datepicker__header {
+  background-color: #3673f8;
+  color: white;
+}
+
+
+/* ================= TIME DARK MODE ================= */
+
+
+/* Time container */
+.dark-calendar .react-datepicker__time-container {
+  border-left: 1px solid #444;
+}
+
+/* Time box */
+.dark-calendar .react-datepicker__time {
+  background-color: #100f0f;
+}
+
+/* Time list */
+.dark-calendar .react-datepicker__time-list {
+  background-color: #100f0f;
+}
+
+/* Time item */
+.dark-calendar .react-datepicker__time-list-item {
+  color: white;
+}
+
+/* Hover */
+.dark-calendar .react-datepicker__time-list-item:hover {
+  color: #032a7e;
+}
+
+/* Selected */
+.dark-calendar .react-datepicker__time-list-item--selected {
+  background-color: #032a7e !important;
+  color: white !important;
+}
+
+/* Dark mode time header text */
+.dark-calendar .react-datepicker_time-container .react-datepicker_header,
+.dark-calendar .react-datepicker_time-container .react-datepicker_header * {
+  background-color: #032a7e !important;
+  color: white !important;
 }

@@ -7,8 +7,20 @@ import listPlugin from "@fullcalendar/list";
 import EventPopover from "./EventPopover";
 import EventViewPopover from "./EventViewPopover";
 import { Plus } from "lucide-react";
+import { useSelector } from "react-redux";
 
 export default function ScheduleCalendar({ role }) {
+  const { LightMode } = useSelector((state) => state.auth);
+
+  const bg = LightMode ? "bg-white" : "bg-black";
+  const shadow = LightMode ? "shadow-darkSM" : "shadow-lightSM";
+  const text = LightMode ? "text-black" : "text-white";
+  const gray = LightMode ? "text-black/80" : "text-white/80";
+
+
+
+
+
   const FullCalendarAny = FullCalendar;
 
   const [events, setEvents] = useState([
@@ -52,9 +64,31 @@ export default function ScheduleCalendar({ role }) {
   const handleSelect = (arg) => {
     if (!isAdmin) return;
 
+    const start = new Date(arg.start);
+    const end = new Date(arg.end);
+
+    // FullCalendar end date is exclusive → subtract 1 minute
+    end.setMinutes(end.getMinutes() - 1);
+
+    const formatForInput = (date) => {
+      const pad = (n) => String(n).padStart(2, "0");
+
+      return (
+        date.getFullYear() +
+        "-" +
+        pad(date.getMonth() + 1) +
+        "-" +
+        pad(date.getDate()) +
+        "T" +
+        pad(date.getHours()) +
+        ":" +
+        pad(date.getMinutes())
+      );
+    };
+
     setNewSelection({
-      start: arg.startStr,
-      end: arg.endStr,
+      start: formatForInput(start),
+      end: formatForInput(end),
     });
 
     setSelectedEvent(null);
@@ -130,13 +164,13 @@ export default function ScheduleCalendar({ role }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-200">
-      <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+    <div className={`${bg} ${shadow} ${text} rounded-2xl border border-slate-200 overflow-hidden flex flex-col h-200 transition-all duration-300 ease-in-out`}>
+      <div className={`${isAdmin ? "justify-between" : "justify-center"} p-4 border-b border-slate-200 flex  items-center`}>
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">
+          <h2 className={`${isAdmin ? "" : "text-center"} text-lg font-semibold ${text} transition-colors duration-300 ease-in-out`}>
             Company Schedule
           </h2>
-          <p className="text-sm text-slate-500">
+          <p className={`text-sm ${gray} ${isAdmin ? "" : "text-center"} transition-colors duration-300 ease-in-out`}>
             Manage and view internal company events
           </p>
         </div>
@@ -148,16 +182,17 @@ export default function ScheduleCalendar({ role }) {
               setNewSelection(null);
               setIsEditOpen(true);
             }}
-            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm text-sm font-medium"
+            className="ClickAnimationNoti flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-800 transition-colors shadow-sm text-sm font-medium"
           >
             <Plus size={18} />
-            Add Event
+            <span className="-mr-1 hidden md:block">Add</span>
+            Event
           </button>
         )}
       </div>
 
-      <div className="flex-1 overflow-x-auto p-4">
-        <div className="min-w-250 h-full">
+      <div className="flex-1 overflow-x-auto p-4 ">
+        <div className={`${LightMode ? "light-calendar" : "dark-calendar"} ${bg} ${shadow} ${text} min-w-250 h-full transition-colors duration-300 ease-in-out`}>
           <FullCalendarAny
             plugins={[
               dayGridPlugin,
@@ -165,6 +200,8 @@ export default function ScheduleCalendar({ role }) {
               interactionPlugin,
               listPlugin,
             ]}
+            dateClick={handleDateClick}
+            selectLongPressDelay={300}
             initialView="dayGridMonth"
             headerToolbar={{
               left: "prev,next today",
@@ -205,17 +242,21 @@ export default function ScheduleCalendar({ role }) {
 
       <style>{`
         .fc {
-          --fc-border-color: #f1f5f9;
-          --fc-event-bg-color: #4f46e5;
-          --fc-event-border-color: #4f46e5;
-          --fc-today-bg-color: #f8fafc;
+          --fc-border-color: #bac3cb;
+          --fc-event-bg-color: #005FFB;
+          --fc-event-border-color: #0039f6;
+          --fc-today-bg-color: #253F50;
           font-family: inherit;
+        }
+
+        .fc-day-today .fc-daygrid-day-number {
+          color: white !important;
         }
 
         .fc .fc-toolbar-title {
           font-size: 1.25rem;
           font-weight: 600;
-          color: #0f172a;
+          color: white;
         }
 
         .fc-event {
@@ -228,8 +269,87 @@ export default function ScheduleCalendar({ role }) {
         }
 
         .fc-event:hover {
-          transform: scale(1.02);
+          transform: scale(1.01);
         }
+
+        /* ================= LIGHT MODE ================= */
+
+        .light-calendar .fc .fc-header-toolbar {
+          padding: 10px 16px !important;
+          border: 1.5px solid white;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .light-calendar .fc-list-day-cushion {
+          background-color: #253F50 !important;
+          color: white !important;
+        }
+
+        .light-calendar .fc-list-event:hover td {
+          background-color: #dedede !important;
+        }
+
+        .light-calendar .fc .fc-toolbar-title {
+          color: #0f172a;
+        }
+
+        .light-calendar .fc-theme-standard td,
+        .light-calendar .fc-theme-standard th {
+          border-color: #e5e7eb;
+        }
+
+        /* ================= DARK MODE ================= */
+
+        .dark-calendar .fc .fc-toolbar-title {
+          color: white;
+        }
+
+        .dark-calendar .fc-theme-standard td,
+        .dark-calendar .fc-theme-standard th {
+          border-color: #334155;
+        }
+
+        /* Fix list view colors */
+
+        .dark-calendar .fc-list-day {
+          background-color: red;
+          color: white;
+        }
+
+        .dark-calendar .fc-list-event:hover {
+          background-color: #1e293b;
+        }
+
+
+
+
+        /* ================= DARK MODE LIST VIEW ================= */
+
+        .dark-calendar .fc .fc-header-toolbar {
+          padding: 10px 16px !important;
+          box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .dark-calendar .fc-list-table {
+          background-color: #020617 !important;
+          color: white !important;
+        }
+
+        .dark-calendar .fc-list-day-cushion {
+          background-color: #253F50 !important;
+          color: white !important;
+        }
+
+        .dark-calendar .fc-list-event td {
+          background-color: transparent !important;
+          color: white !important;
+        }
+
+        .dark-calendar .fc-list-event:hover td {
+          background-color: #0206175a !important;
+          color: white !important;
+        }
+
       `}</style>
     </div>
   );

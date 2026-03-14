@@ -26,6 +26,7 @@
     "@syncfusion/ej2-react-popups": "^32.2.7",
     "@syncfusion/ej2-react-schedule": "^32.2.3",
     "@tailwindcss/vite": "^4.1.18",
+    "@vis.gl/react-google-maps": "^1.7.1",
     "chart.js": "^4.5.1",
     "chartjs-plugin-datalabels": "^2.2.0",
     "clsx": "^2.1.1",

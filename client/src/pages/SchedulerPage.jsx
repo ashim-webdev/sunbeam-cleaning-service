@@ -1,17 +1,26 @@
 import { useState } from 'react';
 import ScheduleCalendar from '../components/scheduleComponents/ScheduleCalendarProps';
 import { Shield, User, Calendar as CalendarIcon } from 'lucide-react';
+import { useSelector } from 'react-redux';
 
-export default function App() {
+export default function SchedulerPage() {
+  const { LightMode } = useSelector((state) => state.auth);
+  const bg = LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM"
+  const shadow = LightMode ? "shadow-darkSM" : "shadow-lightSM"
+  const shadowInner = LightMode ? "shadow-inner" : "shadow-innerWH"
+  const text = LightMode ? "text-black" : "text-white";
+  const subText = LightMode ? "text-black/80" : "text-white/80";
+
+
   const [role, setRole] = useState('admin');
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
+    <div className={`min-h-screen ${bg} ${text} font-sans transition-colors duration-300 ease-in-out`}>
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
+      <header className={`${bg} border-b border-slate-200 sticky top-0 z-30 transition-all duration-300 ease-in-out`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-indigo-200 shadow-lg">
+            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-indigo-200 shadow-lg">
               <CalendarIcon size={24} />
             </div>
             <div>
@@ -51,10 +60,17 @@ export default function App() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
+          <div className='flex justify-center items-center gap-2 mb-6'>
+            <div className={`${shadow} rounded-xl transition-all duration-300 ease-in-out`}>
+              <div className={`shadow-inner w-12 h-12 bg-[#005FFB] rounded-xl flex items-center justify-center text-white`}>
+                <CalendarIcon size={26} />
+              </div>
+            </div>
+            <h2 className={`text-3xl font-bold ${text} transition-all duration-300 ease-in-out`}>Workspace Events</h2>
+          </div>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-              <h2 className="text-3xl font-bold text-slate-900">Workspace Events</h2>
-              <p className="text-slate-500 mt-1">
+              <p className={`${subText} mt-1 transition-all duration-300 ease-in-out`}>
                 {role === 'admin' 
                   ? 'You have full administrative access to manage the company schedule.' 
                   : 'You are viewing the company schedule as an employee.'}
@@ -63,12 +79,12 @@ export default function App() {
             
             <div className="flex gap-4 text-sm">
               <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-indigo-600" />
-                <span className="text-slate-600 font-medium">Company Events</span>
+                <span className="w-3 h-3 rounded-full bg-blue-600" />
+                <span className={`${text} font-medium transition-all duration-300 ease-in-out`}>Company Events</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-3 h-3 rounded-full bg-slate-200" />
-                <span className="text-slate-600 font-medium">Past Events</span>
+                <span className={`${text} font-medium transition-all duration-300 ease-in-out`}>Past Events</span>
               </div>
             </div>
           </div>
@@ -78,7 +94,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-slate-200 mt-12">
+      <footer className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-slate-200 mt-12 ${text} transition-colors duration-300 ease-in-out`}>
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-slate-500">
             &copy; 2026 ProSchedule Enterprise. All rights reserved.

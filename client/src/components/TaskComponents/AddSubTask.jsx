@@ -72,6 +72,14 @@ const AddSubTask = ({ open, setOpen, id }) => {
     reset();
   };
 
+
+  const today = new Date();
+  const safeToday = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+
   return (
     <>
       <ModalWrapper open={open} setOpen={setOpen}>
@@ -108,7 +116,9 @@ const AddSubTask = ({ open, setOpen, id }) => {
                 type="date"
                 name="date"
                 label="Task Date"
+                minDate={safeToday}
                 control={control}
+                showTime={false}
                 className={`w-full border rounded-md outline-0 transition-all duration-200 ${
                   errors.date
                     ? `border-2 border-red-500 focus:border-red-500 ${

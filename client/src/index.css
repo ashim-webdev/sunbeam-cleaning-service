@@ -88,7 +88,6 @@
 
 
 
-
 * {
   /* margin: 0;
   padding: 0; */
@@ -166,7 +165,7 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3b82f6;
+  background: #005FFB;
   border-radius: 4px;
 }
 

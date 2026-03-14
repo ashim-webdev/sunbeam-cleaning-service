@@ -36,7 +36,7 @@ const UserAvatar = () => {
       <div className=''>
         <Menu as='div' className='relative inline-block text-left'>
           <div className="ClickAnimationNoti">
-            <Menu.Button className=' border-2 border-white w-10 h-10 2xl:w-12 2xl:h-12 items-center justify-center rounded-full bg-blue-600 hover:bg-blue-800 hover:shadow-innerWH cursor-pointer transition-transform hover:scale-105 ease-in-out duration-200 shadow-inner'>
+            <Menu.Button className=' border-2 border-white w-10 h-10 2xl:w-12 2xl:h-12 items-center justify-center rounded-full bg-[#005FFB] hover:bg-blue-800 hover:shadow-innerWH cursor-pointer transition-transform hover:scale-105 ease-in-out duration-200 shadow-inner'>
               <span className='text-white font-semibold'>
                 {getInitials('Ashimonye Gabriel')}
               </span>

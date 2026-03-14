@@ -15,6 +15,7 @@ import Sidebar from './components/Sidebar'
 import Navbar from './components/Navbar'
 import LeaveRequest from './pages/LeaveRequest'
 import SchedulerPage from "./pages/SchedulerPage";
+import Bookings from "./pages/Bookings";
 
 
 
@@ -156,6 +157,7 @@ function App() {
             <Route index path="/" element={<Navigate to='/dashboard' />} />
 
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/bookings" element={<Bookings />} />
 
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/completed/:status" element={<Tasks />} />

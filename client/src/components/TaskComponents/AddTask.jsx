@@ -188,6 +188,13 @@ const AddTask = ({ open, setOpen, task }) => {
 
   };
 
+  const today = new Date();
+  const safeToday = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+
   return (
     <>
       <ModalWrapper open={open} setOpen={setOpen}>
@@ -241,6 +248,8 @@ const AddTask = ({ open, setOpen, task }) => {
                   type="date"
                   name="date"
                   label="Task Date"
+                  minDate={safeToday}
+                  showTime={false}
                   control={control}
                   rules={{ required: "Date is required!" }}
                   error={errors.date ? errors.date.message : ""}
@@ -343,9 +352,6 @@ const AddTask = ({ open, setOpen, task }) => {
                 <span className=''>
                   Important Equipments
                 </span>
-                {/* <span className='text-xs pl-5 text-center'>
-                  separated by comma (,)
-                </span> */}
               </p>
               <textarea
                 name='equipments'

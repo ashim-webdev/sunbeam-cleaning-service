@@ -2,7 +2,7 @@ import clsx from "clsx";
 import React from "react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion"
-import { FaTasks, FaTrashAlt, FaUsers } from "react-icons/fa";
+import { FaTasks, FaRegTrashAlt, FaUsers, FaCalendarCheck } from "react-icons/fa";
 import { Briefcase, AlarmClock, ChevronsUp, ChevronDown, Send } from 'lucide-react';
 import {
   MdDashboard,
@@ -12,13 +12,6 @@ import {
   MdTaskAlt,
   MdHourglassEmpty
 } from "react-icons/md";
-import {
-  useFloating,
-  offset,
-  flip,
-  shift,
-  autoUpdate
-} from '@floating-ui/react'
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { setOpenSidebar, setMiniMenu } from "../redux/slices/authSlice";
@@ -35,6 +28,11 @@ const linkData = [
     label: "Dashboard",
     link: "dashboard",
     icon: <MdDashboard />,
+  },
+  {
+    label: "Bookings",
+    link: "bookings",
+    icon: <i className="fa-solid fa-newspaper"></i>,
   },
   {
     label: "Tasks",
@@ -66,15 +64,15 @@ const linkData = [
     link: "status",
     icon: <IoCheckmarkDoneOutline />,
   },
-  {
-    label: "Trash",
-    link: "trashed",
-    icon: <FaTrashAlt />,
-  },
 ];
 
 
 const ActivityLinkData = [
+    {
+    label: "Trash",
+    link: "trashed",
+    icon: <FaRegTrashAlt />,
+  },
   {
     label: "Scheduler",
     link: "scheduler",
@@ -217,7 +215,7 @@ const Sidebar = () => {
                           ? "bg-white shadow-darkSM"
                           : "bg-black/90 shadow-lightSM"
                         }
-                        absolute -top-29 -right-10 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded p-2 cursor-pointer transition-colors ease-in-out duration-300
+                        absolute -top-40 -right-10 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded p-2 cursor-pointer transition-colors ease-in-out duration-300
                       `}
                       >
                       {activityLinks.map((link) => (
