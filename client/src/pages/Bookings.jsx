@@ -39,6 +39,18 @@ const SERVICES = [
   'Window Cleaning'
 ];
 
+const PROPERTY = [
+  'Apartment / Flat',
+  'House',
+  'Office',
+  'Hotel / Guest House',
+  'Restaurant / Cafe',
+  'Warehouse',
+  'Hospital / Clinic',
+  'Event Hall',
+  'Others...',
+];
+
 const DEFAULT_CENTER = { lat: 40.7128, lng: -74.0060 }; // New York City
 
 // --- Components ---
@@ -51,13 +63,15 @@ export default function Bookings() {
 
   const [errors, setErrors] = useState({});
   const [shake, setShake] = useState(false);
-  const [toggle, setToggle] = useState(false);
+  const [toggle1, setToggle1] = useState(false);
+  const [toggle2, setToggle2] = useState(false);
 
   
   // Form State
   const [formData, setFormData] = useState({
     clientName: '',
     phoneNumber: '',
+    property: PROPERTY[0],
     service: SERVICES[0],
     address: '',
     lat: DEFAULT_CENTER.lat,
@@ -136,7 +150,7 @@ export default function Bookings() {
   const subText = LightMode ? "text-black/80" : "text-white/80"
   const shadow = LightMode ? "shadow-darkSM" : "shadow-lightSM";
   const text = LightMode ? "text-black" : "text-white";
-  const UmCL = LightMode ? "bg-stone-100 text-stone-700 hover:bg-stone-200" : "bg-stone-400 text-stone-100 hover:bg-stone-500";
+  const UmCL = LightMode ? "bg-stone-100 text-black/90 hover:bg-stone-200" : "bg-stone-500 text-white/90 hover:bg-stone-600";
 
   return (
     <div className={`${bg} min-h-screen text-stone-900 font-sans transition-all duration-300 ease-in-out`}>
@@ -225,7 +239,7 @@ export default function Bookings() {
                           <p className="text-red-500 text-xs mt-1 italic">{errors.clientName}</p>
                         )}
 
-                        <User className="absolute left-3 top-5.5 -translate-y-1/2 text-stone-400" size={18} />
+                        <User className="absolute left-3 top-5.5 -translate-y-1/2 text-stone-500" size={18} />
                       </div>
                     </div>
 
@@ -251,61 +265,116 @@ export default function Bookings() {
                           <p className="text-red-500 text-xs mt-1 italic">{errors.phoneNumber}</p>
                         )}
 
-                        <Phone className="absolute left-3.5 top-5.5 -translate-y-1/2 text-stone-400" size={18} />
+                        <Phone className="absolute left-3.5 top-5.5 -translate-y-1/2 text-stone-500" size={18} />
                       </div>
                     </div>
 
-                    <div>
-                      <label className={`${subText} block text-sm font-medium mb-1 transition-all duration-300 ease-in-out`}>Service Type</label>
-                        <Listbox
-                          value={formData.service}
-                          onChange={(value) =>
-                            setFormData(prev => ({ ...prev, service: value }))
-                          }
-                        >
-                          <div className="relative">
-                            
-                            {/* Button */}
-                            <Listbox.Button
-                              onClick={() => setToggle(prev => !prev)}
-                              className={`${subText} w-full px-4 py-2 border rounded-xl text-left border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none flex justify-between items-center cursor-pointer`}
-                            >
-                              <span>{formData.service}</span>
-                              <span className="text-black text-sm bg-gray-200 rounded-full p-1">
-                                {toggle ? <ChevronsUp size={25} className="font-bold animate-UpDown" /> : <ChevronDown size={25} className="font-bold" />}
-                              </span>
-                            </Listbox.Button>
+                    <div className='flex justify-between items-center gap-3'>
+                      <div className='w-full'>
+                        <label className={`${subText} block text-sm font-medium mb-1 transition-all duration-300 ease-in-out`}>Property Type</label>
+                          <Listbox
+                            value={formData.property}
+                            onChange={(value) =>
+                              setFormData(prev => ({ ...prev, property: value }))
+                            }
+                          >
+                            {({ open }) => (
 
-                            {/* Options */}
-                            {toggle && (
-                              <Transition
-                                as={Fragment}
-                                leave="transition ease-in duration-100"
-                                leaveFrom="opacity-100"
-                                leaveTo="opacity-0"
+                            <div className="relative">
+                              
+                              {/* Button */}
+                              <Listbox.Button
+                                onClick={() => setToggle1(prev => !prev)}
+                                onClickAn
+                                className={`${subText} w-full px-2 py-2 border rounded-xl text-left border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none flex justify-between items-center cursor-pointer`}
                               >
-                                <Listbox.Options onClick={(e) => e.stopPropagation()} className={`${bgCon} absolute mt-2 w-full border border-stone-200 rounded-xl shadow-lg z-50 overflow-hidden outline-none transition-all duration-300 ease-in-out`}>
-                                  {SERVICES.map((service, index) => (
-                                    <Listbox.Option
-                                      key={index}
-                                      value={service}
-                                      onClick={() => setToggle(false)}
-                                      className={({ active }) =>
-                                        `cursor-pointer px-4 py-2 text-sm transition-all duration-300 ease-in-out ${
-                                          active ? `${LightMode ? "bg-amber-100 text-amber-900 hover:shadow-dark" : "bg-amber-900 text-amber-100 hover:shadow-light"}` : `${LightMode ? "text-gray-900" : "text-gray-200"}`
-                                        }`
-                                      }
-                                    >
-                                      {service}
-                                    </Listbox.Option>
-                                  ))}
-                                </Listbox.Options>
-                              </Transition>
-                            )}
-                            
+                                <span className='line-clamp-1'>{formData.property}</span>
+                                <span className="text-black text-sm bg-gray-200 rounded-full p-0.5">
+                                  {open ? <ChevronsUp size={25} className="font-bold animate-UpDown" /> : <ChevronDown size={25} className="font-bold" />}
+                                </span>
+                              </Listbox.Button>
 
-                          </div>
-                        </Listbox>
+                              {/* Options */}
+                                <Transition
+                                  as={Fragment}
+                                  leave="transition ease-in duration-100"
+                                  leaveFrom="opacity-100"
+                                  leaveTo="opacity-0"
+                                >
+                                  <Listbox.Options onClick={(e) => e.stopPropagation()} className={`${bgCon} absolute mt-2 w-full border border-stone-200 rounded-xl shadow-lg z-50 overflow-hidden outline-none transition-all duration-300 ease-in-out`}>
+                                    {PROPERTY.map((property, index) => (
+                                      <Listbox.Option
+                                        key={index}
+                                        value={property}
+                                        onClick={() => setToggle1(false)}
+                                        className={({ active }) =>
+                                          `cursor-pointer px-4 py-2 text-sm transition-all duration-300 ease-in-out ${
+                                            active ? `${LightMode ? "bg-amber-100 text-amber-900 hover:shadow-dark" : "bg-amber-900 text-amber-100 hover:shadow-light"}` : `${LightMode ? "text-gray-900" : "text-gray-200"}`
+                                          }`
+                                        }
+                                      >
+                                        {property}
+                                      </Listbox.Option>
+                                    ))}
+                                  </Listbox.Options>
+                                </Transition>
+                            </div>
+                            )}
+                          </Listbox>
+                      </div>
+
+                      <div className='w-full'>
+                        <label className={`${subText} block text-sm font-medium mb-1 transition-all duration-300 ease-in-out`}>Property Type</label>
+                          <Listbox
+                            value={formData.property}
+                            onChange={(value) =>
+                              setFormData(prev => ({ ...prev, service: value }))
+                            }
+                          >
+                            {({ open }) => (
+
+                            <div className="relative">
+                              
+                              {/* Button */}
+                              <Listbox.Button
+                                onClick={() => setToggle1(prev => !prev)}
+                                onClickAn
+                                className={`${subText} w-full px-2 py-2 border rounded-xl text-left border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none flex justify-between items-center cursor-pointer`}
+                              >
+                                <span className='line-clamp-1'>{formData.service}</span>
+                                <span className="text-black text-sm bg-gray-200 rounded-full p-0.5">
+                                  {open ? <ChevronsUp size={25} className="font-bold animate-UpDown" /> : <ChevronDown size={25} className="font-bold" />}
+                                </span>
+                              </Listbox.Button>
+
+                              {/* Options */}
+                                <Transition
+                                  as={Fragment}
+                                  leave="transition ease-in duration-100"
+                                  leaveFrom="opacity-100"
+                                  leaveTo="opacity-0"
+                                >
+                                  <Listbox.Options onClick={(e) => e.stopPropagation()} className={`${bgCon} absolute mt-2 w-full border border-stone-200 rounded-xl shadow-lg z-50 overflow-hidden outline-none transition-all duration-300 ease-in-out`}>
+                                    {SERVICES.map((service, index) => (
+                                      <Listbox.Option
+                                        key={index}
+                                        value={service}
+                                        onClick={() => setToggle1(false)}
+                                        className={({ active }) =>
+                                          `cursor-pointer px-4 py-2 text-sm transition-all duration-300 ease-in-out ${
+                                            active ? `${LightMode ? "bg-amber-100 text-amber-900 hover:shadow-dark" : "bg-amber-900 text-amber-100 hover:shadow-light"}` : `${LightMode ? "text-gray-900" : "text-gray-200"}`
+                                          }`
+                                        }
+                                      >
+                                        {service}
+                                      </Listbox.Option>
+                                    ))}
+                                  </Listbox.Options>
+                                </Transition>
+                            </div>
+                            )}
+                          </Listbox>
+                      </div>
                     </div>
 
                     <div>
@@ -326,7 +395,7 @@ export default function Bookings() {
                         {errors.address && (
                           <p className="text-red-500 text-xs -mt-0.5 italic">{errors.address}</p>
                         )}
-                        <MapPin className="absolute left-3 top-5.5 -translate-y-1/2 text-stone-400" size={18} />
+                        <MapPin className="absolute left-3 top-5.5 -translate-y-1/2 text-stone-500" size={18} />
                       </div>
                       <p className={`${subText} text-xs mt-1 italic`}>Address is automatically updated when you move the map marker.</p>
                     </div>
