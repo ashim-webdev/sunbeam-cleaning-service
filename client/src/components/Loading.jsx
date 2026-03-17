@@ -2,18 +2,16 @@ import React from 'react'
 
 const Loading = () => {
   return (
-    <div className='bg-teal-500 flex justify-center items-center'> 
-      <div class="spinner">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
+    <div className='flex justify-center items-center py-5'> 
+      <section class="dots-container">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </section>
     </div>
+
   )
 }
 

@@ -19,9 +19,16 @@ import {
   Calendar, 
   ExternalLink, 
   LayoutDashboard, 
-  UserCircle 
+  UserCircle,
+  ChevronDown,
+  ChevronsUp
 } from 'lucide-react';
+import { Listbox, Transition } from '@headlessui/react';
+import { Fragment } from 'react';
+import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useDispatch, useSelector } from "react-redux";
+
 
 
 const SERVICES = [
@@ -37,8 +44,15 @@ const DEFAULT_CENTER = { lat: 40.7128, lng: -74.0060 }; // New York City
 // --- Components ---
 
 export default function Bookings() {
+  const { LightMode } = useSelector((state) => state.auth);
+  
   const [view, setView] = useState('client');
   const [bookings, setBookings] = useState([]);
+
+  const [errors, setErrors] = useState({});
+  const [shake, setShake] = useState(false);
+  const [toggle, setToggle] = useState(false);
+
   
   // Form State
   const [formData, setFormData] = useState({
@@ -51,6 +65,7 @@ export default function Bookings() {
   });
 
   const addBooking = (booking) => {
+    console.log(booking)
     const newBooking = {
       ...booking,
       id: crypto.randomUUID(),
@@ -66,8 +81,65 @@ export default function Bookings() {
     alert('Booking successful!');
   };
 
+
+  const validateBooking = () => {
+    const newErrors = {};
+
+    const triggerShake = () => {
+      setShake(true);
+
+      if (navigator.vibrate) {
+        navigator.vibrate(300);
+      }
+
+      setTimeout(() => setShake(false), 1000);
+    };
+
+    const { clientName, phoneNumber, address } = formData;
+
+    const allEmpty =
+      !clientName.trim() &&
+      !phoneNumber.trim() &&
+      !address.trim();
+
+    if (allEmpty) {
+      toast.error("All fields are required");
+      newErrors.clientName = "Full name is required";
+      newErrors.phoneNumber = "Phone number is required";
+      newErrors.address = "Address is required";
+      setErrors(newErrors);
+      triggerShake();
+      return false;
+    }
+
+    if (!clientName.trim()) {
+      newErrors.clientName = "Full name is required";
+      toast.error("Full name is required");
+      triggerShake();
+    } else if (!phoneNumber.trim()) {
+      newErrors.phoneNumber = "Phone number is required";
+      toast.error("Phone number is required");
+      triggerShake();
+    } else if (!address.trim()) {
+      newErrors.address = "Please select a location on the map";
+      toast.error("Address is required");
+      triggerShake();
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+
+  const bg = LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM";
+  const bgCon = LightMode ? "bg-white shadow-darkSM" : "bg-black/90 shadow-lightSM";
+  const subText = LightMode ? "text-black/80" : "text-white/80"
+  const shadow = LightMode ? "shadow-darkSM" : "shadow-lightSM";
+  const text = LightMode ? "text-black" : "text-white";
+  const UmCL = LightMode ? "bg-stone-100 text-stone-700 hover:bg-stone-200" : "bg-stone-400 text-stone-100 hover:bg-stone-500";
+
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-900 font-sans">
+    <div className={`${bg} min-h-screen text-stone-900 font-sans transition-all duration-300 ease-in-out`}>
       {/* Header */}
       <header className="bg-white border-b border-stone-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 h-16 flex flex-col sm:flex-row items-center justify-between">
@@ -117,70 +189,146 @@ export default function Bookings() {
             >
               {/* Booking Form */}
               <div className="lg:col-span-5 space-y-6">
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-stone-200">
-                  <h2 className="text-2xl font-semibold mb-6">Book a Cleaning</h2>
+                <div className={`${bgCon} p-6 rounded-2xl border border-stone-200 transition-all duration-300 ease-in-out`}>
+                  <h2 className={`${text} text-2xl font-semibold mb-6 transition-all duration-300 ease-in-out`}>Book a Cleaning</h2>
                   
                   <form 
                     onSubmit={(e) => {
                       e.preventDefault();
+
+                      if (!validateBooking()) return;
+
                       addBooking(formData);
+                      toast.success("Booking successful!");
                     }}
                     className="space-y-4"
                   >
                     <div>
-                      <label className="block text-sm font-medium text-stone-700 mb-1">Full Name</label>
+                      <label className={`block text-sm font-medium ${subText} mb-1 transition-all duration-300 ease-in-out`}>Full Name</label>
                       <div className="relative">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={18} />
                         <input
-                          required
                           type="text"
                           value={formData.clientName}
-                          onChange={e => setFormData(prev => ({ ...prev, clientName: e.target.value }))}
-                          className="w-full pl-10 pr-4 py-2 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none"
+                          onChange={e => {
+                            setFormData(prev => ({ ...prev, clientName: e.target.value }));
+                            setErrors(prev => ({ ...prev, clientName: null }));
+                          }}
+                          className={`${LightMode ? "placeholder-black/70 text-black" : "placeholder-white/70 text-white"} w-full pl-10 pr-4 py-2 border rounded-xl outline-none transition-all ${
+                            errors.clientName
+                              ? `border-2 border-red-500 ${shake ? "animate-shake" : ""}`
+                              : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          }`}
                           placeholder="John Doe"
                         />
+
+                        {errors.clientName && (
+                          <p className="text-red-500 text-xs mt-1 italic">{errors.clientName}</p>
+                        )}
+
+                        <User className="absolute left-3 top-5.5 -translate-y-1/2 text-stone-400" size={18} />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-stone-700 mb-1">Phone Number</label>
+                      <label className={`${subText} block text-sm font-medium mb-1 transition-all duration-300 ease-in-out`}>Phone Number</label>
                       <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={18} />
                         <input
-                          required
                           type="tel"
                           value={formData.phoneNumber}
-                          onChange={e => setFormData(prev => ({ ...prev, phoneNumber: e.target.value }))}
-                          className="w-full pl-10 pr-4 py-2 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none"
+                          onChange={e => {
+                            setFormData(prev => ({ ...prev, phoneNumber: e.target.value }));
+                            setErrors(prev => ({ ...prev, phoneNumber: null }));
+                          }}
+                          className={`${LightMode ? "placeholder-black/70 text-black" : "placeholder-white/70 text-white"} w-full pl-10 pr-4 py-2 border rounded-xl outline-none transition-all duration-300 ease-in-out ${
+                            errors.phoneNumber
+                              ? `border-2 border-red-500 ${shake ? "animate-shake" : ""}`
+                              : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          }`}
                           placeholder="+1 (555) 000-0000"
                         />
+
+                        {errors.phoneNumber && (
+                          <p className="text-red-500 text-xs mt-1 italic">{errors.phoneNumber}</p>
+                        )}
+
+                        <Phone className="absolute left-3.5 top-5.5 -translate-y-1/2 text-stone-400" size={18} />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-stone-700 mb-1">Service Type</label>
-                      <select
-                        value={formData.service}
-                        onChange={e => setFormData(prev => ({ ...prev, service: e.target.value }))}
-                        className="w-full px-4 py-2 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all outline-none appearance-none"
-                      >
-                        {SERVICES.map(s => <option key={s} value={s}>{s}</option>)}
-                      </select>
+                      <label className={`${subText} block text-sm font-medium mb-1 transition-all duration-300 ease-in-out`}>Service Type</label>
+                        <Listbox
+                          value={formData.service}
+                          onChange={(value) =>
+                            setFormData(prev => ({ ...prev, service: value }))
+                          }
+                        >
+                          <div className="relative">
+                            
+                            {/* Button */}
+                            <Listbox.Button
+                              onClick={() => setToggle(prev => !prev)}
+                              className={`${subText} w-full px-4 py-2 border rounded-xl text-left border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none flex justify-between items-center cursor-pointer`}
+                            >
+                              <span>{formData.service}</span>
+                              <span className="text-black text-sm bg-gray-200 rounded-full p-1">
+                                {toggle ? <ChevronsUp size={25} className="font-bold animate-UpDown" /> : <ChevronDown size={25} className="font-bold" />}
+                              </span>
+                            </Listbox.Button>
+
+                            {/* Options */}
+                            {toggle && (
+                              <Transition
+                                as={Fragment}
+                                leave="transition ease-in duration-100"
+                                leaveFrom="opacity-100"
+                                leaveTo="opacity-0"
+                              >
+                                <Listbox.Options onClick={(e) => e.stopPropagation()} className={`${bgCon} absolute mt-2 w-full border border-stone-200 rounded-xl shadow-lg z-50 overflow-hidden outline-none transition-all duration-300 ease-in-out`}>
+                                  {SERVICES.map((service, index) => (
+                                    <Listbox.Option
+                                      key={index}
+                                      value={service}
+                                      onClick={() => setToggle(false)}
+                                      className={({ active }) =>
+                                        `cursor-pointer px-4 py-2 text-sm transition-all duration-300 ease-in-out ${
+                                          active ? `${LightMode ? "bg-amber-100 text-amber-900 hover:shadow-dark" : "bg-amber-900 text-amber-100 hover:shadow-light"}` : `${LightMode ? "text-gray-900" : "text-gray-200"}`
+                                        }`
+                                      }
+                                    >
+                                      {service}
+                                    </Listbox.Option>
+                                  ))}
+                                </Listbox.Options>
+                              </Transition>
+                            )}
+                            
+
+                          </div>
+                        </Listbox>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-stone-700 mb-1">Service Address</label>
+                      <label className={`${subText} block text-sm font-medium text-stone-700 mb-1`}>Service Address</label>
                       <div className="relative">
-                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={18} />
                         <textarea
                           readOnly
                           value={formData.address}
-                          className="w-full pl-10 pr-4 py-2 bg-stone-100 border border-stone-200 rounded-xl text-stone-600 cursor-not-allowed resize-none"
+                          className={`w-full pl-10 pr-4 py-2 border outline-none rounded-xl text-stone-600 cursor-not-allowed resize-none ${LightMode ? "placeholder-black/70 text-black" : "placeholder-white/70 text-white"} transition-all duration-300 ease-in-out ${
+                            errors.address
+                              ? `border-2 border-red-500 ${shake ? "animate-shake" : ""}`
+                              : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          }`}
                           rows={2}
                           placeholder="Select location on map..."
                         />
+
+                        {errors.address && (
+                          <p className="text-red-500 text-xs -mt-0.5 italic">{errors.address}</p>
+                        )}
+                        <MapPin className="absolute left-3 top-5.5 -translate-y-1/2 text-stone-400" size={18} />
                       </div>
-                      <p className="text-xs text-stone-500 mt-1 italic">Address is automatically updated when you move the map marker.</p>
+                      <p className={`${subText} text-xs mt-1 italic`}>Address is automatically updated when you move the map marker.</p>
                     </div>
 
                     <div className="pt-4 space-y-3">
@@ -194,7 +342,7 @@ export default function Bookings() {
                             });
                           }
                         }}
-                        className="w-full py-2.5 px-4 bg-stone-100 text-stone-700 rounded-xl font-medium hover:bg-stone-200 transition-colors flex items-center justify-center gap-2"
+                        className={`ClickAnimationNoti ${UmCL} w-full py-2.5 px-4 rounded-xl font-medium flex items-center justify-center gap-2 transition-all duration-300 ease-in-out`}
                       >
                         <MapPin size={18} />
                         Use My Current Location
@@ -202,7 +350,7 @@ export default function Bookings() {
                       
                       <button
                         type="submit"
-                        className="w-full py-3 px-4 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all shadow-md shadow-emerald-200 active:scale-[0.98]"
+                        className="ClickAnimationNoti shadow-inner hover:shadow-innerWH w-full py-3 px-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-800 active:scale-[0.98] transition-all duration-300 ease-in-out cursor-pointer"
                       >
                         Book Appointment
                       </button>
@@ -212,7 +360,7 @@ export default function Bookings() {
               </div>
 
               {/* Map Section */}
-              <div className="lg:col-span-7 h-125 lg:h-auto min-h-100 rounded-2xl overflow-hidden border border-stone-200 shadow-sm relative">
+              <div className={`${bgCon} lg:col-span-7 h-125 lg:h-auto min-h-100 rounded-2xl overflow-hidden border border-stone-200 relative transition-all duration-300 ease-in-out`}>
                 <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ''}>
                   <MapContainer 
                     lat={formData.lat} 
@@ -232,29 +380,29 @@ export default function Bookings() {
               exit={{ opacity: 0, y: -10 }}
               className="space-y-6"
             >
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-semibold">Booking Dashboard</h2>
-                <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-medium">
+              <div className={`flex items-center justify-between mb-4`}>
+                <h2 className={`${text} text-2xl font-semibold transition-all duration-300 ease-in-out`}>Booking Dashboard</h2>
+                <span className={`${shadow} bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 ease-in-out`}>
                   {bookings.length} Total Bookings
                 </span>
               </div>
 
               {bookings.length === 0 ? (
-                <div className="bg-white border border-dashed border-stone-300 rounded-2xl p-12 text-center">
-                  <div className="bg-stone-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-stone-400">
+                <div className={`${bgCon} border border-dashed border-stone-300 rounded-2xl p-12 text-center transition-all duration-300 ease-in-out`}>
+                  <div className={`${shadow} bg-stone-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-black transition-all duration-300 ease-in-out`}>
                     <Calendar size={32} />
                   </div>
-                  <h3 className="text-lg font-medium text-stone-900">No bookings yet</h3>
-                  <p className="text-stone-500">New bookings will appear here as clients submit the form.</p>
+                  <h3 className={`${text} text-lg font-medium`}>No bookings yet</h3>
+                  <p className={`${subText}`}>New bookings will appear here as clients submit the form.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {bookings.map(booking => (
-                    <div key={booking.id} className="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div key={booking.id} className={`${bgCon} p-6 rounded-2xl border border-stone-200 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out`}>
                       <div className="flex justify-between items-start mb-4">
                         <div>
                           <h3 className="font-semibold text-lg">{booking.clientName}</h3>
-                          <p className="text-sm text-stone-500 flex items-center gap-1">
+                          <p className={`${subText} text-sm flex items-center gap-1 transition-all duration-300 ease-in-out`}>
                             <Phone size={14} /> {booking.phoneNumber}
                           </p>
                         </div>
@@ -299,6 +447,7 @@ export default function Bookings() {
 // --- Map Sub-component ---
 
 function MapContainer({ lat, lng, onLocationChange }) {
+  const { LightMode } = useSelector((state) => state.auth);
   const [markerPos, setMarkerPos] = useState({ lat, lng });
   const mapsLibrary = useMapsLibrary('geocoding');
   const placesLibrary = useMapsLibrary('places');
@@ -370,6 +519,17 @@ function MapContainer({ lat, lng, onLocationChange }) {
     });
   }, [placesLibrary, onLocationChange]);
 
+
+
+  const bg = LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM";
+  const bgCon = LightMode ? "bg-white shadow-darkSM" : "bg-black/90 shadow-lightSM";
+  const subText = LightMode ? "text-black/80" : "text-white/80"
+  const shadow = LightMode ? "shadow-darkSM" : "shadow-lightSM";
+  const text = LightMode ? "text-black" : "text-white";
+  const UmCL = LightMode ? "bg-stone-100 text-stone-700 hover:bg-stone-200" : "bg-stone-400 text-stone-100 hover:bg-stone-500";
+
+
+
   if (!isLoaded) {
     return (
       <div className="w-full h-full bg-stone-100 flex items-center justify-center animate-pulse">
@@ -387,9 +547,9 @@ function MapContainer({ lat, lng, onLocationChange }) {
             ref={searchInputRef}
             type="text"
             placeholder="Search for an address..."
-            className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl shadow-lg focus:ring-2 focus:ring-emerald-500 outline-none pr-10"
+            className={`${bgCon} ${LightMode ? "placeholder-black/70 text-black" : "placeholder-white/70 text-white"} border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full px-4 py-3 border rounded-xl outline-none pr-10 transition-all duration-300 ease-in-out`}
           />
-          <MapPin className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400" size={18} />
+          <MapPin className={`${LightMode ? "text-stone-500" : "text-stone-200"} absolute right-3 top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out`} size={18} />
         </div>
       </div>
 

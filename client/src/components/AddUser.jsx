@@ -184,9 +184,7 @@ const AddUser = ({ open, setOpen, userData }) => {
           </div>
 
           {isLoading || isUpdating ? (
-            <div className='py-5'>
-              <Loading />
-            </div>
+            <Loading />
           ) : (
             <div className='py-3 mt-4 flex sm:flex-row-reverse gap-2'>
               <Button

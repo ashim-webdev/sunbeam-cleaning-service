@@ -35,6 +35,8 @@ export default function EventPopover({
 
   const [errors, setErrors] = useState({});
   const [shake, setShake] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
 
   useEffect(() => {
     if (initialEvent) {
@@ -53,6 +55,20 @@ export default function EventPopover({
 
     setErrors({});
   }, [initialEvent, defaultStart, defaultEnd, isOpen]);
+
+  // Calender "withPortal" Screen Sizing
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 600);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // End
 
   const validateFields = () => {
     const newErrors = {};
@@ -146,7 +162,7 @@ export default function EventPopover({
 
   return (
     <Transition show={isOpen} as={Fragment}>
-      <Dialog className="relative z-50" onClose={() => {}}>
+      <Dialog className="relative z-2000" onClose={() => {}}>
         <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
@@ -170,7 +186,7 @@ export default function EventPopover({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <DialogPanel className={`w-full max-w-md transform overflow-hidden rounded-2xl ${bg} ${shadow} p-6 text-left align-middle border border-slate-100 transition-colors duration-300 ease-in-out`}>
+              <DialogPanel className={`z-100 w-full max-w-md transform overflow-hidden rounded-2xl ${bg} ${shadow} p-6 text-left align-middle border border-slate-100 transition-colors duration-300 ease-in-out`}>
                 <div className="flex items-center justify-between mb-4">
                   <DialogTitle className={`text-lg font-semibold leading-6 ${text} transition-colors duration-300 ease-in-out`}>
                     {initialEvent ? 'Edit Event' : 'Create New Event'}
@@ -197,7 +213,7 @@ export default function EventPopover({
                         setErrors(prev => ({ ...prev, title: null }));
                       }}
                       placeholder="e.g. Board Meeting"
-                      className={`${text} ${placeholder} w-full px-3 py-2 border rounded-md outline-0 transition-all duration-50 ease-in-out ${
+                      className={`${text} ${placeholder}  w-full px-3 py-2 border rounded-md outline-0 transition-all duration-50 ease-in-out ${
                         errors.title
                           ? `border-2 border-red-500 focus:border-red-500 ${
                               shake ? "animate-shake" : ""
@@ -228,6 +244,7 @@ export default function EventPopover({
                         timeIntervals={15}
                         dateFormat="dd/MM/yyyy hh:mm aa"
                         placeholderText="Select start date & time"
+                        withPortal={isMobile}
                         minDate={new Date}
                         calendarClassName={clsx(
                           LightMode
@@ -264,6 +281,7 @@ export default function EventPopover({
                         timeIntervals={15}
                         dateFormat="dd/MM/yyyy hh:mm aa"
                         placeholderText="Select end date & time"
+                        withPortal={isMobile}
                         minDate={start || new Date()}
                         minTime={
                           start && end && start.toDateString() === end.toDateString()

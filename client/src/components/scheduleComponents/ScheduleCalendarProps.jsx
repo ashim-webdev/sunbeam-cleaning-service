@@ -8,6 +8,7 @@ import EventPopover from "./EventPopover";
 import EventViewPopover from "./EventViewPopover";
 import { Plus } from "lucide-react";
 import { useSelector } from "react-redux";
+import { toast } from "sonner";
 
 export default function ScheduleCalendar({ role }) {
   const { LightMode } = useSelector((state) => state.auth);
@@ -49,7 +50,25 @@ export default function ScheduleCalendar({ role }) {
 
   const isAdmin = role === "admin";
 
+  // Reusable function for past date No Click
+  const openEventForm = (date) => {
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    const clickedDate = new Date(date);
+    clickedDate.setHours(0,0,0,0);
+
+    if (clickedDate < today) {
+      isAdmin && toast.error("Oops can't create even in the past!");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleDateClick = (arg) => {
+    if (!openEventForm(arg.date)) return;
+
     if (!isAdmin) return;
 
     setNewSelection({
@@ -59,9 +78,13 @@ export default function ScheduleCalendar({ role }) {
 
     setSelectedEvent(null);
     setIsEditOpen(true);
+
+
   };
 
   const handleSelect = (arg) => {
+    if (!openEventForm(arg.start)) return;
+
     if (!isAdmin) return;
 
     const start = new Date(arg.start);
@@ -161,6 +184,7 @@ export default function ScheduleCalendar({ role }) {
 
   const handleDeleteEvent = (id) => {
     setEvents((prev) => prev.filter((e) => e.id !== id));
+    toast.success("Even deleted successfully")
   };
 
   return (
@@ -191,8 +215,8 @@ export default function ScheduleCalendar({ role }) {
         )}
       </div>
 
-      <div className="flex-1 overflow-x-auto p-4 ">
-        <div className={`${LightMode ? "light-calendar" : "dark-calendar"} ${bg} ${shadow} ${text} min-w-250 h-full transition-colors duration-300 ease-in-out`}>
+      <div className="flex-1 overflow-x-auto p-4">
+        <div className={`${isAdmin ? "isAdmin" : ""} ${LightMode ? "light-calendar" : "dark-calendar"} ${bg} ${shadow} ${text} min-w-250 h-full transition-colors duration-300 ease-in-out`}>
           <FullCalendarAny
             plugins={[
               dayGridPlugin,
@@ -211,6 +235,12 @@ export default function ScheduleCalendar({ role }) {
             events={events}
             editable={isAdmin}
             selectable={isAdmin}
+            selectAllow={(selectInfo) => {
+              const today = new Date();
+              today.setHours(0,0,0,0);
+
+              return selectInfo.start >= today;
+            }}
             selectMirror={true}
             dayMaxEvents={true}
             weekends={true}
@@ -247,6 +277,10 @@ export default function ScheduleCalendar({ role }) {
           --fc-event-border-color: #0039f6;
           --fc-today-bg-color: #253F50;
           font-family: inherit;
+        }
+
+        .isAdmin .fc-day-past {
+          cursor: not-allowed;
         }
 
         .fc-day-today .fc-daygrid-day-number {
@@ -348,6 +382,61 @@ export default function ScheduleCalendar({ role }) {
         .dark-calendar .fc-list-event:hover td {
           background-color: #0206175a !important;
           color: white !important;
+        }
+
+
+
+        /* Light mode Small PopOver*/
+
+        .fc-popover {
+          z-index: 1050 !important;
+        }
+
+        .light-calendar .fc-popover {
+          background-color: white !important;
+          color: black !important;
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .light-calendar .fc-popover .fc-popover-header {
+          background-color: #f1f5f9;
+          color: #0f172a;
+          font-weight: 600;
+          padding: 6px 10px;
+        }
+
+        .light-calendar .fc-popover .fc-event {
+          background-color: #005FFB;
+          color: white;
+          border-radius: 4px;
+          padding: 4px 6px;
+          margin-bottom: 2px;
+        }
+
+        /* Dark mode Small PopOver*/
+        .dark-calendar .fc-popover {
+          background-color: #111827 !important;
+          color: white !important;
+          border: 1px solid #334155;
+          border-radius: 8px;
+          box-shadow: 0 4px 10px rgba(255,255,255,0.1);
+        }
+
+        .dark-calendar .fc-popover .fc-popover-header {
+          background-color: #1e293b;
+          color: white;
+          font-weight: 600;
+          padding: 6px 10px;
+        }
+
+        .dark-calendar .fc-popover .fc-event {
+          background-color: #3b82f6;
+          color: white;
+          border-radius: 4px;
+          padding: 4px 6px;
+          margin-bottom: 2px;
         }
 
       `}</style>

@@ -35,9 +35,7 @@ const Tasks = () => {
 
 
   return isLoading ? (
-    <div className='py-10'>
-      <Loading />
-    </div>
+    <Loading />
   ) : (
     <div className='w-full'>
       <div className='flex items-center justify-between mb-4'>

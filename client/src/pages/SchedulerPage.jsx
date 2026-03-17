@@ -66,7 +66,7 @@ export default function SchedulerPage() {
                 <CalendarIcon size={26} />
               </div>
             </div>
-            <h2 className={`text-3xl font-bold ${text} transition-all duration-300 ease-in-out`}>Workspace Events</h2>
+            <h2 className={`text-3xl font-bold ${text} transition-all duration-300 ease-in-out line-clamp-1`}>Workspace Events</h2>
           </div>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
@@ -94,16 +94,16 @@ export default function SchedulerPage() {
       </main>
 
       {/* Footer */}
-      <footer className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-slate-200 mt-12 ${text} transition-colors duration-300 ease-in-out`}>
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-slate-500">
-            &copy; 2026 ProSchedule Enterprise. All rights reserved.
+      <footer className='flex justify-center items-center'>
+        <div className="px-4 pt-2 pb-8">
+          <p className={`text-sm ${subText} animate-pulse `}>
+            {role === 'admin'
+              ?
+              "Click a date to create a new event, Drag & Drop to change even date." 
+              : 
+              "Click on an even to view even details and stay updated on company schedules."
+            }
           </p>
-          <div className="flex gap-6 text-sm font-medium text-slate-400">
-            <a href="#" className="hover:text-indigo-600 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-indigo-600 transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-indigo-600 transition-colors">Help Center</a>
-          </div>
         </div>
       </footer>
     </div>

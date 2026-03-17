@@ -34,7 +34,7 @@ export default function EventViewPopover({ isOpen, onClose, event }) {
 
   return (
     <Transition show={isOpen} as={Fragment}>
-      <Dialog className="relative z-50" onClose={onClose}>
+      <Dialog className="relative z-2000" onClose={onClose}>
 
         <TransitionChild as={Fragment}>
           <div className={`fixed inset-0 ${blurBG} backdrop-blur-sm`} />

@@ -262,9 +262,7 @@ const Trash = () => {
 }
 
   return isLoading ? (
-    <div className='py-10'>
-      <Loading />
-    </div>
+    <Loading />
   ) : (
     <>
       <div className='w-full md:px-1 px-0 mb-6'>
