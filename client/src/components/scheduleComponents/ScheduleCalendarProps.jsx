@@ -216,7 +216,7 @@ export default function ScheduleCalendar({ role }) {
       </div>
 
       <div className="flex-1 overflow-x-auto p-4">
-        <div className={`${isAdmin ? "isAdmin" : ""} ${LightMode ? "light-calendar" : "dark-calendar"} ${bg} ${shadow} ${text} min-w-250 h-full transition-colors duration-300 ease-in-out`}>
+        <div className={`${isAdmin ? "isAdmin" : ""} ${LightMode ? "light-calendar" : "dark-calendar"} ${bg} ${text} min-w-250 h-full transition-colors duration-300 ease-in-out`}>
           <FullCalendarAny
             plugins={[
               dayGridPlugin,

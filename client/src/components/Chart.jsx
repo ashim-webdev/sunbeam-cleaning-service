@@ -23,8 +23,8 @@ const Chart = () => {
     `}>
       <div className={`
           ${LightMode 
-            ? "bg-transparent shadow-lg shadow-black/30"
-            : "bg-transparent shadow-lg shadow-white/30 border border-white"
+            ? "bg-transparent shadow-darkSM"
+            : "bg-transparent shadow-lightSM border border-white"
           }
           dataCard relative customerCard w-full md:w-[50%] transition-colors ease-in-out duration-300 h-90
         `}>
@@ -119,8 +119,8 @@ const Chart = () => {
         <div
           className={`
             ${LightMode 
-              ? "bg-transparent shadow-lg shadow-black/30"
-              : "bg-transparent shadow-lg shadow-white/30 border border-white"
+              ? "bg-transparent shadow-darkSM"
+              : "bg-transparent shadow-lightSM border border-white"
             }
             dataCard relative categoryCard w-full md:w-85 h-80 transition-colors ease-in-out duration-300
           `}

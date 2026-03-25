@@ -96,7 +96,7 @@ export default function SchedulerPage() {
       {/* Footer */}
       <footer className='flex justify-center items-center'>
         <div className="px-4 pt-2 pb-8">
-          <p className={`text-sm ${subText} animate-pulse `}>
+          <p className={`text-sm ${subText}`}>
             {role === 'admin'
               ?
               "Click a date to create a new event, Drag & Drop to change even date." 

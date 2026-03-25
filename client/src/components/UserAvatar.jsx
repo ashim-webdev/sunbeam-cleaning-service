@@ -11,7 +11,12 @@ import { getInitials } from "../utils";
 // import AddUser from "./AddUser";
 // import ChangePassword from "./ChangePassword";
 
+import img2 from "../img/m2.jpg"
+
 const UserAvatar = () => {
+  const [isActive, setIsActive] = useState(true)
+
+
   const [open, setOpen] = useState(false);
   const [openPassword, setOpenPassword] = useState(false);
   const { LightMode } = useSelector((state) => state.auth);
@@ -34,11 +39,24 @@ const UserAvatar = () => {
   return (
     <>
       <div className=''>
-        <Menu as='div' className='relative inline-block text-left'>
-          <div className="ClickAnimationNoti">
-            <Menu.Button className=' border-2 border-white w-10 h-10 2xl:w-12 2xl:h-12 items-center justify-center rounded-full bg-[#005FFB] hover:bg-blue-800 hover:shadow-innerWH cursor-pointer transition-transform hover:scale-105 ease-in-out duration-200 shadow-inner'>
-              <span className='text-white font-semibold'>
-                {getInitials('Ashimonye Gabriel')}
+        <Menu as='div' className='relative inline-block text-left outline-0'>
+          <div className="ClickAnimationNoti outline-0">
+            <Menu.Button className={`outline-0 border-2 ${isActive ? "border-green-600" : "border-red-600"} w-10 h-10 2xl:w-12 2xl:h-12 items-center justify-center rounded-full bg-[#005FFB] hover:bg-blue-800 hover:shadow-innerWH cursor-pointer transition-all hover:scale-105 ease-in-out duration-200 shadow-inner overflow-hidden`}>
+              <span className='text-white font-semibold '>
+                {/* {user?.img ? 
+                  <img src={user?.img} alt="Avatar" className="w-full h-full object-cover "/>
+                :
+                  <span>
+                    {getInitials(user?.name)}
+                  </span>
+                } */}
+                {img2 ? 
+                  <img src={img2} alt="Avatar" className="w-full h-full object-cover "/>
+                :
+                  <span>
+                    {getInitials('Ashimonye Gabriel')}
+                  </span>
+                }
               </span>
             </Menu.Button>
           </div>

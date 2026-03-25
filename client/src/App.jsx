@@ -2,6 +2,7 @@ import { Transition } from "@headlessui/react";
 import { Fragment, useRef, useEffect } from "react";
 import { useState } from 'react'
 import { Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom'
+import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { setOpenSidebar,  } from "./redux/slices/authSlice";
 import { Toaster } from 'sonner' // Notification library
@@ -52,18 +53,21 @@ function Layout() {
       }
       w-full h-full flex flex-col md:flex-row transition-colors ease-in-out duration-300
     `}>
-      <div className='w-1/5 lg:w-3.5/4 h-screen sticky top-0 hidden lg:block'>
+      <div className='z-60 w-1/5 lg:w-3.5/4 h-screen sticky top-0 hidden xl:block'>
         <Sidebar />
       </div>
 
       <div className="z-200">
-      <MobileSidebar />
+        <MobileSidebar />
       </div>
 
-      <div ref={containerRef} className='flex-1 overflow-y-auto'>
-        <Navbar isScrolled={isScrolled}/>
+      <div ref={containerRef} className='relative w-full overflow-y-auto flex-1'>     
+        <div className="fixed top-0 left-0 right-0 z-50">
+          <Navbar isScrolled={isScrolled}/>
+        </div>
+        
 
-        <div className='p-4 2xl:px-10'>
+        <div className='pt-25 p-4 2xl:px-10 '>
           <Outlet />
         </div>
       </div>
@@ -75,83 +79,71 @@ function Layout() {
 
 
 const MobileSidebar = () => {
-  const { isSidebarOpen } = useSelector((state) => state.auth);
-  const { LightMode } = useSelector((state) => state.auth);
-  
-  const mobileMenuRef = useRef(null);
+  const { isSidebarOpen, LightMode } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
-
-  // Sidebar Smooth Delay Timeout
   const closeSidebar = () => {
-    setTimeout(() => {
-      dispatch(setOpenSidebar(false));
-    }, 50);
+    dispatch(setOpenSidebar(false));
   };
-  // End
 
   return (
-    <>
-      <Transition
-        show={isSidebarOpen}
-        as={Fragment}
-        enter="transition-all duration-500 ease-out"
-        enterFrom="opacity-0 -translate-x-full"
-        enterTo="opacity-100 translate-x-0"
-        leave="transition-all duration-500 ease-in"
-        leaveFrom="opacity-100 translate-x-0"
-        leaveTo="opacity-0 -translate-x-full"
-      >
-        {(ref) => (
-          <div
-            ref={(node) => (mobileMenuRef.current = node)}
-            onClick={() => closeSidebar()}
-            
-          >
-            <div className={`
-                
-                fixed top-0 left-0 lg:hidden w-full h-screen transition-colors ease-in-out duration-300 overflow-auto
-              `}>
-              <div className=' md:w-full h-full'>
-                <div className={`
-                    ${LightMode 
-                      ? "shadow-dark"
-                      : "shadow-light"
-                    }
-                    absolute top-0 sm:w-1/2 w-3/4
-                  `}>
-                  <Sidebar />
+    <AnimatePresence>
+      {isSidebarOpen && (
+        <>
+          {/* Overlay */}
+          <motion.div
+            className="fixed inset-0 bg-black/40 z-40 xl:hidden"
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            initial={{ x: "-100%", scale: 0.98 }}
+            animate={{ x: 0, scale: 1 }}
+            exit={{ x: "-100%", scale: 0.98 }}
+            onClick={closeSidebar}
+          />
 
-                  <div className='absolute top-2.5 right-3 w-full flex justify-end px-5 pt-4'>
-                    <button
-                      onClick={() => closeSidebar()}
-                      className='flex justify-end items-end'
-                    >
-                      <i className={`
-                          ${LightMode 
-                            ? "text-gray-500 hover:text-gray-600"
-                            : "text-white"
-                          }
-                          fa-solid fa-x text-2xl cursor-pointer transition-transform ease-in-out duration-200 hover:scale-105 z-10`
-                        }></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </Transition>
-    </>
+          {/* Sidebar */}
+          <motion.div
+            className={`
+              fixed top-0 left-0 h-full w-3/4 sm:w-1/2 z-50 xl:hidden
+              ${LightMode ? "bg-white shadow-lg" : "bg-[#2a2a2a] shadow-xl"}
+            `}
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "-100%" }}
+            transition={{ type: "tween", duration: 0.3 }}
+          >
+            <Sidebar />
+
+            {/* Close button */}
+            <button
+              onClick={closeSidebar}
+              className="absolute top-4 right-4"
+            >
+              <i
+                className={`
+                  ${LightMode ? "text-gray-600" : "text-white"}
+                  fa-solid fa-x text-2xl hover:scale-105 cursor-pointer
+                `}
+              />
+            </button>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 };
 
-
 function App() {
-
+  const { LightMode } = useSelector((state) => state.auth);
+  
   return (
     <>
-      <main className="w-full min-h-screen bg-[#f3f4f6]">
+      <main className={`
+        ${LightMode
+          ? "bg-black/10"
+          : "bg-[#3D3D3D]"
+        }
+        w-full min-h-screen transition-colors duration-300 ease-in-out
+      `}>
         <Routes>
           <Route element={<Layout />}>
             <Route index path="/" element={<Navigate to='/dashboard' />} />

@@ -122,6 +122,7 @@ const AddTask = ({ open, setOpen, task }) => {
   };
 
   const handleOnSubmit = async (data) => {
+    console.log(data)
     
         // for (const file of assets) {
     //   setUploading(true);

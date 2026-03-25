@@ -33,7 +33,7 @@ export default function UserInfoDash({ task }) {
     strategy: "fixed",
     middleware: [
       offset(0),   // spacing from button
-      flip(),      // 👈 this makes it open top if bottom has no space
+      flip(),      // this makes it open top if bottom has no space
       shift(),     // keeps it inside screen
     ],
     whileElementsMounted: autoUpdate,

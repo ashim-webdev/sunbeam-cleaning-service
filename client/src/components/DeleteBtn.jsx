@@ -6,7 +6,8 @@ const DeleteBtn = ({ onClick }) => {
       (e) => {
         e.stopPropagation();
         onClick?.(e)
-      }} className="bin-button shadow-inner hover:shadow-innerWH">
+      }} 
+      className="bin-button shadow-inner hover:shadow-innerWH">
       <svg
         className="bin-top"
         viewBox="0 0 39 7"

@@ -18,8 +18,10 @@ export default function ConfirmationDialog({
   
   const closeDialog = () => {
     setOpen(false);
-    setType(type);
-    setMsg(msg);
+
+    // AI said i should delete this 
+    // setType(type);
+    // setMsg(msg);
   };
 
   return (

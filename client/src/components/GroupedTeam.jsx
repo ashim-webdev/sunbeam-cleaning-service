@@ -68,7 +68,7 @@ export default function GroupedTeam({ team = [] }) {
                   }
                   hidden pt-5 sm:block px-4 text-sm text-center transition-colors ease-in-out duration-300
                 `}>
-                {member.email.slice(0, 1) + "......@......com" ?? "email@example.com"}
+                {member?.email.slice(0, 1) + "......@gmail.com"}
               </td>
               
               <td>

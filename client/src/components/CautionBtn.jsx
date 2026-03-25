@@ -9,7 +9,7 @@ const CautionBtn = () => {
 
         <span className="btn-content">
           {/* Caution Icon Spin {seperate component} */}
-          <div class="tooltip-container hint" data-position="4">
+          <div class="tooltip-containerCaution hint" data-position="4">
             <div class="icon hint-dot">
               <span class="hint-radius"></span>
               <svg

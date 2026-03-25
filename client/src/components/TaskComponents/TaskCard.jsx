@@ -248,21 +248,21 @@ const TaskCard = ({ task }) => {
 
               <div className={`
                   ${LightMode 
-                    ? "bg-[#F3F4F6]"
+                    ? "bg-[#E8E8E8]"
                     : "bg-[#3C3C3C]"
                   }
                   absolute -top-2 -left-2 w-4 h-4.5 rotate-45 transition-colors duration-300 ease-in-out
                 `} />
               <div className={`
                   ${LightMode 
-                    ? "bg-[#F3F4F6]"
+                    ? "bg-[#E8E8E8]"
                     : "bg-[#3C3C3C]"
                   }
                   absolute border-white/80 -top-[0.5px] -left-[0.5px] w-3.5 h-3.5 border ${TASK_HEADER[task.stage]}
                 `} />
               <div className={`
                   ${LightMode 
-                    ? "bg-[#F3F4F6]"
+                    ? "bg-[#E8E8E8]"
                     : "bg-[#3C3C3C]"
                   }
                   absolute -top-2 -left-2 w-4 h-4.5 rotate-45 transition-colors duration-300 ease-in-out

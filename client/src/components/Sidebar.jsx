@@ -160,7 +160,7 @@ const Sidebar = () => {
           ? "bg-white "
           : "bg-black/90"
         }
-          w-full h-dvh flex flex-col gap-6 p-5 transition-colors ease-in-out duration-300
+          w-full h-full flex flex-col gap-6 p-5 transition-colors ease-in-out duration-300
       `}>
       <h1 className='flex gap-1 items-center'>
         <p className='p-2 bg-blue-600 shadow-inner rounded-full'>
@@ -171,7 +171,7 @@ const Sidebar = () => {
         </span>
       </h1>
 
-      <div className='pl-4 flex-1 flex flex-col gap-y-3'>
+      <div className='pl-4 pr-4 flex-1 flex flex-col gap-y-3 overflow-y-auto overflow-x-hidden'>
         {sidebarLinks.map((link) => (
           <NavLink el={link} key={link.label} />
         ))}
@@ -215,7 +215,7 @@ const Sidebar = () => {
                           ? "bg-white shadow-darkSM"
                           : "bg-black/90 shadow-lightSM"
                         }
-                        absolute -top-40 -right-10 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded p-2 cursor-pointer transition-colors ease-in-out duration-300
+                        absolute -top-40 right-2 xl:right-0 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded p-2 cursor-pointer transition-colors ease-in-out duration-300
                       `}
                       >
                       {activityLinks.map((link) => (

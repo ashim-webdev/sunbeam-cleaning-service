@@ -36,9 +36,9 @@ const Navbar = ({ isScrolled }) => {
             ? `${isScrolled ? 'bg-white/90 backdrop-blur-xs ' : 'bg-white'}`
             : `${isScrolled ? 'bg-black/90 backdrop-blur-[2px]' : 'bg-black/90'}`
           }
-          flex justify-between items-center px-6 py-3 2xl:py-4 sticky z-50 top-0 transition-colors ease-in-out duration-300
+          sticky flex justify-between items-center px-6 py-3 2xl:py-4  z-50 top-0 transition-colors ease-in-out duration-300
         `}>
-      <div className='flex gap-4'>
+      <div className='sm:ml-8 ml-2 flex gap-4'>
         <div className='flex justify-center items-center'>
           <button
             onClick={() => dispatch(setOpenSidebar(true))}
@@ -47,7 +47,7 @@ const Navbar = ({ isScrolled }) => {
                   ? "text-gray-500 hover:text-gray-600"
                   : "text-white"
                 }
-                text-3xl cursor-pointer transition-transform ease-in-out duration-300 hover:scale-105 flex justify-center items-center lg:hidden font-bold
+                text-3xl cursor-pointer transition-transform ease-in-out duration-300 hover:scale-105 flex justify-center items-center xl:hidden font-bold
               `}
           >
             <i className="fa-solid fa-bars"></i>
@@ -59,7 +59,7 @@ const Navbar = ({ isScrolled }) => {
             onSubmit={handleSubmit}
             className='w-auto 2xl:w-100 flex items-center py-2 px-3 gap-2 rounded-full'
           >
-            <div className="input-container">
+            <div className="lg:pl-55 input-container">
               <input
                 onChange={(e) => setSearchTerm(e.target.value)}
                 value={searchTerm}

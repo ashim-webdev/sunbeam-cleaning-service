@@ -34,15 +34,18 @@ import { useDispatch, useSelector } from "react-redux";
 const SERVICES = [
   'Basic Cleaning',
   'Deep Cleaning',
-  'Office Cleaning',
-  'Move In/Out Cleaning',
-  'Window Cleaning'
+  'Move In Cleaning',
+  'Move Out Cleaning',
+  'Window Cleaning',
+  'Carpet Cleaning',
+  'Sofa / Upholstery Cleaning',
+  'Others...'
 ];
 
 const PROPERTY = [
   'Apartment / Flat',
-  'House',
-  'Office',
+  'House / Home',
+  'Office / Industry',
   'Hotel / Guest House',
   'Restaurant / Cafe',
   'Warehouse',
@@ -147,6 +150,7 @@ export default function Bookings() {
 
   const bg = LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM";
   const bgCon = LightMode ? "bg-white shadow-darkSM" : "bg-black/90 shadow-lightSM";
+  const bgMenu = LightMode ? "bg-white shadow-dark border-black border-stone-200" : "bg-black/90 shadow-light border-white border-stone-900";
   const subText = LightMode ? "text-black/80" : "text-white/80"
   const shadow = LightMode ? "shadow-darkSM" : "shadow-lightSM";
   const text = LightMode ? "text-black" : "text-white";
@@ -269,7 +273,7 @@ export default function Bookings() {
                       </div>
                     </div>
 
-                    <div className='flex justify-between items-center gap-3'>
+                    <div className='flex flex-col md:flex-row justify-between items-center gap-4'>
                       <div className='w-full'>
                         <label className={`${subText} block text-sm font-medium mb-1 transition-all duration-300 ease-in-out`}>Property Type</label>
                           <Listbox
@@ -301,14 +305,14 @@ export default function Bookings() {
                                   leaveFrom="opacity-100"
                                   leaveTo="opacity-0"
                                 >
-                                  <Listbox.Options onClick={(e) => e.stopPropagation()} className={`${bgCon} absolute mt-2 w-full border border-stone-200 rounded-xl shadow-lg z-50 overflow-hidden outline-none transition-all duration-300 ease-in-out`}>
+                                  <Listbox.Options onClick={(e) => e.stopPropagation()} className={`${bgMenu} absolute mt-2 w-full border overflow-hidden rounded-xl z-50  outline-none transition-all duration-300 ease-in-out`}>
                                     {PROPERTY.map((property, index) => (
                                       <Listbox.Option
                                         key={index}
                                         value={property}
                                         onClick={() => setToggle1(false)}
                                         className={({ active }) =>
-                                          `cursor-pointer px-4 py-2 text-sm transition-all duration-300 ease-in-out ${
+                                          `cursor-pointer px-4 py-2 text-sm transition-all duration-300 ease-in-out hover:scale-105 ${
                                             active ? `${LightMode ? "bg-amber-100 text-amber-900 hover:shadow-dark" : "bg-amber-900 text-amber-100 hover:shadow-light"}` : `${LightMode ? "text-gray-900" : "text-gray-200"}`
                                           }`
                                         }
@@ -324,7 +328,7 @@ export default function Bookings() {
                       </div>
 
                       <div className='w-full'>
-                        <label className={`${subText} block text-sm font-medium mb-1 transition-all duration-300 ease-in-out`}>Property Type</label>
+                        <label className={`${subText} block text-sm font-medium mb-1 transition-all duration-300 ease-in-out`}>Service Type</label>
                           <Listbox
                             value={formData.property}
                             onChange={(value) =>
@@ -354,14 +358,14 @@ export default function Bookings() {
                                   leaveFrom="opacity-100"
                                   leaveTo="opacity-0"
                                 >
-                                  <Listbox.Options onClick={(e) => e.stopPropagation()} className={`${bgCon} absolute mt-2 w-full border border-stone-200 rounded-xl shadow-lg z-50 overflow-hidden outline-none transition-all duration-300 ease-in-out`}>
+                                  <Listbox.Options onClick={(e) => e.stopPropagation()} className={`${bgMenu} absolute mt-2 w-full border rounded-xl shadow-lg z-50 overflow-hidden outline-none transition-all duration-300 ease-in-out`}>
                                     {SERVICES.map((service, index) => (
                                       <Listbox.Option
                                         key={index}
                                         value={service}
                                         onClick={() => setToggle1(false)}
                                         className={({ active }) =>
-                                          `cursor-pointer px-4 py-2 text-sm transition-all duration-300 ease-in-out ${
+                                          `cursor-pointer px-4 py-2 text-sm transition-all duration-300 ease-in-out hover:scale-105 ${
                                             active ? `${LightMode ? "bg-amber-100 text-amber-900 hover:shadow-dark" : "bg-amber-900 text-amber-100 hover:shadow-light"}` : `${LightMode ? "text-gray-900" : "text-gray-200"}`
                                           }`
                                         }

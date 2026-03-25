@@ -2,7 +2,8 @@ import clsx from "clsx";
 import moment from "moment";
 import { Popover, Transition } from "@headlessui/react";
 import { Fragment } from "react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Tilt } from "react-tilt"
 import { useDispatch, useSelector } from "react-redux";
 import { FaNewspaper } from "react-icons/fa";
@@ -20,6 +21,7 @@ import { PRIORITY_STYLES, TASK_TYPE, getInitials } from "../utils";
 import { summary, tasks } from "../assets/data";
 import Chart from "../components/Chart"
 import UserInfoDash from "../components/UserInfoDash"
+import SocialMedia from "../components/SocialMedia";
 
 
 
@@ -31,6 +33,7 @@ import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const { LightMode } = useSelector((state) => state.auth);
+
   const totals = summary.tasks
   const lastMonth = summary.lastMonth
 
@@ -73,6 +76,14 @@ const Dashboard = () => {
     },
   ];
 
+
+
+  const bgMenu = LightMode ? "bg-white shadow-darkSM border-black/90" : "bg-black/90 shadow-lightSM border-white/90";
+  const arrow = LightMode ? "bg-white" : "bg-black/90"
+  const text = LightMode ? "text-black !important" : "text-white !important";
+  const cautionBG = LightMode ? "bg-blue-600" : "bg-blue-600/40";
+
+
   const Card = ({ label, lastMonth, count, bg, tx, icon }) => {
     return (
       <div className={`
@@ -108,7 +119,203 @@ const Dashboard = () => {
   };
 
 
+  const DisabledComponent = ({ user }) => {
+    const [tooltipShow, setTooltipShow] = useState(false);
 
+    useEffect(() => {
+      if (user) return;
+
+      const interval = setInterval(() => {
+        setTooltipShow(prev => !prev);
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }, [user]);
+
+    return (
+      <div className="w-2/3 flex justify-between items-center">
+          <div className={`
+            ${LightMode
+              ? "border-[#E8E8E8] bg-[#E8E8E8]"
+              : "border-[#3D3D3D] bg-[#3D3D3D]"
+            }
+            absolute -bottom-6 -right-4 flex justify-center items-center rounded-3xl border-8 transition-all duration-300 ease-in-out
+          `}>
+          <div class="relative inline-block group">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setTooltipShow(e => !e)
+              }}
+              className={clsx(
+                "relative w-fit px-3.5 py-1.5 rounded-full transition-transform ease-in-out duration-300 text-[15px] shadow-inner  cursor-pointer",
+                user ? "bg-green-500 text-white" : "bg-red-500 text-white active:scale-95"
+              )}
+              >
+              {user ? "Active" : "Disabled"}
+            </button>
+
+            {user
+              ?
+              null
+              :
+              <AnimatePresence mode="wait">
+                {tooltipShow && (
+                  <motion.div
+                    key="box"
+                    initial={{ x: 100, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: 100, opacity: 0 }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    class={`z-10 absolute bottom-full -left-14 -translate-x-1/2 mb-5 w-72 transition-all duration-300 ease-out transform group-hover:translate-y-0 translate-y-2`}
+                  >
+                    <div
+                      class={`relative ${bgMenu} p-4 rounded-2xl border transition-all duration-300 ease-in-out`}
+                    >
+                      <div class="flex items-center gap-3 mb-2">
+                        <div
+                          class={`${cautionBG} flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300 ease-in-out`}
+                        >
+                          <svg
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          class="w-4 h-4 text-red-600"
+                        >
+                          <path
+                            clip-rule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                            fill-rule="evenodd"
+                          ></path>
+                        </svg>
+                        </div>
+                        <h3 class={`${text} text-sm font-semibold transition-all duration-300 ease-in-out`}>Important Information</h3>
+                      </div>
+
+                      <div class="space-y-2">
+                        <p class={`${text} text-sm transition-all duration-300 ease-in-out`}>
+                          This user account is currently disabled. Please contact an administrator for more information.
+                        </p>
+                        <div class="flex items-center gap-2 text-xs text-red-600">
+                          <i class="fa-solid fa-ban"></i>
+                          <span className="">User Disabled</span>
+                        </div>
+                      </div>
+
+                      <div
+                        class={`${arrow} absolute inset-0 rounded-2xl  blur-xl opacity-50 transition-all duration-300 ease-in-out`}
+                      ></div>
+
+                      <div
+                        class={`${arrow} absolute -bottom-1.5 right-7 -translate-x-1/2 w-3 h-3 rotate-45 border-r border-b border-red-600 transition-all duration-300 ease-in-out`}
+                      ></div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            }
+
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+
+  const DisabledComponentTable = ({ user }) => {
+    const [tooltipShow, setTooltipShow] = useState(false);
+
+    useEffect(() => {
+      if (user) return;
+
+      const interval = setInterval(() => {
+        setTooltipShow(prev => !prev);
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }, [user]);
+
+    return (
+      <div class="relative inline-block group">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setTooltipShow(e => !e)
+          }}
+          className={clsx(
+            "relative w-fit px-3.5 py-1.5 rounded-full transition-transform ease-in-out duration-300 text-[15px] shadow-inner  cursor-pointer",
+            user ? "bg-green-500 text-white" : "bg-red-500 text-white active:scale-95 -ml-2"
+          )}
+          >
+          {user ? "Active" : "Disabled"}
+        </button>
+
+        {user
+          ?
+          null
+          :
+          <AnimatePresence mode="wait">
+            {tooltipShow && (
+              <motion.div
+                key="box"
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -100, opacity: 0 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                class="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-72 transition-all duration-300 ease-out transform group-hover:translate-y-0 translate-y-2"
+              >
+                <div
+                  class={`relative ${bgMenu} p-4 rounded-2xl border transition-all duration-300 ease-in-out`}
+                >
+                  <div class="flex items-center gap-3 mb-2">
+                    <div
+                      class={`${cautionBG} flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300 ease-in-out`}
+                    >
+                      <svg
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        class="w-4 h-4 text-red-600"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                          fill-rule="evenodd"
+                        ></path>
+                      </svg>
+                    </div>
+                    <h3 class={`${text} text-sm font-semibold transition-all duration-300 ease-in-out`}>Important Information</h3>
+                  </div>
+
+                  <div class="space-y-2">
+                    <p class={`${text} text-sm transition-all duration-300 ease-in-out`}>
+                      This user account is currently disabled. Please contact an administrator for more information.
+                    </p>
+                    <div class="flex items-center gap-2 text-xs text-red-600">
+                      <svg 
+                        fill="currentColor"
+                        class="w-4 h-4 text-red-600"
+                        xmlns="http://www.w3.org/2000/svg" 
+                        viewBox="0 0 640 640"
+                      ><path d="M431.2 476.5L163.5 208.8C141.1 240.2 128 278.6 128 320C128 426 214 512 320 512C361.5 512 399.9 498.9 431.2 476.5zM476.5 431.2C498.9 399.8 512 361.4 512 320C512 214 426 128 320 128C278.5 128 240.1 141.1 208.8 163.5L476.5 431.2zM64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320z"/></svg>
+                      <span className="text-red-600">User Disabled</span>
+                    </div>
+                  </div>
+
+                  <div
+                    class={`${arrow} absolute inset-0 rounded-2xl  blur-xl opacity-50 transition-all duration-300 ease-in-out`}
+                  ></div>
+
+                  <div
+                    class={`${arrow} absolute -bottom-1.5 right-33.5 -translate-x-1/2 w-3 h-3 rotate-45 border-r border-b border-red-600 transition-all duration-300 ease-in-out`}
+                  ></div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        }
+
+      </div>
+    )
+  }
 
 
 
@@ -132,7 +339,7 @@ const Dashboard = () => {
           `}>
           <th className='py-2 pl-4'>Full Name</th>
           <th className='py-2 pl-2 text-start'>Status</th>
-          <th className='py-2 hidden sm:block'>Created At</th>
+          <th className='py-2 pl-3 hidden sm:block'>Created At</th>
         </tr>
       </thead>
     );
@@ -159,7 +366,7 @@ const Dashboard = () => {
                 </span>
               }
             </div>
-            <div>
+            <div className={`${user.isActive ? "" : "blur-[2px]"}`}>
               <p className="whitespace-nowrap"> {user.name}</p>
               <span className={`
                 ${LightMode 
@@ -173,36 +380,101 @@ const Dashboard = () => {
         </td>
 
         <td>
-          <button
-            onClick={(e) => e.stopPropagation()}
-            className={clsx(
-              "ClickAnimation w-fit px-3 mr-4 sm:mr-0 py-1 rounded-full transition-transform ease-in-out duration-300 text-sm shadow-inner hover:shadow-innerWH  cursor-pointer",
-              user?.isActive ? "bg-green-500 text-white hover:bg-green-700 hover:scale-105" : "bg-red-500 text-whits hover:bg-red-700 hover:scale-110"
-            )}
-          >
-            
-
-
-            <Link to={`/log-in`}>
-            {user?.isActive ? "Active" : "Disabled"}
-            </Link>
-
-
-
-          </button>
+          <DisabledComponentTable user={user.isActive} />
         </td>
-        <td className='pt-5 pl-1 text-sm hidden sm:block'>{moment(user?.createdAt).fromNow()}</td>
+
+        <td className={`w-32 px-3 whitespace-nowrap ${user.isActive ? "" : "blur-[2px]"}`}>{moment(user?.createdAt).fromNow()}</td>
+
+        <td className="">
+          <td className="flex justify-center px-2">
+            <SocialMedia tiktok={user?.tiktok} youtube={user?.youtube} whatsApp={user?.whatsApp} telegram={user?.telegram} />
+          </td>
+        </td>
       </tr>
     );
 
+
+
+  const UserCard = ({ user }) => (
+    <div className={`
+      ${LightMode
+        ? "bg-white shadow-darkSM"
+        : "bg-black/90 shadow-lightSM"
+      }
+      relative w-full rounded-2xl h-35 flex flex-col justify-center items-center transition-all duration-300 ease-in-out
+    `}>
+        <div className='absolute -top-10 -left-2 flex flex-col justify-center items-center gap-3 whitespace-nowrap'>
+          <div className={clsx(
+            LightMode
+              ? "shadow-darkSM border-white"
+              : "shadow-lightSM border-black",
+            "w-30 h-30 rounded-full border-8 flex items-center justify-center text-white text-sm overflow-hidden bg-blue-600 transition-all duration-300 ease-in-out",
+          )}>
+            {user?.img ? 
+              <img src={user?.img} alt="Avatar" className="w-full h-full object-cover "/>
+            :
+              <span className='text-2xl md:text-sm text-center'>
+                {getInitials(user?.name)}
+              </span>
+            }
+          </div>
+        </div>
+
+        <div className={`
+          ${LightMode
+            ? "border-[#E8E8E8] bg-[#E8E8E8]"
+            : "border-[#3D3D3D] bg-[#3D3D3D]"
+          }
+          absolute border-2 p-2 rounded-full -top-8 -right-4 flex justify-center transition-all duration-300 ease-in-out
+        `}>
+          <SocialMedia tiktok={user?.tiktok} youtube={user?.youtube} whatsApp={user?.whatsApp} telegram={user?.telegram} />
+        </div>
+
+        <div className={`
+          ${LightMode
+            ? "text-black"
+            : "text-white"
+          }
+            w-full mt-4 transition-all duration-300 ease-in-out
+            ${user.isActive ? "" : "blur-[2px]"}
+          `}>
+          <div className="ml-30 w-40 flex flex-col justify-center items-start gap-0">
+            <div className="text-xl font-semibold font-serif whitespace-nowrap [@media(min-width:400px)_and_(min-width:500px)]:hidden">{user.name.slice(0, 12) + "..."}</div>
+            <div className="text-xl font-semibold font-serif whitespace-nowrap [@media(min-width:400px)_and_(min-width:500px)]:block hidden">{user.name}</div>
+            
+            <div className="text-lg [@media(min-width:400px)_and_(min-width:500px)]:hidden">{user.email.slice(0, 1) + "......@gmail.com"}</div>
+            <div className="text-lg [@media(min-width:400px)_and_(min-width:500px)]:block hidden">{user.email.slice(0, 1) + "......@gmail.com"}</div>
+          </div>
+        </div>
+
+        <div className={`
+            ${LightMode
+              ? "text-black"
+              : "text-white"
+            }
+            w-full mt-4 ml-5 flex justify-start items-center gap-2 transition-all duration-300 ease-in-out
+            ${user.isActive ? "" : "blur-[2px]"}
+          `}>
+          <div className="text-sm font-semibold">{user.title}</div>
+
+          <div className="w-0.5 h-8 bg-linear-to-b from-green-400/10 via-green-500 to-green-400/10" />
+
+          <div className="text-sm font-semibold">{user.role}</div>
+        </div>
+
+        <DisabledComponent user={user.isActive}/>
+
+    </div>
+  )
+
     return (
-      <div className="md:px-30 py-5">
+      <div className="md:px-30 py-5 pt-26 overflow-hidden">
         <div className={`
             ${LightMode 
               ? "bg-white shadow-md shadow-black/30"
               : "bg-black/90 shadow-md shadow-white/30"
             }
-            w-full h-fit px-2 md:px-6 py-4 shadow-md rounded transition-colors ease-in-out duration-300
+            hidden sm:block w-full h-fit px-2 md:px-6 py-4 shadow-md rounded transition-colors ease-in-out duration-300
           `}>
           <table className='w-full mb-5'>
             <TableHeader />
@@ -212,6 +484,28 @@ const Dashboard = () => {
               ))}
             </tbody>
           </table>
+        </div>
+
+        <div className={`
+          ${LightMode
+            ? "shadow-darkSM "
+            : "shadow-lightSM"
+          }
+          relative flex flex-col justify-center gap-15 px-4 pt-20 pb-15 mx-1 sm:hidden rounded-2xl transition-colors duration-300 ease-in-out
+        `}>
+          {users?.map((user, index) => (
+            <UserCard key={index} user={user} />
+          ))}
+
+          <span className="absolute z-0 text-center -top-6 left-0 right-0">
+            <span className={`
+              ${LightMode
+                ? "text-black bg-[#E8E8E8]"
+                : "text-white bg-[#3D3D3D]"
+              }
+              py-2 px-4 text-3xl font-semibold font-sans transition-colors duration-300 ease-in-out
+            `}>Users</span>
+          </span>
         </div>
       </div>
     );

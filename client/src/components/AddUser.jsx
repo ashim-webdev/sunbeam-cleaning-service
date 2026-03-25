@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
+import { BiImageAdd } from "react-icons/bi";
 // import { useRegisterMutation } from "../redux/slices/api/authApiSlice";
 // import { useUpdateUserMutation } from "../redux/slices/api/userApiSlice";
 // import { setCredentials } from "../redux/slices/authSlice";
@@ -12,6 +13,8 @@ import ModalWrapper from "./ModalWrapper";
 import Textbox from "./Textbox";
 
 const AddUser = ({ open, setOpen, userData }) => {
+  const { LightMode } = useSelector((state) => state.auth);
+  
   let defaultValues = userData ?? {};
   // const { user } = useSelector((state) => state.auth);
 
@@ -29,6 +32,18 @@ const AddUser = ({ open, setOpen, userData }) => {
   
   const [isLoading, setIsLoading] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
+
+  // Image Function
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      setImage(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
 
   const [shake, setShake] = useState(false);
 
@@ -63,7 +78,13 @@ const AddUser = ({ open, setOpen, userData }) => {
     }
   };
 
-  const handleOnSubmit = async () => {
+  const handleOnSubmit = async (data) => {
+    const fullData = {
+      ...data,
+      profileImage: image,
+    };
+
+    console.log(fullData)
     // try {
     //   if (userData) {
     //     const res = await updateUser(data).unwrap();
@@ -95,6 +116,8 @@ const AddUser = ({ open, setOpen, userData }) => {
     }, 800);
 
     reset();
+    setImage(null);
+    setPreview(null)
   };
 
   return (
@@ -103,11 +126,48 @@ const AddUser = ({ open, setOpen, userData }) => {
         <form onSubmit={handleSubmit(handleOnSubmit, handleFormError)} className=''>
           <Dialog.Title
             as='h2'
-            className='text-base font-bold leading-6 text-gray-900 mb-4'
+            className={`
+                ${
+                  LightMode ? "text-black" : "text-white"
+                }
+                text-base font-bold leading-6 mb-4
+              `}
           >
             {userData ? "UPDATE PROFILE" : "ADD NEW USER"}
           </Dialog.Title>
           <div className='mt-2 flex flex-col gap-6'>
+<div className="flex justify-center items-center">
+  <label htmlFor="profileUpload" className="cursor-pointer">
+    <div className={`
+        ${
+          LightMode ? "shadow-darkSM" : "shadow-lightSM"
+        }
+        w-20 h-20 rounded-full border-2 border-dashed border-gray-400 flex items-center justify-center overflow-hidden hover:scale-105 transition-all duration-300 ease-in-out
+      `}>
+      
+      {preview ? (
+        <img
+          src={preview}
+          alt="Profile Preview"
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <span className="text-xs text-gray-400 text-center px-2">
+          <BiImageAdd className="text-2xl text-gray-400" />
+        </span>
+      )}
+
+    </div>
+
+    <input
+      type="file"
+      id="profileUpload"
+      className="hidden"
+      accept="image/*"
+      onChange={handleImageChange}
+    />
+  </label>
+</div>
             <Textbox
               placeholder='Full name'
               type='text'
@@ -180,6 +240,46 @@ const AddUser = ({ open, setOpen, userData }) => {
               })}
               error={errors.role ? errors.role.message : ""}
             />
+
+            <div className="flex justify-center items-center gap-2">
+              <Textbox
+                placeholder='Tiktok'
+                type='text'
+                name='tiktok'
+                label='Tiktok'
+                className="w-full border rounded-md outline-0 border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                register={register("tiktok")}
+              />
+
+              <Textbox
+                placeholder='WhatsApp'
+                type='text'
+                name='whatsApp'
+                label='whatsApp'
+                className="w-full border rounded-md outline-0 border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                register={register("whatsApp")}
+              />
+            </div>
+
+            <div className="flex justify-center items-center gap-2">
+              <Textbox
+                placeholder='YouTube'
+                type='text'
+                name='youtube'
+                label='YouTube'
+                className="w-full border rounded-md outline-0 border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                register={register("youtube")}
+              />
+
+              <Textbox
+                placeholder='Telegram'
+                type='text'
+                name='telegram'
+                label='Telegram'
+                className="w-full border rounded-md outline-0 border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                register={register("telegram")}
+              />
+            </div>
 
           </div>
 

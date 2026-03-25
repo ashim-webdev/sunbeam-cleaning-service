@@ -175,7 +175,7 @@ const Login = () => {
         <div className='LogIn-BG'></div>
       </div>
 
-      <div className='absolute w-fill flex justify-center item-center top-5 left-0 right-0 '>
+      <div className='absolute bg-transparent w-fill flex justify-center item-center top-5 left-0 right-0 '>
         <CautionBtn />
       </div>
     </div>
