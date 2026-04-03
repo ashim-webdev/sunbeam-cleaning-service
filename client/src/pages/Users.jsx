@@ -135,8 +135,8 @@ const Users = () => {
           <div 
             onClick={() => toggleSocial(user._id)}
             className={clsx(
-            "w-9 h-9 rounded-full border border-white flex items-center justify-center text-white text-sm ml-2 shadow-inner overflow-hidden bg-blue-600 hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out",
-            
+            "w-9 h-9 rounded-full border-2 flex items-center justify-center text-white text-sm ml-2 shadow-inner overflow-hidden bg-blue-600 hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out",
+            user.isActive ? "border-green-500" : "border-red-600"
           )}>
             {user?.img ? 
               <img src={user?.img} alt="Avatar" className="w-full h-full object-cover "/>
@@ -151,7 +151,7 @@ const Users = () => {
 
           {showSocial === user._id && (
             <div className="absolute -top-1.5 left-15">
-              <LinearSocial tiktok={user?.tiktok} youtube={user?.youtube} whatsApp={user?.whatsApp} telegram={user?.telegram}/>
+              <LinearSocial tiktok={user?.tiktok} x={user?.x} whatsApp={user?.whatsApp} telegram={user?.telegram}/>
 
               <div
                 className={`absolute inset-0 rounded-2xl  blur-xl opacity-50 transition-all duration-300 ease-in-out`}
@@ -219,7 +219,7 @@ const Users = () => {
       }
       relative w-full rounded-2xl h-35 flex flex-col justify-center items-center transition-all duration-300 ease-in-out
     `}>
-        <div className='absolute -top-7 -left-5 flex flex-col justify-center items-center gap-3 whitespace-nowrap'>
+        <div className={`${user.isActive ? "border-green-500" : "border-red-600"} absolute -top-7 -left-5 border-2 rounded-full flex flex-col justify-center items-center gap-3 whitespace-nowrap`}>
           <div className={clsx(
             LightMode
               ? "shadow-darkSM border-white"
@@ -243,7 +243,7 @@ const Users = () => {
           }
           absolute border-2 p-2 rounded-full -top-11 right-25 flex justify-center transition-all duration-300 ease-in-out
         `}>
-          <SocialMedia tiktok={user.tiktok} youtube={user.youtube} whatsApp={user.whatsApp} telegram={user.telegram} />
+          <SocialMedia tiktok={user.tiktok} x={user.x} whatsApp={user.whatsApp} telegram={user.telegram} />
         </div>
 
         <div className='absolute -top-6 -right-6 p-2 flex flex-col gap-1.5 justify-center'>

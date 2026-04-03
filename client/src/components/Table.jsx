@@ -47,10 +47,10 @@ const Table = ({ tasks }) => {
     setOpenDialog(true);
   };
 
-  // const editClickHandler = (el) => {
-  //   setSelected(el);
-  //   setOpenEdit(true);
-  // };
+  const editClickHandler = (el) => {
+    setSelected(el);
+    setOpenEdit(true);
+  };
 
   const deleteHandler = async () => {
     // try {

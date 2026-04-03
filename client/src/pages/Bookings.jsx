@@ -24,6 +24,7 @@ import {
   ChevronsUp
 } from 'lucide-react';
 import { Listbox, Transition } from '@headlessui/react';
+import { BiImages } from "react-icons/bi";
 import { Fragment } from 'react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -34,11 +35,12 @@ import { useDispatch, useSelector } from "react-redux";
 const SERVICES = [
   'Basic Cleaning',
   'Deep Cleaning',
-  'Move In Cleaning',
-  'Move Out Cleaning',
+  'Move-In / Move-Out Cleaning',
+  'Environmental Cleaning',
   'Window Cleaning',
   'Carpet Cleaning',
   'Sofa / Upholstery Cleaning',
+  'Janitorial Cleaning',
   'Others...'
 ];
 
@@ -69,6 +71,32 @@ export default function Bookings() {
   const [toggle1, setToggle1] = useState(false);
   const [toggle2, setToggle2] = useState(false);
 
+  // image field
+  const [assets, setAssets] = useState([]);
+  const [images, setImages] = useState([]);
+  
+  useEffect(() => {
+    return () => {
+      images.forEach((file) => URL.revokeObjectURL(file.preview));
+    };
+  }, [images]);
+
+  const handleSelect = (e) => {
+    const files = Array.from(e.target.files);
+
+    const imageFiles = files
+      .filter((file) => file.type.startsWith("image/"))
+      .map((file) => {
+        return Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        });
+      });
+
+    setImages(imageFiles);
+
+    // reset input so same file can be selected again if needed
+    e.target.value = null;
+  };
   
   // Form State
   const [formData, setFormData] = useState({
@@ -96,6 +124,8 @@ export default function Bookings() {
       phoneNumber: '',
     }));
     alert('Booking successful!');
+
+    setImages([])
   };
 
 
@@ -155,6 +185,7 @@ export default function Bookings() {
   const shadow = LightMode ? "shadow-darkSM" : "shadow-lightSM";
   const text = LightMode ? "text-black" : "text-white";
   const UmCL = LightMode ? "bg-stone-100 text-black/90 hover:bg-stone-200" : "bg-stone-500 text-white/90 hover:bg-stone-600";
+  const imgBorder = LightMode ? "shadow-darkSM border-amber-400" : "shadow-lightSM border-white"
 
   return (
     <div className={`${bg} min-h-screen text-stone-900 font-sans transition-all duration-300 ease-in-out`}>
@@ -216,7 +247,7 @@ export default function Bookings() {
 
                       if (!validateBooking()) return;
 
-                      addBooking(formData);
+                      addBooking({ ...formData, images });
                       toast.success("Booking successful!");
                     }}
                     className="space-y-4"
@@ -294,7 +325,7 @@ export default function Bookings() {
                               >
                                 <span className='line-clamp-1'>{formData.property}</span>
                                 <span className="text-black text-sm bg-gray-200 rounded-full p-0.5">
-                                  {open ? <ChevronsUp size={25} className="font-bold animate-UpDown" /> : <ChevronDown size={25} className="font-bold" />}
+                                  {open ? <ChevronsUp size={22} className="font-bold animate-UpDown" /> : <ChevronDown size={22} className="font-bold" />}
                                 </span>
                               </Listbox.Button>
 
@@ -313,7 +344,7 @@ export default function Bookings() {
                                         onClick={() => setToggle1(false)}
                                         className={({ active }) =>
                                           `cursor-pointer px-4 py-2 text-sm transition-all duration-300 ease-in-out hover:scale-105 ${
-                                            active ? `${LightMode ? "bg-amber-100 text-amber-900 hover:shadow-dark" : "bg-amber-900 text-amber-100 hover:shadow-light"}` : `${LightMode ? "text-gray-900" : "text-gray-200"}`
+                                            active ? `${LightMode ? "bg-blue-100 text-blue-900 hover:shadow-dark" : "bg-blue-900 text-blue-100 hover:shadow-light"}` : `${LightMode ? "text-gray-900" : "text-gray-200"}`
                                           }`
                                         }
                                       >
@@ -347,7 +378,7 @@ export default function Bookings() {
                               >
                                 <span className='line-clamp-1'>{formData.service}</span>
                                 <span className="text-black text-sm bg-gray-200 rounded-full p-0.5">
-                                  {open ? <ChevronsUp size={25} className="font-bold animate-UpDown" /> : <ChevronDown size={25} className="font-bold" />}
+                                  {open ? <ChevronsUp size={22} className="font-bold animate-UpDown" /> : <ChevronDown size={20} className="font-bold" />}
                                 </span>
                               </Listbox.Button>
 
@@ -366,7 +397,7 @@ export default function Bookings() {
                                         onClick={() => setToggle1(false)}
                                         className={({ active }) =>
                                           `cursor-pointer px-4 py-2 text-sm transition-all duration-300 ease-in-out hover:scale-105 ${
-                                            active ? `${LightMode ? "bg-amber-100 text-amber-900 hover:shadow-dark" : "bg-amber-900 text-amber-100 hover:shadow-light"}` : `${LightMode ? "text-gray-900" : "text-gray-200"}`
+                                            active ? `${LightMode ? "bg-blue-100 text-blue-900 hover:shadow-dark" : "bg-blue-900 text-blue-100 hover:shadow-light"}` : `${LightMode ? "text-gray-900" : "text-gray-200"}`
                                           }`
                                         }
                                       >
@@ -379,6 +410,71 @@ export default function Bookings() {
                             )}
                           </Listbox>
                       </div>
+                    </div>
+
+                    <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10 mt-6" />
+
+
+                    <div className="w-full mt-4">
+                      <label className={`text-center sm:text-start block text-sm font-medium mb-2 ${subText}`}>
+                        Upload Photos of the Area to be Cleaned
+                      </label>
+
+                      <label
+                        htmlFor="imgUpload"
+                        className={`
+                          flex flex-col items-center justify-center
+                          border-2 border-dashed rounded-xl p-6
+                          cursor-pointer transition-all duration-300
+                          ${LightMode 
+                            ? "border-gray-300 hover:border-blue-400 bg-gray-50" 
+                            : "border-gray-600 hover:border-blue-400 bg-gray-900"}
+                        `}
+                      >
+                        <input
+                          type="file"
+                          id="imgUpload"
+                          className="hidden"
+                          onChange={handleSelect}
+                          accept="image/*"
+                          multiple
+                        />
+
+                        <BiImages size={28} className={`mb-2 opacity-70 ${subText}`} />
+
+                        <p className={`font-medium text-center ${subText}`}>
+                          Tap to upload photos
+                        </p>
+
+                        <p className={`text-xs mt-1 text-center ${subText}`}>
+                          Take clear pictures of the area (kitchen, floor, sofa, etc.)
+                        </p>
+                      </label>
+
+                      {/* Preview */}
+                      {images.length > 0 && (
+                        <div className="flex flex-wrap justify-center items-center mt-3 gap-2">
+                          {images.map((img, index) => (
+                            <div key={index} className="relative hover:scale-110 transition-all duration-300 ease-in-out">
+                              <img
+                                key={index}
+                                src={img.preview}
+                                alt="preview"
+                                className={`w-16 h-16 object-cover rounded-lg border ${imgBorder}`}
+                              />
+
+                              <span
+                                onClick={() => {
+                                  setImages(prev => prev.filter((_, i) => i !== index));
+                                }}
+                                className="absolute top-1 right-1 font-bold bg-white shadow-inner text-red-600 rounded-full py-px cursor-pointer px-1 text-xs"
+                              >
+                                ✕
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
 
                     <div>

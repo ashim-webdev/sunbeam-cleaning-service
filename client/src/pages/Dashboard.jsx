@@ -355,8 +355,8 @@ const Dashboard = () => {
         <td className='py-2 px-6'>
           <div className='flex items-center gap-3'>
             <div className={clsx(
-              "w-9 h-9 rounded-full border border-white flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
-              
+              "w-9 h-9 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
+              user.isActive ? "border-green-500" : "border-red-600"
             )}>
               {user?.img ? 
                 <img src={user?.img} alt="Avatar" className="w-full h-full object-cover "/>
@@ -403,7 +403,7 @@ const Dashboard = () => {
       }
       relative w-full rounded-2xl h-35 flex flex-col justify-center items-center transition-all duration-300 ease-in-out
     `}>
-        <div className='absolute -top-10 -left-2 flex flex-col justify-center items-center gap-3 whitespace-nowrap'>
+        <div className={`${user.isActive ? "border-green-500" : "border-red-600"} border-2 rounded-full absolute -top-10 -left-2 flex flex-col justify-center items-center gap-3 whitespace-nowrap`}>
           <div className={clsx(
             LightMode
               ? "shadow-darkSM border-white"

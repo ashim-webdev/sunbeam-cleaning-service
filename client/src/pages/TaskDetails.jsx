@@ -416,14 +416,14 @@ const TaskDetail = () => {
                   <span className={`${LightMode ? "text-gray-800" : "text-gray-300"} font-semibold transition-colors duration-300 ease-in-out italic`}>{new Date(task?.date).toDateString()}</span>
                 </p>
 
-                <div className={`${LightMode ? "text-gray-500 border-gray-400" : "text-gray-400 border-gray-200"} transition-colors duration-300 ease-in-out flex items-center gap-8 p-4 border-y`}>
-                  <div className='space-x-2'>
-                    <span className={`${LightMode ? "text-black" : "text-white"} font-semibold transition-colors duration-300 ease-in-out`}>Assets <span className={`${LightMode ? "text-gray-500" : "text-gray-400"} transition-colors duration-300 ease-in-out`}>:</span></span>
+                <div className={`${LightMode ? "text-gray-500 border-gray-400" : "text-gray-400 border-gray-200"} transition-colors duration-300 ease-in-out flex justify-center items-center gap-8 p-4 border-y`}>
+                  <div className='space-x-2 flex flex-col sm:flex-row items-center'>
+                    <span className={`${LightMode ? "text-black" : "text-white"} whitespace-nowrap font-semibold transition-colors duration-300 ease-in-out`}>Assets <span className={`${LightMode ? "text-gray-500" : "text-gray-400"} transition-colors duration-300 ease-in-out`}>:</span></span>
                     <span className={`${LightMode ? "text-black" : "text-white"} transition-colors duration-300 ease-in-out`}>{task?.assets?.length}</span>
                   </div>
                   <span className={`${LightMode ? "border-gray-400" : "border-gray-200"} border-l h-6 transition-colors duration-300 ease-in-out`}></span>
-                  <div className='space-x-2'>
-                    <span className={`${LightMode ? "text-black" : "text-white"} font-semibold transition-colors duration-300 ease-in-out`}>Sub-Task <span className={`${LightMode ? "text-gray-500" : "text-gray-400"} transition-colors duration-300 ease-in-out`}>:</span></span>
+                  <div className='space-x-2 flex flex-col sm:flex-row items-center'>
+                    <span className={`${LightMode ? "text-black" : "text-white"} whitespace-nowrap font-semibold transition-colors duration-300 ease-in-out`}>Sub-Task <span className={`${LightMode ? "text-gray-500" : "text-gray-400"} transition-colors duration-300 ease-in-out`}>:</span></span>
                     <span className={`${LightMode ? "text-black" : "text-white"} transition-colors duration-300 ease-in-out`}>{task?.subTasks?.length}</span>
                   </div>
                 </div>
@@ -489,18 +489,18 @@ const TaskDetail = () => {
                     <div className='space-y-8'>
                       {task?.subTasks?.map((el, index) => (
                         <div key={index + el?._id} className='flex gap-3'>
-                          <div className='w-10 h-10 flex items-center justify-center rounded-full bg-violet-200'>
+                          <div className='w-10 h-10 flex items-center justify-center rounded-full bg-violet-200 p-2 -ml-2 [@media(min-width:500px)]:ml-0'>
                             <MdTaskAlt className='text-violet-600' size={26} />
                           </div>
 
                           <div className='space-y-1'>
-                            <div className='flex gap-2 items-center '>
-                              <span className={`${LightMode ? "text-gray-800" : "text-gray-200"} text-sm -mt-6 sm:mt-0 transition-colors duration-300 ease-in-out`}>
+                            <div className='flex gap-2 items-center'>
+                              <span className={`${LightMode ? "text-gray-800" : "text-gray-200"} text-sm [@media(min-width:500px)]:mt-0 -mt-5 mr-2 transition-colors duration-300 ease-in-out whitespace-nowrap`}>
                                 {new Date(el?.date).toDateString()}
                               </span>
 
-                              <div className="flex flex-col sm:flex-row justify-center items-center gap-2">
-                                <span className='px-2 py-0.5 text-center text-sm rounded-full bg-violet-100 text-violet-700 font-semibold lowercase'>
+                              <div className="flex flex-col [@media(min-width:500px)]:flex-row justify-center items-center gap-2">
+                                <span className='px-2 py-0.5 text-center text-sm rounded-full bg-violet-200 text-violet-700 font-semibold lowercase whitespace-nowrap'>
                                   {el?.tag}
                                 </span>
 
@@ -508,7 +508,7 @@ const TaskDetail = () => {
                                   className={`px-2 py-0.5 text-center text-sm rounded-full font-semibold whitespace-nowrap ${
                                     el?.isCompleted
                                       ? "bg-emerald-100 text-emerald-700"
-                                      : "bg-amber-50 text-amber-600"
+                                      : "bg-amber-100 text-amber-600"
                                   }`}
                                 >
                                   {el?.isCompleted ? "done" : "in progress"}

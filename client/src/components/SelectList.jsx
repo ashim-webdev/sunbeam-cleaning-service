@@ -51,7 +51,7 @@ const SelectList = ({ lists, selected, setSelected, label }) => {
                   key={index}
                   className={({ active }) =>
                     `relative cursor-pointer select-none py-2 pl-10 pr-4 mx-1.5 transition-colors duration-300 ease-in-out hover:scale-105 ${
-                      active ? `${LightMode ? "bg-amber-100 text-amber-900 hover:shadow-dark" : "bg-amber-900 text-amber-100 hover:shadow-light"}` : `${LightMode ? "text-gray-900" : "text-gray-200"}`
+                      active ? `${LightMode ? "bg-blue-100 text-blue-900 hover:shadow-dark" : "bg-blue-900 text-blue-100 hover:shadow-light"}` : `${LightMode ? "text-gray-900" : "text-gray-200"}`
                     }`
                   }
                   value={list}
@@ -66,7 +66,7 @@ const SelectList = ({ lists, selected, setSelected, label }) => {
                         {list}
                       </span>
                       {selected ? (
-                        <span className='absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600'>
+                        <span className='absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600'>
                           <MdCheck className='h-5 w-5' aria-hidden='true' />
                         </span>
                       ) : null}

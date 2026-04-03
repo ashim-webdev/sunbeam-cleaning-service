@@ -59,20 +59,20 @@ const AddUser = ({ open, setOpen, userData }) => {
     }, 1000);
   };
 
-  const handleFormError = () => {    
-    if (errors.name && errors.title && errors.email && errors.role) {
+  const handleFormError = (formErrors) => {    
+    if (formErrors.name && formErrors.title && formErrors.email && formErrors.role) {
       toast.error("Please fill in all required fields");
       triggerShake()
-    } else if (errors.name) {
+    } else if (formErrors.name) {
       toast.error("Full Name is required");
       triggerShake()
-    } else if (errors.title) {
+    } else if (formErrors.title) {
       toast.error("Title is required");
       triggerShake()
-    } else if (errors.email) {
+    } else if (formErrors.email) {
       toast.error("Email is required");
       triggerShake()
-    } else if (errors.role) {
+    } else if (formErrors.role) {
       toast.error("User role is required");
       triggerShake()
     }
@@ -136,38 +136,40 @@ const AddUser = ({ open, setOpen, userData }) => {
             {userData ? "UPDATE PROFILE" : "ADD NEW USER"}
           </Dialog.Title>
           <div className='mt-2 flex flex-col gap-6'>
-<div className="flex justify-center items-center">
-  <label htmlFor="profileUpload" className="cursor-pointer">
-    <div className={`
-        ${
-          LightMode ? "shadow-darkSM" : "shadow-lightSM"
-        }
-        w-20 h-20 rounded-full border-2 border-dashed border-gray-400 flex items-center justify-center overflow-hidden hover:scale-105 transition-all duration-300 ease-in-out
-      `}>
-      
-      {preview ? (
-        <img
-          src={preview}
-          alt="Profile Preview"
-          className="w-full h-full object-cover"
-        />
-      ) : (
-        <span className="text-xs text-gray-400 text-center px-2">
-          <BiImageAdd className="text-2xl text-gray-400" />
-        </span>
-      )}
 
-    </div>
+            <div className="flex justify-center items-center">
+              <label htmlFor="profileUpload" className="cursor-pointer">
+                <div className={`
+                    ${
+                      LightMode ? "shadow-darkSM" : "shadow-lightSM"
+                    }
+                    w-20 h-20 rounded-full border-2 border-dashed border-gray-400 flex items-center justify-center overflow-hidden hover:scale-105 transition-all duration-300 ease-in-out
+                  `}>
+                  
+                  {preview ? (
+                    <img
+                      src={preview}
+                      alt="Profile Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-xs text-gray-400 text-center px-2">
+                      <BiImageAdd className="text-2xl text-gray-400" />
+                    </span>
+                  )}
 
-    <input
-      type="file"
-      id="profileUpload"
-      className="hidden"
-      accept="image/*"
-      onChange={handleImageChange}
-    />
-  </label>
-</div>
+                </div>
+
+                <input
+                  type="file"
+                  id="profileUpload"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </label>
+            </div>
+
             <Textbox
               placeholder='Full name'
               type='text'

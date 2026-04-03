@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 // import {
 //   getDownloadURL,
@@ -86,7 +87,6 @@ const AddTask = ({ open, setOpen, task }) => {
   const [priority, setPriority] = useState(
     task?.priority?.toUpperCase() || PRIORITY[2]
   );
-  const [assets, setAssets] = useState([]);
 
   const [uploading, setUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -105,17 +105,17 @@ const AddTask = ({ open, setOpen, task }) => {
     }, 1000);
   };
 
-  const handleFormError = () => {    
-    if (errors.title && errors.description && errors.equipments) {
+  const handleFormError = (formErrors) => {    
+    if (formErrors.title && formErrors.description && formErrors.equipments) {
       toast.error("Please fill in all required fields");
       triggerShake()
-    } else if (errors.title) {
+    } else if (formErrors.title) {
       toast.error("Title field is required");
       triggerShake()
-    } else if (errors.description) {
+    } else if (formErrors.description) {
       toast.error("Description field is required");
       triggerShake()
-    } else if (errors.equipments) {
+    } else if (formErrors.equipments) {
       toast.error("Equipment field is required");
       triggerShake()
     }
@@ -123,6 +123,7 @@ const AddTask = ({ open, setOpen, task }) => {
 
   const handleOnSubmit = async (data) => {
     console.log(data)
+    // const filesOnly = assets.map(obj => obj.file); AI given
     
         // for (const file of assets) {
     //   setUploading(true);
@@ -139,7 +140,7 @@ const AddTask = ({ open, setOpen, task }) => {
     // try {
     //   const newData = {
     //     ...data,
-    //     assets: [...URLS, ...uploadedFileURLs],
+    //     assets: filesOnly, AI given
     //     team,
     //     stage,
     //     priority,
@@ -172,22 +173,78 @@ const AddTask = ({ open, setOpen, task }) => {
   // const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
   // const URLS = task?.assets ? [...task.assets] : [];
 
+  // image field
+  const [assets, setAssets] = useState([]);
   const [images, setImages] = useState([]);
 
+  useEffect(() => {
+    return () => {
+      images.forEach((fileObj) => {
+        URL.revokeObjectURL(fileObj.preview);
+      });
+    };
+  }, [images]);
+
+  const MAX_FILES = 10;
+  const MAX_SIZE = 2 * 1024 * 1024; // 2MB
 
   const handleSelect = (e) => {
-    setAssets(e.target.files);
-    
     const files = Array.from(e.target.files);
 
-    // Optional: filter only images
-    const imageFiles = files.filter((file) =>
+    // ❌ Limit number of files
+    if (files.length > MAX_FILES) {
+      toast.error(`You can upload a maximum of ${MAX_FILES} images`);
+      return;
+    }
+
+    // ✅ Filter only images
+    const imageFiles = files.filter(file =>
       file.type.startsWith("image/")
     );
 
-    setImages(imageFiles);
+    if (imageFiles.length !== files.length) {
+      toast.error("Only image files are allowed");
+      return;
+    }
 
+    // ❌ File size validation
+    const validFiles = imageFiles.filter(file => file.size <= MAX_SIZE);
+
+    if (validFiles.length !== imageFiles.length) {
+      toast.error("Each image must be less than 2MB");
+      return;
+    }
+
+    // ✅ Add preview URL (important for memory fix later)
+    const filesWithPreview = validFiles.map(file => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+
+    setAssets(filesWithPreview);   // store objects now
+    setImages(filesWithPreview);   // same structure
   };
+
+
+  const handleRemoveImage = (e, index) => {
+    e.stopPropagation();
+
+    setImages(prev => {
+      const updated = [...prev];
+
+      // 🔥 clean memory for removed image
+      URL.revokeObjectURL(updated[index].preview);
+
+      updated.splice(index, 1);
+      return updated;
+    });
+
+    setAssets(prev => {
+      const updated = [...prev];
+      updated.splice(index, 1);
+      return updated;
+    });
+  }
 
   const today = new Date();
   const safeToday = new Date(
@@ -261,49 +318,70 @@ const AddTask = ({ open, setOpen, task }) => {
                     ? "text-black"
                     : "text-white"
                   }
-                  w-full flex  items-center justify-center mt-4
+                  w-full flex items-center justify-center -mt-2
                 `}>
                 <label
                   className='flex flex-col items-center gap-1 text-base text-ascent-2 hover:text-ascent-1 cursor-pointer my-4'
                   htmlFor='imgUpload'
                 >
-                  <div className="flex flex-col items-center gap-1 text-base text-ascent-2 hover:text-ascent-1 hover:text-blue-600 transition-all duration-200 ease-in-out cursor-pointer">
-                  <input
-                    type='file'
-                    className='hidden'
-                    id='imgUpload'
-                    onChange={(e) => handleSelect(e)}
-                    accept='.jpg, .png, .jpeg'
-                    multiple={true}
-                  />
-                  <BiImages />
-                  <span>Add Assets</span>
-                  </div>
-
-                  <div>
-                    {/* Preview Grid */}
-                    <div className="flex flex-wrap justify-center items-center mt-2">
-                      {images.map((file, index) => (
-                        <img
-                          key={index}
-                          src={URL.createObjectURL(file)}
-                          alt="preview"
-                          className={`${LightMode ? "shadow-darkSM border-amber-400" : "shadow-lightSM border-white"} ${index >= 1 ? "-ml-4" : "" } w-10 h-10 border  rounded-full object-cover shadow cursor-pointer transition-all duration-300 ease-in-out md:hover:scale-125 hover:z-50`}
-                        />
-                      ))}
-                    </div>
-                    {/* Selected count */}
-                    {images.length > 0 && (
-                      <p className={`${LightMode ? "text-gray-500" : "text-gray-300"} mb-1 text-sm mt-1 text-center`}>
-                        {`${images.length} ${images.length >= 2 ? "images selected" : "image selected"}`}
+                  {images.length <= 0 
+                    ?
+                    <div className="flex flex-col items-center gap-1 text-base text-ascent-2 hover:text-ascent-1 hover:text-blue-600 transition-all duration-200 ease-in-out cursor-pointer">
+                    <input
+                      type='file'
+                      className='hidden'
+                      id='imgUpload'
+                      onChange={(e) => handleSelect(e)}
+                      accept='.jpg, .png, .jpeg'
+                      multiple={true}
+                    />
+                    <span className="text-center">
+                      <span className="flex items-center justify-center">
+                        <BiImages className="text-lg"/>
+                      </span>
+                      <span>Add Assets</span>
+                      <p className="text-xs text-gray-400 text-center">
+                        Max 5 images • Max 2MB each • JPG, PNG
                       </p>
-                    )}
-                  </div>
+                    </span>
+                    </div>
+                    :
+                    <div onClick={(e) => e.stopPropagation()}>
+                      {/* Preview Grid */}
+                      <div className="flex flex-wrap justify-center items-center mt-2">
+                        {images.map((file, index) => (
+                          <div 
+                            key={index}
+                            className="relative transition-all duration-300 ease-in-out hover:scale-125 hover:z-50 mb-2 -ml-2"
+                          >
+                            <img
+                              src={file.preview}
+                              alt="preview"
+                              className={`${LightMode ? "shadow-darkSM border-amber-400" : "shadow-lightSM border-white"} w-10 h-10 border rounded-full object-cover shadow transition-all duration-300 ease-in-out `}
+                            />
+
+                            <span
+                              onClick={(e) => handleRemoveImage(e, index)}
+                              className="absolute -bottom-2 right-2.5 font-bold bg-white shadow-inner text-red-600 rounded-full py-px cursor-pointer px-1 text-xs"
+                            >
+                              ✕
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      {/* Selected count */}
+                      {images.length > 0 && (
+                        <p className={`${LightMode ? "text-gray-500" : "text-gray-300"} mb-1 text-sm mt-0.5 text-center`}>
+                          {`${images.length} ${images.length >= 2 ? "images selected" : "image selected"}`}
+                        </p>
+                      )}
+                    </div>
+                  }
                 </label>
               </div>
             </div>
 
-            <div className='w-full'>
+            <div className='w-full -mt-4'>
               <p className={`
                 ${LightMode 
                   ? "text-black" 
@@ -313,7 +391,9 @@ const AddTask = ({ open, setOpen, task }) => {
               `}>Task Description</p>
               <textarea
                 name='description'
-                {...register("description")}
+                {...register("description", {
+                  required: "Description is required!",
+                })}
                 className={`
                   ${LightMode 
                     ? "text-black border-gray-300 placeholder-gray-300"
@@ -330,9 +410,7 @@ const AddTask = ({ open, setOpen, task }) => {
                   outline-none focus:ring-2
                   ring-blue-300 transition-colors duration-300 ease-in-out
                 `}
-                register={register("description", {
-                  required: "Description is required!",
-                })}
+                
               ></textarea>
               {errors.description && (
                 <p className="text-red-500 text-[12px] italic">
@@ -356,7 +434,9 @@ const AddTask = ({ open, setOpen, task }) => {
               </p>
               <textarea
                 name='equipments'
-                {...register("equipments")}
+                {...register("equipments", {
+                  required: "Important Equipments is required!",
+                })}
                 className={`
                   ${LightMode 
                     ? "text-black border-gray-300 placeholder-gray-300"
@@ -373,9 +453,6 @@ const AddTask = ({ open, setOpen, task }) => {
                   outline-none focus:ring-2
                   ring-blue-300 transition-colors duration-300 ease-in-out
                 `}
-                register={register("equipments", {
-                  required: "Important Equipments is required!",
-                })}
               ></textarea>
               {errors.equipments && (
                 <p className="text-red-500 text-[12px] italic">
