@@ -99,7 +99,7 @@ const Dashboard = () => {
                 ? "text-gray-600"
                 : "text-white"
               }
-              text-base md:text-sm lg:text-base font-semibold transition-colors ease-in-out duration-300 whitespace-nowrap
+              text-base md:text-sm lg:text-base font-semibold transition-all ease-in-out duration-300 whitespace-nowrap
             `}>{label}</p>
           <span className={clsx("text-2xl font-semibold" , tx)}>{count}</span>
           <span className='text-sm text-[#0061FA] -mb-1'>
@@ -141,7 +141,7 @@ const Dashboard = () => {
             }
             absolute -bottom-6 -right-4 flex justify-center items-center rounded-3xl border-8 transition-all duration-300 ease-in-out
           `}>
-          <div class="relative inline-block group">
+          <div className="relative inline-block group">
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -167,46 +167,46 @@ const Dashboard = () => {
                     animate={{ x: 0, opacity: 1 }}
                     exit={{ x: 100, opacity: 0 }}
                     transition={{ duration: 0.4, ease: "easeInOut" }}
-                    class={`z-10 absolute bottom-full -left-14 -translate-x-1/2 mb-5 w-72 transition-all duration-300 ease-out transform group-hover:translate-y-0 translate-y-2`}
+                    className={`z-10 absolute bottom-full -left-14 -translate-x-1/2 mb-5 w-72 transition-all duration-300 ease-out transform group-hover:translate-y-0 translate-y-2`}
                   >
                     <div
-                      class={`relative ${bgMenu} p-4 rounded-2xl border transition-all duration-300 ease-in-out`}
+                      className={`relative ${bgMenu} p-4 rounded-2xl border transition-all duration-300 ease-in-out`}
                     >
-                      <div class="flex items-center gap-3 mb-2">
+                      <div className="flex items-center gap-3 mb-2">
                         <div
-                          class={`${cautionBG} flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300 ease-in-out`}
+                          className={`${cautionBG} flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300 ease-in-out`}
                         >
                           <svg
                           viewBox="0 0 20 20"
                           fill="currentColor"
-                          class="w-4 h-4 text-red-600"
+                          className="w-4 h-4 text-red-600"
                         >
                           <path
-                            clip-rule="evenodd"
+                            clipRule="evenodd"
                             d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                            fill-rule="evenodd"
+                            fillRule="evenodd"
                           ></path>
                         </svg>
                         </div>
-                        <h3 class={`${text} text-sm font-semibold transition-all duration-300 ease-in-out`}>Important Information</h3>
+                        <h3 className={`${text} text-sm font-semibold transition-all duration-300 ease-in-out`}>Important Information</h3>
                       </div>
 
-                      <div class="space-y-2">
-                        <p class={`${text} text-sm transition-all duration-300 ease-in-out`}>
+                      <div className="space-y-2">
+                        <p className={`${text} text-sm transition-all duration-300 ease-in-out`}>
                           This user account is currently disabled. Please contact an administrator for more information.
                         </p>
-                        <div class="flex items-center gap-2 text-xs text-red-600">
-                          <i class="fa-solid fa-ban"></i>
+                        <div className="flex items-center gap-2 text-xs text-red-600">
+                          <i className="fa-solid fa-ban"></i>
                           <span className="">User Disabled</span>
                         </div>
                       </div>
 
                       <div
-                        class={`${arrow} absolute inset-0 rounded-2xl  blur-xl opacity-50 transition-all duration-300 ease-in-out`}
+                        className={`${arrow} absolute inset-0 rounded-2xl  blur-xl opacity-50 transition-all duration-300 ease-in-out`}
                       ></div>
 
                       <div
-                        class={`${arrow} absolute -bottom-1.5 right-7 -translate-x-1/2 w-3 h-3 rotate-45 border-r border-b border-red-600 transition-all duration-300 ease-in-out`}
+                        className={`${arrow} absolute -bottom-1.5 right-7 -translate-x-1/2 w-3 h-3 rotate-45 border-r border-b border-red-600 transition-all duration-300 ease-in-out`}
                       ></div>
                     </div>
                   </motion.div>
@@ -235,7 +235,7 @@ const Dashboard = () => {
     }, [user]);
 
     return (
-      <div class="relative inline-block group">
+      <div className="relative inline-block group">
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -261,38 +261,38 @@ const Dashboard = () => {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -100, opacity: 0 }}
                 transition={{ duration: 0.4, ease: "easeInOut" }}
-                class="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-72 transition-all duration-300 ease-out transform group-hover:translate-y-0 translate-y-2"
+                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-72 transition-all duration-300 ease-out transform group-hover:translate-y-0 translate-y-2"
               >
                 <div
-                  class={`relative ${bgMenu} p-4 rounded-2xl border transition-all duration-300 ease-in-out`}
+                  className={`relative ${bgMenu} p-4 rounded-2xl border transition-all duration-300 ease-in-out`}
                 >
-                  <div class="flex items-center gap-3 mb-2">
+                  <div className="flex items-center gap-3 mb-2">
                     <div
-                      class={`${cautionBG} flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300 ease-in-out`}
+                      className={`${cautionBG} flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300 ease-in-out`}
                     >
                       <svg
                         viewBox="0 0 20 20"
                         fill="currentColor"
-                        class="w-4 h-4 text-red-600"
+                        className="w-4 h-4 text-red-600"
                       >
                         <path
-                          clip-rule="evenodd"
+                          clipRule="evenodd"
                           d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                          fill-rule="evenodd"
+                          fillRule="evenodd"
                         ></path>
                       </svg>
                     </div>
-                    <h3 class={`${text} text-sm font-semibold transition-all duration-300 ease-in-out`}>Important Information</h3>
+                    <h3 className={`${text} text-sm font-semibold transition-all duration-300 ease-in-out`}>Important Information</h3>
                   </div>
 
-                  <div class="space-y-2">
-                    <p class={`${text} text-sm transition-all duration-300 ease-in-out`}>
+                  <div className="space-y-2">
+                    <p className={`${text} text-sm transition-all duration-300 ease-in-out`}>
                       This user account is currently disabled. Please contact an administrator for more information.
                     </p>
-                    <div class="flex items-center gap-2 text-xs text-red-600">
+                    <div className="flex items-center gap-2 text-xs text-red-600">
                       <svg 
                         fill="currentColor"
-                        class="w-4 h-4 text-red-600"
+                        className="w-4 h-4 text-red-600"
                         xmlns="http://www.w3.org/2000/svg" 
                         viewBox="0 0 640 640"
                       ><path d="M431.2 476.5L163.5 208.8C141.1 240.2 128 278.6 128 320C128 426 214 512 320 512C361.5 512 399.9 498.9 431.2 476.5zM476.5 431.2C498.9 399.8 512 361.4 512 320C512 214 426 128 320 128C278.5 128 240.1 141.1 208.8 163.5L476.5 431.2zM64 320C64 178.6 178.6 64 320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320z"/></svg>
@@ -301,11 +301,11 @@ const Dashboard = () => {
                   </div>
 
                   <div
-                    class={`${arrow} absolute inset-0 rounded-2xl  blur-xl opacity-50 transition-all duration-300 ease-in-out`}
+                    className={`${arrow} absolute inset-0 rounded-2xl  blur-xl opacity-50 transition-all duration-300 ease-in-out`}
                   ></div>
 
                   <div
-                    class={`${arrow} absolute -bottom-1.5 right-33.5 -translate-x-1/2 w-3 h-3 rotate-45 border-r border-b border-red-600 transition-all duration-300 ease-in-out`}
+                    className={`${arrow} absolute -bottom-1.5 right-33.5 -translate-x-1/2 w-3 h-3 rotate-45 border-r border-b border-red-600 transition-all duration-300 ease-in-out`}
                   ></div>
                 </div>
               </motion.div>
@@ -329,13 +329,13 @@ const Dashboard = () => {
           ? "border-gray-400"
           : "border-gray-600"
         }
-        border-b transition-colors ease-in-out duration-300
+        border-b transition-all ease-in-out duration-300
       `}>
         <tr className={`
             ${LightMode 
                 ? "text-black"
                 : "text-white"
-            } text-left transition-colors ease-in-out duration-300
+            } text-left transition-all ease-in-out duration-300
           `}>
           <th className='py-2 pl-4'>Full Name</th>
           <th className='py-2 pl-2 text-start'>Status</th>
@@ -350,7 +350,7 @@ const Dashboard = () => {
             ? "border-gray-300 text-gray-600 hover:bg-gray-300/50 hover:shadow-dark"
             : "border-gray-600 text-white hover:bg-white/30 hover:shadow-light"
           }
-          tableRow border hover:bg-gray-300/50  transition-colors ease-in-out duration-300
+          tableRow border hover:bg-gray-300/50 transition-all ease-in-out duration-300
         `}>
         <td className='py-2 px-6'>
           <div className='flex items-center gap-3'>
@@ -373,7 +373,7 @@ const Dashboard = () => {
                     ? "text-black"
                     : "text-white"
                 }
-                text-xs transition-colors ease-in-out duration-300
+                text-xs transition-all ease-in-out duration-300
               `}>{user?.role}</span>
             </div>
           </div>
@@ -386,9 +386,9 @@ const Dashboard = () => {
         <td className={`w-32 px-3 whitespace-nowrap ${user.isActive ? "" : "blur-[2px]"}`}>{moment(user?.createdAt).fromNow()}</td>
 
         <td className="">
-          <td className="flex justify-center px-2">
+          <div className="flex justify-center px-2">
             <SocialMedia tiktok={user?.tiktok} youtube={user?.youtube} whatsApp={user?.whatsApp} telegram={user?.telegram} />
-          </td>
+          </div>
         </td>
       </tr>
     );
@@ -474,7 +474,7 @@ const Dashboard = () => {
               ? "bg-white shadow-md shadow-black/30"
               : "bg-black/90 shadow-md shadow-white/30"
             }
-            hidden sm:block w-full h-fit px-2 md:px-6 py-4 shadow-md rounded transition-colors ease-in-out duration-300
+            hidden sm:block w-full h-fit px-2 md:px-6 py-4 shadow-md rounded transition-all ease-in-out duration-300
           `}>
           <table className='w-full mb-5'>
             <TableHeader />
@@ -491,7 +491,7 @@ const Dashboard = () => {
             ? "shadow-darkSM "
             : "shadow-lightSM"
           }
-          relative flex flex-col justify-center gap-15 px-4 pt-20 pb-15 mx-1 sm:hidden rounded-2xl transition-colors duration-300 ease-in-out
+          relative flex flex-col justify-center gap-15 px-4 pt-20 pb-15 mx-1 sm:hidden rounded-2xl transition-all duration-300 ease-in-out
         `}>
           {users?.map((user, index) => (
             <UserCard key={index} user={user} />
@@ -503,7 +503,7 @@ const Dashboard = () => {
                 ? "text-black bg-[#E8E8E8]"
                 : "text-white bg-[#3D3D3D]"
               }
-              py-2 px-4 text-3xl font-semibold font-sans transition-colors duration-300 ease-in-out
+              py-2 px-4 text-3xl font-semibold font-sans transition-all duration-300 ease-in-out
             `}>Users</span>
           </span>
         </div>
@@ -534,13 +534,13 @@ const Dashboard = () => {
           ? "border-gray-400"
           : "border-gray-600"
         }
-        border-b transition-colors ease-in-out duration-300
+        border-b transition-all ease-in-out duration-300
       `}>
         <tr className={`
             ${LightMode 
                 ? "text-black"
                 : "text-white"
-            } text-left transition-colors ease-in-out duration-300
+            } text-left transition-all ease-in-out duration-300
           `}>
           <th className='py-2 whitespace-nowrap pl-4'>Task Title</th>
           <th className='py-2 px-6 whitespace-nowrap'>Client Names</th>
@@ -566,7 +566,7 @@ const Dashboard = () => {
             ? "border-gray-300 text-gray-600 hover:bg-gray-300/50 hover:shadow-dark"
             : "border-gray-600 text-white hover:bg-white/30 hover:shadow-light"
           }
-          tableRow border hover:bg-gray-300/50 cursor-pointer transition-colors ease-in-out duration-300
+          tableRow border hover:bg-gray-300/50 cursor-pointer transition-all ease-in-out duration-300
         `}>
             <td className='py-2 pl-4'>
               <div className='flex items-center gap-2'>
@@ -578,7 +578,7 @@ const Dashboard = () => {
                       ? "text-black"
                       : "text-white"
                     }
-                    hidden xl:block whitespace-nowrap transition-colors ease-in-out duration-300 
+                    hidden xl:block whitespace-nowrap transition-all ease-in-out duration-300 
                   `}>
                   {task.title}
                 </p>
@@ -587,7 +587,7 @@ const Dashboard = () => {
                       ? "text-black"
                       : "text-white"
                     }
-                    xl:hidden whitespace-nowrap transition-colors ease-in-out duration-300 
+                    xl:hidden whitespace-nowrap transition-all ease-in-out duration-300 
                   `}>
                   {titleShort}
                 </p>
@@ -600,7 +600,7 @@ const Dashboard = () => {
                     ? "text-black/70"
                     : "text-white/70"
                   }
-                  whitespace-nowrap transition-colors ease-in-out duration-300 capitalize 
+                  whitespace-nowrap transition-all ease-in-out duration-300 capitalize 
                 `}>
                 {nameShort || "N/A"}
               </p>
@@ -612,7 +612,7 @@ const Dashboard = () => {
                     ? "text-black/70"
                     : "text-white/70"
                   }
-                  whitespace-nowrap transition-colors ease-in-out duration-300 capitalize
+                  whitespace-nowrap transition-all ease-in-out duration-300 capitalize
                 `}>
                 {addressShort || "N/A"}
               </p>
@@ -647,7 +647,7 @@ const Dashboard = () => {
                       ? "text-black/50"
                       : "text-white/60"
                   }
-                  whitespace-nowrap text-base transition-colors ease-in-out duration-300
+                  whitespace-nowrap text-base transition-all ease-in-out duration-300
                 `}>
                 {moment(task?.date).fromNow()}
               </span>
@@ -660,7 +660,7 @@ const Dashboard = () => {
       <>
         <div
           className={clsx(
-            "w-full px-2 md:px-4 pt-4 pb-4 shadow-md rounded transition-colors ease-in-out duration-300",
+            "w-full px-2 md:px-4 pt-4 pb-4 shadow-md rounded transition-all ease-in-out duration-300",
             LightMode 
               ? "bg-white shadow-md shadow-black/30"
               : "bg-black/90 shadow-md shadow-white/30",
@@ -703,14 +703,14 @@ const Dashboard = () => {
               ? "bg-white shadow-md shadow-black/30"
               : "bg-black/90 shadow-md shadow-white/30"
             }
-            w-full my-16 p-4 transition-colors ease-in-out duration-300 rounded-lg
+            w-full my-16 p-4 transition-all ease-in-out duration-300 rounded-lg
           `}>
           <h4 className={`
               ${LightMode 
                 ? "text-gray-700"
                 : "text-gray-200"
               }
-              text-xl font-bold mb-4 transition-colors ease-in-out duration-300
+              text-xl font-bold mb-4 transition-all ease-in-out duration-300
             `}>
             Task Analytics
           </h4>

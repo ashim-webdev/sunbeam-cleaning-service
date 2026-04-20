@@ -19,6 +19,8 @@ import LinearSocial from "../components/linearSocial";
 import { useSelector } from "react-redux";
 import { getInitials } from "../utils/index";
 import { summary } from "../assets/data";
+import { Link } from 'react-router-dom'
+
 // import { useSearchParams } from "react-router-dom";
 
 const Users = () => {
@@ -101,7 +103,7 @@ const Users = () => {
     setShowSocial(prev => (prev === id ? null : id))
   }
 
-  console.log(user)
+  // console.log(user)
 
   const TableHeader = () => (
     <thead className='border-b border-gray-300 dark:border-gray-600'>
@@ -337,7 +339,9 @@ const Users = () => {
                 user.isActive ? "bg-green-500 text-white hover:bg-green-700 hover:scale-105" : "bg-red-500 text-white hover:bg-red-700 hover:scale-105"
               )}
             >
-              {user.isActive ? "Active" : "Disabled"}
+              <Link to={`/log-in`}>
+                {user.isActive ? "Active" : "Disabled"}
+              </Link>
             </button>
           </div>
         </div>

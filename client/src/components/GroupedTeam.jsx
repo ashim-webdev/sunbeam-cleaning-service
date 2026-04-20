@@ -64,7 +64,7 @@ export default function GroupedTeam({ team = [] }) {
               <td className={`
                   ${LightMode
                     ? "text-gray-900"
-                    : "text-white/80"
+                    : "text-white/80" 
                   }
                   hidden pt-5 sm:block px-4 text-sm text-center transition-colors ease-in-out duration-300
                 `}>

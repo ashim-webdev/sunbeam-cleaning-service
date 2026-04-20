@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // import { LeaveRequest } from './lib/supabase';
 import { useSelector } from "react-redux";
 import { RoleToggle } from '../components/LeaveComponent/RoleToggle';
@@ -14,6 +14,12 @@ const LeaveRequest = () => {
   const [userEmail, setUserEmail] = useState('ashimgab@gmail.com');
   const [requests, setRequests] = useState([]);
   const [selectedRequest, setSelectedRequest] = useState(null);
+
+  // Make slide bar disappear when modal is open
+  useEffect(() => {
+    document.body.classList.toggle("overflow-hidden", selectedRequest !== null);
+  }, [selectedRequest]);
+
 
   const handleToggleRole = () => {
     setIsAdmin(!isAdmin);

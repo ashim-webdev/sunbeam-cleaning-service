@@ -66,6 +66,8 @@ const AddTask = ({ open, setOpen, task }) => {
   // const task = ""
   const defaultValues = {
     title: task?.title || "",
+    clientName: task?.clientName || "",
+    address: task?.address || "",
     date: dateFormatter(task?.date || new Date()),
     team: [],
     stage: "",
@@ -106,11 +108,17 @@ const AddTask = ({ open, setOpen, task }) => {
   };
 
   const handleFormError = (formErrors) => {    
-    if (formErrors.title && formErrors.description && formErrors.equipments) {
+    if (formErrors.title && formErrors.description && formErrors.equipments && formErrors.clientName && formErrors.address) {
       toast.error("Please fill in all required fields");
       triggerShake()
     } else if (formErrors.title) {
       toast.error("Title field is required");
+      triggerShake()
+    } else if (formErrors.clientName) {
+      toast.error("Client Name field is required");
+      triggerShake()
+    } else if (formErrors.address) {
+      toast.error("Address field is required");
       triggerShake()
     } else if (formErrors.description) {
       toast.error("Description field is required");
@@ -281,6 +289,42 @@ const AddTask = ({ open, setOpen, task }) => {
                 required: "Title is required!",
               })}
               error={errors.title ? errors.title.message : ""}
+            />
+
+            <Textbox
+              placeholder='Client Name'
+              type='text'
+              name='clientName'
+              label='Client Name'
+                className={`w-full border rounded-md outline-0 transition-all duration-200 ${
+                errors.clientName
+                  ? `border-2 border-red-500 focus:border-red-500 ${
+                      shake ? "animate-shake" : ""
+                    }`
+                  : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              }`}
+              register={register("clientName", {
+                required: "client name is required!",
+              })}
+              error={errors.clientName ? errors.clientName.message : ""}
+            />
+
+            <Textbox
+              placeholder='Location'
+              type='text'
+              name='address'
+              label='Location'
+                className={`w-full border rounded-md outline-0 transition-all duration-200 ${
+                errors.address
+                  ? `border-2 border-red-500 focus:border-red-500 ${
+                      shake ? "animate-shake" : ""
+                    }`
+                  : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              }`}
+              register={register("address", {
+                required: "Address is required!",
+              })}
+              error={errors.address ? errors.address.message : ""}
             />
 
             <UserList setTeam={setTeam} team={team} />

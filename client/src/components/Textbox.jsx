@@ -21,6 +21,7 @@ const Textbox = React.forwardRef(
       register,
       error,
       rules,
+      onFocus,
     },
     ref
   ) => {
@@ -102,6 +103,7 @@ const Textbox = React.forwardRef(
               name={name}
               placeholder={placeholder}
               ref={ref}
+              onFocus={onFocus}
               className={clsx(
                 LightMode 
                   ? "text-black placeholder-gray-300 border-gray-300"

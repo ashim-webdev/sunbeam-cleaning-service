@@ -320,7 +320,6 @@ export default function Bookings() {
                               {/* Button */}
                               <Listbox.Button
                                 onClick={() => setToggle1(prev => !prev)}
-                                onClickAn
                                 className={`${subText} w-full px-2 py-2 border rounded-xl text-left border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none flex justify-between items-center cursor-pointer`}
                               >
                                 <span className='line-clamp-1'>{formData.property}</span>
@@ -373,7 +372,6 @@ export default function Bookings() {
                               {/* Button */}
                               <Listbox.Button
                                 onClick={() => setToggle1(prev => !prev)}
-                                onClickAn
                                 className={`${subText} w-full px-2 py-2 border rounded-xl text-left border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none flex justify-between items-center cursor-pointer`}
                               >
                                 <span className='line-clamp-1'>{formData.service}</span>

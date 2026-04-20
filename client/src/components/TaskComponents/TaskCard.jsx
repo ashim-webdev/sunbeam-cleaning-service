@@ -74,76 +74,74 @@ const TaskCard = ({ task }) => {
           }
           relative w-full h-fit shadow-md p-4 mt-15 rounded transition-colors duration-300 ease-in-out
         `}>
-        <Link to={`/task/${task._id}`}>
-          <div className={`
-            ${LightMode 
-              ? "border-gray-300 hover:shadow-darkSM"
-              : "border-gray-500 hover:shadow-lightSM"
-            }
-            mt-1 cursor-pointer py-0.5 px-1 border-b transition-transform duration-200 ease-in-out
-          `}>
-            <div className='w-full z-1 flex justify-between'>
-              <div
-                className={clsx(
-                  "flex flex-1 gap-1 mt-2 items-center text-sm font-medium",
-                  PRIORITY_STYLES[task?.priority]
-                )}
-              >
-                <span className='text-lg'>{ICONS[task?.priority]}</span>
-                <span className='uppercase'>{task?.priority} Priority</span>
-                <div className={`px-4 capitalize text-center text-lg  whitespace-nowrap`}>
-                  <i className={`animate-UpDown ${TASK_ICON[task?.stage].icon} ${TASK_ICON[task?.stage].color}`}></i>
-                </div>
+        <div className={`
+          ${LightMode 
+            ? "border-gray-300"
+            : "border-gray-500"
+          }
+          mt-1 py-0.5 px-1 border-b transition-transform duration-200 ease-in-out
+        `}>
+          <div className='w-full z-1 flex justify-between'>
+            <div
+              className={clsx(
+                "flex flex-1 gap-1 mt-2 items-center text-sm font-medium",
+                PRIORITY_STYLES[task?.priority]
+              )}
+            >
+              <span className='text-lg'>{ICONS[task?.priority]}</span>
+              <span className='uppercase'>{task?.priority} Priority</span>
+              <div className={`px-4 capitalize text-center text-lg  whitespace-nowrap`}>
+                <i className={`animate-UpDown ${TASK_ICON[task?.stage].icon} ${TASK_ICON[task?.stage].color}`}></i>
               </div>
             </div>
-            <>
-                <div className='CardTextColor mt-1 mb-1 pl-1.5 flex items-center gap-2'>
-                  <TaskColor className={TASK_TYPE[task.stage]} />
-                  <h4 className={`
-                      ${LightMode 
-                        ? "text-black"
-                        : "text-white"
-                      }
-                      line-clamp-1 transition-colors duration-300 ease-in-out
-                    `}>
-                    {task?.title}
-                  </h4>
-                </div>
-              <span className={`
-                  ${LightMode 
-                    ? "text-gray-600"
-                    : "text-gray-400"
-                  }
-                  text-sm pl-2 transition-colors duration-300 ease-in-out
-                `}>
-                {formatDate(new Date(task?.date))}
-              </span>
-            </>
-
-            <div className={`
+          </div>
+          <>
+              <div className='CardTextColor mt-1 mb-1 pl-1.5 flex items-center gap-2'>
+                <TaskColor className={TASK_TYPE[task.stage]} />
+                <h4 className={`
+                    ${LightMode 
+                      ? "text-black"
+                      : "text-white"
+                    }
+                    line-clamp-1 transition-colors duration-300 ease-in-out
+                  `}>
+                  {task?.title}
+                </h4>
+              </div>
+            <span className={`
                 ${LightMode 
-                  ? "border-gray-300"
-                  : "border-gray-500"
+                  ? "text-gray-600"
+                  : "text-gray-400"
                 }
-                w-full border-t my-2 transition-colors duration-300 ease-in-out`
-              } />
-            <div className='flex items-center justify-between mb-2'>
-              <TaskAssets
-                activities={task?.activities?.length}
-                subTasks={task?.subTasks}
-                assets={task?.assets?.length}
-              />
+                text-sm pl-2 transition-colors duration-300 ease-in-out
+              `}>
+              {formatDate(new Date(task?.date))}
+            </span>
+          </>
 
-              <div className='flex flex-row-reverse'>
-                <div className=' flex flex-row justify-start items-center mr-6'>
-                  <div className="flex flex-row justify-center items-center">
-                    <UserInfoTask task={task} />
-                  </div>
+          <div className={`
+              ${LightMode 
+                ? "border-gray-300"
+                : "border-gray-500"
+              }
+              w-full border-t my-2 transition-colors duration-300 ease-in-out`
+            } />
+          <div className='flex items-center justify-between mb-2'>
+            <TaskAssets
+              activities={task?.activities?.length}
+              subTasks={task?.subTasks}
+              assets={task?.assets?.length}
+            />
+
+            <div className='flex flex-row-reverse'>
+              <div className=' flex flex-row justify-start items-center mr-6'>
+                <div className="flex flex-row justify-center items-center">
+                  <UserInfoTask task={task} />
                 </div>
               </div>
             </div>
           </div>
-        </Link>
+        </div>
 
 
         {/* subtasks */}
@@ -171,10 +169,10 @@ const TaskCard = ({ task }) => {
               </span>
               <span className={`
                   ${LightMode 
-                    ? "bg-blue-600/10 shadow-inner"
-                    : "bg-white/20 shadow-innerWH"
+                    ? "bg-blue-600/10 shadow-inner text-blue-700"
+                    : "bg-white/20 shadow-innerWH text-blue-200"
                   }
-                  px-3 py-1 rounded-full text-blue-600 font-medium transition-colors duration-300 ease-in-out
+                  px-3 py-1 rounded-full font-medium transition-colors duration-300 ease-in-out
                 `}>
                 {task?.subTasks[0]?.tag}
               </span>

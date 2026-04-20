@@ -100,7 +100,7 @@ export function LeaveDetailModal({ request, isAdmin, onClose, onUpdate }) {
         ? "bg-black/80" 
         : "bg-white/80"
       }
-      fixed inset-0 w-full flex items-center justify-center overflow-y-auto bg-opacity-50 z-80 transition-colors duration-300 ease-in-out
+      fixed inset-0 w-full  flex items-center justify-center overflow-y-auto bg-opacity-50 z-80 transition-colors duration-300 ease-in-out
     `}>
       <div className=' absolute py-4 top-0 bottom-0 w-full h-fit px-2.5 flex items-center justify-center'>
         <div className={`

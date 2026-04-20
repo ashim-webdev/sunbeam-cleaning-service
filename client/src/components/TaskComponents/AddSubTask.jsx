@@ -1,6 +1,7 @@
 import { Dialog } from "@headlessui/react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
 import { toast } from "sonner";
 
 // import { useCreateSubTaskMutation } from "../../redux/slices/api/taskApiSlice";
@@ -10,6 +11,8 @@ import ModalWrapper from "../ModalWrapper";
 import Textbox from "../Textbox";
 
 const AddSubTask = ({ open, setOpen, id }) => {
+  const { LightMode } = useSelector((state) => state.auth);
+  
   const {
     control,
     register,
@@ -86,7 +89,7 @@ const AddSubTask = ({ open, setOpen, id }) => {
         <form onSubmit={handleSubmit(handleOnSubmit, handleFormError)} className=''>
           <Dialog.Title
             as='h2'
-            className='text-base font-bold leading-6 text-gray-900 mb-4'
+            className={`${LightMode ? "text-black" : "text-white"} text-base font-bold leading-6 mb-4`}
           >
             ADD SUB-TASK
           </Dialog.Title>

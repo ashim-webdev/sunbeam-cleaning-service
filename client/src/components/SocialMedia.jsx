@@ -90,6 +90,7 @@ const SocialMedia = ({tiktok, x, whatsApp, telegram}) => {
           </svg>
         </a>
         :
+        
         <span onClick={message} className="tooltip3">
           <svg
             xmlns="http://www.w3.org/2000/svg"

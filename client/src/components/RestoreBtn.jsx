@@ -8,7 +8,7 @@ const RestoreBtn = ({ onClick }) => {
             e.stopPropagation();
             onClick?.(e)
           }
-        } class="RestoreButton ClickAnimationNoti shadow-inner hover:shadow-innerWH transition-colors duration-200 ease-in-out">
+        } className="RestoreButton ClickAnimationNoti shadow-inner hover:shadow-innerWH transition-colors duration-200 ease-in-out">
         <svg 
           className="svgIcon"
           height="512"

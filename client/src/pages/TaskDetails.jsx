@@ -242,9 +242,10 @@ const Activities = ({ activity, id, refetch }) => {
             className={`${LightMode ? "placeholder-black/40 text-black border-gray-200 shadow-darkSM" : "placeholder-white/40 text-white border-gray-100 shadow-lightSM"} w-full mt-10 border  outline-none p-4 rounded-md focus:ring-2 ring-blue-500 shadow transition-colors duration-300 ease-in-out`}
           ></textarea>
 
+          <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10 mt-2" />
 
           {/* After Cleanup Images Upload */}
-          <div className="w-full mt-6">
+          <div className="w-full mt-2">
             {/* <label className={`block mb-2 font-semibold ${
               LightMode ? "text-gray-600" : "text-gray-200"
             }`}>
@@ -252,10 +253,10 @@ const Activities = ({ activity, id, refetch }) => {
             </label> */}
 
           <label
-            className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-xl cursor-pointer transition
+            className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed hover:border-blue-400 rounded-xl cursor-pointer transition
             ${
               LightMode
-                ? "bg-gray-50 border-gray-300 hover:bg-gray-100"
+                ? "bg-gray-50 border-gray-300 hover:bg-gray-200"
                 : "bg-black/30 border-gray-600 hover:bg-black/40"
             }`}
           >
@@ -300,12 +301,22 @@ const Activities = ({ activity, id, refetch }) => {
             {/* Preview Grid */}
             <div className="grid grid-cols-3 gap-3 mt-4">
               {images.map((file, index) => (
-                <img
-                  key={index}
-                  src={URL.createObjectURL(file)}
-                  alt="preview"
-                  className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} w-full h-24 object-cover rounded shadow cursor-pointer transition-all duration-300 ease-in-out md:hover:scale-125 hover:z-50`}
-                />
+                <div key={index} className="relative hover:scale-110 transition-all duration-300 ease-in-out hover:z-50">
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt="preview"
+                    className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} w-full h-24 object-cover rounded shadow cursor-pointer transition-all duration-300 ease-in-out`}
+                  />
+
+                  <span
+                    onClick={() => {
+                      setImages(prev => prev.filter((_, i) => i !== index));
+                    }}
+                    className="absolute -top-1.5 -right-1 font-bold bg-white shadow-inner text-red-600 rounded-full py-px cursor-pointer px-1 text-xs"
+                  >
+                    ✕
+                  </span>
+                </div>
               ))}
             </div>
           </div>
@@ -403,12 +414,12 @@ const TaskDetail = () => {
                 
                 <p className={`${LightMode ? "text-black bg-blue-50 shadow-darkSM" : "text-white shadow-lightSM"} mt-6 border-l-10 border-blue-600 pl-2 rounded-l-lg  flex gap-2 justify-start items-center transition-colors duration-300 ease-in-out `}>
                   <span className="flex justify-center items-center gap-1 font-semibold"><i className="fa-solid fa-user text-xl text-blue-700 "></i></span>
-                  <span className="font-bold text-lg line-clamp-1 italic pr-1">{task?.clientName}</span>
+                  <span className="font-bold text-lg italic pr-1">{task?.clientName}</span>
                 </p>
 
                 <p className={`${LightMode ? "text-black bg-blue-50 shadow-darkSM" : "text-white shadow-lightSM"} border-l-10 border-blue-600  pl-2 rounded-l-lg flex gap-2 justify-start items-center transition-colors duration-300 ease-in-out -mt-4`}>
                   <span className="flex justify-center items-center gap-1 font-semibold"><i className="fa-solid fa-location-dot text-xl text-amber-400"></i></span>
-                  <span className="font-bold text-lg line-clamp-1 italic pr-1">{task?.address}</span>
+                  <span className="font-bold text-lg italic pr-1">{task?.address}</span>
                 </p>
 
                 <p className={`${LightMode ? "text-black bg-blue-50 shadow-darkSM" : "text-white shadow-lightSM"} border-l-10 border-blue-600 pl-2 rounded-l-lg flex gap-2 justify-start items-center -mt-4 transition-colors duration-300 ease-in-out`}>
@@ -543,7 +554,7 @@ const TaskDetail = () => {
                                     <div className="dot-spinner__dot"></div>
                                     <div className="dot-spinner__dot"></div>
                                     <div className="dot-spinner__dot"></div>
-                                </div>
+                                  </div>
                                 ) : el?.isCompleted ? (
                                   " Mark as Undone"
                                 ) : (

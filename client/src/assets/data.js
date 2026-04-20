@@ -895,38 +895,38 @@ export const summary = {
 export const pieData = [
   {
     name: "Total Task",
-    total: 48,
+    total: 4,
   },
   {
     name: "In Progress",
-    total: 15,
+    total: 2,
   },
   {
     name: "Todo",
-    total: 11,
+    total: 2,
   },
   {
     name: "Completed",
-    total: 32,
+    total: 8,
   },
 ]
 
 export const chartData = [
   {
     name: "High",
-    total: 3500,
+    total: 100,
   },
   {
     name: "Medium",
-    total: 2500,
+    total: 75,
   },
   {
     name: "Normal",
-    total: 1500,
+    total: 50,
   },
   {
     name: "Low",
-    total: 800,
+    total: 25,
   },
 ];
 

@@ -41,7 +41,7 @@ const UserAvatar = () => {
       <div className=''>
         <Menu as='div' className='relative inline-block text-left outline-0'>
           <div className="ClickAnimationNoti outline-0">
-            <Menu.Button className={`outline-0 border-2 ${isActive ? "border-green-600" : "border-red-600"} w-10 h-10 2xl:w-12 2xl:h-12 items-center justify-center rounded-full bg-[#005FFB] hover:bg-blue-800 hover:shadow-innerWH cursor-pointer transition-all hover:scale-105 ease-in-out duration-200 shadow-inner overflow-hidden`}>
+            <Menu.Button className={`outline-0 border-2 ${isActive ? "border-green-600" : "border-red-600"} w-10 h-10 2xl:w-12 2xl:h-12 flex items-center justify-center rounded-full bg-[#005FFB] hover:bg-blue-800 hover:shadow-innerWH cursor-pointer transition-all hover:scale-105 ease-in-out duration-200 shadow-inner overflow-hidden`}>
               <span className='text-white font-semibold '>
                 {/* {user?.img ? 
                   <img src={user?.img} alt="Avatar" className="w-full h-full object-cover "/>
@@ -72,44 +72,50 @@ const UserAvatar = () => {
           >
             <Menu.Items className={`
                 ${LightMode 
-                  ? "bg-white"
-                  : "bg-black/90 border border-white text-white"
+                  ? "bg-red-200"
+                  : "bg-red-200 border border-white text-white"
                 }
                 absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md shadow-2xl ring-1 ring-black/5 focus:outline-none transition-colors ease-in-out duration-300
               `}>
-              <div className='p-4'>
-                <Menu.Item>
+              <div className=''>
+                {/* <Menu.Item>
                   {({ active }) => (
                     <button
                       onClick={() => setOpen(true)}
-                      className={`group flex w-full items-center rounded-md px-2 py-2 text-base transition-transform hover:scale-105 ease-in-out duration-200 cursor-pointer`}
+                      className={`${
+                            active ? LightMode ? "bg-blue-600 text-white  hover:shadow-dark" : " text-white bg-blue-600 hover:shadow-light "  : LightMode ? "text-black" : " text-white"
+                          } group flex w-full items-center rounded-md px-2 hover:px-4 py-2 text-base transition-transform hover:scale-105 ease-in-out duration-200 cursor-pointer`}
                     >
                       <FaUser className='mr-2' aria-hidden='true' />
                       Profile
                     </button>
                   )}
-                </Menu.Item>
+                </Menu.Item> */}
 
-                <Menu.Item>
+                {/* <Menu.Item>
                   {({ active }) => (
                     <button
                       onClick={() => setOpenPassword(true)}
-                      className={`group flex w-full items-center rounded-md px-2 py-2 text-base transition-transform hover:scale-105 ease-in-out duration-200 cursor-pointer`}
+                      className={`${
+                            active ? LightMode ? "bg-blue-600 text-white  hover:shadow-dark" : " text-white bg-blue-600 hover:shadow-light "  : LightMode ? "text-black" : " text-white"
+                          } group flex w-full items-center rounded-md px-2 hover:px-4 py-2 text-base transition-transform hover:scale-105 ease-in-out duration-200 cursor-pointer`}
                     >
                       <FaUserLock className='mr-2' aria-hidden='true' />
                       Change Password
                     </button>
                   )}
-                </Menu.Item>
+                </Menu.Item> */}
 
                 <Menu.Item>
                   {({ active }) => (
                     <button
                       onClick={logoutHandler}
-                      className={`text-red-500 group flex w-full items-center rounded-md px-2 py-2 text-base transition-transform hover:scale-105 ease-in-out duration-200 cursor-pointer`}
+                      className={`${
+                            active ? LightMode ? "bg-red-100 text-red-600  hover:shadow-darkSM hover:bg-red-300" : " text-red-600 bg-red-100 hover:shadow-lightSM hover:bg-red-300"  : LightMode ? "text-black" : " text-red-600"
+                          } text-red-600 group flex w-full items-center rounded-md px-4 py-2 text-base transition-transform hover:scale-102 ease-in-out duration-200 cursor-pointer`}
                     >
                       <IoLogOutOutline className='mr-2 text-lg' aria-hidden='true' />
-                      Logout
+                      Log Out
                     </button>
                   )}
                 </Menu.Item>

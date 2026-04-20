@@ -7,7 +7,7 @@ const initialState = {
 
   isSidebarOpen: false,
   LightMode: true,
-  MiniMenu: false
+  MiniMenu: true
 };
 
 
@@ -34,7 +34,7 @@ const authSlice = createSlice ({
     },
 
     setMiniMenu : (state, action) => {
-      state.MiniMenu = !state.MiniMenu;
+      state.MiniMenu = action.payload;
     }
   },
 })

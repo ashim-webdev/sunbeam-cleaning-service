@@ -19,7 +19,6 @@ import SchedulerPage from "./pages/SchedulerPage";
 import Bookings from "./pages/Bookings";
 
 
-
 function Layout() {
   const [isScrolled, setIsScrolled] = useState(false);
   const { LightMode } = useSelector((state) => state.auth);
@@ -32,6 +31,7 @@ function Layout() {
 
   // Navbar Scroll Color Change
   const containerRef = useRef(null);
+
 
   useEffect(() => {
     const container = containerRef.current;
@@ -53,7 +53,7 @@ function Layout() {
       }
       w-full h-full flex flex-col md:flex-row transition-colors ease-in-out duration-300
     `}>
-      <div className='z-60 w-1/5 lg:w-3.5/4 h-screen sticky top-0 hidden xl:block'>
+      <div className='z-70 w-1/5 lg:w-3.5/4 h-screen sticky top-0 hidden xl:block'>
         <Sidebar />
       </div>
 
@@ -62,7 +62,7 @@ function Layout() {
       </div>
 
       <div ref={containerRef} className='relative w-full overflow-y-auto flex-1'>     
-        <div className="fixed top-0 left-0 right-0 z-50">
+        <div className="fixed top-0 left-0 right-0 z-60">
           <Navbar isScrolled={isScrolled}/>
         </div>
         
@@ -86,13 +86,18 @@ const MobileSidebar = () => {
     dispatch(setOpenSidebar(false));
   };
 
+  // Make slide bar disappear when mMobileMenu is open
+  useEffect(() => {
+    document.body.classList.toggle("overflow-hidden", isSidebarOpen);
+  }, [isSidebarOpen]);
+
   return (
     <AnimatePresence>
       {isSidebarOpen && (
         <>
           {/* Overlay */}
           <motion.div
-            className="fixed inset-0 bg-black/40 z-40 xl:hidden"
+            className="fixed inset-0 bg-black/40 backdrop-blur-[3px] z-40 xl:hidden"
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             initial={{ x: "-100%", scale: 0.98 }}
             animate={{ x: 0, scale: 1 }}

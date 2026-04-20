@@ -247,7 +247,7 @@ export default function TaskDialog({ task }) {
                       // disabled={!user.isAdmin}
                       onClick={() => deleteClicks()}
                       className={`${
-                        active ? LightMode ? "bg-red-100 text-red-900  hover:shadow-dark" : " text-red-900 bg-red-100 hover:shadow-light"  : "text-red-600"
+                        active ? LightMode ? "bg-red-300 text-red-900  hover:shadow-dark" : " text-red-900 bg-red-300 hover:shadow-light"  : "text-red-600"
                       } group hover:scale-110 transition-all duration-50 ease-in-out cursor-pointer flex w-full items-center rounded-md px-2 py-2 text-sm disabled:text-gray-400`}
                     >
                       <RiDeleteBin6Line
