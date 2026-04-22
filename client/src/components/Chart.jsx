@@ -19,7 +19,7 @@ const Chart = () => {
 
   return (
     <div className={`
-      App flex flex-col justify-center item-center gap-8 md:gap-4 md:flex-row transition-colors ease-in-out duration-300
+      App flex flex-col justify-center item-center gap-10 md:gap-12 md:flex-row transition-colors ease-in-out duration-300
     `}>
       <div className={`
           ${LightMode 

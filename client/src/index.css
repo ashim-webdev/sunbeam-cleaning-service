@@ -19,12 +19,45 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
+/* Override Radix dropdown item highlight */
+[data-radix-collection-item][data-highlighted] {
+  background-color: inherit !important;
+  color: inherit !important;
+}
+
+:root {
+  --chart-1: #0c67fa;
+  --chart-2: #0ff262;
+  --chart-3: #eac80a;
+  --chart-4: #a855f7;
+  --chart-5: #eab308;
+
+  --color-chrome: #3b82f6;
+  --color-safari: #22c55e;
+  --color-firefox: #f97316;
+  --color-edge: #a855f7;
+  --color-other: #eab308;
+
+  --color-desktop: #3b82f6, #0050D7 #FF9900 #D30055 #007870; /*Pie chart*/
+  --color-mobile: #a855f7, #4CAF50 #0004ff #FFA500 #FF4C4C; /*Bar chart*/
+}
+
   @theme {
     --color-chocolate-100: #EFEBE9;
     --color-chocolate-300: #A1887F;
     --color-chocolate-500: #795548;
     --color-chocolate-700: #5D4037;
     --color-chocolate-900: #3E2723;
+
+    --color-chrome: #3b82f6;
+    --color-safari: #22c55e;
+    --color-firefox: #f97316;
+    --color-edge: #a855f7;
+    --color-other: #eab308;
+
+    --color-desktop: #3b82f6;
+    --color-mobile: #a855f7;
 
     --spacing-0: 0px;
     --spacing-1: 0.25rem;

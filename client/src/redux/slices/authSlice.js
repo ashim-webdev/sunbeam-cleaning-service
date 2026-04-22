@@ -6,8 +6,10 @@ const initialState = {
   : null,
 
   isSidebarOpen: false,
-  LightMode: true,
-  MiniMenu: true
+  isProfileOpen: false,
+  LightMode: JSON.parse(localStorage.getItem("lightMode")) ?? true,
+  MiniMenu: true,
+  SelectUserDashInfo: null
 };
 
 
@@ -28,18 +30,27 @@ const authSlice = createSlice ({
     setOpenSidebar : (state, action) => {
       state.isSidebarOpen = action.payload;
     },
+    
+    setOpenProfile : (state, action) => {
+      state.isProfileOpen = action.payload;
+    },
 
-    setLightMode : (state, action) => {
+    setLightMode: (state) => {
       state.LightMode = !state.LightMode;
+      localStorage.setItem("lightMode", JSON.stringify(state.LightMode));
     },
 
     setMiniMenu : (state, action) => {
       state.MiniMenu = action.payload;
+    },
+
+    setSelectUserDashInfo : (state, action) => {
+      state.SelectUserDashInfo = action.payload;
     }
   },
 })
 
 
-export const { setCredentials, logout, setOpenSidebar, setLightMode, setMiniMenu } = authSlice.actions
+export const { setCredentials, logout, setOpenSidebar, setOpenProfile, setLightMode, setMiniMenu, setSelectUserDashInfo } = authSlice.actions
 
 export default authSlice.reducer

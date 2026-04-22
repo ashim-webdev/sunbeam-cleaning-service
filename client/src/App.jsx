@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import { setOpenSidebar,  } from "./redux/slices/authSlice";
+import { setOpenSidebar, setOpenProfile } from "./redux/slices/authSlice";
 import { Toaster } from 'sonner' // Notification library
 import Login from './pages/Login'
 import TaskDetails from './pages/TaskDetails'
@@ -17,11 +17,13 @@ import Navbar from './components/Navbar'
 import LeaveRequest from './pages/LeaveRequest'
 import SchedulerPage from "./pages/SchedulerPage";
 import Bookings from "./pages/Bookings";
+import Overview from "./pages/Overview";
 
 
 function Layout() {
   const [isScrolled, setIsScrolled] = useState(false);
   const { LightMode } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
 
   // const { user } = useSelector((state) => state.auth);
 
@@ -46,7 +48,9 @@ function Layout() {
   }, []);
 
   return user ? (
-    <div className={`
+    <div 
+    onClick={() => dispatch(setOpenProfile(false))}
+    className={`
       ${LightMode 
         ? "bg-white/10"
         : "bg-[#3D3D3D]"
@@ -84,6 +88,7 @@ const MobileSidebar = () => {
 
   const closeSidebar = () => {
     dispatch(setOpenSidebar(false));
+    dispatch(setOpenProfile(false))
   };
 
   // Make slide bar disappear when mMobileMenu is open
@@ -107,6 +112,7 @@ const MobileSidebar = () => {
 
           {/* Sidebar */}
           <motion.div
+            onClick={() => dispatch(setOpenProfile(false))}
             className={`
               fixed top-0 left-0 h-full w-3/4 sm:w-1/2 z-50 xl:hidden
               ${LightMode ? "bg-white shadow-lg" : "bg-[#2a2a2a] shadow-xl"}
@@ -142,37 +148,39 @@ function App() {
   
   return (
     <>
-      <main className={`
-        ${LightMode
-          ? "bg-black/10"
-          : "bg-[#3D3D3D]"
-        }
-        w-full min-h-screen transition-colors duration-300 ease-in-out
-      `}>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route index path="/" element={<Navigate to='/dashboard' />} />
+      <main 
+        className={`
+          ${LightMode
+            ? "bg-black/10"
+            : "bg-[#3D3D3D]"
+          }
+          w-full min-h-screen transition-colors duration-300 ease-in-out
+        `}>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route index path="/" element={<Navigate to='/dashboard' />} />
 
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/bookings" element={<Bookings />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/bookings" element={<Bookings />} />
 
-            <Route path="/tasks" element={<Tasks />} />
-            <Route path="/completed/:status" element={<Tasks />} />
-            <Route path="/in-progress/:status" element={<Tasks />} />
-            <Route path="/todos/:status" element={<Tasks />} />
+              <Route path="/tasks" element={<Tasks />} />
+              <Route path="/completed/:status" element={<Tasks />} />
+              <Route path="/in-progress/:status" element={<Tasks />} />
+              <Route path="/todos/:status" element={<Tasks />} />
 
-            <Route path="/team" element={<Users />} />
-            <Route path="/trashed" element={<Trash />} />
-            <Route path="/leave-request" element={<LeaveRequest />} />
-            <Route path="/task/:id" element={<TaskDetails />} />
-            <Route path="/scheduler" element={<SchedulerPage />} />
+              <Route path="/team" element={<Users />} />
+              <Route path="/trashed" element={<Trash />} />
+              <Route path="/leave-request" element={<LeaveRequest />} />
+              <Route path="/task/:id" element={<TaskDetails />} />
+              <Route path="/scheduler" element={<SchedulerPage />} />
+              <Route path="/overview" element={<Overview />} />
 
-          </Route>
+            </Route>
 
-          <Route path="/log-in" element={<Login />} />
-        </Routes>
+            <Route path="/log-in" element={<Login />} />
+          </Routes>
 
-        <Toaster richColors position='top-right'/>
+          <Toaster richColors position='top-right'/>
       </main>
     </>
   )

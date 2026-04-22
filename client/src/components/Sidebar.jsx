@@ -3,7 +3,7 @@ import React from "react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion"
 import { FaTasks, FaRegTrashAlt, FaUsers, FaCalendarCheck } from "react-icons/fa";
-import { Briefcase, AlarmClock, ChevronsUp, ChevronDown, Send } from 'lucide-react';
+import { Briefcase, AlarmClock, ChevronsUp, ChevronDown, Send, BarChart3, PieChart } from 'lucide-react';
 import {
   MdDashboard,
   MdOutlineAddTask,
@@ -14,7 +14,7 @@ import {
 } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { setOpenSidebar, setMiniMenu } from "../redux/slices/authSlice";
+import { setOpenSidebar, setMiniMenu, setOpenProfile } from "../redux/slices/authSlice";
 import { IoCheckmarkDoneOutline } from "react-icons/io5";
 import "./components.css";
 import ProfileDropdown from "./ProfileDropdown";
@@ -69,6 +69,11 @@ const linkData = [
 
 const ActivityLinkData = [
     {
+    label: "Overview",
+    link: "overview",
+    icon: <BarChart3 size={18} />,
+  },
+  {
     label: "Trash",
     link: "trashed",
     icon: <FaRegTrashAlt />,
@@ -88,7 +93,7 @@ const ActivityLinkData = [
 const Sidebar = () => {
   const { user } = useSelector((state) => state.auth);
   // DarkMode Change
-  const { LightMode, MiniMenu }  = useSelector((state) => state.auth);
+  const { LightMode, MiniMenu, isProfileOpen }  = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
   const location = useLocation();
@@ -116,6 +121,7 @@ const Sidebar = () => {
   const NavLink = ({ el }) => {
     return (
       <div
+        key={el.label}
         onClick={() => handleNavClick(el.link)}
         className={clsx(
           "ClickAnimationNoti w-full flex gap-2 px-5 py-1.25 rounded-xl items-center text-base cursor-pointer transition-colors ease-in-out duration-300 ",
@@ -135,6 +141,7 @@ const Sidebar = () => {
   const ActivityNavLink = ({ el }) => {
     return (
       <div
+        key={el.label}
         onClick={() => handleNavClick(el.link)}
         className={clsx(
           "ClickAnimationNoti w-full flex gap-2 px-5 py-1.25 rounded-xl items-center text-base cursor-pointer transition-colors ease-in-out duration-300 ",
@@ -153,6 +160,10 @@ const Sidebar = () => {
 
   return (
     <div 
+      onClick={() => {
+        dispatch(setOpenProfile(false))
+        dispatch(setOpenSidebar(true))
+      }}
       className=
       {`
         ${LightMode 
@@ -214,7 +225,7 @@ const Sidebar = () => {
                           ? "bg-white shadow-darkSM"
                           : "bg-black/95 shadow-lightSM"
                         }
-                        absolute -top-43 right-2 xl:-right-1 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded p-4 cursor-pointer transition-colors ease-in-out duration-300
+                        absolute -top-54 right-2 xl:-right-1 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded p-4 cursor-pointer
                       `}
                       >
                       {activityLinks.map((link) => (

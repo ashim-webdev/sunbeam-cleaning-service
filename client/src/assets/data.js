@@ -1866,3 +1866,78 @@ export const dummyEvents = [
     Color: '#14B8A6'
   }
 ];
+
+
+
+
+
+
+
+
+// const data = {
+//   thisMonth: {
+//     totalTasks: 51,
+//     tasks: {
+//       completed: 25,
+//       "in progress": 14,
+//       todo: 12,
+//     },
+//     month: "April 2026",
+//   }, 
+//   lastMonth: {
+//     totalTasks: 75,
+//     tasks: {
+//       completed: 63,
+//       "in progress": 8,
+//       todo: 4,
+//     },
+//     month: "March 2026",
+//   }, 
+//   twoMonthAgo: {
+//     totalTasks: 122,
+//     tasks: {
+//       completed: 120,
+//       "in progress": 0,
+//       todo: 0,
+//     },
+//     month: "Febuary 2026",
+//   }, 
+//   team: [
+//         {
+//           _id: "65c317360fd860f958baa08e",
+//           img: image1,
+//           name: "Alex Johnson",
+//           email: "joy@gmail.com",
+//           todo: 6,
+//           "in progress": 8,
+//           completed: 17
+//         },
+//         {
+//           _id: "65c3176a0fd860f958baa099",
+//           img: image2,
+//           name: "Emily Wilson",
+//           email: "ashimgab@gmail.com",
+//           todo: 12,
+//           "in progress": 8,
+//           completed: 10
+//         },
+//         {
+//           _id: "65c317ff70fd860f958baa08e",
+//           img: image3,
+//           name: "Alex Johnson",
+//           email: "gab@gmail.com",
+//           todo: 3,
+//           "in progress": 18,
+//           completed: 21
+//         },
+//         {
+//           _id: "65c31736556fd860f958baa08e",
+//           img: image4,
+//           name: "Alex Johnson",
+//           email: "jasmine@gmail.com",
+//           todo: 9,
+//           "in progress": 13,
+//           completed:17
+//         },
+//       ],
+// }
