@@ -2,10 +2,15 @@ import { useState } from "react";
 import { Send } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
+import { useCreateLeaveMutation } from "../../redux/slices/api/leaveApiSlice";
 import { toast } from "sonner";
 
-export function LeaveForm({ userEmail, onSubmitSuccess }) {
+
+
+
+export function LeaveForm() {
   const { LightMode } = useSelector((state) => state.auth);
+  const [createLeave] = useCreateLeaveMutation();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [shake, setShake] = useState(false);
@@ -46,7 +51,7 @@ export function LeaveForm({ userEmail, onSubmitSuccess }) {
   };
 
   // Submit Handler
-  const submitHandler = (data) => {
+  const submitHandler = async (data) => {
     setIsSubmitting(true);
 
     const durationNum = parseInt(data.duration);
@@ -58,29 +63,26 @@ export function LeaveForm({ userEmail, onSubmitSuccess }) {
       return;
     }
 
-    const id = crypto.randomUUID();
-
-    setTimeout(() => {
-      const newRequest = {
-        id: id,
-        user_email: userEmail,
+    try {
+      await createLeave({
         reason: data.reason,
         duration: durationNum,
         description: data.description,
-        status: "pending",
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
+      }).unwrap();
 
       reset();
-      onSubmitSuccess(newRequest);
-      setIsSubmitting(false);
+
       toast.success("Leave request submitted successfully");
-    }, 300);
+
+    } catch (error) {
+      toast.error(error?.data?.message || "Something went wrong");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div className={`${LightMode ? "bg-white shadow-darkSM" : "bg-black/90 shadow-lightSM"} rounded-lg p-6 transition-colors duration-300 ease-in-out`}>
+    <div className={`${LightMode ? "bg-white shadow-darkSM" : "bg-black/90 shadow-lightSM"} w-full rounded-lg p-6 transition-colors duration-300 ease-in-out`}>
       <h2 className={`text-2xl font-semibold ${LightMode ? "text-black" : "text-white"} mb-6 transition-colors duration-300 ease-in-out`}>
         Request Leave
       </h2>

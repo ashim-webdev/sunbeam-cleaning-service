@@ -147,7 +147,7 @@ const Chart = () => {
                     "#007870",
                   ],
                   offset: (ctx) =>
-                    ctx.dataIndex === 0 || ctx.dataIndex === 3 ? 20 : 0,
+                    ctx.dataIndex === 0 || ctx.dataIndex === 4 ? 20 : 10,
 
                   borderColor: LightMode ? "#D9D9D0" : "#ffffff",
                   borderWidth: 2,
@@ -168,7 +168,7 @@ const Chart = () => {
                   color: "#fff",
                   font: {
                     weight: "bold",
-                    size: 8,
+                    size: 10,
                   },
                   formatter: (value, context) => {
                     return `${context.chart.data.labels[context.dataIndex]}\n${value}`;

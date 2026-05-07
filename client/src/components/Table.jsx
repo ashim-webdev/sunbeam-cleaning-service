@@ -20,7 +20,7 @@ import TaskColor from "./TaskComponents/TaskColor.jsx";
 import TaskAssets from "./TaskComponents/TaskAssets.jsx";
 import DeleteBtn from "./DeleteBtn.jsx";
 import EditBtn from "./EditBtn.jsx"; 
-// import { AddTask, TaskAssets, TaskColor } from "./tasks";
+import AddTask from "../components/TaskComponents/AddTask.jsx";
 import { Link } from "react-router-dom";
 
 const ICONS = {
@@ -253,12 +253,12 @@ const Table = ({ tasks }) => {
         onClick={deleteHandler}
       />
 
-      {/* <AddTask
+      <AddTask
         open={openEdit}
         setOpen={setOpenEdit}
         task={selected}
         key={new Date().getTime()}
-      /> */}
+      />
     </>
   );
 };

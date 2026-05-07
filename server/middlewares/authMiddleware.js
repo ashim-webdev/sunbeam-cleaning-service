@@ -1,0 +1,55 @@
+import jwt from "jsonwebtoken";
+import User from "../models/userModel.js";
+
+const protectRoute = async (req, res, next) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({
+      status: false,
+      message: "Not authorized. Try login again.",
+    });
+  }
+
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findById(decodedToken.userId).select(
+      "isAdmin email"
+    );
+
+    if (!user) {
+      return res.status(401).json({
+        status: false,
+        message: "User not found",
+      });
+    }
+
+    req.user = {
+      _id: decodedToken.userId,
+      email: user.email,
+      isAdmin: user.isAdmin,
+    };
+
+    next();
+  } catch (error) {
+    console.error(error);
+    return res.status(401).json({
+      status: false,
+      message: "Not authorized. Try login again.",
+    });
+  }
+};
+
+const isAdminRoute = (req, res, next) => {
+  if (req.user && req.user.isAdmin) {
+    next();
+  } else {
+    return res.status(401).json({
+      status: false,
+      message: "Not authorized as admin. Try login as admin.",
+    });
+  }
+};
+
+export { isAdminRoute, protectRoute };

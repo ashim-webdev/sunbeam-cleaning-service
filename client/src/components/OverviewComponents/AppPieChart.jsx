@@ -1,4 +1,5 @@
 import { Label, Pie, PieChart } from "recharts";
+import { useDispatch, useSelector } from "react-redux";
 import {
   ChartContainer,
   ChartTooltip,
@@ -31,15 +32,22 @@ const chartData = [
 ];
 
 const AppPieChart = () => {
+  const { LightMode }  = useSelector((state) => state.auth);
+
 
   // If you don't use React compiler use useMemo hook to improve performance
   const totalTotal = chartData.reduce((acc, curr) => acc + curr.Total, 0);
   
+
+  const chartXYAxis = LightMode ? "#000000" : "#ffffff"
+  const text = LightMode ? "text-black" : "text-white"
+  const changeAnimation = "transition-all duration-300 ease-in-out"
+
   return (
-    <div className="">
-      <h1 className="text-lg font-medium mb-6">Total Task Analytics</h1>
+    <div className={`${text} ${changeAnimation}`}>
+      <h1 className="text-lg font-medium mb-2 md:mb-16">Total Task Analytics</h1>
       
-      <div className="mx-auto w-full h-full">
+      <div className="mx-auto w-full h-full ">
         <ChartContainer
           config={chartConfig}
         >
@@ -54,6 +62,9 @@ const AppPieChart = () => {
               nameKey="title"
               innerRadius={60}
               strokeWidth={5}
+              tick={{
+                fill: `${chartXYAxis}`
+              }}
             >
               <Label
                 content={({ viewBox }) => {
@@ -64,11 +75,12 @@ const AppPieChart = () => {
                         y={viewBox.cy}
                         textAnchor="middle"
                         dominantBaseline="middle"
+                        fill={`${chartXYAxis}`}
                       >
                         <tspan
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
+                          className="text-3xl font-bold"
                         >
                           {totalTotal.toLocaleString()}
                         </tspan>
@@ -88,12 +100,12 @@ const AppPieChart = () => {
           </PieChart>
         </ChartContainer>
       </div>
-      <div className="mt-4 flex flex-col gap-2 items-center">
+      <div className="mt-4 flex flex-col gap-2 items-center mb-10">
         <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4 text-green-500" />
+          Monthly Task Overview <TrendingUp className="h-4 w-4 text-green-500" />
         </div>
         <div className="leading-none text-muted-foreground">
-          Showing total Total for the last 6 months
+          Progression of task this month
         </div>
       </div>
     </div>

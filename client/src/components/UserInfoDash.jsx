@@ -55,7 +55,7 @@ export default function UserInfoDash({ task }) {
               <img src={member?.img} alt="Avatar" className="w-full h-full object-cover "/>
             :
               <span>
-                {getInitials(member?.name)}
+                {getInitials(member?.name || "Unknown User")}
               </span>
             }
           </div>

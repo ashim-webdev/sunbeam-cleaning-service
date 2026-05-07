@@ -18,10 +18,14 @@ import LeaveRequest from './pages/LeaveRequest'
 import SchedulerPage from "./pages/SchedulerPage";
 import Bookings from "./pages/Bookings";
 import Overview from "./pages/Overview";
+import Profile from "./pages/Profile";
+import Status from "./pages/Status";
 
 
 function Layout() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isSearchPanelOpen, setIsSearchPanelOpen] = useState(false);
+  
   const { LightMode } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
@@ -37,19 +41,29 @@ function Layout() {
 
   useEffect(() => {
     const container = containerRef.current;
-
     const handleScroll = () => {
       setIsScrolled(container.scrollTop > 50);
     };
-
     container.addEventListener("scroll", handleScroll);
 
     return () => container.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      dispatch(setOpenSidebar(false));
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return user ? (
     <div 
-    onClick={() => dispatch(setOpenProfile(false))}
+    onClick={() => {
+      dispatch(setOpenProfile(false))
+      setIsSearchPanelOpen(false)
+    }}
     className={`
       ${LightMode 
         ? "bg-white/10"
@@ -67,11 +81,11 @@ function Layout() {
 
       <div ref={containerRef} className='relative w-full overflow-y-auto flex-1'>     
         <div className="fixed top-0 left-0 right-0 z-60">
-          <Navbar isScrolled={isScrolled}/>
+          <Navbar isScrolled={isScrolled} isSearchPanelOpen={isSearchPanelOpen} setIsSearchPanelOpen={setIsSearchPanelOpen} />
         </div>
         
 
-        <div className='pt-25 p-4 2xl:px-10 '>
+        <div className='pt-25 px-2 sm:px-5 pb-4 2xl:px-10 overflow-x-hidden'>
           <Outlet />
         </div>
       </div>
@@ -170,10 +184,12 @@ function App() {
 
               <Route path="/team" element={<Users />} />
               <Route path="/trashed" element={<Trash />} />
-              <Route path="/leave-request" element={<LeaveRequest />} />
+              <Route path="/leaves" element={<LeaveRequest />} />
               <Route path="/task/:id" element={<TaskDetails />} />
               <Route path="/scheduler" element={<SchedulerPage />} />
               <Route path="/overview" element={<Overview />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/status" element={<Status />} />
 
             </Route>
 

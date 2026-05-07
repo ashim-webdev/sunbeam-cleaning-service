@@ -3,7 +3,7 @@ import React from "react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion"
 import { FaTasks, FaRegTrashAlt, FaUsers, FaCalendarCheck } from "react-icons/fa";
-import { Briefcase, AlarmClock, ChevronsUp, ChevronDown, Send, BarChart3, PieChart } from 'lucide-react';
+import { Briefcase, AlarmClock, ChevronsUp, ChevronsDown, ChevronDown, ChevronUp , Send, BarChart3, PieChart } from 'lucide-react';
 import {
   MdDashboard,
   MdOutlineAddTask,
@@ -23,72 +23,7 @@ import ProfileDropdown from "./ProfileDropdown";
 
 
 
-const linkData = [
-  {
-    label: "Dashboard",
-    link: "dashboard",
-    icon: <MdDashboard />,
-  },
-  {
-    label: "Bookings",
-    link: "bookings",
-    icon: <i className="fa-solid fa-newspaper"></i>,
-  },
-  {
-    label: "Tasks",
-    link: "tasks",
-    icon: <FaTasks />,
-  },
-  {
-    label: "Completed",
-    link: "completed/completed",
-    icon: <MdTaskAlt />,
-  },
-  {
-    label: "In Progress",
-    link: "in-progress/in-progress",
-    icon: <MdHourglassEmpty />,
-  },
-  {
-    label: "To Do",
-    link: "todo/todo",
-    icon: <MdOutlinePendingActions />,
-  },
-  {
-    label: "Team",
-    link: "team",
-    icon: <FaUsers />,
-  },
-  {
-    label: "Status",
-    link: "status",
-    icon: <IoCheckmarkDoneOutline />,
-  },
-];
 
-
-const ActivityLinkData = [
-    {
-    label: "Overview",
-    link: "overview",
-    icon: <BarChart3 size={18} />,
-  },
-  {
-    label: "Trash",
-    link: "trashed",
-    icon: <FaRegTrashAlt />,
-  },
-  {
-    label: "Scheduler",
-    link: "scheduler",
-    icon: <AlarmClock size={18} />,
-  },
-  {
-    label: "Leave Request",
-    link: "leave-request",
-    icon: <Send size={18} />,
-  },
-];
 
 const Sidebar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -98,10 +33,6 @@ const Sidebar = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const path = location.pathname.split("/")[1];
-
-  const sidebarLinks = user?.isAdmin ? linkData.slice(0, 5) : linkData; // Links that will not be available to employees
-
-  const activityLinks = ActivityLinkData; // Links that will not be available to employees
 
 
   // Sidebar Smooth Slide
@@ -118,11 +49,103 @@ const Sidebar = () => {
   // End
 
 
+  // SideBar Links
+  const linkData = [
+    {
+      label: "Dashboard",
+      link: "dashboard",
+      icon: <MdDashboard />,
+      role: ["admin", "employee"]
+    },
+    {
+      label: "Bookings",
+      link: "bookings",
+      icon: <i className="fa-solid fa-newspaper"></i>,
+      role: ["admin"]
+    },
+    {
+      label: "Tasks",
+      link: "tasks",
+      icon: <FaTasks />,
+      role: ["admin", "employee"]
+    },
+    {
+      label: "Completed",
+      link: "completed/completed",
+      icon: <MdTaskAlt />,
+      role: ["admin", "employee"]
+    },
+    {
+      label: "In Progress",
+      link: "in-progress/in-progress",
+      icon: <MdHourglassEmpty />,
+      role: ["admin", "employee"]
+    },
+    {
+      label: "To Do",
+      link: "todo/todo",
+      icon: <MdOutlinePendingActions />,
+      role: ["admin", "employee"]
+    },
+    {
+      label: "Team",
+      link: "team",
+      icon: <FaUsers />,
+      role: ["admin"]
+    },
+    {
+      label: "Status",
+      link: "status",
+      icon: <IoCheckmarkDoneOutline />,
+      role: ["admin"]
+    },
+  ];
+
+
+  const ActivityLinkData = [
+      {
+      label: "Overview",
+      link: "overview",
+      icon: <BarChart3 size={18} />,
+      role: ["admin"]
+    },
+    {
+      label: "Trash",
+      link: "trashed",
+      icon: <FaRegTrashAlt />,
+      role: ["admin"]
+    },
+    {
+      label: "Scheduler",
+      link: "scheduler",
+      icon: <AlarmClock size={18} />,
+      role: ["admin", "employee"]
+    },
+    {
+      label: `${user.isAdmin ? "Leave Requests" : "My Leaves"}`,
+      link: "leaves",
+      icon: <Send size={18} />,
+      role: ["admin", "employee"]
+    },
+  ];
+
+
+  const role = user?.isAdmin ? "admin" : "employee";
+
+  const sidebarLinks = linkData.filter(link => link.role.includes(role)); // Filter links based on user role
+
+  const activityLinks =  ActivityLinkData.filter(link => link.role.includes(role)); // Filter activity links based on user role
+
+
   const NavLink = ({ el }) => {
     return (
       <div
         key={el.label}
-        onClick={() => handleNavClick(el.link)}
+        onClick={(e) => {
+          e.stopPropagation()
+          handleNavClick(el.link)
+          dispatch(setOpenProfile(false))
+        }}
         className={clsx(
           "ClickAnimationNoti w-full flex gap-2 px-5 py-1.25 rounded-xl items-center text-base cursor-pointer transition-colors ease-in-out duration-300 ",
           LightMode 
@@ -162,7 +185,7 @@ const Sidebar = () => {
     <div 
       onClick={() => {
         dispatch(setOpenProfile(false))
-        dispatch(setOpenSidebar(true))
+        dispatch(setOpenSidebar(false))
       }}
       className=
       {`
@@ -207,33 +230,65 @@ const Sidebar = () => {
                   Actions
                 </span>
 
-                <span className="w-full flex justify-end items-center transition-colors duration-300 ease-in-out">
-                  {!MiniMenu ? <ChevronsUp size={25} className="font-bold animate-UpDown" /> : <ChevronDown size={25} className="font-bold" />}
-                </span>
+                {user?.isAdmin ? (
+                  <span className="w-full flex justify-end items-center transition-colors duration-300 ease-in-out">
+                    {!MiniMenu ? <ChevronsUp size={25} className="font-bold animate-UpDown" /> : <ChevronDown size={25} className="font-bold" />}
+                  </span>
+                ) : (
+                  <span className="w-full flex justify-end items-center transition-colors duration-300 ease-in-out">
+                    {!MiniMenu ? <ChevronsDown size={25} className="font-bold" /> : <ChevronUp size={25} className="font-bold animate-UpDown" /> }
+                  </span>
+                )}
               </div>
 
-                <AnimatePresence>
-                  {!MiniMenu && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{ duration: 0.2 }}
-                      onMouseOver={(e) => e.stopPropagation()} 
-                      className={`
-                        ${LightMode 
-                          ? "bg-white shadow-darkSM"
-                          : "bg-black/95 shadow-lightSM"
-                        }
-                        absolute -top-54 right-2 xl:-right-1 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded p-4 cursor-pointer
-                      `}
-                      >
-                      {activityLinks.map((link) => (
-                        <ActivityNavLink el={link} key={link.label} />
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {user?.isAdmin ? (
+                  <AnimatePresence>
+                    {!MiniMenu && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.2 }}
+                        onMouseOver={(e) => e.stopPropagation()} 
+                        className={`
+                          ${LightMode 
+                            ? "bg-white shadow-darkSM"
+                            : "bg-black/95 shadow-lightSM"
+                          }
+                          absolute -top-54 right-0 xl:-right-1 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded p-4 cursor-pointer
+                        `}
+                        >
+                        {activityLinks.map((link) => (
+                          <ActivityNavLink el={link} key={link.label} />
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                ) : (
+                  <AnimatePresence>
+                    {!MiniMenu && (
+                      <motion.div
+                        initial={{ opacity: 0, x: 40 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 40 }}
+                        transition={{ duration: 0.5 }}
+                        onMouseOver={(e) => e.stopPropagation()} 
+                        className={`
+                          ${LightMode 
+                            ? "bg-white shadow-darkSM"
+                            : "bg-black/95 shadow-lightSM"
+                          }
+                          absolute top-8 right-0 xl:-right-1 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded p-4 cursor-pointer
+                        `}
+                        >
+                        {activityLinks.map((link) => (
+                          <ActivityNavLink el={link} key={link.label} />
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                )}
+                
             </div>
           </div>
         </div>
@@ -243,7 +298,7 @@ const Sidebar = () => {
       className={`
           relative flex flex-row justify-between items-center sm:mt-0 cursor-pointer transition-all duration-300 ease-in-out
         `}>
-        <div className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} rounded-2xl w-full transition-all duration-300 ease-in-out`}>
+        <div onClick={(e) => e.stopPropagation()} className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} rounded-2xl w-full transition-all duration-300 ease-in-out`}>
           <ProfileDropdown />
         </div>
       </div>

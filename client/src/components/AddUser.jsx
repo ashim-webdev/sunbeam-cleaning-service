@@ -1,22 +1,29 @@
 import { Dialog } from "@headlessui/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
+import { setCPEditPopUp } from "../redux/slices/authSlice";
+
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from "sonner";
 import { BiImageAdd } from "react-icons/bi";
-// import { useRegisterMutation } from "../redux/slices/api/authApiSlice";
-// import { useUpdateUserMutation } from "../redux/slices/api/userApiSlice";
-// import { setCredentials } from "../redux/slices/authSlice";
+import { RefreshCw } from "lucide-react"
+import { useRegisterMutation } from "../redux/slices/api/authApiSlice";
+import { useUpdateUserMutation } from "../redux/slices/api/userApiSlice";
+import { setCredentials } from "../redux/slices/authSlice";
 import Button from "./Button";
 import Loading from "./Loading";
 import ModalWrapper from "./ModalWrapper";
 import Textbox from "./Textbox";
 
 const AddUser = ({ open, setOpen, userData }) => {
-  const { LightMode } = useSelector((state) => state.auth);
+  const { LightMode, CPEditPopUp } = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
+  console.log(userData)
   
   let defaultValues = userData ?? {};
-  // const { user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
   const {
     register,
@@ -27,14 +34,21 @@ const AddUser = ({ open, setOpen, userData }) => {
 
   // const dispatch = useDispatch();
 
-  // const [addNewUser, { isLoading }] = useRegisterMutation();
-  // const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
+  const [addNewUser, { isLoading }] = useRegisterMutation();
+  const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
   
-  const [isLoading, setIsLoading] = useState(false)
-  const [isUpdating, setIsUpdating] = useState(false)
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [shake, setShake] = useState(false);
+  const [spinner, setSpinner] = useState(false);
+  const [tempPassword, setTempPassword] = useState("");
 
+  const generateSpinner = () => {
+    setSpinner(true);
+    setTimeout(() => {
+      setSpinner(false);
+    }, 1000);
+  }
   // Image Function
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -45,8 +59,58 @@ const AddUser = ({ open, setOpen, userData }) => {
     }
   };
 
-  const [shake, setShake] = useState(false);
 
+  // Generate random password for new user
+  useEffect(() => {
+    if (open && !userData) {
+      const generated = Math.random().toString(36).slice(-8);
+      setTempPassword(generated);
+    }
+  }, [open, userData]);
+
+  // Copy generated password to clipboard
+  const handleCopyPassword = () => {
+    if (!tempPassword) return;
+
+    navigator.clipboard.writeText(tempPassword);
+    toast.success("Password copied!");
+  };
+
+  // Reset form when opening/closing or when userData changes
+  useEffect(() => {
+    if (!open) return;
+
+    if (userData && Object.keys(userData).length > 0) {
+      // Editing
+      reset(userData);
+
+      // ✅ Set preview from existing image
+      if (userData.profileImage || userData.img) {
+        setPreview(userData.profileImage || userData.img);
+      } else {
+        setPreview(null);
+      }
+
+      setImage(null); // prevent conflict with old file
+    } else {
+      // Creating new user
+      reset({
+        name: "",
+        title: "",
+        email: "",
+        role: "",
+        tiktok: "",
+        whatsApp: "",
+        x: "",
+        telegram: "",
+      });
+
+      setImage(null);
+      setPreview(null);
+    }
+  }, [userData, open, reset]);
+
+  
   const triggerShake = () => {
     setShake(true);
 
@@ -78,232 +142,338 @@ const AddUser = ({ open, setOpen, userData }) => {
     }
   };
 
+
   const handleOnSubmit = async (data) => {
-    const fullData = {
-      ...data,
-      profileImage: image,
-    };
+    const hasAtLeastOneSocial =
+      data.tiktok || data.whatsApp || data.x || data.telegram;
 
-    console.log(fullData)
-    // try {
-    //   if (userData) {
-    //     const res = await updateUser(data).unwrap();
-    //     toast.success(res?.message);
-    //     if (userData?._id === user?._id) {
-    //       dispatch(setCredentials({ ...res?.user }));
-    //     }
-    //   } else {
-    //     const res = await addNewUser({
-    //       ...data,
-    //       password: data?.email,
-    //     }).unwrap();
-    //     toast.success("New User added successfully");
-    //   }
+    if (!hasAtLeastOneSocial) {
+      toast.error("Please provide at least one social link");
+      triggerShake();
+      return;
+    }
 
-    //   setTimeout(() => {
-    //     setOpen(false);
-    //   }, 1500);
-    // } catch (err) {
-    //   console.log(err);
-    //   toast.error(err?.data?.message || err.error);
-    // }
+    try {
+      const formData = new FormData();
 
+      // ✅ Append fields
+      formData.append("name", data.name);
+      formData.append("email", data.email);
+      formData.append("title", data.title);
+      formData.append("role", data.role);
 
-    toast.success("User Created Successfully!");
+      if (data.tiktok) formData.append("tiktok", data.tiktok);
+      if (data.whatsApp) formData.append("whatsApp", data.whatsApp);
+      if (data.x) formData.append("x", data.x);
+      if (data.telegram) formData.append("telegram", data.telegram);
 
-    setTimeout(() => {
-      setOpen(false);
-    }, 800);
+      // ✅ Password only when creating
+      if (!userData) {
+        formData.append("password", tempPassword);
+      }
 
-    reset();
-    setImage(null);
-    setPreview(null)
+      // ✅ Image
+      if (image) {
+        formData.append("profileImage", image);
+      }
+
+      let res;
+
+      if (userData) {
+        // ✅ UPDATE USER
+        formData.append("_id", userData._id); // Append user ID for update
+
+        res = await updateUser(formData).unwrap();
+
+        toast.success(res?.message);
+
+        // 🔥 If updating self, refresh redux user
+        if (userData?._id === user?._id) {
+          dispatch(setCredentials({ ...res?.user }));
+        }
+      } else {
+        // ✅ CREATE USER
+        res = await addNewUser(formData).unwrap();
+
+        toast.success("New User added successfully");
+      }
+
+      setTimeout(() => {
+        setOpen(false);
+      }, 500);
+
+      reset();
+      setImage(null);
+      setPreview(null);
+
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.data?.message || err.error || "Something went wrong");
+    }
   };
 
   return (
     <>
       <ModalWrapper open={open} setOpen={setOpen}>
-        <form onSubmit={handleSubmit(handleOnSubmit, handleFormError)} className=''>
-          <Dialog.Title
-            as='h2'
-            className={`
-                ${
-                  LightMode ? "text-black" : "text-white"
-                }
-                text-base font-bold leading-6 mb-4
-              `}
-          >
-            {userData ? "UPDATE PROFILE" : "ADD NEW USER"}
-          </Dialog.Title>
-          <div className='mt-2 flex flex-col gap-6'>
+        <AnimatePresence>
+          <motion.form 
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 50 }}
+            transition={{ duration: 0.8 }}
+            onSubmit={handleSubmit(handleOnSubmit, handleFormError)} 
+            className=''
+            >
+            <Dialog.Title
+              as='h2'
+              className={`
+                  ${
+                    LightMode ? "text-black" : "text-white"
+                  }
+                  text-base font-bold leading-6 mb-4
+                `}
+            >
+              {userData ? "UPDATE PROFILE" : "ADD NEW USER"}
+            </Dialog.Title>
+            <div className='mt-2 flex flex-col gap-6'>
 
-            <div className="flex justify-center items-center">
-              <label htmlFor="profileUpload" className="cursor-pointer">
-                <div className={`
-                    ${
-                      LightMode ? "shadow-darkSM" : "shadow-lightSM"
-                    }
-                    w-20 h-20 rounded-full border-2 border-dashed border-gray-400 flex items-center justify-center overflow-hidden hover:scale-105 transition-all duration-300 ease-in-out
-                  `}>
-                  
-                  {preview ? (
-                    <img
-                      src={preview}
-                      alt="Profile Preview"
-                      className="w-full h-full object-cover"
+              <div className="flex justify-center items-center">
+                <label htmlFor="profileUpload" className="cursor-pointer">
+                  <div className={`
+                      ${
+                        LightMode ? "shadow-darkSM" : "shadow-lightSM"
+                      }
+                      w-20 h-20 rounded-full border-2 border-dashed border-gray-400 flex items-center justify-center overflow-hidden hover:scale-105 transition-all duration-300 ease-in-out
+                    `}>
+                    
+                    {preview ? (
+                      <img
+                        src={preview}
+                        alt="Profile Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-xs text-gray-400 text-center px-2">
+                        <BiImageAdd className="text-2xl text-gray-400" />
+                      </span>
+                    )}
+
+                  </div>
+
+                  <input
+                    type="file"
+                    id="profileUpload"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                  />
+                </label>
+              </div>
+
+              <Textbox
+                placeholder='Full name'
+                type='text'
+                name='name'
+                label='Full Name'
+                  className={`w-full border rounded-md outline-0 ${
+                  errors.name
+                    ? `border-2 border-red-500 focus:border-red-500 ${
+                        shake ? "animate-shake" : ""
+                      }`
+                    : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                }`}
+                register={register("name", {
+                  required: "Full name is required!",
+                })}
+                error={errors.name ? errors.name.message : ""}
+              />
+
+              <Textbox
+                placeholder='Title'
+                type='text'
+                name='title'
+                label='Title'
+                  className={`w-full border rounded-md outline-0 ${
+                  errors.title
+                    ? `border-2 border-red-500 focus:border-red-500 ${
+                        shake ? "animate-shake" : ""
+                      }`
+                    : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                }`}
+                register={register("title", {
+                  required: "Title is required!",
+                })}
+                error={errors.title ? errors.title.message : ""}
+              />
+
+              <Textbox
+                placeholder='Email Address'
+                type='email'
+                name='email'
+                label='Email Address'
+                disabled={userData} // Disable email field when editing
+                  className={`w-full border rounded-md outline-0 ${
+                  errors.email
+                    ? `border-2 border-red-500 focus:border-red-500 ${
+                        shake ? "animate-shake" : ""
+                      }`
+                    : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                }`}
+                register={register("email", {
+                  required: "Email Address is required!",
+                })}
+                error={errors.email ? errors.email.message : ""}
+              />
+
+              {userData ? null : 
+                <div>
+                  <label className={`${LightMode ? "text-black" : "text-white"} text-sm`}>
+                    Temporary Password
+                  </label>
+
+                  <div className="flex items-center gap-2 mt-1">
+                    <input
+                      type="text"
+                      value={tempPassword}
+                      readOnly
+                      className="w-full border rounded-md px-3 py-2 bg-gray-200 text-gray-700 cursor-not-allowed"
                     />
-                  ) : (
-                    <span className="text-xs text-gray-400 text-center px-2">
-                      <BiImageAdd className="text-2xl text-gray-400" />
-                    </span>
-                  )}
 
+                    <button
+                      type="button"
+                      onClick={handleCopyPassword}
+                      className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} px-3 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 cursor-pointer`}
+                    >
+                      Copy
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newPass = Math.random().toString(36).slice(-8);
+                        setTempPassword(newPass);
+                        toast.success("New password generated");
+                      }}
+                      className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} hidden sm:block px-3 py-2 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600 cursor-pointer`}
+                    >
+                      Regenerate
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        generateSpinner();
+                        const newPass = Math.random().toString(36).slice(-8);
+                        setTempPassword(newPass);
+                        toast.success("New password generated");
+                      }}
+                      className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} sm:hidden px-3 py-2 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600 cursor-pointer`}
+                    >
+                      <div className={`${spinner ? "animate-spin" : ""}`}>
+                        <RefreshCw className="text-sm" />
+                      </div>
+                    </button>
+                  </div>
+
+                  <p className="text-xs text-gray-400 mt-1">
+                    Share this password with the user. They will be required to change it after login.
+                  </p>
                 </div>
+              }
 
-                <input
-                  type="file"
-                  id="profileUpload"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleImageChange}
+
+
+              <Textbox
+                placeholder='Role'
+                type='text'
+                name='role'
+                label='Role'
+                  className={`w-full border rounded-md outline-0 ${
+                  errors.role
+                    ? `border-2 border-red-500 focus:border-red-500 ${
+                        shake ? "animate-shake" : ""
+                      }`
+                    : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                }`}
+                register={register("role", {
+                  required: "User role is required!",
+                })}
+                error={errors.role ? errors.role.message : ""}
+              />
+
+              <div className="flex justify-center items-center gap-2">
+                <Textbox
+                  placeholder='Tiktok'
+                  type='text'
+                  name='tiktok'
+                  label='Tiktok'
+                  className="w-full border rounded-md outline-0 border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                  register={register("tiktok")}
                 />
-              </label>
+
+                <Textbox
+                  placeholder='WhatsApp'
+                  type='text'
+                  name='whatsApp'
+                  label='whatsApp'
+                  className="w-full border rounded-md outline-0 border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                  register={register("whatsApp")}
+                />
+              </div>
+
+              <div className="flex justify-center items-center gap-2">
+                <Textbox
+                  placeholder='Twitter / X'
+                  type='text'
+                  name='x'
+                  label='Twitter / X'
+                  className="w-full border rounded-md outline-0 border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                  register={register("x")}
+                />
+
+                <Textbox
+                  placeholder='Telegram'
+                  type='text'
+                  name='telegram'
+                  label='Telegram'
+                  className="w-full border rounded-md outline-0 border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+                  register={register("telegram")}
+                />
+              </div>
+
             </div>
+            
+            {isLoading || isUpdating ? (
+              <span className="mt-6 mb-4 flex justify-center items-center">
+                <Loading />
+              </span>
+            ) : (
+              <div className='py-3 mt-4 flex sm:flex-row-reverse gap-2'>
+                <Button
+                  type='submit'
+                  className='bg-blue-700 px-8 text-sm font-semibold text-white hover:bg-blue-800  sm:w-auto shadow-inner hover:shadow-innerWH hover:scale-105 transition-all duration-150 ease-in-out'
+                  label='Submit'
+                />
 
-            <Textbox
-              placeholder='Full name'
-              type='text'
-              name='name'
-              label='Full Name'
-                className={`w-full border rounded-md outline-0 ${
-                errors.name
-                  ? `border-2 border-red-500 focus:border-red-500 ${
-                      shake ? "animate-shake" : ""
-                    }`
-                  : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
-              }`}
-              register={register("name", {
-                required: "Full name is required!",
-              })}
-              error={errors.name ? errors.name.message : ""}
-            />
-
-            <Textbox
-              placeholder='Title'
-              type='text'
-              name='title'
-              label='Title'
-                className={`w-full border rounded-md outline-0 ${
-                errors.title
-                  ? `border-2 border-red-500 focus:border-red-500 ${
-                      shake ? "animate-shake" : ""
-                    }`
-                  : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
-              }`}
-              register={register("title", {
-                required: "Title is required!",
-              })}
-              error={errors.title ? errors.title.message : ""}
-            />
-
-            <Textbox
-              placeholder='Email Address'
-              type='email'
-              name='email'
-              label='Email Address'
-                className={`w-full border rounded-md outline-0 ${
-                errors.email
-                  ? `border-2 border-red-500 focus:border-red-500 ${
-                      shake ? "animate-shake" : ""
-                    }`
-                  : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
-              }`}
-              register={register("email", {
-                required: "Email Address is required!",
-              })}
-              error={errors.email ? errors.email.message : ""}
-            />
-
-
-            <Textbox
-              placeholder='Role'
-              type='text'
-              name='role'
-              label='Role'
-                className={`w-full border rounded-md outline-0 ${
-                errors.role
-                  ? `border-2 border-red-500 focus:border-red-500 ${
-                      shake ? "animate-shake" : ""
-                    }`
-                  : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
-              }`}
-              register={register("role", {
-                required: "User role is required!",
-              })}
-              error={errors.role ? errors.role.message : ""}
-            />
-
-            <div className="flex justify-center items-center gap-2">
-              <Textbox
-                placeholder='Tiktok'
-                type='text'
-                name='tiktok'
-                label='Tiktok'
-                className="w-full border rounded-md outline-0 border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
-                register={register("tiktok")}
-              />
-
-              <Textbox
-                placeholder='WhatsApp'
-                type='text'
-                name='whatsApp'
-                label='whatsApp'
-                className="w-full border rounded-md outline-0 border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
-                register={register("whatsApp")}
-              />
-            </div>
-
-            <div className="flex justify-center items-center gap-2">
-              <Textbox
-                placeholder='YouTube'
-                type='text'
-                name='youtube'
-                label='YouTube'
-                className="w-full border rounded-md outline-0 border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
-                register={register("youtube")}
-              />
-
-              <Textbox
-                placeholder='Telegram'
-                type='text'
-                name='telegram'
-                label='Telegram'
-                className="w-full border rounded-md outline-0 border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
-                register={register("telegram")}
-              />
-            </div>
-
-          </div>
-
-          {isLoading || isUpdating ? (
-            <Loading />
-          ) : (
-            <div className='py-3 mt-4 flex sm:flex-row-reverse gap-2'>
-              <Button
-                type='submit'
-                className='bg-blue-600 px-8 text-sm font-semibold text-white hover:bg-blue-700  sm:w-auto shadow-inner hover:shadow-innerWH hover:scale-105 transition-all duration-150 ease-in-out'
-                label='Submit'
-              />
-
-              <Button
-                type='button'
-                className='bg-white px-5 text-sm font-semibold text-gray-900 sm:w-auto shadow-inner hover:scale-105 transition-all duration-150 ease-in-out'
-                onClick={() => setOpen(false)}
-                label='Cancel'
-              />
-            </div>
-          )}
-        </form>
+                <Button
+                  type='button'
+                  className='bg-white px-5 text-sm font-semibold text-gray-900 sm:w-auto shadow-inner hover:scale-105 transition-all duration-150 ease-in-out'
+                  onClick={(e) => { 
+                    e.preventDefault();
+                    setOpen(false);
+                    dispatch(setCPEditPopUp(false));
+                    
+                    // 🔥 ADD THIS
+                    reset();
+                    setImage(null);
+                    setPreview(null);
+                  }}
+                  label='Cancel'
+                />
+              </div>
+            )}
+          </motion.form>
+        </AnimatePresence>
       </ModalWrapper>
     </>
   );

@@ -1,15 +1,20 @@
 // import { LeaveRequest } from '../lib/supabase';
+import clsx from "clsx";
+import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, Clock, CheckCircle, XCircle, Hourglass } from 'lucide-react';
+import { Card, CardContent, CardFooter, CardTitle } from "../ui/card";
+import { Badge } from "../ui/badge";
 import { useSelector } from "react-redux";
+import { getInitials } from "../../utils/index";
 
 
 
-export function LeaveList({ requests, isAdmin, userEmail, onRequestClick }) {
+export function LeaveList({ requests, isAdmin, onRequestClick }) {
   const { LightMode } = useSelector((state) => state.auth);
-  
-  const filteredRequests = isAdmin
-    ? requests
-    : requests.filter((req) => req.user_email === userEmail);
+
+  const sortedRequests = [...requests].sort(
+    (a, b) => new Date(b.created_at) - new Date(a.created_at)
+  );
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -44,7 +49,7 @@ export function LeaveList({ requests, isAdmin, userEmail, onRequestClick }) {
     }
   };
 
-  if (filteredRequests.length === 0) {
+  if (sortedRequests.length === 0) {
     return (
       <div className={`${LightMode ? "bg-white shadow-darkSM" : "shadow-lightSM bg-black/90"} rounded-lg p-8 text-center transition-colors duration-300 ease-in-out`}>
         <div className={` ${LightMode ? "text-gray-400" : "text-gray-300"} mb-4 transition-colors duration-300 ease-in-out`}>
@@ -58,29 +63,83 @@ export function LeaveList({ requests, isAdmin, userEmail, onRequestClick }) {
   }
 
 
+  const hover = LightMode ? "hover:shadow-darkSM hover:bg-gray-50" : "hover:shadow-lightSM hover:bg-white/20"
+  const changeAnimation = "transition-all duration-300 ease-in-out"
+  const bg = LightMode ? "bg-white" : "bg-black/95"
+  const text = LightMode ? "text-black" : "text-white"
+  const navColor = LightMode ? "bg-gray-100" : "bg-blue-600/20"
+
+
   return (
-    <div className={`${LightMode ? "bg-white shadow-darkSM" : "shadow-lightSM bg-black/90"} rounded-lg p-6 transition-colors duration-300 ease-in-out`}>
-      <h2 className={`${LightMode ? "text-black" : "text-white"} text-[22px] font-semibold font-sans text-gray-800 mb-6 transition-colors duration-300 ease-in-out`}>
+    <div className={`${LightMode ? "bg-white" : "bg-black/95"} px-4 rounded-lg pt-6 pb-1 transition-colors duration-300 ease-in-out`}>
+      <h2 className={`${LightMode ? "text-black" : "text-white"} text-[22px] font-semibold font-sans text-gray-800 mb-6  transition-colors duration-300 ease-in-out`}>
         {isAdmin ? 'All Leave Requests' : 'My Leave Requests'}
       </h2>
+      
+      <div className="px-3">
+      <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10 mt-6" />
+      </div>
 
-      <div className="space-y-3">
-        {filteredRequests.map((request) => (
+      <div className={`${navColor} ${isAdmin ? "" : "overflow-y-auto lg:max-h-120 h-full"} mb-6 space-y-3 py-4 px-2 md:px-4 rounded-lg`}>
+        {sortedRequests.map((request) => (
           <div
-            key={request.id}
+            key={request._id}
             onClick={() => onRequestClick(request)}
-            className="ListHB border border-gray-200 rounded-lg my-6 p-4 hover:shadow-md transition-all duration-300 cursor-pointer"
+            className={`${isAdmin ? "mt-12 mb-6" : "my-9"} ${bg} ListHB border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all duration-300 cursor-pointer`}
           >
             <div className="relative flex items-start justify-between">
               <div className="flex-1">
-                <div className="flex flex-col md:flex-row gap-2 mb-2">
+                <div className="relative flex flex-col md:flex-row gap-2 mb-2">
                   <div>
-                    <h3 className={`${LightMode ? "text-black/90" : "text-white/90"} line-clamp-1 pt-2 font-cursive text-lg font-semibold text-gray-800 transition-colors duration-300 ease-in-out`}>{request.reason}</h3>
+                    <h3 className={`${LightMode ? "text-black/90" : "text-white/90"} ${isAdmin ? "pt-7" : "pt-0"} line-clamp-1 font-cursive text-lg font-semibold text-gray-800 transition-colors duration-300 ease-in-out`}>{request.reason}</h3>
                   </div>
                   {isAdmin && (
                     <>
-                      <span className={`${LightMode ? "text-gray-700 bg-gray-100 shadow-darkSM" : "text-gray-200 bg-black/70 shadow-lightSM"} w-fit px-2 flex justify-center items-center text-sm  py-1 rounded transition-colors duration-300 ease-in-out`}>
-                        {request.user_email}
+                      <span className={`${LightMode ? "text-gray-700" : "text-gray-200"} absolute -top-12  w-fit flex justify-center bg-transparent rounded-xl items-center text-sm transition-colors duration-300 ease-in-out`}>
+                        <Card 
+                          className={`${changeAnimation} ${bg} ${text} userInfo border-b flex-row users-center justify-between gap-4 py-2 pl-3 pr-3 md:pr-0  active:scale-95 cursor-pointer`}
+                          >
+                            <div 
+                              className={clsx(
+                                "w-11 h-11 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
+                                request.user?.isActive ? "border-green-500" : "border-red-600"
+                            )}>
+                              {request.user?.profileImage ? 
+                                <img src={request.user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                              :
+                                <span className='text-xs md:text-sm text-center'>
+                                  {getInitials(request.user?.name || "Unknown request")}
+                                </span>
+                              }
+                            </div>
+                            <CardContent className="flex-1 p-0 [@media(min-width:50px)_and_(max-width:501px)]:hidden [@media(min-width:502px)]:block ">
+                              <CardTitle className="text-sm font-medium pt-0.5">
+                                {request.user?.name}
+                              </CardTitle>
+                              <span className="flex flex-col justify-center items-start">
+                                <span className="hidden md:block">
+                                  {request.user?.email}
+                                </span>
+                                
+                                <Badge 
+                                  variant="secondary"
+                                  className="mt-1 md:hidden"
+                                >{request.user?.title}</Badge>
+                              </span>
+                            </CardContent>
+                            <CardFooter className="mt-1.5 pr-4 -mr-9 sm:mr-0 text-xl text-blue-600 hidden md:block">
+                              <AnimatePresence>
+                                <motion.span
+                                  initial={{ opacity: 0, x: -30 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  exit={{ opacity: 0, x: -30 }}
+                                  transition={{ duration: 0.5 }}
+                                >
+                                  <Badge variant="secondary">{request.user?.title}</Badge>            
+                                </motion.span>
+                              </AnimatePresence>
+                            </CardFooter>
+                        </Card>
                       </span>
                     </>
                   )}
@@ -100,15 +159,14 @@ export function LeaveList({ requests, isAdmin, userEmail, onRequestClick }) {
                 <p className={`${LightMode ? "text-gray-800" : "text-gray-300"} text-sm line-clamp-2 transition-colors duration-300 ease-in-out`}>{request.description}</p>
 
                 {request.message && (
-                  
-                <div className="mt-6 pt-2.5 border-t border-blue-600">
-                  <div className="flex items-center gap-2 ">
-                    <CheckCircle className="text-blue-700 animate-UpDown" size={20} />
-                    <h4 className={`${LightMode ? "text-gray-600" : "text-gray-200"} text-xs uppercase tracking-wide transition-colors duration-300 ease-in-out font-semibold`}>
-                      Management Commented
-                    </h4>
+                  <div className="mt-6 pt-2.5 border-t border-blue-600">
+                    <div className="flex items-center gap-2 ">
+                      <CheckCircle className="text-blue-700 animate-UpDown" size={20} />
+                      <h4 className={`${LightMode ? "text-gray-600" : "text-gray-200"} text-xs uppercase tracking-wide transition-colors duration-300 ease-in-out font-semibold`}>
+                        Management Commented
+                      </h4>
+                    </div>
                   </div>
-                </div>
                 )}
 
               </div>

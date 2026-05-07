@@ -10,6 +10,7 @@ import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { BiImages } from "react-icons/bi";
 import { toast } from "sonner";
+import { motion, AnimatePresence } from 'framer-motion';
 
 // import {
 //   useCreateTaskMutation,
@@ -24,6 +25,7 @@ import ModalWrapper from "../ModalWrapper";
 import SelectList from "../SelectList";
 import Textbox from "../Textbox";
 import UserList from "./UserList";
+import { tasks } from "@/assets/data";
 
 const LISTS = ["TODO", "IN PROGRESS", "COMPLETED"];
 const PRIORITY = ["HIGH", "MEDIUM", "NORMAL", "LOW"];
@@ -73,8 +75,8 @@ const AddTask = ({ open, setOpen, task }) => {
     stage: "",
     priority: "",
     assets: [],
-    description: "",
-    links: "",
+    description: task?.description || "",
+    equipments: task?.equipments || "",
   };
   const {
     control,
@@ -130,51 +132,71 @@ const AddTask = ({ open, setOpen, task }) => {
   };
 
   const handleOnSubmit = async (data) => {
-    console.log(data)
-    // const filesOnly = assets.map(obj => obj.file); AI given
-    
-        // for (const file of assets) {
-    //   setUploading(true);
-    //   try {
-    //     await uploadFile(file);
-    //   } catch (error) {
-    //     console.error("Error uploading file:", error.message);
-    //     return;
-    //   } finally {
-    //     setUploading(false);
-    //   }
-    // }
+    try {
+      const formData = new FormData();
 
-    // try {
-    //   const newData = {
-    //     ...data,
-    //     assets: filesOnly, AI given
-    //     team,
-    //     stage,
-    //     priority,
-    //   };
-    //   console.log(data, newData);
-    //   const res = task?._id
-    //     ? await updateTask({ ...newData, _id: task._id }).unwrap()
-    //     : await createTask(newData).unwrap();
+      // ✅ Basic fields
+      formData.append("title", data.title);
+      formData.append("clientName", data.clientName);
+      formData.append("address", data.address);
+      formData.append("date", data.date);
+      formData.append("stage", stage);
+      formData.append("priority", priority);
+      formData.append("description", data.description);
 
-    //   toast.success(res.message);
+      // ✅ equipments
+      formData.append("equipments", JSON.stringify([data.equipments]));
 
-    //   setTimeout(() => {
-    //     setOpen(false);
-    //   }, 500);
-    // } catch (err) {
-    //   console.log(err);
-    //   toast.error(err?.data?.message || err.error);
-    // }
+      // ✅ team
+      formData.append(
+        "team",
+        JSON.stringify({
+          members: team,
+          leader: team[0] || null,
+        })
+      );
 
-    toast.success(task ? "Task Updated Successfully!" : "Task Added Successfully!");
+      // 🔥 NEW IMAGES ONLY
+      assets.forEach((item) => {
+        if (item.file) {
+          formData.append("assets", item.file);
+        }
+      });
 
-    setTimeout(() => {
-      setOpen(false);
-    }, 800);
+      // ✅ IMPORTANT: send old images when editing
+      if (task?.assets) {
+        formData.append("existingAssets", JSON.stringify(task.assets));
+      }
 
-    reset();
+      const url = task?._id
+        ? `/api/tasks/${task._id}` // UPDATE
+        : `/api/tasks/create`;     // CREATE
+
+      const method = task?._id ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        body: formData,
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) throw new Error(result.message);
+
+      toast.success(
+        task ? "Task Updated Successfully!" : "Task Added Successfully!"
+      );
+
+      setTimeout(() => setOpen(false), 800);
+
+      reset();
+      setAssets([]);
+      setImages([]);
+
+    } catch (err) {
+      console.log(err);
+      toast.error(err.message || "Something went wrong");
+    }
   };
 
   // const [createTask, { isLoading }] = useCreateTaskMutation();
@@ -233,6 +255,20 @@ const AddTask = ({ open, setOpen, task }) => {
     setImages(filesWithPreview);   // same structure
   };
 
+  // ✅ Load existing images on edit from task.assets URLs in Cloudinary (no file objects, just URLs)
+  useEffect(() => {
+    if (open && task?.assets?.length) {
+      const existingImages = task.assets.map((url) => ({
+        file: null,
+        preview: url,
+        isExisting: true,
+      }));
+
+      setImages(existingImages);
+      setAssets(existingImages);
+    }
+  }, [open, task]);
+
 
   const handleRemoveImage = (e, index) => {
     e.stopPropagation();
@@ -264,269 +300,277 @@ const AddTask = ({ open, setOpen, task }) => {
   return (
     <>
       <ModalWrapper open={open} setOpen={setOpen}>
-        <form onSubmit={handleSubmit(handleOnSubmit, handleFormError)}>
-          <Dialog.Title
-            as='h2'
-            className={`text-base font-bold leading-6 ${LightMode ? "text-black" : "text-white"} mb-4 transition-colors duration-300 ease-in-out`}
+        <AnimatePresence>
+          <motion.form 
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 50 }}
+            transition={{ duration: 0.8 }}
+            onSubmit={handleSubmit(handleOnSubmit, handleFormError)}
           >
-            {task ? "UPDATE TASK" : "ADD TASK"}
-          </Dialog.Title>
+            <Dialog.Title
+              as='h2'
+              className={`text-base font-bold leading-6 ${LightMode ? "text-black" : "text-white"} mb-4 transition-colors duration-300 ease-in-out`}
+            >
+              {task ? "UPDATE TASK" : "ADD TASK"}
+            </Dialog.Title>
 
-          <div className='mt-2 flex flex-col gap-6'>
-            <Textbox
-              placeholder='Task title'
-              type='text'
-              name='title'
-              label='Task Title'
-                className={`w-full border rounded-md outline-0 transition-all duration-200 ${
-                errors.title
-                  ? `border-2 border-red-500 focus:border-red-500 ${
-                      shake ? "animate-shake" : ""
-                    }`
-                  : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              }`}
-              register={register("title", {
-                required: "Title is required!",
-              })}
-              error={errors.title ? errors.title.message : ""}
-            />
-
-            <Textbox
-              placeholder='Client Name'
-              type='text'
-              name='clientName'
-              label='Client Name'
-                className={`w-full border rounded-md outline-0 transition-all duration-200 ${
-                errors.clientName
-                  ? `border-2 border-red-500 focus:border-red-500 ${
-                      shake ? "animate-shake" : ""
-                    }`
-                  : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              }`}
-              register={register("clientName", {
-                required: "client name is required!",
-              })}
-              error={errors.clientName ? errors.clientName.message : ""}
-            />
-
-            <Textbox
-              placeholder='Location'
-              type='text'
-              name='address'
-              label='Location'
-                className={`w-full border rounded-md outline-0 transition-all duration-200 ${
-                errors.address
-                  ? `border-2 border-red-500 focus:border-red-500 ${
-                      shake ? "animate-shake" : ""
-                    }`
-                  : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              }`}
-              register={register("address", {
-                required: "Address is required!",
-              })}
-              error={errors.address ? errors.address.message : ""}
-            />
-
-            <UserList setTeam={setTeam} team={team} />
-
-            <div className='flex gap-4'>
-              <SelectList
-                label='Task Stage'
-                lists={LISTS}
-                selected={stage}
-                setSelected={setStage}
+            <div className='mt-2 flex flex-col gap-6'>
+              <Textbox
+                placeholder='Task title'
+                type='text'
+                name='title'
+                label='Task Title'
+                  className={`w-full border rounded-md outline-0 transition-all duration-200 ${
+                  errors.title
+                    ? `border-2 border-red-500 focus:border-red-500 ${
+                        shake ? "animate-shake" : ""
+                      }`
+                    : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                }`}
+                register={register("title", {
+                  required: "Title is required!",
+                })}
+                error={errors.title ? errors.title.message : ""}
               />
-              <SelectList
-                label='Priority Level'
-                lists={PRIORITY}
-                selected={priority}
-                setSelected={setPriority}
+
+              <Textbox
+                placeholder='Client Name'
+                type='text'
+                name='clientName'
+                label='Client Name'
+                  className={`w-full border rounded-md outline-0 transition-all duration-200 ${
+                  errors.clientName
+                    ? `border-2 border-red-500 focus:border-red-500 ${
+                        shake ? "animate-shake" : ""
+                      }`
+                    : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                }`}
+                register={register("clientName", {
+                  required: "client name is required!",
+                })}
+                error={errors.clientName ? errors.clientName.message : ""}
               />
-            </div>
-            <div className='flex gap-4'>
-              <div className='w-full'>
-                <Textbox
-                  placeholder="Select Date"
-                  type="date"
-                  name="date"
-                  label="Task Date"
-                  minDate={safeToday}
-                  showTime={false}
-                  control={control}
-                  rules={{ required: "Date is required!" }}
-                  error={errors.date ? errors.date.message : ""}
+
+              <Textbox
+                placeholder='Location'
+                type='text'
+                name='address'
+                label='Location'
+                  className={`w-full border rounded-md outline-0 transition-all duration-200 ${
+                  errors.address
+                    ? `border-2 border-red-500 focus:border-red-500 ${
+                        shake ? "animate-shake" : ""
+                      }`
+                    : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                }`}
+                register={register("address", {
+                  required: "Address is required!",
+                })}
+                error={errors.address ? errors.address.message : ""}
+              />
+
+              <UserList setTeam={setTeam} team={team} />
+
+              <div className='flex gap-4'>
+                <SelectList
+                  label='Task Stage'
+                  lists={LISTS}
+                  selected={stage}
+                  setSelected={setStage}
+                />
+                <SelectList
+                  label='Priority Level'
+                  lists={PRIORITY}
+                  selected={priority}
+                  setSelected={setPriority}
                 />
               </div>
-              <div className={`
-                  ${LightMode
-                    ? "text-black"
+              <div className='flex gap-4'>
+                <div className='w-full'>
+                  <Textbox
+                    placeholder="Select Date"
+                    type="date"
+                    name="date"
+                    label="Task Date"
+                    minDate={safeToday}
+                    showTime={false}
+                    control={control}
+                    rules={{ required: "Date is required!" }}
+                    error={errors.date ? errors.date.message : ""}
+                  />
+                </div>
+                <div className={`
+                    ${LightMode
+                      ? "text-black"
+                      : "text-white"
+                    }
+                    w-full flex items-center justify-center -mt-2
+                  `}>
+                  <label
+                    className='flex flex-col items-center gap-1 text-base text-ascent-2 hover:text-ascent-1 cursor-pointer my-4'
+                    htmlFor='imgUpload'
+                  >
+                    {images.length === 0 
+                      ?
+                      <div className="flex flex-col items-center gap-1 text-base text-ascent-2 hover:text-ascent-1 hover:text-blue-600 transition-all duration-200 ease-in-out cursor-pointer">
+                      <input
+                        type='file'
+                        className='hidden'
+                        id='imgUpload'
+                        onChange={(e) => handleSelect(e)}
+                        accept='.jpg, .png, .jpeg'
+                        multiple={true}
+                      />
+                      <span className="text-center">
+                        <span className="flex items-center justify-center">
+                          <BiImages className="text-lg"/>
+                        </span>
+                        <span>Add Assets</span>
+                        <p className="text-xs text-gray-400 text-center">
+                          Max 5 images • Max 2MB each • JPG, PNG
+                        </p>
+                      </span>
+                      </div>
+                      :
+                      <div onClick={(e) => e.stopPropagation()}>
+                        {/* Preview Grid */}
+                        <div className="flex flex-wrap justify-center items-center mt-2">
+                          {images.map((file, index) => (
+                            <div 
+                              key={index}
+                              className="relative transition-all duration-300 ease-in-out hover:scale-125 hover:z-50 mb-2 -ml-2"
+                            >
+                              <img
+                                src={file.preview}
+                                alt="preview"
+                                className={`${LightMode ? "shadow-darkSM border-amber-400" : "shadow-lightSM border-white"} w-10 h-10 border rounded-full object-cover shadow transition-all duration-300 ease-in-out `}
+                              />
+
+                              <span
+                                onClick={(e) => handleRemoveImage(e, index)}
+                                className="absolute -bottom-2 right-2.5 font-bold bg-white shadow-inner text-red-600 rounded-full py-px cursor-pointer px-1 text-xs"
+                              >
+                                ✕
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                        {/* Selected count */}
+                        {images.length > 0 && (
+                          <p className={`${LightMode ? "text-gray-500" : "text-gray-300"} mb-1 text-sm mt-0.5 text-center`}>
+                            {`${images.length} ${images.length >= 2 ? "images selected" : "image selected"}`}
+                          </p>
+                        )}
+                      </div>
+                    }
+                  </label>
+                </div>
+              </div>
+
+              <div className='w-full -mt-4'>
+                <p className={`
+                  ${LightMode 
+                    ? "text-black" 
                     : "text-white"
                   }
-                  w-full flex items-center justify-center -mt-2
-                `}>
-                <label
-                  className='flex flex-col items-center gap-1 text-base text-ascent-2 hover:text-ascent-1 cursor-pointer my-4'
-                  htmlFor='imgUpload'
-                >
-                  {images.length <= 0 
-                    ?
-                    <div className="flex flex-col items-center gap-1 text-base text-ascent-2 hover:text-ascent-1 hover:text-blue-600 transition-all duration-200 ease-in-out cursor-pointer">
-                    <input
-                      type='file'
-                      className='hidden'
-                      id='imgUpload'
-                      onChange={(e) => handleSelect(e)}
-                      accept='.jpg, .png, .jpeg'
-                      multiple={true}
-                    />
-                    <span className="text-center">
-                      <span className="flex items-center justify-center">
-                        <BiImages className="text-lg"/>
-                      </span>
-                      <span>Add Assets</span>
-                      <p className="text-xs text-gray-400 text-center">
-                        Max 5 images • Max 2MB each • JPG, PNG
-                      </p>
-                    </span>
-                    </div>
-                    :
-                    <div onClick={(e) => e.stopPropagation()}>
-                      {/* Preview Grid */}
-                      <div className="flex flex-wrap justify-center items-center mt-2">
-                        {images.map((file, index) => (
-                          <div 
-                            key={index}
-                            className="relative transition-all duration-300 ease-in-out hover:scale-125 hover:z-50 mb-2 -ml-2"
-                          >
-                            <img
-                              src={file.preview}
-                              alt="preview"
-                              className={`${LightMode ? "shadow-darkSM border-amber-400" : "shadow-lightSM border-white"} w-10 h-10 border rounded-full object-cover shadow transition-all duration-300 ease-in-out `}
-                            />
+                  transition-colors duration-300 ease-in-out
+                `}>Task Description</p>
+                <textarea
+                  name='description'
+                  {...register("description", {
+                    required: "Description is required!",
+                  })}
+                  className={`
+                    ${LightMode 
+                      ? "text-black border-gray-300 placeholder-gray-300"
+                      : "text-white border-gray-400 placeholder-gray-400"
+                    }
+                    ${
+                      errors.description
+                        ? `border-2 border-red-500 focus:border-red-500 ${
+                            shake ? "animate-shake" : ""
+                          }`
+                        : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    }
+                    w-full bg-transparent px-3 py-1.5 2xl:py-3 border  rounded-md outline-0
+                    outline-none focus:ring-2
+                    ring-blue-300 transition-colors duration-300 ease-in-out
+                  `}
+                  
+                ></textarea>
+                {errors.description && (
+                  <p className="text-red-500 text-[12px] italic">
+                    {errors.description.message}
+                  </p>
+                )}
+              </div>
 
-                            <span
-                              onClick={(e) => handleRemoveImage(e, index)}
-                              className="absolute -bottom-2 right-2.5 font-bold bg-white shadow-inner text-red-600 rounded-full py-px cursor-pointer px-1 text-xs"
-                            >
-                              ✕
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                      {/* Selected count */}
-                      {images.length > 0 && (
-                        <p className={`${LightMode ? "text-gray-500" : "text-gray-300"} mb-1 text-sm mt-0.5 text-center`}>
-                          {`${images.length} ${images.length >= 2 ? "images selected" : "image selected"}`}
-                        </p>
-                      )}
-                    </div>
-                  }
-                </label>
+              <div className='w-full'>
+                <p className={`
+                    ${LightMode 
+                      ? "text-black"
+                      : "text-white"
+                    } 
+                    transition-colors duration-300 ease-in-out
+                  `}>
+                  
+                  <span className=''>
+                    Important Equipments
+                  </span>
+                </p>
+                <textarea
+                  name='equipments'
+                  {...register("equipments", {
+                    required: "Important Equipments is required!",
+                  })}
+                  className={`
+                    ${LightMode 
+                      ? "text-black border-gray-300 placeholder-gray-300"
+                      : "text-white border-gray-400 placeholder-gray-400"
+                    }
+                    ${
+                      errors.equipments
+                        ? `border-2 border-red-500 focus:border-red-500 ${
+                            shake ? "animate-shake" : ""
+                          }`
+                        : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    }
+                    w-full bg-transparent px-3 py-1.5 2xl:py-3 border  rounded-md outline-0
+                    outline-none focus:ring-2
+                    ring-blue-300 transition-colors duration-300 ease-in-out
+                  `}
+                ></textarea>
+                {errors.equipments && (
+                  <p className="text-red-500 text-[12px] italic">
+                    {errors.equipments.message}
+                  </p>
+                )}
               </div>
             </div>
 
-            <div className='w-full -mt-4'>
-              <p className={`
-                ${LightMode 
-                  ? "text-black" 
-                  : "text-white"
-                }
-                transition-colors duration-300 ease-in-out
-              `}>Task Description</p>
-              <textarea
-                name='description'
-                {...register("description", {
-                  required: "Description is required!",
-                })}
-                className={`
-                  ${LightMode 
-                    ? "text-black border-gray-300 placeholder-gray-300"
-                    : "text-white border-gray-400 placeholder-gray-400"
-                  }
-                  ${
-                    errors.description
-                      ? `border-2 border-red-500 focus:border-red-500 ${
-                          shake ? "animate-shake" : ""
-                        }`
-                      : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  }
-                  w-full bg-transparent px-3 py-1.5 2xl:py-3 border  rounded-md outline-0
-                  outline-none focus:ring-2
-                  ring-blue-300 transition-colors duration-300 ease-in-out
-                `}
-                
-              ></textarea>
-              {errors.description && (
-                <p className="text-red-500 text-[12px] italic">
-                  {errors.description.message}
-                </p>
-              )}
-            </div>
+            {isLoading || isUpdating || uploading ? (
+              <div className='py-4'>
+                <Loading />
+              </div>
+            ) : (
+              <div className=' mt-6 mb-4 flex sm:flex-row-reverse gap-4'>
+                <Button
+                  label='Submit'
+                  type='submit'
+                  className='ClickAnimationNoti bg-blue-600 px-5 shadow-inner hover:shadow-innerWH transition-colors duration-200 ease-in-out text-sm rounded-sm font-semibold text-white hover:bg-blue-700  sm:w-auto'
+                />
 
-            <div className='w-full'>
-              <p className={`
-                  ${LightMode 
-                    ? "text-black"
-                    : "text-white"
-                  } 
-                  transition-colors duration-300 ease-in-out
-                `}>
-                
-                <span className=''>
-                  Important Equipments
-                </span>
-              </p>
-              <textarea
-                name='equipments'
-                {...register("equipments", {
-                  required: "Important Equipments is required!",
-                })}
-                className={`
-                  ${LightMode 
-                    ? "text-black border-gray-300 placeholder-gray-300"
-                    : "text-white border-gray-400 placeholder-gray-400"
-                  }
-                  ${
-                    errors.equipments
-                      ? `border-2 border-red-500 focus:border-red-500 ${
-                          shake ? "animate-shake" : ""
-                        }`
-                      : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  }
-                  w-full bg-transparent px-3 py-1.5 2xl:py-3 border  rounded-md outline-0
-                  outline-none focus:ring-2
-                  ring-blue-300 transition-colors duration-300 ease-in-out
-                `}
-              ></textarea>
-              {errors.equipments && (
-                <p className="text-red-500 text-[12px] italic">
-                  {errors.equipments.message}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {isLoading || isUpdating || uploading ? (
-            <div className='py-4'>
-              <Loading />
-            </div>
-          ) : (
-            <div className=' mt-6 mb-4 flex sm:flex-row-reverse gap-4'>
-              <Button
-                label='Submit'
-                type='submit'
-                className='ClickAnimationNoti bg-blue-600 px-5 shadow-inner hover:shadow-innerWH transition-colors duration-200 ease-in-out text-sm rounded-sm font-semibold text-white hover:bg-blue-700  sm:w-auto'
-              />
-
-              <Button
-                type='button'
-                className='bg-white px-5 text-sm font-semibold text-gray-900 sm:w-auto shadow-inner hover:scale-105 transition-all duration-150 ease-in-out'
-                onClick={() => setOpen(false)}
-                label='Cancel'
-              />
-            </div>
-          )}
-        </form>
+                <Button
+                  type='button'
+                  className='bg-white px-5 text-sm font-semibold text-gray-900 sm:w-auto shadow-inner hover:scale-105 transition-all duration-150 ease-in-out'
+                  onClick={() => setOpen(false)}
+                  label='Cancel'
+                />
+              </div>
+            )}
+          </motion.form>
+        </AnimatePresence>
       </ModalWrapper>
     </>
   );

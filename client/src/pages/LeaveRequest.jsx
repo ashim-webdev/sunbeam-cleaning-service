@@ -1,33 +1,50 @@
 import { useState, useEffect } from 'react';
 // import { LeaveRequest } from './lib/supabase';
 import { useSelector } from "react-redux";
-import { RoleToggle } from '../components/LeaveComponent/RoleToggle';
+import {
+  useGetAllLeavesQuery,
+  useGetMyLeavesQuery,
+} from "../redux/slices/api/leaveApiSlice";
 import { LeaveForm } from '../components/LeaveComponent/LeaveForm';
 import { LeaveList } from '../components/LeaveComponent/LeaveList';
 import { LeaveDetailModal } from '../components/LeaveComponent/LeaveDetailModal';
+import Loading from "../components/Loading"
 import { Briefcase } from 'lucide-react';
+
 
 const LeaveRequest = () => {
   const { LightMode } = useSelector((state) => state.auth);
-  
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [userEmail, setUserEmail] = useState('ashimgab@gmail.com');
-  const [requests, setRequests] = useState([]);
+  const { user } = useSelector((state) => state.auth);
+
   const [selectedRequest, setSelectedRequest] = useState(null);
+
+
+  const {
+    data: adminLeaves = [],
+    isLoading: adminLoading,
+  } = useGetAllLeavesQuery(undefined, {
+    skip: !user?.isAdmin,
+  });
+
+  const {
+    data: employeeLeaves = [],
+    isLoading: employeeLoading,
+  } = useGetMyLeavesQuery(undefined, {
+    skip: user?.isAdmin,
+  });
+
+  console.log(employeeLeaves)
+
+  const requests = user?.isAdmin ? adminLeaves : employeeLeaves;
+
+
 
   // Make slide bar disappear when modal is open
   useEffect(() => {
     document.body.classList.toggle("overflow-hidden", selectedRequest !== null);
   }, [selectedRequest]);
 
-
-  const handleToggleRole = () => {
-    setIsAdmin(!isAdmin);
-  };
-
-  const handleSubmitRequest = (newRequest) => {
-    setRequests([newRequest, ...requests]);
-  };
+  console.log(selectedRequest)
 
   const handleRequestClick = (request) => {
     setSelectedRequest(request);
@@ -37,13 +54,16 @@ const LeaveRequest = () => {
     setSelectedRequest(null);
   };
 
-  const handleUpdateRequest = (updatedRequest) => {
-    setRequests(requests.map(req => req.id === updatedRequest.id ? updatedRequest : req));
-    setSelectedRequest(updatedRequest);
-  };
+  if (adminLoading || employeeLoading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
-    <div className={`${LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM"} h-full bg-linear-to-br transition-colors duration-300 ease-in-out`}>
+    <div className={`${LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 "} h-full bg-linear-to-br transition-colors duration-300 ease-in-out rounded-2xl`}>
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-8 text-center">
           <div className="flex justify-center items-center mb-1">
@@ -54,31 +74,27 @@ const LeaveRequest = () => {
             </h1>
           </div>
           <p className={`${LightMode ? "text-gray-600" : "text-gray-400"}`}>
-            {isAdmin
+            {user?.isAdmin
               ? 'Review and manage employee leave requests'
               : 'Submit and track your leave requests'}
           </p>
         </div>
 
-        <RoleToggle
-          isAdmin={isAdmin}
-          onToggle={handleToggleRole}
-          userEmail={userEmail}
-          onEmailChange={setUserEmail}
-        />
+        <div className="px-3">
+          <div className={`w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10  ${user?.isAdmin ? "mb-7 -mt-3" : "mb-8 -mt-2"}`} />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {!isAdmin && (
-            <div>
-              <LeaveForm userEmail={userEmail} onSubmitSuccess={handleSubmitRequest} />
+          {!user?.isAdmin && (
+            <div className="lg:col-span-1 flex justify-center items-center">
+              <LeaveForm />
             </div>
           )}
 
-          <div className={isAdmin ? 'lg:col-span-2' : ''}>
+          <div className={user?.isAdmin ? 'lg:col-span-2' : ''}>
             <LeaveList
               requests={requests}
-              isAdmin={isAdmin}
-              userEmail={userEmail}
+              isAdmin={user?.isAdmin}
               onRequestClick={handleRequestClick}
             />
           </div>
@@ -87,9 +103,8 @@ const LeaveRequest = () => {
         {selectedRequest && (
           <LeaveDetailModal
             request={selectedRequest}
-            isAdmin={isAdmin}
+            isAdmin={user?.isAdmin}
             onClose={handleCloseModal}
-            onUpdate={handleUpdateRequest}
           />
         )}
       </div>

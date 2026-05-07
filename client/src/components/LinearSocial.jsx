@@ -3,19 +3,18 @@ import { toast } from 'sonner'
 import { useSelector } from "react-redux";
 
 
-const LinearSocial = ({tiktok, x, whatsApp, telegram}) => {
+const LinearSocial = ({tiktok, x, whatsApp, telegram, noBG}) => {
   const { LightMode } = useSelector((state) => state.auth);
-  console.log(tiktok)
+  // console.log(tiktok)
   
   const message = () => {
     toast.error("No available link")
   }
+
+  const noBackground = noBG ? LightMode ? "shadow-darkSM bg-[#E8E8E8]" : "shadow-lightSM bg-[#3D3D3D]" : null
   return (
     <ul className={`
-      ${LightMode 
-        ? "shadow-darkSM bg-[#E8E8E8]" 
-        : "shadow-lightSM bg-[#3D3D3D]"
-      }
+      ${noBackground}
       example-2 transition-colors duration-300 ease-in-out
     `}>
       {tiktok ?

@@ -1,8 +1,11 @@
 import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
+import { ChevronRight } from "lucide-react";
 import { toast } from "sonner";
-import ConfirmationDialog from "../components/ConfirmationDialog";
+import { Badge } from "../components/ui/badge"
+import { motion, AnimatePresence } from "framer-motion";
+import ConfirmationDialog, {UserAction} from "../components/ConfirmationDialog";
 import AddUser from "../components/AddUser";
 import Loading from "../components/Loading";
 import Button from "../components/Button";
@@ -11,14 +14,14 @@ import DeleteBtn from "../components/DeleteBtn";
 import EditBtn from "../components/EditBtn";
 import SocialMedia from "../components/SocialMedia";
 import LinearSocial from "../components/linearSocial";
-// import {
-//   useDeleteUserMutation,
-//   useGetTeamListsQuery,
-//   useUserActionMutation,
-// } from "../redux/slices/api/userApiSlice";
+import ViewUserProfile from "../components/ProfileComponents/ViewUserProfile";
+import {
+  useDeleteUserMutation,
+  useGetTeamListsQuery,
+  useUserActionMutation,
+} from "../redux/slices/api/userApiSlice";
 import { useSelector } from "react-redux";
 import { getInitials } from "../utils/index";
-import { summary } from "../assets/data";
 import { Link } from 'react-router-dom'
 
 // import { useSearchParams } from "react-router-dom";
@@ -29,21 +32,21 @@ const Users = () => {
   // const [searchParams] = useSearchParams();
   // const [searchTerm] = useState(searchParams.get("search") || "");
 
-  // const { data, isLoading, refetch } = useGetTeamListsQuery({
-  //   search: searchTerm,
-  // });
-  // const [deleteUser] = useDeleteUserMutation();
-  // const [userAction] = useUserActionMutation();
-  const [isLoading, setIsLoading] = useState(false);
-  const [user, setIsUser] = useState(true);
+  const { data, isLoading, refetch } = useGetTeamListsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true,
+    refetchOnFocus: true,
+  });
+  const [deleteUser] = useDeleteUserMutation();
+  const [userAction] = useUserActionMutation();
+
   const [showSocial, setShowSocial] = useState(null)
-
-
-
   const [openDialog, setOpenDialog] = useState(false);
   const [open, setOpen] = useState(false);
+  const [openProfile, setOpenProfile] = useState(false);
   const [openAction, setOpenAction] = useState(false);
   const [selected, setSelected] = useState(null);
+  const [profileSelected, setProfileSelected] = useState(null);
 
   const deleteClick = (id) => {
     setSelected(id);
@@ -55,44 +58,49 @@ const Users = () => {
     setOpen(true);
   };
 
-  // const userStatusClick = (el) => {
-  //   setSelected(el);
-  //   setOpenAction(true);
-  // };
+  const viewProfileInfo = (el) => {
+    setProfileSelected(el);
+    setOpenProfile(true);
+  };
+
+  const userStatusClick = (el) => {
+    setSelected(el);
+    setOpenAction(true);
+  };
 
   const deleteHandler = async () => {
-    // try {
-    //   const res = await deleteUser(selected);
+    try {
+      const res = await deleteUser(selected);
 
-    //   refetch();
-    //   toast.success(res?.data?.message);
-    //   setSelected(null);
-    //   setTimeout(() => {
-    //     setOpenDialog(false);
-    //   }, 500);
-    // } catch (error) {
-    //   console.log(err);
-    //   toast.error(err?.data?.message || err.error);
-    // }
+      refetch();
+      toast.success(res?.data?.message);
+      setSelected(null);
+      setTimeout(() => {
+        setOpenDialog(false);
+      }, 500);
+    } catch (error) {
+      console.log(err);
+      toast.error(err?.data?.message || err.error);
+    }
   };
 
   const userActionHandler = async () => {
-    // try {
-    //   const res = await userAction({
-    //     isActive: !selected?.isActive,
-    //     id: selected?._id,
-    //   });
+    try {
+      const res = await userAction({
+        isActive: !selected?.isActive,
+        id: selected?._id,
+      });
 
-    //   refetch();
-    //   toast.success(res?.data?.message);
-    //   setSelected(null);
-    //   setTimeout(() => {
-    //     setOpenAction(false);
-    //   }, 500);
-    // } catch (error) {
-    //   console.log(err);
-    //   toast.error(err?.data?.message || err.error);
-    // }
+      refetch();
+      toast.success(res?.data?.message);
+      setSelected(null);
+      setTimeout(() => {
+        setOpenAction(false);
+      }, 500);
+    } catch (error) {
+      console.log(err);
+      toast.error(err?.data?.message || err.error);
+    }
   };
 
   // useEffect(() => {
@@ -125,35 +133,51 @@ const Users = () => {
   );
 
   const TableRow = ({ user }) => (
-    <tr className={`
+    <tr 
+        onClick={(e) => {
+          e.stopPropagation()
+          viewProfileInfo(user)
+        }} 
+        className={`
           ${LightMode 
             ? "border-gray-300 text-gray-600 hover:bg-gray-300/50 hover:shadow-dark"
             : "border-gray-600 text-white/70 hover:bg-white/30 hover:shadow-light"
           }
           tableRow border hover:bg-gray-300/50  transition-colors ease-in-out duration-300 cursor-pointer
         `}>
-      <td className='p-2'>
+      <td   
+        className='p-2'
+      >
         <div className='relative flex items-center gap-3 whitespace-nowrap'>
           <div 
-            onClick={() => toggleSocial(user._id)}
+            onClick={(e) => {
+              e.stopPropagation()
+              toggleSocial(user._id)
+            }}
             className={clsx(
-            "w-9 h-9 rounded-full border-2 flex items-center justify-center text-white text-sm ml-2 shadow-inner overflow-hidden bg-blue-600 hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out",
+            "relative w-9 h-9 rounded-full border-2 flex items-center justify-center text-white text-sm ml-2 shadow-inner overflow-hidden bg-blue-600 hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out",
             user.isActive ? "border-green-500" : "border-red-600"
           )}>
-            {user?.img ? 
-              <img src={user?.img} alt="Avatar" className="w-full h-full object-cover "/>
+            {user?.profileImage ? 
+              <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
             :
               <span className='text-xs md:text-sm text-center'>
                 {getInitials(user?.name)}
               </span>
             }
-            
           </div>
-          <span className={`${user.isActive ? "" : "blur-[2px]"}`}>{user.name}</span>
+            
+          {showSocial !== user._id && (
+            <span className="absolute top-2 left-11  text-blue-600">
+              <ChevronRight size={18} className="animate-LeftRight"/>
+            </span>
+          )}
+            
+          <span className={`${user.isActive ? "" : "blur-[2px]"} ml-3`}>{user.name}</span>
 
           {showSocial === user._id && (
-            <div className="absolute -top-1.5 left-15">
-              <LinearSocial tiktok={user?.tiktok} x={user?.x} whatsApp={user?.whatsApp} telegram={user?.telegram}/>
+            <div onClick={(e) => e.stopPropagation()} className="absolute -top-1.5 left-15">
+              <LinearSocial tiktok={user?.tiktok} x={user?.x} whatsApp={user?.whatsApp} telegram={user?.telegram} noBG={true}/>
 
               <div
                 className={`absolute inset-0 rounded-2xl  blur-xl opacity-50 transition-all duration-300 ease-in-out`}
@@ -174,18 +198,22 @@ const Users = () => {
       </td>
       <td className={`p-2 px-6 whitespace-nowrap text-start ${user.isActive ? "" : "blur-[2px]"}`}>{user.title}</td>
       <td className={`p-2 px-4 text-start ${user.isActive ? "" : "blur-[2px]"}`}>{user.email}</td>
-      <td className={`p-2 text-center ${user.isActive ? "" : "blur-[2px]"}`}>{user.role}</td>
-      <td className="px-4">
+      <td className={`p-2 line-clamp-2 whitespace-nowrap text-center ${user.isActive ? "" : "blur-[2px]"}`}>{user.role}</td>
+      <td className="px-8">
         <div className="flex justify-center items-center">
-          <button
-            onClick={(e) => e.stopPropagation()}
-            className={clsx(
-              "w-fit px-3.5 py-1.5 rounded-full transition-transform ease-in-out duration-300 text-[15px] shadow-inner hover:shadow-innerWH  cursor-pointer active:scale-95",
-              user.isActive ? "bg-green-500 text-white hover:bg-green-700 hover:scale-105" : "bg-red-500 text-white hover:bg-red-700 hover:scale-105"
-            )}
-          >
-            {user.isActive ? "Active" : "Disabled"}
-          </button>
+          <button 
+            onClick={(e) => {
+              e.stopPropagation()
+              userStatusClick(user)
+            }} 
+            className="cursor-pointer active:scale-103"
+            >
+            <Badge 
+              className={`${user.isActive ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"} text-white text-[16px] hover:scale-103 shadow-darkSM transition-all duration-100 ease-in-out`}
+            >
+              {user.isActive ? "Active" : "Disabled"}
+            </Badge>     
+          </button>       
         </div>
         
       </td>
@@ -197,7 +225,10 @@ const Users = () => {
           onClick={() => editClick(user)}
         /> */}
         <EditBtn 
-          onClick={() => editClick(user)}
+          onClick={(e) => {
+            e.stopPropagation()
+            editClick(user)
+          }}
         />
 
         {/* <Button
@@ -207,19 +238,27 @@ const Users = () => {
           onClick={() => deleteClick(user?._id)}
         /> */}
         <DeleteBtn
-          onClick={() => deleteClick(user?._id)}
+          onClick={(e) => {
+            e.stopPropagation()
+            deleteClick(user?._id)
+          }}
         />
       </td>
     </tr>
   );
 
   const UserCard = ({ user }) => (
-    <div className={`
+    <div 
+      onClick={(e) => {
+        e.stopPropagation()
+        viewProfileInfo(user)
+      }} 
+      className={`
       ${LightMode
         ? "bg-white shadow-darkSM"
         : "bg-black/90 shadow-lightSM"
       }
-      relative w-full rounded-2xl h-35 flex flex-col justify-center items-center transition-all duration-300 ease-in-out
+      relative w-full rounded-2xl h-35 flex flex-col justify-center items-center transition-all duration-300 ease-in-out cursor-pointer hover:scale-102
     `}>
         <div className={`${user.isActive ? "border-green-500" : "border-red-600"} absolute -top-7 -left-5 border-2 rounded-full flex flex-col justify-center items-center gap-3 whitespace-nowrap`}>
           <div className={clsx(
@@ -228,8 +267,8 @@ const Users = () => {
               : "shadow-lightSM border-black",
             "w-30 h-30 rounded-full border-8 flex items-center justify-center text-white text-sm overflow-hidden bg-blue-600 transition-all duration-300 ease-in-out",
           )}>
-            {user?.img ? 
-              <img src={user?.img} alt="Avatar" className="w-full h-full object-cover "/>
+            {user?.profileImage ? 
+              <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
             :
               <span className='text-2xl md:text-sm text-center'>
                 {getInitials(user?.name)}
@@ -238,13 +277,15 @@ const Users = () => {
           </div>
         </div>
 
-        <div className={`
-          ${LightMode
-            ? "border-[#E8E8E8] bg-[#E8E8E8]"
-            : "border-[#3D3D3D] bg-[#3D3D3D]"
-          }
-          absolute border-2 p-2 rounded-full -top-11 right-25 flex justify-center transition-all duration-300 ease-in-out
-        `}>
+        <div 
+          onClick={(e) => e.stopPropagation()} 
+          className={`
+            ${LightMode
+              ? "border-[#E8E8E8] bg-[#E8E8E8]"
+              : "border-[#3D3D3D] bg-[#3D3D3D]"
+            }
+            absolute border-2 p-2 rounded-full -top-11 right-25 flex justify-center transition-all duration-300 ease-in-out`
+          }>
           <SocialMedia tiktok={user.tiktok} x={user.x} whatsApp={user.whatsApp} telegram={user.telegram} />
         </div>
 
@@ -317,11 +358,11 @@ const Users = () => {
             w-full mt-4 ml-5 flex justify-start items-center gap-2 transition-all duration-300 ease-in-out
             ${user.isActive ? "" : "blur-[2px]"}
           `}>
-          <div className="text-sm font-semibold">{user.title}</div>
+          <div className="text-sm font-semibold whitespace-nowrap">{user.title}</div>
 
-          <div className="w-0.5 h-8 bg-linear-to-b from-green-400/10 via-green-500 to-green-400/10" />
+          <div className={`w-0.5 h-8 ${user.isActive ? "bg-linear-to-b from-green-400/10 via-green-500 to-green-400/10" : "bg-linear-to-b from-red-400/10 via-red-500 to-red-400/10" } `} />
 
-          <div className="text-sm font-semibold">{user.role}</div>
+          <div className="mr-8 text-sm font-semibold line-clamp-1">{user.role}</div>
         </div>
 
         <div className="w-2/3 flex justify-between items-center">
@@ -330,19 +371,30 @@ const Users = () => {
                 ? "border-[#E8E8E8] bg-[#E8E8E8]"
                 : "border-[#3D3D3D] bg-[#3D3D3D]"
               }
-              absolute -bottom-6 -right-4 flex justify-center items-center rounded-3xl border-8 transition-all duration-300 ease-in-out
+              absolute -bottom-6 -right-4 flex justify-center items-center rounded-md border-6 transition-all duration-300 ease-in-out
             `}>
-            <button
-              onClick={(e) => e.stopPropagation()}
-              className={clsx(
-                "w-fit px-3.5 py-1.5 rounded-full transition-transform ease-in-out duration-300 text-[15px] shadow-inner hover:shadow-innerWH  cursor-pointer  active:scale-95",
-                user.isActive ? "bg-green-500 text-white hover:bg-green-700 hover:scale-105" : "bg-red-500 text-white hover:bg-red-700 hover:scale-105"
-              )}
-            >
-              <Link to={`/log-in`}>
-                {user.isActive ? "Active" : "Disabled"}
-              </Link>
-            </button>
+            <AnimatePresence>
+              <motion.span
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    userStatusClick(user)
+                  }} 
+                  className="cursor-pointer active:scale-103"
+                  >
+                  <Badge 
+                    className={`${user.isActive ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"} text-white text-[16px] hover:scale-103 shadow-darkSM transition-all duration-100 ease-in-out`}
+                  >
+                    {user.isActive ? "Active" : "Disabled"}
+                  </Badge>     
+                </button>       
+              </motion.span>
+            </AnimatePresence>
           </div>
         </div>
     </div>
@@ -357,8 +409,11 @@ const Users = () => {
           <Button
             label='Add New User'
             icon={<IoMdAdd className='text-lg' />}
-            className='ClickAnimationNoti flex flex-row-reverse gap-1 items-center bg-blue-600 text-white rounded-md 2xl:py-2.5 shadow-inner hover:shadow-innerWH transition-colors duration-300 ease-in-out'
-            onClick={() => setOpen(true)}
+            className='ClickAnimationNoti flex flex-row-reverse gap-1 items-center bg-blue-600 text-white rounded-md 2xl:py-2.5 shadow-darkSM hover:shadow-inner transition-colors duration-300 ease-in-out'
+            onClick={() =>{
+              setOpen(true)
+              setSelected(null)
+            }}
           />
         </div>
 
@@ -371,24 +426,37 @@ const Users = () => {
             }
             sm:block hidden mt-3 px-2 md:px-4 py-4 shadow rounded transition-colors duration-300 ease-in-out
           `}>
-          <div className='overflow-x-auto'>
-            <table className='w-full mb-5'>
-              <TableHeader />
-              <tbody>
-                {summary.users?.map((user, index) => (
-                  <TableRow key={index} user={user} />
-                ))}
-              </tbody>
-            </table>
-          </div>
+          
+          {data?.length === 0 ? (
+              <div className={`${LightMode ? "text-black" : "text-white"} text-center text-xl transition-colors duration-300 ease-in-out`}>
+                No users found.
+              </div>
+            ) : 
+              <div className='overflow-x-auto'>
+                <table className='w-full mb-5'>
+                  <TableHeader />
+                  <tbody>
+                    {data?.map((user, index) => (
+                      <TableRow key={index} user={user} />
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            }
         </div>
 
         <div className={`
             flex flex-col justify-center gap-17 px-4 sm:hidden mt-10 mb-6 py-4 rounded transition-colors duration-300 ease-in-out
           `}>
-          {summary.users?.map((user, index) => (
-            <UserCard key={index} user={user} />
-          ))}
+          {data?.length === 0 ? (
+            <div className={`${LightMode ? "text-black" : "text-white"} text-center text-xl transition-colors duration-300 ease-in-out`}>
+              No users found.
+            </div>
+          ) : 
+            data?.map((user, index) => (
+              <UserCard key={index} user={user} />
+            ))
+          }
         </div>
       </div>
 
@@ -405,11 +473,20 @@ const Users = () => {
         onClick={deleteHandler}
       />
 
-      {/* <UserAction
+      <UserAction
         open={openAction}
         setOpen={setOpenAction}
         onClick={userActionHandler}
-      /> */}
+      />
+
+      <ViewUserProfile 
+        open={openProfile} 
+        setOpen={setOpenProfile} 
+        profileSelected={profileSelected} 
+        openDialog={openDialog}
+        setOpenDialog={setOpenDialog}
+        deleteHandler={deleteHandler}
+      />
     </>
   );
 };

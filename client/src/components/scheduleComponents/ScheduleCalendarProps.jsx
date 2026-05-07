@@ -14,7 +14,7 @@ export default function ScheduleCalendar({ role }) {
   const { LightMode } = useSelector((state) => state.auth);
 
   const bg = LightMode ? "bg-white" : "bg-black";
-  const shadow = LightMode ? "shadow-darkSM" : "shadow-lightSM";
+  const shadow = LightMode ? "" : "";
   const text = LightMode ? "text-black" : "text-white";
   const gray = LightMode ? "text-black/80" : "text-white/80";
 

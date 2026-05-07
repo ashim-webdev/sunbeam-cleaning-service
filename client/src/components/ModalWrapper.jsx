@@ -3,7 +3,7 @@ import { Fragment, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 
-const ModalWrapper = ({ open, setOpen, children }) => {
+const ModalWrapper = ({ open, setOpen, children, profile }) => {
   const { LightMode } = useSelector((state) => state.auth);
   
   const cancelButtonRef = useRef(null);
@@ -34,7 +34,7 @@ const ModalWrapper = ({ open, setOpen, children }) => {
             `} />
         </Transition.Child>
 
-        <div className='fixed inset-0 z-120 w-screen overflow-y-auto'>
+        <div className='fixed inset-0 z-120 w-screen overflow-y-auto overflow-x-hidden '>
           <div className='flex min-h-full items-center justify-center p-4 text-center sm:p-0'>
             <Transition.Child
               as={Fragment}
@@ -46,16 +46,18 @@ const ModalWrapper = ({ open, setOpen, children }) => {
               leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
             >
               <Dialog.Panel className={`
-                  ${LightMode 
-                    ? "bg-white"
-                    : "bg-black/80"
+                  ${profile ?
+                    ""
+                    :
+                    LightMode ? "bg-white sm:w-full sm:max-w-lg": "bg-black/80 sm:w-full sm:max-w-lg"
                   }
-                  w-full relative transform rounded-lg  text-left shadow-xl transition-all duration-300 ease-in-out pb-0 sm:my-8 sm:w-full sm:max-w-lg
+                  w-full relative transform rounded-lg text-left transition-all duration-300 ease-in-out pb-0 sm:my-8
                 `}>
                 <div className={`
-                    ${LightMode 
-                      ? "bg-white shadow-inner"
-                      : "bg-black/80 shadow-innerWH"
+                    ${profile ?
+                      ""
+                      :
+                      LightMode ? "bg-white shadow-inner" : "bg-black/80 shadow-innerWH"
                     }
                     px-4 pb-4 pt-5 sm:p-6 sm:pb-4 rounded-lg transition-colors duration-300 ease-in-out
                   `}>

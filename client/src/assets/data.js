@@ -12,6 +12,7 @@ import m4 from "../img/m4.jpg"
 import m5 from "../img/m5.jpg"
 import m6 from "../img/m6.jpg"
 import m7 from "../img/m7.jpg"
+import Img6 from "../img/m6.jpg"
 
 
 
@@ -33,6 +34,7 @@ export const summary = {
     {
       _id: "65c5f12ab5204a81bde866a9",
       title: "Office Clean Up",
+      description: "You need to clean up the office space and make it look neat and organized",
       clientName: "Jasmine Ajamogha Edirin",
       address: "Jikwoyi phase 2 extention, Abuja",
       date: "2024-02-09T00:00:00.000Z",
@@ -827,6 +829,103 @@ export const summary = {
       x: "https://www.netlify.com",
       whatsApp: "",
       telegram: "",
+      chartData: [
+        { 
+          month: "November",
+          todo: 18, 
+          InProgress: 68, 
+          completed: 30 
+        },
+        { 
+          month: "December", 
+          todo: 15, 
+          InProgress: 92, 
+          completed: 32 
+        },
+        { 
+          month: "January", 
+          todo: 71, 
+          InProgress: 41, 
+          completed: 76 },
+        { 
+          month: "February", 
+          todo: 19, 
+          InProgress: 32, 
+          completed: 50 
+        },
+        { 
+          month: "March", 
+          todo: 29, 
+          InProgress: 12, 
+          completed: 44 
+        },
+        { 
+          month: "April", 
+          todo: 100, 
+          InProgress: 100, 
+          completed: 100 
+        },
+      ],
+      dummyLeave: [
+          {
+            id: crypto.randomUUID(),
+            name: "Ashim Gabriel",
+            email: "ashimgab@gmail.com",
+            img: Img6,
+            title: "Frontend Dev",
+            isActive: true,
+            reason: "Family Event",
+            duration: 5,
+            description: "I will be traveling to attend a family wedding outside the city.",
+            message: "You are free to go",
+            status: "approved",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          {
+            id: crypto.randomUUID(),
+            name: "Ashim Gabriel",
+            email: "ashimgab@gmail.com",
+            img: Img6,
+            title: "Frontend Dev",
+            isActive: true,
+            reason: "Medical Appointment",
+            duration: 5,
+            description: "I will be traveling to attend a medical appointment.",
+            message: "Be back soon",
+            status: "approved",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          {
+            id: crypto.randomUUID(),
+            name: "Ashim Gabriel",
+            email: "ashimgab@gmail.com",
+            img: Img6,
+            title: "Frontend Dev",
+            isActive: true,
+            reason: "Children PTA Meeting",
+            duration: 5,
+            description: "I will be attending a PTA meeting at my children's school.",
+            status: "pending",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          {
+            id: crypto.randomUUID(),
+            name: "Ashim Gabriel",
+            email: "ashimgab@gmail.com",
+            img: Img6,
+            title: "Frontend Dev",
+            isActive: true,
+            reason: "Family Vacation",
+            duration: 5,
+            description: "I will be traveling with my family for a vacation.",
+            status: "denied",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          }
+      ]
     },
     {
       _id: "65c3176a0fd860f958baa099",
@@ -841,6 +940,103 @@ export const summary = {
       x: "",
       whatsApp: "",
       telegram: "",
+      chartData: [
+        { 
+          month: "November",
+          todo: 24, 
+          InProgress: 29, 
+          completed: 50 
+        },
+        { 
+          month: "December", 
+          todo: 58, 
+          InProgress: 62, 
+          completed: 92 
+        },
+        { 
+          month: "January", 
+          todo: 38, 
+          InProgress: 16, 
+          completed: 8 },
+        { 
+          month: "February", 
+          todo: 59, 
+          InProgress: 20, 
+          completed: 69 
+        },
+        { 
+          month: "March", 
+          todo: 43, 
+          InProgress: 5, 
+          completed: 28 
+        },
+        { 
+          month: "April", 
+          todo: 84, 
+          InProgress: 19, 
+          completed: 78 
+        },
+      ],
+      dummyLeave: [
+          {
+            id: crypto.randomUUID(),
+            name: "Ashim Gabriel",
+            email: "ashimgab@gmail.com",
+            img: Img6,
+            title: "Frontend Dev",
+            isActive: true,
+            reason: "Family Event",
+            duration: 5,
+            description: "I will be traveling to attend a family wedding outside the city.",
+            message: "You are free to go",
+            status: "approved",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          {
+            id: crypto.randomUUID(),
+            name: "Ashim Gabriel",
+            email: "ashimgab@gmail.com",
+            img: Img6,
+            title: "Frontend Dev",
+            isActive: true,
+            reason: "Medical Appointment",
+            duration: 5,
+            description: "I will be traveling to attend a medical appointment.",
+            message: "Be back soon",
+            status: "approved",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          {
+            id: crypto.randomUUID(),
+            name: "Ashim Gabriel",
+            email: "ashimgab@gmail.com",
+            img: Img6,
+            title: "Frontend Dev",
+            isActive: true,
+            reason: "Children PTA Meeting",
+            duration: 5,
+            description: "I will be attending a PTA meeting at my children's school.",
+            status: "pending",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          {
+            id: crypto.randomUUID(),
+            name: "Ashim Gabriel",
+            email: "ashimgab@gmail.com",
+            img: Img6,
+            title: "Frontend Dev",
+            isActive: true,
+            reason: "Family Vacation",
+            duration: 5,
+            description: "I will be traveling with my family for a vacation.",
+            status: "denied",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          }
+        ]
     },
     {
       _id: "65c317360fd860f958baa08e",
@@ -855,6 +1051,43 @@ export const summary = {
       x: "",
       whatsApp: "",
       telegram: "",
+      chartData: [
+        { 
+          month: "November",
+          todo: 20, 
+          InProgress: 80, 
+          completed: 60 
+        },
+        { 
+          month: "December", 
+          todo: 85, 
+          InProgress: 22, 
+          completed: 52 
+        },
+        { 
+          month: "January", 
+          todo: 23, 
+          InProgress: 12, 
+          completed: 57 },
+        { 
+          month: "February", 
+          todo: 73, 
+          InProgress: 90, 
+          completed: 63 
+        },
+        { 
+          month: "March", 
+          todo: 29, 
+          InProgress: 13, 
+          completed: 39 
+        },
+        { 
+          month: "April", 
+          todo: 48, 
+          InProgress: 10, 
+          completed: 88 
+        },
+      ]
     },
     {
       _id: "65c30b96e639681a13def0b5",
@@ -869,6 +1102,43 @@ export const summary = {
       x: "",
       whatsApp: "",
       telegram: "",
+      chartData: [
+        { 
+          month: "November",
+          todo: 80, 
+          InProgress: 10, 
+          completed: 24 
+        },
+        { 
+          month: "December", 
+          todo: 67, 
+          InProgress: 25, 
+          completed: 64 
+        },
+        { 
+          month: "January", 
+          todo: 22, 
+          InProgress: 14, 
+          completed: 45 },
+        { 
+          month: "February", 
+          todo: 37, 
+          InProgress: 3, 
+          completed: 91 
+        },
+        { 
+          month: "March", 
+          todo: 43, 
+          InProgress: 63, 
+          completed: 19 
+        },
+        { 
+          month: "April", 
+          todo: 18, 
+          InProgress: 31, 
+          completed: 12 
+        },
+      ]
     },
     {
       _id: "65c202d4aa62f32ffd1303cc",
@@ -883,6 +1153,94 @@ export const summary = {
       x: "",
       whatsApp: "",
       telegram: "",
+      chartData: [
+        { 
+          month: "November",
+          todo: 20, 
+          InProgress: 80, 
+          completed: 60 
+        },
+        { 
+          month: "December", 
+          todo: 85, 
+          InProgress: 22, 
+          completed: 52 
+        },
+        { 
+          month: "January", 
+          todo: 23, 
+          InProgress: 12, 
+          completed: 57 },
+        { 
+          month: "February", 
+          todo: 73, 
+          InProgress: 90, 
+          completed: 63 
+        },
+        { 
+          month: "March", 
+          todo: 29, 
+          InProgress: 13, 
+          completed: 39 
+        },
+        { 
+          month: "April", 
+          todo: 48, 
+          InProgress: 10, 
+          completed: 88 
+        },
+      ]
+    },
+    {
+      _id: "65c202d4agft2f32ffd1303cc",
+      img: m5,
+      name: "Codewave Asante",
+      email: "codeAsa@gmail.com",
+      title: "Administrator",
+      role: "Admin",
+      createdAt: "2024-02-06T09:58:44.794Z",
+      isActive: true,
+      tiktok: "",
+      x: "",
+      whatsApp: "",
+      telegram: "",
+      chartData: [
+        { 
+          month: "November",
+          todo: 20, 
+          InProgress: 80, 
+          completed: 60 
+        },
+        { 
+          month: "December", 
+          todo: 85, 
+          InProgress: 22, 
+          completed: 52 
+        },
+        { 
+          month: "January", 
+          todo: 23, 
+          InProgress: 12, 
+          completed: 57 },
+        { 
+          month: "February", 
+          todo: 73, 
+          InProgress: 90, 
+          completed: 63 
+        },
+        { 
+          month: "March", 
+          todo: 29, 
+          InProgress: 13, 
+          completed: 39 
+        },
+        { 
+          month: "April", 
+          todo: 48, 
+          InProgress: 10, 
+          completed: 88 
+        },
+      ]
     },
   ],
   tasks: {
@@ -895,19 +1253,19 @@ export const summary = {
 export const pieData = [
   {
     name: "Total Task",
-    total: 4,
+    total: 18,
   },
   {
     name: "In Progress",
-    total: 2,
+    total: 7,
   },
   {
     name: "Todo",
-    total: 2,
+    total: 3,
   },
   {
     name: "Completed",
-    total: 8,
+    total: 16,
   },
 ]
 
@@ -951,6 +1309,8 @@ export const tasks = [
     title: "Office Clean Up",
     clientName: "Jasmine Ajamogha Edirin",
     address: "Jikwoyi phase 2 extention, Abuja",
+    description: "Clean up the office space",
+    equipments: "Vacuum cleaner, mop, cleaning agents",
     date: "2024-02-09T00:00:00.000Z",
     priority: "low",
     stage: "todo",
@@ -1036,6 +1396,7 @@ export const tasks = [
   {
     _id: "65c5d547660756f6fd453a7a",
     title: "Home renovation clean up",
+    description: "Clean up the renovated home",
     clientName: "Favour Peter Asiwaju",
     address: "Kuje tipper garage, 1000 unit, Abuja",
     date: "2024-02-09T00:00:00.000Z",
@@ -1107,6 +1468,7 @@ export const tasks = [
   {
     _id: "65c46026af6ec0118be9407a",
     title: "Backyard Cleaning up",
+    description: "You need to clean up the office space and make it look neat and organized",
     clientName: "Jennifer smith",
     address: "Karu abuja clinic estate, Abuja",
     date: "2024-02-07T00:00:00.000Z",
@@ -1202,7 +1564,8 @@ export const tasks = [
   },
   {
     _id: "65c45fb6af6ec0118be94052",
-    title: "Office Clean Up",
+    title: "Office Clean Up & Organization",
+    description: "You need to clean up the office space and make it look neat and organized",
     clientName: "Ashimonye Gabriel Ndubuisi",
     address: "Jikwoyi phase 2 extention, Abuja",
     date: "2024-02-11T00:00:00.000Z",
@@ -1311,6 +1674,7 @@ export const tasks = [
   {
     _id: "65c4586f0548279012f8c256",
     title: "Bug Fixing",
+    description: "You need to clean up the office space and make it look neat and organized",
     clientName: "Solomon clerk james",
     address: "Jikwoyi phase 2 extention, Abuja",
     date: "2024-02-07T00:00:00.000Z",
@@ -1374,6 +1738,7 @@ export const tasks = [
   {
     _id: "65c3c457fb9c6768ce4bc31a",
     title: "Duplicate - Website Project Proposal",
+    description: "You need to clean up the office space and make it look neat and organized",
     clientName: "Jasmine Ajamogha Edirin",
     address: "Jikwoyi phase 2 extention, Abuja",
     date: "2024-02-07T17:55:13.218Z",
@@ -1429,6 +1794,7 @@ export const tasks = [
   {
     _id: "65c3c439fb9c6768ce4bc308",
     title: "Duplicate - Review Code Changes",
+    description: "You need to review the code changes and provide feedback",
     clientName: "Jasmine Ajamogha Edirin",
     address: "Jikwoyi phase 2 extention, Abuja",
     date: "2024-02-07T17:55:13.218Z",
@@ -1470,6 +1836,7 @@ export const tasks = [
   {
     _id: "65c3c21f55ae9b2f7666e86c",
     title: "Duplicate - Website Project Proposal",
+    description: "You need to clean up the office space and make it look neat and organized",
     clientName: "Jasmine Ajamogha Edirin",
     address: "Jikwoyi phase 2 extention, Abuja",
     date: "2024-02-07T17:46:56.040Z",
@@ -1525,6 +1892,7 @@ export const tasks = [
   {
     _id: "65c352b376ed5c48f9440955",
     title: "Review Code Changes",
+    description: "You need to review the code changes and provide feedback",
     clientName: "Jasmine Ajamogha Edirin",
     address: "Jikwoyi phase 2 extention, Abuja",
     date: "2024-02-05T00:00:00.000Z",
@@ -1566,6 +1934,7 @@ export const tasks = [
   {
     _id: "65c351b976ed5c48f9440947",
     title: "Website Project Proposal",
+    description: "You need to create a proposal for the new website project",
     clientName: "Jasmine Ajamogha Edirin",
     address: "Jikwoyi phase 2 extention, Abuja",
     date: "2024-02-07T00:00:00.000Z",
@@ -1642,19 +2011,982 @@ export const tasks = [
 
 
 
-export const user = {
-  _id: "662f32ffd1303cc",
-  name: "Codewave",
-  title: "Administrator",
-  role: "Admin",
-  email: "admin@mts.com",
-  isAdmin: true,
-  tasks: [],
-  createdAt: "2024-02-06T09:58:44.794Z",
-  updatedAt: "2024-02-07T06:13:26.757Z",
-  __v: 0,
-  isActive: true,
-};
+export const user = 
+[
+  {
+    _id: "662f32ffd1303cc",
+    name: "Ashimonye Gabriel",
+    title: "Administrator",
+    role: "Admin",
+    email: "admin@mts.com",
+    isAdmin: true,
+    tasks: [],
+    createdAt: "2024-02-06T09:58:44.794Z",
+    updatedAt: "2024-02-07T06:13:26.757Z",
+    __v: 0,
+    isActive: true,
+    tasks :[
+    {
+      _id: "65c5f12ab5204a81bde866a9",
+      title: "Office Clean Up & Organization",
+      description: "You need to clean up the office space and make it look neat and organized",
+      clientName: "Jasmine Ajamogha Edirin",
+      address: "Jikwoyi phase 2 extention, Abuja",
+      date: "2024-02-09T00:00:00.000Z",
+      priority: "low",
+      stage: "todo",
+      assets: [
+        img1,
+        img2,
+        img2,
+        img2,
+        img2,
+      ],
+      team: [
+        {
+          _id: "65c317360fd860f958baa08e",
+          img: m1,
+          name: "Alex Johnson",
+          title: "Sanitation Specialist",
+          email: "alex.johnson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c3176a0fd860f958baa099",
+          img: m2,
+          name: "Ashimo Stephen",
+          title: "Home Care Technician",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c317980fd860f958baa099",
+          img: m3,
+          name: "Emily Wilson",
+          title: "Carpet Expert",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c31798099d860f958baa099",
+          img: m4,
+          name: "Emily Wilson",
+          title: "Residential Cleaning Specialist",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c3179809906860f958baa099",
+          img: m5,
+          name: "Emily Wilson",
+          title: "Office Sanitation Expert",
+          email: "emily.wilson@example.com",
+          isLeader: true
+        },
+        {
+          _id: "65c3179809978860f958baa099",
+          img: m6,
+          name: "Emily Wilson",
+          title: "Window Cleaning Specialist",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c3179809906860f958baa099",
+          img: m7,
+          name: "Emily Wilson",
+          title: "Floor Care Technician",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+      ],
+      isTrashed: false,
+      activities: [],
+      subTasks: [
+        {
+          title: "Roof and solar panel cleaning",
+          date: "2024-02-09T00:00:00.000Z",
+          tag: "House cleaning",
+          _id: "65c5f153b5204a81bde866c8",
+        },
+      ],
+      createdAt: "2024-02-09T09:32:26.574Z",
+      updatedAt: "2024-02-09T09:36:53.339Z",
+      __v: 1,
+    },
+    {
+      _id: "65c5d547660756f6fd453a7a",
+      title: "Home renovation clean up",
+      description: "You need to clean up the home after the renovation is complete",
+      clientName: "Favour Peter Asiwaju",
+      address: "Kuje tipper garage, 1000 unit, Abuja",
+      date: "2024-02-09T00:00:00.000Z",
+      priority: "medium",
+      stage: "in progress",
+      assets: [],
+      team: [
+        {
+          _id: "65c317360fd860f958baa08e",
+          img: m7,
+          name: "Alex Johnson",
+          title: "UX Designer",
+          email: "alex.johnson@example.com",
+          isLeader: true
+        },
+        {
+          _id: "65c3176a0fd860f958baa099",
+          img: m5,
+          name: "Emily Wilson",
+          title: "Data Analyst",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c3176a0fd860f98baa099",
+          img: m2,
+          name: "Emily Wilson",
+          title: "Data Analyst",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+      ],
+      isTrashed: false,
+      activities: [
+        {
+          type: "started",
+          activity: "Project started",
+          date: "2024-02-09T09:16:56.623Z",
+          by: "65c202d4aa62f32ffd1303cc",
+          _id: "65c5f18bb5204a81bde866d1",
+        },
+        {
+          type: "commented",
+          activity: "i like coding!!",
+          date: "2024-02-09T09:16:56.623Z",
+          by: "65c202d4aa62f32ffd1303cc",
+          _id: "65c5f19eb5204a81bde866dd",
+        },
+        {
+          type: "bug",
+          activity: "bug found",
+          date: "2024-02-09T09:16:56.623Z",
+          by: "65c202d4aa62f32ffd1303cc",
+          _id: "65c5f1abb5204a81bde866eb",
+        },
+      ],
+      subTasks: [
+        {
+          title: "Garden cleaning up",
+          date: "2024-02-08T00:00:00.000Z",
+          tag: "Renovation",
+          _id: "65c3535476ed5c48f9440973",
+        },
+      ],
+      createdAt: "2024-02-09T07:33:27.590Z",
+      updatedAt: "2024-02-09T09:36:10.386Z",
+      __v: 4,
+    },
+    {
+      _id: "65c46026af6ec0118be9407a",
+      title: "Backyard Cleaning up",
+      clientName: "Jennifer smith",
+      address: "Karu abuja clinic estate, Abuja",
+      date: "2024-02-07T00:00:00.000Z",
+      priority: "high",
+      stage: "completed",
+      assets: [
+        "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707410130023hand-holding-writing-checklist-application-form-document-clipboard-white-background-3d-illustration.jpg?alt=media&token=08de4848-517f-48ca-a9b4-624744d5ddb0",
+        "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707412301523image_processing20220706-26930-ktfgon.png?alt=media&token=6cd185c1-9fc3-4f52-bb0b-0d4a29e65b85",
+        "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707412306237image_processing20220706-11953-1f826f4.png?alt=media&token=7270475f-a994-41fd-8ae6-62e00f72b0b3",
+      ],
+      team: [
+        {
+          _id: "65c202d4aa62f32ffd1303cc",
+          img: m6,
+          name: "Codewave Asante",
+          title: "Administrator",
+          email: "admin@gmail.com",
+          isLeader: false
+        },
+        {
+          _id: "65c27a0e18c0a1b750ad5cad",
+          img: m1,
+          name: "John Doe",
+          title: "Software Engineer",
+          email: "john.doe@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c30b96e639681a13def0b5",
+          img: m7,
+          name: "Jane Smith",
+          title: "Product Manager",
+          email: "jane.smith@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c30b96e639681rd6a13def0b5",
+          img: m4,
+          name: "Jane Smith",
+          title: "Product Manager",
+          email: "jane.smith@example.com",
+          isLeader: true
+        },
+      ],
+      isTrashed: false,
+      activities: [
+        {
+          type: "assigned",
+          activity: "Test activity. Let's go!!!",
+          date: "2024-02-08T17:55:34.353Z",
+          by: "65c202d4aa62f32ffd1303cc",
+          _id: "65c5188be1585cfa650b79c4",
+        },
+        {
+          type: "in progress",
+          activity: "Project is progress. Hiope to fin=ish soon!!",
+          date: "2024-02-08T17:55:34.353Z",
+          by: "65c202d4aa62f32ffd1303cc",
+          _id: "65c518dce1585cfa650b79da",
+        },
+        {
+          type: "bug",
+          activity: "Bug found in the code. Kindly check and fixed ASAP!!!",
+          date: "2024-02-08T18:13:14.717Z",
+          by: "65c202d4aa62f32ffd1303cc",
+          _id: "65c51a5e8064df97d208b392",
+        },
+        {
+          type: "commented",
+          activity: "Nice work. Let's finished hard!!!",
+          date: "2024-02-08T18:13:14.717Z",
+          by: "65c202d4aa62f32ffd1303cc",
+          _id: "65c51af08064df97d208b3b0",
+        },
+      ],
+      subTasks: [
+        {
+          title: "Children play ground cleaning up",
+          date: "2024-02-06T00:00:00.000Z",
+          tag: "Play ground",
+          _id: "65c352e776ed5c48f944095c",
+        },
+        {
+          title: "Blog App Admin Dashboard",
+          date: "2024-02-07T00:00:00.000Z",
+          tag: "Design",
+          _id: "65c3531476ed5c48f9440965",
+        },
+      ],
+      createdAt: "2024-02-08T05:01:26.983Z",
+      updatedAt: "2024-02-09T06:51:15.005Z",
+      __v: 8,
+    },
+    {
+      _id: "65c45fb6af6ec0118be94052",
+      title: "Office Clean Up",
+      clientName: "Ashimonye Gabriel Ndubuisi",
+      address: "Jikwoyi phase 2 extention, Abuja",
+      date: "2024-02-11T00:00:00.000Z",
+      priority: "medium",
+      stage: "completed",
+      assets: [
+        office1,
+        office2,
+        office3,
+        office4,
+      ],
+      team: [
+        {
+          _id: "65c317360fd860f958baa08e",
+          img: m1,
+          name: "Alex Johnson",
+          title: "Sanitation Specialist",
+          email: "alex.johnson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c3176a0fd860f958baa099",
+          img: m2,
+          name: "Ashimo Stephen",
+          title: "Home Care Technician",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c317980fd860f958baa099",
+          img: m3,
+          name: "Emily Wilson",
+          title: "Carpet Expert",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c31798099d860f958baa099",
+          img: m4,
+          name: "Emily Wilson",
+          title: "Residential Cleaning Specialist",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c3179809906860f958baa099",
+          img: m5,
+          name: "Emily Wilson",
+          title: "Office Sanitation Expert",
+          email: "emily.wilson@example.com",
+          isLeader: true
+        },
+        {
+          _id: "65c3179809978860f958baa099",
+          img: m6,
+          name: "Emily Wilson",
+          title: "Window Cleaning Specialist",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c3179809906860f958baa099",
+          img: m7,
+          name: "Emily Wilson",
+          title: "Floor Care Technician",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+      ],
+      isTrashed: false,
+      activities: [
+        {
+          type: "started",
+          activity: "Project completed!!",
+          date: "2024-02-08T18:13:14.717Z",
+          by: { _id: "65c202d4aa62f32ffd1303cc", name: "Codewave" },
+          _id: "65c51b998064dfd208b3f9",
+        },
+        {
+          type: "commented",
+          activity: "Project completed!!",
+          date: "2024-02-08T18:13:14.717Z",
+          by: { _id: "65c202d4aa62f32ffd1303cc", name: "Codewave" },
+          _id: "65c51b98064df97d208b3f9",
+        },
+        {
+          type: "completed",
+          activity: "Project completed!!",
+          date: "2024-02-08T18:13:14.717Z",
+          by: { _id: "65c202d4aa62f32ffd1303cc", name: "Codewave" },
+          _id: "65c51b998064df97d208b3f9",
+        },
+      ],
+      subTasks: [
+        {
+          title: "Blog App Admin Dashboard",
+          date: "2024-02-08T00:00:00.000Z",
+          tag: "Website App",
+          _id: "65c3535476ed5c48f9440973",
+        },
+      ],
+      createdAt: "2024-02-08T04:59:34.826Z",
+      updatedAt: "2024-02-09T06:51:15.005Z",
+      __v: 3,
+    },
+    {
+      _id: "65c4586f0548279012f8c256",
+      title: "Bug Fixing",
+      clientName: "Solomon clerk james",
+      address: "Jikwoyi phase 2 extention, Abuja",
+      date: "2024-02-07T00:00:00.000Z",
+      priority: "high",
+      stage: "todo",
+      assets: [
+        "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707412457946Wed%20Dev%20Course.png?alt=media&token=028416bf-88c6-4738-9a5a-d90e6d53b202",
+        "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707412466672original-380755132e03e80a9fa3ef1203219cf3.png?alt=media&token=10d96b0d-feea-4627-aa1e-9b8f87cf7500",
+        "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707412469358original-a738b8d0cbced29ae8609072d006fbcb.jpg?alt=media&token=9a6cc56f-63ff-4405-b978-d962c3c1f1d0",
+        "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707412472346cosial.png?alt=media&token=b6e427b3-bc36-4fa2-a8f9-438f9ebf93e2",
+        "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707412478590original-a005132062ca5bafc505c4c74f0e1865.jpg?alt=media&token=e81047bd-a1e2-49e5-85f5-feda31c423f2",
+      ],
+      team: [
+        {
+          _id: "65c30b96e639681a13def0b5",
+          img: m2,
+          name: "Jane Smith",
+          title: "Product Manager",
+          email: "jane.smith@example.com",
+          isLeader: true
+        },
+        {
+          _id: "65c202d4aa62f32ffd1303cc",
+          img: m4,
+          name: "Codewave Asante",
+          title: "Administrator",
+          email: "admin@gmail.com",
+          isLeader: false
+        },
+        {
+          _id: "65c317360fd860f958baa08e",
+          img: m6,
+          name: "Alex Johnson",
+          title: "UX Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
+        },
+      ],
+      isTrashed: false,
+      activities: [
+        {
+          type: "commented",
+          activity: "Great!!!",
+          date: "2024-02-08T18:13:14.717Z",
+          by: "65c202d4aa62f32ffd1303cc",
+          _id: "65c51b678064df97d208b3d6",
+        },
+      ],
+      subTasks: [
+        {
+          title: "Check Login code and fix bugs asap",
+          date: "2024-02-08T00:00:00.000Z",
+          tag: "Bug Fixing",
+          _id: "65c46074af6ec0118be94094",
+        },
+      ],
+      createdAt: "2024-02-08T04:28:31.966Z",
+      updatedAt: "2024-02-09T06:51:15.005Z",
+      __v: 3,
+    },
+    {
+      _id: "65c3c457fb9c6768ce4bc31a",
+      title: "Duplicate - Website Project Proposal",
+      clientName: "Jasmine Ajamogha Edirin",
+      address: "Jikwoyi phase 2 extention, Abuja",
+      date: "2024-02-07T17:55:13.218Z",
+      priority: "high",
+      stage: "todo",
+      assets: [],
+      team: [
+        {
+          _id: "65c202d4aa62f32ffd1303cc",
+          img: m3,
+          name: "Codewave Asante",
+          title: "Administrator",
+          email: "admin@gmail.com",
+          isLeader: false
+        },
+        {
+          _id: "65c27a0e18c0a1b750ad5cad",
+          img: m7,
+          name: "John Doe",
+          title: "Software Engineer",
+          email: "john.doe@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c30b96e639681a13def0b5",
+          img: m4,
+          name: "Jane Smith",
+          title: "Product Manager",
+          email: "jane.smith@example.com",
+          isLeader: true
+        },
+      ],
+      isTrashed: false,
+      activities: [],
+      subTasks: [
+        {
+          title: "Blog App Dashboard",
+          date: "2024-02-06T00:00:00.000Z",
+          tag: "Design",
+          _id: "65c352e776ed5c48f944095c",
+        },
+        {
+          title: "Blog App Admin Dashboard",
+          date: "2024-02-07T00:00:00.000Z",
+          tag: "Design",
+          _id: "65c3531476ed5c48f9440965",
+        },
+      ],
+      createdAt: "2024-02-07T17:56:39.969Z",
+      updatedAt: "2024-02-09T06:51:15.005Z",
+      __v: 1,
+    },
+    {
+      _id: "65c3c439fb9c6768ce4bc308",
+      title: "Duplicate - Review Code Changes",
+      clientName: "Jasmine Ajamogha Edirin",
+      address: "Jikwoyi phase 2 extention, Abuja",
+      date: "2024-02-07T17:55:13.218Z",
+      priority: "medium",
+      stage: "in progress",
+      assets: [],
+      team: [
+        {
+          _id: "65c317360fd860f958baa08e",
+          img: m1,
+          name: "Alex Johnson",
+          title: "UX Designer",
+          email: "alex.johnson@example.com",
+          isLeader: true
+        },
+        {
+          _id: "65c3176a0fd860f958baa099",
+          img: m5,
+          name: "Emily Wilson",
+          title: "Data Analyst",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+      ],
+      isTrashed: false,
+      activities: [],
+      subTasks: [
+        {
+          title: "Blog App Admin Dashboard",
+          date: "2024-02-08T00:00:00.000Z",
+          tag: "Website App",
+          _id: "65c3535476ed5c48f9440973",
+        },
+      ],
+      createdAt: "2024-02-07T17:56:09.174Z",
+      updatedAt: "2024-02-07T17:56:09.456Z",
+      __v: 1,
+    },
+    {
+      _id: "65c3c21f55ae9b2f7666e86c",
+      title: "Duplicate - Website Project Proposal",
+      clientName: "Jasmine Ajamogha Edirin",
+      address: "Jikwoyi phase 2 extention, Abuja",
+      date: "2024-02-07T17:46:56.040Z",
+      priority: "normal",
+      stage: "todo",
+      assets: [],
+      team: [
+        {
+          _id: "65c202d4aa62f32ffd1303cc",
+          img: m5,
+          name: "Codewave Asante",
+          title: "Administrator",
+          email: "admin@gmail.com",
+          isLeader: false
+        },
+        {
+          _id: "65c27a0e18c0a1b750ad5cad",
+          img: m4,
+          name: "John Doe",
+          title: "Software Engineer",
+          email: "john.doe@example.com",
+          isLeader: true
+        },
+        {
+          _id: "65c30b96e639681a13def0b5",
+          img: m2,
+          name: "Jane Smith",
+          title: "Product Manager",
+          email: "jane.smith@example.com",
+          isLeader: false
+        },
+      ],
+      isTrashed: false,
+      activities: [],
+      subTasks: [
+        {
+          title: "Blog App Dashboard",
+          date: "2024-02-06T00:00:00.000Z",
+          tag: "Design",
+          _id: "65c352e776ed5c48f944095c",
+        },
+        {
+          title: "Blog App Admin Dashboard",
+          date: "2024-02-07T00:00:00.000Z",
+          tag: "Design",
+          _id: "65c3531476ed5c48f9440965",
+        },
+      ],
+      createdAt: "2024-02-07T17:47:11.560Z",
+      updatedAt: "2024-02-07T17:47:11.972Z",
+      __v: 1,
+    },
+    {
+      _id: "65c352b376ed5c48f9440955",
+      title: "Review Code Changes",
+      clientName: "Jasmine Ajamogha Edirin",
+      address: "Jikwoyi phase 2 extention, Abuja",
+      date: "2024-02-05T00:00:00.000Z",
+      priority: "medium",
+      stage: "in progress",
+      assets: [],
+      team: [
+        {
+          _id: "65c317360fd860f958baa08e",
+          img: m1,
+          name: "Alex Johnson",
+          title: "UX Designer",
+          email: "alex.johnson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c3176a0fd860f958baa099",
+          img: m3,
+          name: "Emily Wilson",
+          title: "Data Analyst",
+          email: "emily.wilson@example.com",
+          isLeader: true
+        },
+      ],
+      isTrashed: false,
+      activities: [],
+      subTasks: [
+        {
+          title: "Blog App Admin Dashboard",
+          date: "2024-02-08T00:00:00.000Z",
+          tag: "Website App",
+          _id: "65c3535476ed5c48f9440973",
+        },
+      ],
+      createdAt: "2024-02-07T09:51:47.149Z",
+      updatedAt: "2024-02-07T09:54:28.645Z",
+      __v: 1,
+    },
+    {
+      _id: "65c351b976ed5c48f9440947",
+      title: "Website Project Proposal",
+      clientName: "Jasmine Ajamogha Edirin",
+      address: "Jikwoyi phase 2 extention, Abuja",
+      date: "2024-02-07T00:00:00.000Z",
+      priority: "high",
+      stage: "todo",
+      assets: [],
+      team: [
+        {
+          _id: "65c202d4aa62f32ffd1303cc",
+          img: m4,
+          name: "Codewave Asante",
+          title: "Administrator",
+          email: "admin@gmail.com",
+          isLeader: false
+        },
+        {
+          _id: "65c27a0e18c0a1b750ad5cad",
+          img: m7,
+          name: "John Doe",
+          title: "Software Engineer",
+          email: "john.doe@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c27a0e18c0a1b750ad5cad",
+          img: m6,
+          name: "John Doe",
+          title: "Software Engineer",
+          email: "john.doe@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c27a0e18c0a1b750ad5cad",
+          img: m3,
+          name: "John Doe",
+          title: "Software Engineer",
+          email: "john.doe@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c30b96e639681a13def0b5",
+          img: m1,
+          name: "Jane Smith",
+          title: "Product Manager",
+          email: "jane.smith@example.com",
+          isLeader: true
+        },
+      ],
+      isTrashed: false,
+      activities: [],
+      subTasks: [
+        {
+          title: "Blog App Dashboard",
+          date: "2024-02-06T00:00:00.000Z",
+          tag: "Design",
+          _id: "65c352e776ed5c48f944095c",
+        },
+        {
+          title: "Blog App Admin Dashboard",
+          date: "2024-02-07T00:00:00.000Z",
+          tag: "Design",
+          _id: "65c3531476ed5c48f9440965",
+        },
+      ],
+      createdAt: "2024-02-07T09:47:37.337Z",
+      updatedAt: "2024-02-07T09:53:24.079Z",
+      __v: 2,
+    },
+    ]
+  },
+  {
+    _id: "662f3439s9s8f2ffd1303cc",
+    name: "Jasmine Ajamogha",
+    title: "Employee",
+    role: "Sanitation Specialist",
+    email: "jasmineAjamogha@gmail.com",
+    isAdmin: false,
+    createdAt: "2024-02-06T09:58:44.794Z",
+    updatedAt: "2024-02-07T06:13:26.757Z",
+    __v: 0,
+    isActive: true,
+    tasks :[
+    {
+      _id: "65c5f12ab5204a81bde866a9",
+      title: "Office Clean Up",
+      clientName: "Mr Clatus Johnson",
+      address: "Jikwoyi phase 2 extention, Abuja",
+      date: "2024-02-09T00:00:00.000Z",
+      priority: "low",
+      stage: "todo",
+      assets: [
+        img1,
+        img2,
+        img2,
+        img2,
+        img2,
+      ],
+      team: [
+        {
+          _id: "662f3439s9s8f2ffd1303cc",
+          img: m1,
+          name: "Jasmine Ajamogha",
+          title: "Sanitation Specialist",
+          email: "jasmineAjamogha@gmail.com",
+          isLeader: true
+        },
+        {
+          _id: "65c3176a0fd860f958baa099",
+          img: m2,
+          name: "Ashimo Stephen",
+          title: "Home Care Technician",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c317980fd860f958baa099",
+          img: m3,
+          name: "Emily Wilson",
+          title: "Carpet Expert",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c31798099d860f958baa099",
+          img: m4,
+          name: "Emily Wilson",
+          title: "Residential Cleaning Specialist",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c3179809906860f958baa099",
+          img: m5,
+          name: "Emily Wilson",
+          title: "Office Sanitation Expert",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c3179809978860f958baa099",
+          img: m6,
+          name: "Emily Wilson",
+          title: "Window Cleaning Specialist",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "65c3179809906860f958baa099",
+          img: m7,
+          name: "Emily Wilson",
+          title: "Floor Care Technician",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+      ],
+      isTrashed: false,
+      activities: [],
+      subTasks: [
+        {
+          title: "Roof and solar panel cleaning",
+          date: "2024-02-09T00:00:00.000Z",
+          tag: "House cleaning",
+          _id: "65c5f153b5204a81bde866c8",
+        },
+      ],
+      createdAt: "2024-02-09T09:32:26.574Z",
+      updatedAt: "2024-02-09T09:36:53.339Z",
+      __v: 1,
+    },
+    {
+      _id: "65c5d547660756f6fd453a7a",
+      title: "Home renovation clean up",
+      clientName: "Favour Peter Asiwaju",
+      address: "Kuje tipper garage, 1000 unit, Abuja",
+      date: "2024-02-09T00:00:00.000Z",
+      priority: "medium",
+      stage: "in progress",
+      assets: [],
+      team: [
+        {
+          _id: "65c317360fd860f958baa08e",
+          img: m7,
+          name: "Alex Johnson",
+          title: "UX Designer",
+          email: "alex.johnson@example.com",
+          isLeader: true
+        },
+        {
+          _id: "65c3176a0fd860f958baa099",
+          img: m5,
+          name: "Emily Wilson",
+          title: "Data Analyst",
+          email: "emily.wilson@example.com",
+          isLeader: false
+        },
+        {
+          _id: "662f3439s9s8f2ffd1303cc",
+          img: m1,
+          name: "Jasmine Ajamogha",
+          title: "Sanitation Specialist",
+          email: "jasmineAjamogha@gmail.com",
+          isLeader: false
+        },
+      ],
+      isTrashed: false,
+      activities: [
+        {
+          type: "started",
+          activity: "Project started",
+          date: "2024-02-09T09:16:56.623Z",
+          by: "65c202d4aa62f32ffd1303cc",
+          _id: "65c5f18bb5204a81bde866d1",
+        },
+        {
+          type: "commented",
+          activity: "i like coding!!",
+          date: "2024-02-09T09:16:56.623Z",
+          by: "65c202d4aa62f32ffd1303cc",
+          _id: "65c5f19eb5204a81bde866dd",
+        },
+        {
+          type: "bug",
+          activity: "bug found",
+          date: "2024-02-09T09:16:56.623Z",
+          by: "65c202d4aa62f32ffd1303cc",
+          _id: "65c5f1abb5204a81bde866eb",
+        },
+      ],
+      subTasks: [
+        {
+          title: "Garden cleaning up",
+          date: "2024-02-08T00:00:00.000Z",
+          tag: "Renovation",
+          _id: "65c3535476ed5c48f9440973",
+        },
+      ],
+      createdAt: "2024-02-09T07:33:27.590Z",
+      updatedAt: "2024-02-09T09:36:10.386Z",
+      __v: 4,
+    },
+    {
+      _id: "65c46026af6ec0118be9407a",
+      title: "Backyard Cleaning up",
+      clientName: "Jennifer smith",
+      address: "Karu abuja clinic estate, Abuja",
+      date: "2024-02-07T00:00:00.000Z",
+      priority: "high",
+      stage: "completed",
+      assets: [
+        "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707410130023hand-holding-writing-checklist-application-form-document-clipboard-white-background-3d-illustration.jpg?alt=media&token=08de4848-517f-48ca-a9b4-624744d5ddb0",
+        "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707412301523image_processing20220706-26930-ktfgon.png?alt=media&token=6cd185c1-9fc3-4f52-bb0b-0d4a29e65b85",
+        "https://firebasestorage.googleapis.com/v0/b/taskmanager-557d7.appspot.com/o/1707412306237image_processing20220706-11953-1f826f4.png?alt=media&token=7270475f-a994-41fd-8ae6-62e00f72b0b3",
+      ],
+      team: [
+        {
+          _id: "65c202d4aa62f32ffd1303cc",
+          img: m6,
+          name: "Codewave Asante",
+          title: "Administrator",
+          email: "admin@gmail.com",
+          isLeader: false
+        },
+        {
+          _id: "65c27a0e18c0a1b750ad5cad",
+          img: m1,
+          name: "John Doe",
+          title: "Software Engineer",
+          email: "john.doe@example.com",
+          isLeader: false
+        },
+        {
+          _id: "662f3439s9s8f2ffd1303cc",
+          img: m1,
+          name: "Jasmine Ajamogha",
+          title: "Sanitation Specialist",
+          email: "jasmineAjamogha@gmail.com",
+          isLeader: true
+        },
+        {
+          _id: "65c30b96e639681rd6a13def0b5",
+          img: m4,
+          name: "Jane Smith",
+          title: "Product Manager",
+          email: "jane.smith@example.com",
+          isLeader: false
+        },
+      ],
+      isTrashed: false,
+      activities: [
+        {
+          type: "assigned",
+          activity: "Test activity. Let's go!!!",
+          date: "2024-02-08T17:55:34.353Z",
+          by: "65c202d4aa62f32ffd1303cc",
+          _id: "65c5188be1585cfa650b79c4",
+        },
+        {
+          type: "in progress",
+          activity: "Project is progress. Hiope to fin=ish soon!!",
+          date: "2024-02-08T17:55:34.353Z",
+          by: "65c202d4aa62f32ffd1303cc",
+          _id: "65c518dce1585cfa650b79da",
+        },
+        {
+          type: "bug",
+          activity: "Bug found in the code. Kindly check and fixed ASAP!!!",
+          date: "2024-02-08T18:13:14.717Z",
+          by: "65c202d4aa62f32ffd1303cc",
+          _id: "65c51a5e8064df97d208b392",
+        },
+        {
+          type: "commented",
+          activity: "Nice work. Let's finished hard!!!",
+          date: "2024-02-08T18:13:14.717Z",
+          by: "65c202d4aa62f32ffd1303cc",
+          _id: "65c51af08064df97d208b3b0",
+        },
+      ],
+      subTasks: [
+        {
+          title: "Children play ground cleaning up",
+          date: "2024-02-06T00:00:00.000Z",
+          tag: "Play ground",
+          _id: "65c352e776ed5c48f944095c",
+        },
+        {
+          title: "Blog App Admin Dashboard",
+          date: "2024-02-07T00:00:00.000Z",
+          tag: "Design",
+          _id: "65c3531476ed5c48f9440965",
+        },
+      ],
+      createdAt: "2024-02-08T05:01:26.983Z",
+      updatedAt: "2024-02-09T06:51:15.005Z",
+      __v: 8,
+    },
+    ]
+  }
+];
 
 export const activitiesData = [
   {

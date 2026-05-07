@@ -18,26 +18,56 @@ import { FaUsers, FaCalendarCheck } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion"
 import { setLightMode } from "../redux/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { setOpenSidebar, setOpenProfile } from "../redux/slices/authSlice";
+import {useGetUserProfileQuery} from "../redux/slices/api/userApiSlice"
+import { setOpenSidebar, setOpenProfile, setCPEditPopUp } from "../redux/slices/authSlice";
 
 
 import { cn } from "@/lib/utils";
 import { getInitials } from "../utils";
 import Dark_Light_Btn from "./Dark_Light_Btn";
-import img2 from "../img/m2.jpg"
 
-// ✅ Sample data (you can replace later with real user)
-const SAMPLE_PROFILE_DATA = {
-  name: "Ashimonye Gabriel",
-  email: "ashimgab@gmail.com",
-  avatar: img2,
-  isActive: true,
+
+
+const LoadingCircle = () => {
+  const { LightMode }  = useSelector((state) => state.auth);
+
+  const smallLoader = LightMode ? "dot-spinner" : "dot-spinnerDark"
+
+  return (
+    <div className='w-full py-3 flex items-center justify-center'>
+      <div className={`${smallLoader} transition-colors duration-300 ease-in-out animate-UpDown`}>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+      </div>
+    </div>
+  )
+}
+
+
+export default function ProfileDropdown({ className }) {
+  const { LightMode, isProfileOpen, CPEditPopUp }  = useSelector((state) => state.auth);
+  const [chevronIcon, setChevronIcon] = useState(false);
+
+  // console.log(CPEditPopUp)
+  const { user: storedUser } = useSelector((state) => state.auth);
+  const { data: freshUser, isLoading } = useGetUserProfileQuery();
+  const user = freshUser ?? storedUser;
+
+  const USER_DETAILS = {
+  name: user?.name,
+  email: user?.email,
+  avatar: user?.profileImage,
+  isActive: user?.isActive,
   mode: <Dark_Light_Btn />,
 };
 
-export default function ProfileDropdown({ data = SAMPLE_PROFILE_DATA, className }) {
-  const { LightMode, isProfileOpen }  = useSelector((state) => state.auth);
-  const [chevronIcon, setChevronIcon] = useState(false);
+  const data = USER_DETAILS
 
 
   const dispatch = useDispatch();
@@ -58,7 +88,7 @@ export default function ProfileDropdown({ data = SAMPLE_PROFILE_DATA, className 
     { 
       _id: 1,
       label: "Profile",
-      href: "#",
+      link: "profile",
       icon: <User className="h-4 w-4" />,
     },
     {
@@ -71,7 +101,7 @@ export default function ProfileDropdown({ data = SAMPLE_PROFILE_DATA, className 
     {
       _id: 3,
       label: "Settings",
-      href: "#",
+      link: "#",
       onClick: settingsIconToggle,
       icon: <Settings className="h-4 w-4" />,
       value: chevronIcon ? <ChevronDown className="h-5 w-5 " /> : <ChevronUp className="h-5 w-5 " />,
@@ -79,7 +109,7 @@ export default function ProfileDropdown({ data = SAMPLE_PROFILE_DATA, className 
     {
       _id: 4,
       label: "Terms & Policies",
-      href: "#",
+      link: "#",
       icon: <FileText className="h-4 w-4" />,
     },
   ];
@@ -93,7 +123,7 @@ export default function ProfileDropdown({ data = SAMPLE_PROFILE_DATA, className 
     },
     {
       label: "Edit Profile",
-      link: "tasks",
+      link: "Profile",
       icon: <UserPen className="h-4 w-4" />,
     },
   ];
@@ -163,21 +193,25 @@ export default function ProfileDropdown({ data = SAMPLE_PROFILE_DATA, className 
                 </div>
               </div>
               
-              <div className={`outline-0 border-2 ${data.isActive ? "border-green-600" : "border-red-600"} w-11 h-11 2xl:w-13 2xl:h-13 flex items-center justify-center rounded-full bg-[#005FFB] hover:bg-blue-800 hover:shadow-innerWH cursor-pointer transition-all hover:scale-105 ease-in-out duration-300 shadow-inner overflow-hidden`}>
-                <span className='text-white font-semibold '>
-                  {data.avatar ? 
-                    <img
-                      src={data.avatar}
-                      alt={data.name}
-                      className="h-full w-full rounded-full object-cover"
-                    />
-                  :
-                    <span>
-                      {getInitials(data.name)}
-                    </span>
-                  }
-                </span>
-              </div>              
+              {isLoading ? (
+                <LoadingCircle />
+              ) : (
+                <div className={`outline-0 border-2 ${data.isActive ? "border-green-600" : "border-red-600"} w-11 h-11 2xl:w-13 2xl:h-13 flex items-center justify-center rounded-full bg-[#005FFB] hover:bg-blue-800 hover:shadow-innerWH cursor-pointer transition-all hover:scale-105 ease-in-out duration-300 shadow-inner overflow-hidden`}>
+                  <span className='text-white font-semibold '>
+                    {data.avatar ? 
+                      <img
+                        src={data.avatar}
+                        alt={data.name}
+                        className="h-full w-full rounded-full object-cover"
+                      />
+                    :
+                      <span>
+                        {getInitials(data?.name || "Unknown User")}
+                      </span>
+                    }
+                  </span>
+                </div>              
+              )}
             </button>
           </div>
 
@@ -191,7 +225,7 @@ export default function ProfileDropdown({ data = SAMPLE_PROFILE_DATA, className 
             <div className="text-blue-400 text-2xl font-bold">{")"}</div>
           </div>
           
-          <div className="flex justify-center absolute bottom-20 right-0 left-0">
+          <div className="flex justify-center absolute bottom-20 right-0 left-0 ">
             <AnimatePresence>
               {isProfileOpen && (
                 <motion.div
@@ -211,6 +245,7 @@ export default function ProfileDropdown({ data = SAMPLE_PROFILE_DATA, className 
                           if (item._id === 2 || item._id === 3) {
                             e.preventDefault();
                           } else {
+                            handleNavClick(item?.link)
                             dispatch(setOpenProfile(false));
                           }
                         }}
@@ -256,8 +291,14 @@ export default function ProfileDropdown({ data = SAMPLE_PROFILE_DATA, className 
                                     key={el.label}
                                     onClick={(e) => {
                                       e.preventDefault();
+                                      e.stopPropagation()
                                       handleNavClick(el.link);
                                       dispatch(setOpenProfile(false));
+                                      if (el.label === "Edit Profile") {
+                                        setTimeout(() => {
+                                          dispatch(setCPEditPopUp(true));
+                                        }, 2000);
+                                      }
                                     }}
                                     className={clsx(
                                       "ClickAnimationNoti w-full flex gap-2 px-5 py-1.25 rounded-xl items-center text-base cursor-pointer transition-colors ease-in-out duration-300 ",
@@ -300,23 +341,3 @@ export default function ProfileDropdown({ data = SAMPLE_PROFILE_DATA, className 
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

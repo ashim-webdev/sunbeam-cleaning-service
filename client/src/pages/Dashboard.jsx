@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tilt } from "react-tilt"
 import { useDispatch, useSelector } from "react-redux";
+import { Badge } from "../components/ui/badge"
 import { FaNewspaper } from "react-icons/fa";
 import { FaArrowsToDot } from "react-icons/fa6";
 import { LuClipboardCheck } from "react-icons/lu";
@@ -67,7 +68,7 @@ const Dashboard = () => {
     },
     {
       _id: "4",
-      label: "TODOS",
+      label: "TODO",
       total: totals["todo"],
       lastMonth: lastMonth.tasks.todo,
       icon: <FaArrowsToDot />,
@@ -103,7 +104,7 @@ const Dashboard = () => {
             `}>{label}</p>
           <span className={clsx("text-2xl font-semibold" , tx)}>{count}</span>
           <span className='text-sm text-[#0061FA] -mb-1'>
-            <i className="fa-solid fa-chart-simple"></i> {lastMonth} <span className="text-gray-500 ">last month</span>
+            <i className="fa-solid fa-chart-simple"></i> {lastMonth} <span className={`${LightMode ? "text-gray-500" : "text-gray-400"} transition-colors duration-300 ease-in-out`}>last month</span>
           </span>
         </div>
         <div
@@ -139,21 +140,30 @@ const Dashboard = () => {
               ? "border-[#E8E8E8] bg-[#E8E8E8]"
               : "border-[#3D3D3D] bg-[#3D3D3D]"
             }
-            absolute -bottom-6 -right-4 flex justify-center items-center rounded-3xl border-8 transition-all duration-300 ease-in-out
+            absolute -bottom-6 -right-4 flex justify-center items-center rounded-lg border-8 transition-all duration-300 ease-in-out
           `}>
-          <div className="relative inline-block group">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setTooltipShow(e => !e)
-              }}
-              className={clsx(
-                "relative w-fit px-3.5 py-1.5 rounded-full transition-transform ease-in-out duration-300 text-[15px] shadow-inner  cursor-pointer",
-                user ? "bg-green-500 text-white" : "bg-red-500 text-white active:scale-95"
-              )}
-              >
-              {user ? "Active" : "Disabled"}
-            </button>
+          <div className={`relative inline-block group`}>
+            <AnimatePresence>
+                <motion.span
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation()
+                    }} 
+                    className=""
+                    >
+                    <Badge 
+                      className={`${user ? "bg-green-700" : "bg-red-700"} text-white text-[16px] shadow-darkSM transition-all duration-100 ease-in-out`}
+                    >
+                      {user ? "Active" : "Disabled"}
+                    </Badge>     
+                  </button>       
+                </motion.span>
+              </AnimatePresence>
 
             {user
               ?
@@ -235,19 +245,29 @@ const Dashboard = () => {
     }, [user]);
 
     return (
-      <div className="relative inline-block group">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setTooltipShow(e => !e)
-          }}
-          className={clsx(
-            "relative w-fit px-3.5 py-1.5 rounded-full transition-transform ease-in-out duration-300 text-[15px] shadow-inner  cursor-pointer",
-            user ? "bg-green-500 text-white" : "bg-red-500 text-white active:scale-95 -ml-2"
-          )}
-          >
-          {user ? "Active" : "Disabled"}
-        </button>
+      <div className={`${user ? "ml-2.5" : ""} relative inline-block group`}>
+        <AnimatePresence>
+            <motion.span
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className=""
+            >
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation()
+                }} 
+                className=""
+                >
+                <Badge 
+                  className={`${user ? "bg-green-700" : "bg-red-700"} text-white text-[16px] shadow-darkSM transition-all duration-100 ease-in-out`}
+                >
+                  {user ? "Active" : "Disabled"}
+                </Badge>     
+              </button>       
+            </motion.span>
+          </AnimatePresence>
 
         {user
           ?
@@ -261,7 +281,7 @@ const Dashboard = () => {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -100, opacity: 0 }}
                 transition={{ duration: 0.4, ease: "easeInOut" }}
-                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-72 transition-all duration-300 ease-out transform group-hover:translate-y-0 translate-y-2"
+                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-5 w-72 transition-all duration-300 ease-out transform group-hover:translate-y-0 translate-y-2"
               >
                 <div
                   className={`relative ${bgMenu} p-4 rounded-2xl border transition-all duration-300 ease-in-out`}
@@ -362,7 +382,7 @@ const Dashboard = () => {
                 <img src={user?.img} alt="Avatar" className="w-full h-full object-cover "/>
               :
                 <span className='text-xs md:text-sm text-center'>
-                  {getInitials(user?.name)}
+                  {getInitials(user?.name || "Unknown User")}
                 </span>
               }
             </div>
@@ -379,7 +399,7 @@ const Dashboard = () => {
           </div>
         </td>
 
-        <td>
+        <td className="">
           <DisabledComponentTable user={user.isActive} />
         </td>
 
@@ -414,7 +434,7 @@ const Dashboard = () => {
               <img src={user?.img} alt="Avatar" className="w-full h-full object-cover "/>
             :
               <span className='text-2xl md:text-sm text-center'>
-                {getInitials(user?.name)}
+                {getInitials(user?.name || "Unknown User")}
               </span>
             }
           </div>
@@ -457,7 +477,7 @@ const Dashboard = () => {
           `}>
           <div className="text-sm font-semibold">{user.title}</div>
 
-          <div className="w-0.5 h-8 bg-linear-to-b from-green-400/10 via-green-500 to-green-400/10" />
+          <div className={`w-0.5 h-8 ${user.isActive ? "bg-linear-to-b from-green-400/10 via-green-500 to-green-400/10" : "bg-linear-to-b from-red-400/10 via-red-500 to-red-400/10" } `} />
 
           <div className="text-sm font-semibold">{user.role}</div>
         </div>

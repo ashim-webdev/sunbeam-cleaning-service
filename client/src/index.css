@@ -9,6 +9,17 @@
     border-color 300ms ease-in-out;
 }
 
+@layer base {
+  input[type="password"]::-ms-reveal,
+  input[type="password"]::-ms-clear {
+    display: none;
+  }
+
+  input[type="password"] {
+    appearance: none;
+  }
+}
+
 @import "tailwindcss";
 
 @import "tw-animate-css";
@@ -39,8 +50,8 @@
   --color-edge: #a855f7;
   --color-other: #eab308;
 
-  --color-desktop: #3b82f6, #0050D7 #FF9900 #D30055 #007870; /*Pie chart*/
-  --color-mobile: #a855f7, #4CAF50 #0004ff #FFA500 #FF4C4C; /*Bar chart*/
+  --color-desktop: #3b82f6 ;
+  --color-mobile: #a855f7;
 }
 
   @theme {
@@ -95,6 +106,8 @@
 
     --animate-UpDown: UpDown 3s ease-in-out infinite;
 
+    --animate-LeftRight: LeftRight 3s ease-in-out infinite;
+
     @keyframes UpDown {
       0%,
       100% {
@@ -102,6 +115,16 @@
       }
       50% {
         transform: translateY(-4px);
+      }
+    }
+
+    @keyframes LeftRight {
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+      50% {
+        transform: translateX(-4px);
       }
     }
 
@@ -332,8 +355,6 @@ html {
   /* fill: rgba(107, 107, 107, 0.492); */
   cursor: pointer;
   width: 22px;
-  position: absolute;
-  right: 10px;
   transition: transform 0.25s ease, color 0.25s ease, background-color 0.25s ease;
   top: calc(50% + 5px);
   transform: translateY(calc(-50% - 5px));
@@ -350,7 +371,6 @@ html {
   padding: 10px;
   transition: 0.2s linear;
   font-size: 14px;
-  text-transform: uppercase;
   letter-spacing: 2px;
 }
 
@@ -363,6 +383,7 @@ html {
 .input-container:focus-within .icon_search {
   /* transform: scale(1.15); */
   fill: #005FFB;
+  right: -35px;
 }
 
 .input-container:hover > .icon_search {
@@ -738,6 +759,12 @@ html {
 
 .ListHB:hover .ListStats {
   border-color: #0061FA;
+  transition: transform 2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.ListHB:hover .userInfo {
+  /* border-bottom: #0061FA solid 2px; */
+  box-shadow: 0 3px 5px #0060fa46;
   transition: transform 2s ease-in-out, border-color 0.2s ease-in-out;
 }
 

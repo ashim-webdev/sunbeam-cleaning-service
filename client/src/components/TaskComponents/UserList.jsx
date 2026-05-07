@@ -25,7 +25,10 @@ export default function UserList({ team, setTeam }) {
     const activeUsers = users.filter((u) => u.isActive);
 
     setSelectedUsers(activeUsers);
-    setTeam(activeUsers.map((u) => u._id));
+    setTeam({
+      members: activeUsers.map((u) => u._id),
+      leader: leaderId,
+    });
 
     // Reset leader if needed
     if (!activeUsers.find((u) => u._id === leaderId)) {
@@ -60,11 +63,17 @@ export default function UserList({ team, setTeam }) {
       if (firstActiveUser) {
         // Normal case
         setSelectedUsers([firstActiveUser]);
-        setTeam([firstActiveUser._id]);
+        setTeam({
+          members: [firstActiveUser._id],
+          leader: null,
+        });
       } else {
         // All users are disabled
         setSelectedUsers([]);
-        setTeam([]);
+        setTeam({
+          members: [],
+          leader: null,
+        });
       }
     } else {
       setSelectedUsers(team);
@@ -174,7 +183,7 @@ export default function UserList({ team, setTeam }) {
                               <img src={user?.img} alt="Avatar" className="w-full h-full object-cover "/>
                             :
                               <span className='text-center text-[10px]'>
-                                {getInitials(user?.name)}
+                                {getInitials(user?.name || "Unknown User")}
                               </span>
                             }
                           </div>

@@ -205,10 +205,10 @@ const Activities = ({ activity, id, refetch }) => {
       </div>
 
       <div className='w-full md:w-1/2'>
-        <h4 className={`${LightMode ? "text-gray-600" : "text-white"} font-semibold text-lg mb-5 transition-colors duration-300 ease-in-out`}>
+        <h4 className={`${LightMode ? "text-gray-500" : "text-white"} font-semibold text-lg mb-5 transition-colors duration-300 ease-in-out`}>
           Add Activity
         </h4>
-        <div className='w-full flex flex-wrap gap-5'>
+        <div className='w-full flex flex-col justify-center items-start gap-5'>
           {act_types.map((item, index) => (
             <div key={item} className='flex gap-0.5 justify-center items-center'>
               {/* <input
@@ -227,7 +227,7 @@ const Activities = ({ activity, id, refetch }) => {
                     type="checkbox" 
                     onChange={(e) => setSelected(item)}
                   />
-                  <span className={`checkmark transition-colors duration-300 ease-in-out ${LightMode ? "bg-[#eee] shadow-[0_2px_5px_rgba(0,0,0,0.2)]" : "bg-black/20 shadow-[0_2px_5px_rgba(139,138,138,0.2)]"}`}></span>
+                  <span className={`checkmark transition-colors duration-300 ease-in-out ${LightMode ? "bg-gray-500 shadow-[0_2px_5px_rgba(0,0,0,0.2)]" : "bg-gray-200 shadow-[0_2px_5px_rgba(139,138,138,0.2)]"}`}></span>
               </label>
 
               <p className={`${LightMode ? "text-gray-600" : "text-gray-200"}  transition-colors duration-300 ease-in-out`}>{item}</p>
@@ -388,7 +388,9 @@ const TaskDetail = () => {
       <h1 className={`
           ${LightMode ? "text-gray-700" : "text-gray-300"} 
           text-2xl font-bold transition-colors duration-300 ease-in-out
-        `}>{titleShort}</h1>
+        `}>
+        {titleShort}
+      </h1>
       <Tabs tabs={TABS} setSelected={setSelected}>
         {selected === 0 ? (
           <>
@@ -440,7 +442,7 @@ const TaskDetail = () => {
                 </div>
 
                 <div className='space-y-4 py-6'>
-                  <p className={`${LightMode ? "text-gray-600" : "text-white"} font-semibold text-sm transition-colors duration-300 ease-in-out`}>
+                  <p className={`${LightMode ? "text-black" : "text-white"} font-semibold text-sm transition-colors duration-300 ease-in-out`}>
                     TASK TEAM
                   </p>
                   <div className='space-y-3'>
@@ -464,7 +466,7 @@ const TaskDetail = () => {
               
                         <div className={`absolute ${m.isLeader ? "block" : "hidden"} top-2.5 mx-auto w-2.5 h-2.5 rounded-full bg-green-500 shadow-inner animate-spin`} />
                         <div>
-                          <p className={`${LightMode ? "text-black/80" : "text-white/80"} text-lg font-normal transition-colors duration-300 ease-in-out`}>{m?.name}</p>
+                          <p className={`${LightMode ? "text-black" : "text-white"} text-lg font-normal transition-colors duration-300 ease-in-out`}>{m?.name}</p>
                           <span className={`${LightMode ? "text-gray-500" : "text-gray-400"} transition-colors duration-300 ease-in-out`}>{m?.title}</span>
                         </div>
 
@@ -575,11 +577,15 @@ const TaskDetail = () => {
 
               <div className='w-full md:w-1/2 space-y-3'>
                 {task?.description && (
-                  <div className='mb-10'>
+                  <div className={`${LightMode ? "text-black" : "text-white"} transition-colors duration-300 ease-in-out`}>
                     <p className='text-lg font-semibold'>TASK DESCRIPTION</p>
-                    <div className='w-full'>{task?.description}</div>
+                    <div className={`${LightMode ? "text-gray-800" : "text-gray-300"} transition-colors duration-300 ease-in-out`}>{task?.description}</div>
                   </div>
                 )}
+
+                <div className="px-4">
+                  <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10 my-6" />
+                </div>
 
                 {task?.assets?.length > 0 ? (
                   <div className='pb-10'>
