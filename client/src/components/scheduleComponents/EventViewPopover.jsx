@@ -3,7 +3,11 @@ import { Fragment } from 'react';
 import { X, MapPin, Clock, AlignLeft, Calendar1Icon, Calendar1 } from 'lucide-react';
 import { useSelector } from "react-redux";
 
-export default function EventViewPopover({ isOpen, onClose, event }) {
+export default function EventViewPopover({
+  isOpen,
+  onClose,
+  event 
+}) {
 
   if (!event) return null;
 
@@ -29,7 +33,7 @@ export default function EventViewPopover({ isOpen, onClose, event }) {
   };
 
   const start = getDateTime(event.start);
-  const end = getDateTime(event.end);
+  const end = getDateTime(event.end || event.start);
 
 
   return (

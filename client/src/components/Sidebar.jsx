@@ -18,6 +18,7 @@ import { setOpenSidebar, setMiniMenu, setOpenProfile } from "../redux/slices/aut
 import { IoCheckmarkDoneOutline } from "react-icons/io5";
 import "./components.css";
 import ProfileDropdown from "./ProfileDropdown";
+import ConnectionStatus from "./ConnectionStatus";
 
 
 
@@ -195,14 +196,20 @@ const Sidebar = () => {
         }
           w-full h-full flex flex-col gap-6 p-5 transition-colors ease-in-out duration-300
       `}>
-      <h1 className='flex gap-1 items-center'>
-        <p className='p-2 bg-blue-600 shadow-inner rounded-full'>
-          <MdOutlineAddTask className='text-white text-2xl font-black' />
-        </p>
-        <span className={`text-2xl font-bold transition-colors ease-in-out duration-300 ${LightMode ? " text-black" : "text-white"} `}>
-          TaskMe
-        </span>
-      </h1>
+      <div className="flex justify-between item-center gap-2">
+        <div className='flex gap-1 items-center'>
+          <p className='p-2 bg-blue-600 shadow-inner rounded-full'>
+            <MdOutlineAddTask className='text-white text-2xl font-black' />
+          </p>
+          <span className={`text-2xl font-bold transition-colors ease-in-out duration-300 ${LightMode ? " text-black" : "text-white"} `}>
+            TaskMe
+          </span>
+        </div>
+        
+        <div className="xl:hidden flex sm:flex-col sm:mr-6 md:mr-10 lg:mr-20 justify-center item-center">
+          <ConnectionStatus />
+        </div>
+      </div>
 
       <div className='pl-4 pr-4 flex-1 flex flex-col gap-y-3 overflow-y-auto overflow-x-hidden'>
         {sidebarLinks.map((link) => (

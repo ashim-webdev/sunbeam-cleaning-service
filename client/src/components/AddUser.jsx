@@ -17,10 +17,9 @@ import ModalWrapper from "./ModalWrapper";
 import Textbox from "./Textbox";
 
 const AddUser = ({ open, setOpen, userData }) => {
-  const { LightMode, CPEditPopUp } = useSelector((state) => state.auth);
+  const { LightMode } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
-  console.log(userData)
   
   let defaultValues = userData ?? {};
   const { user } = useSelector((state) => state.auth);
@@ -32,7 +31,6 @@ const AddUser = ({ open, setOpen, userData }) => {
     formState: { errors },
   } = useForm({ defaultValues });
 
-  // const dispatch = useDispatch();
 
   const [addNewUser, { isLoading }] = useRegisterMutation();
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
@@ -184,7 +182,6 @@ const AddUser = ({ open, setOpen, userData }) => {
         formData.append("_id", userData._id); // Append user ID for update
 
         res = await updateUser(formData).unwrap();
-
         toast.success(res?.message);
 
         // 🔥 If updating self, refresh redux user

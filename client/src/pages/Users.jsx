@@ -464,7 +464,6 @@ const Users = () => {
         open={open}
         setOpen={setOpen}
         userData={selected}
-        key={new Date().getTime().toString()}
       />
 
       <ConfirmationDialog

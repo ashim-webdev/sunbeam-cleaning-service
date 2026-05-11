@@ -1,21 +1,44 @@
 import { useState } from "react";
 import CardList from "../components/OverviewComponents/CardList";
 import ViewUserProfile from "../components/ProfileComponents/viewUserProfile";
+import AddUser from "../components/AddUser";
+import ConfirmationDialog from "../components/ConfirmationDialog";
+import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
+import { useDeleteUserMutation } from "../redux/slices/api/userApiSlice";
 
 const Status = () => {
   const { LightMode } = useSelector((state) => state.auth);
+
+  const [deleteUser] = useDeleteUserMutation();
   
   const [open, setOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
   const [selected, setSelected] = useState(null);
 
 
   const openInfoClick = (el) => {
-    console.log(el)
     setSelected(el);
     setOpen(true);
   };
+
+
+  const deleteHandler = async () => {
+    try {
+      const res = await deleteUser(selected);
+
+      toast.success(res?.data?.message);
+
+      setOpenDialog(false);
+      setSelected(null);
+      setOpen(false)
+
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    }
+  };
+
 
   const bg = LightMode ? "bg-primary-foreground" : "bg-black/90"
   const changeAnimation = "transition-all duration-300 ease-in-out"
@@ -40,12 +63,27 @@ const Status = () => {
         />
       </div>
 
+      <ConfirmationDialog
+        open={openDialog}
+        setOpen={setOpenDialog}
+        onClick={deleteHandler}
+      />
+
+      <AddUser
+        open={openEdit}
+        setOpen={setOpenEdit}
+        userData={selected}
+      />
+
       <ViewUserProfile 
         open={open}
         setOpen={setOpen}
         profileSelected={selected}
         openDialog={openDialog}
         setOpenDialog={setOpenDialog}
+        deleteHandler={deleteHandler}
+        setSelected = {setSelected}
+        selected = {selected}
       />
     </div>
   );

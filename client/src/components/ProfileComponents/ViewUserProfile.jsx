@@ -1,20 +1,9 @@
 import { useState } from 'react';
 import ProfileInfo from './ProfileInfo';
-import { motion, AnimatePresence } from 'framer-motion';
-import { getInitials } from "../../utils/index";
-import { Badge } from "../../components/ui/badge";
 import { useDispatch, useSelector } from "react-redux";
-import { 
-  UserPen,
-  User,
-  MailCheck,
-  X,
-  Trash2
-} from 'lucide-react';
-import LinearSocial from '../LinearSocial';
+import { useGetTeamListsQuery } from '../../redux/slices/api/userApiSlice';
 import ModalWrapper from '../ModalWrapper';
 import AddUser from '../AddUser';
-import Button from '../Button';
 import ConfirmationDialog from '../ConfirmationDialog';
 import ProfileCard from './ProfileCard';
 
@@ -26,15 +15,28 @@ const ViewUserProfile = ({
   profileSelected, 
   openDialog, 
   setOpenDialog, 
-  deleteHandler 
+  deleteHandler,
+  setSelected,
+  selected,
 }) => {
   const { LightMode }  = useSelector((state) => state.auth);
-  const [openEdit, setOpenEdit] = useState(false);
-  const [selected, setSelected] = useState(null);
 
+   // FETCH FRESH USERS
+  const { data: users = [] } = useGetTeamListsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
+
+  const freshUser = users.find(
+    (user) => user._id === profileSelected?._id
+  ) || profileSelected;
+
+
+
+  const [openEdit, setOpenEdit] = useState(false);
 
   const deleteClick = (id) => {
-    console.log(setOpenDialog)
     setSelected(id);
     setOpenDialog(true);
   };
@@ -48,10 +50,10 @@ const ViewUserProfile = ({
   return (
     <ModalWrapper open={open} openDialog={openDialog} setOpenDialog={setOpenDialog} setOpen={setOpen} profile={true}>
       <div className='w-full flex md:flex-row flex-col justify-center items-center gap-10 '>
-        <ProfileCard onClick={(e) => e.stopPropagation()} profileSelected={profileSelected} setOpen={setOpen} editClick={editClick} deleteClick={deleteClick} componentType="ViewUserProfile" />
+        <ProfileCard onClick={(e) => e.stopPropagation()} profileSelected={freshUser} setOpen={setOpen} editClick={editClick} deleteClick={deleteClick} componentType="ViewUserProfile" />
 
         <div onClick={(e) => e.stopPropagation()} className='bg-blue-400/70 backdrop-blur-[2px] border border-blue-200/30 shadow-[0_8px_32px_rgba(0,0,0,0.25)] w-90 sm:w-120 h-full px-2 py-4 rounded-lg'>
-          <ProfileInfo userProfileData={profileSelected}/>
+          <ProfileInfo userProfileData={freshUser}/>
         </div>
 
         {openDialog &&
@@ -66,7 +68,6 @@ const ViewUserProfile = ({
           open={openEdit}
           setOpen={setOpenEdit}
           userData={selected}
-          key={new Date().getTime().toString()}
         />
       </div>
     </ModalWrapper>

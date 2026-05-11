@@ -82,3 +82,35 @@ export const updateLeaveStatus = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+// @desc Get leaves by user ID
+// GET /api/leaves/user/:id
+
+// @desc Get leaves by user ID
+// GET /api/leaves/user/:id
+
+export const getLeavesByUser = async (req, res) => {
+  try {
+
+    // prevent invalid object being passed
+    if (!req.params.id || req.params.id === "[object Object]") {
+      return res.status(400).json({
+        message: "Invalid user id",
+      });
+    }
+
+    const leaves = await Leave.find({
+      user: req.params.id,
+    })
+      .populate("user", "name email title profileImage isActive")
+      .sort({ createdAt: -1 });
+
+    res.json(leaves);
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};

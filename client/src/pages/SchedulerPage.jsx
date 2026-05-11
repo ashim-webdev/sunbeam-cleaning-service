@@ -2,17 +2,26 @@ import { useState } from 'react';
 import ScheduleCalendar from '../components/scheduleComponents/ScheduleCalendarProps';
 import { Shield, User, Calendar as CalendarIcon } from 'lucide-react';
 import { useSelector } from 'react-redux';
+import { useGetUserProfileQuery } from '../redux/slices/api/userApiSlice';
 
 export default function SchedulerPage() {
-  const { LightMode } = useSelector((state) => state.auth);
+  const { LightMode, User } = useSelector((state) => state.auth);
+  const { data: freshUser, isLoading } = useGetUserProfileQuery();
+
+  const { user: storedUser } = useSelector((state) => state.auth);
+
+  const user = freshUser ?? storedUser;
+  
+
+  // console.log(freshUser)
+
+  const role = user.isAdmin ? "admin" : "employee"
+
   const bg = LightMode ? "bg-white/60" : "bg-black/60";
   const shadow = LightMode ? "" : "shadow-lightSM";
   const shadowInner = LightMode ? "shadow-inner" : "shadow-innerWH"
   const text = LightMode ? "text-black" : "text-white";
   const subText = LightMode ? "text-black/80" : "text-white/80";
-
-
-  const [role, setRole] = useState('admin'); // 'admin' or 'employee'
 
   return (
     <div className={`min-h-screen ${bg} ${text} rounded-2xl font-sans transition-colors duration-300 ease-in-out`}>

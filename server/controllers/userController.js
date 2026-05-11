@@ -152,7 +152,7 @@ const getTeamList = asyncHandler(async (req, res) => {
 
 // @GET  - get user notifications
 const getNotificationsList = asyncHandler(async (req, res) => {
-  const { userId } = req.user._id;
+  const userId = req.user._id;
 
   const notice = await Notice.find({
     team: userId,
@@ -176,7 +176,7 @@ const getUserTaskStatus = asyncHandler(async (req, res) => {
 // @GET  - get user notifications
 const markNotificationRead = asyncHandler(async (req, res) => {
   try {
-    const { userId } = req.user._id;
+    const userId = req.user._id;
     const { isReadType, id } = req.query;
 
     if (isReadType === "all") {
@@ -281,30 +281,43 @@ const activateUserProfile = asyncHandler(async (req, res) => {
 const changeUserPassword = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
-  // Remove this condition
-  if (userId === "65ff94c7bb2de638d0c73f63") {
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword) {
+    return res.status(400).json({
+      status: false,
+      message: "All fields are required",
+    });
+  }
+
+  const user = await User.findById(userId).select("+password");
+
+  if (!user) {
     return res.status(404).json({
       status: false,
-      message: "This is a test user. You can not chnage password. Thank you!!!",
+      message: "User not found",
     });
   }
 
-  const user = await User.findById(user._id);
+  const isMatch = await user.matchPassword(oldPassword);
 
-  if (user) {
-    user.password = req.body.password;
-
-    await user.save();
-
-    user.password = undefined;
-
-    res.status(201).json({
-      status: true,
-      message: `Password chnaged successfully.`,
+  if (!isMatch) {
+    return res.status(400).json({
+      status: false,
+      message: "Old password is incorrect",
     });
-  } else {
-    res.status(404).json({ status: false, message: "User not found" });
   }
+
+  user.password = newPassword;
+
+  await user.save();
+
+  user.password = undefined;
+
+  res.status(200).json({
+    status: true,
+    message: "Password changed successfully",
+  });
 });
 
 // DELETE - delete user account

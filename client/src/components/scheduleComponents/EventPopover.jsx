@@ -22,19 +22,15 @@ export default function EventPopover({
 }) {
   const { LightMode } = useSelector((state) => state.auth);
 
-  const bg = LightMode ? "bg-white" : "bg-black";
-  const shadow = LightMode ? "shadow-darkSM" : "shadow-lightSM";
-  const text = LightMode ? "text-black" : "text-white";
-  const placeholder = LightMode ? "placeholder:text-gray-500" : "placeholder:text-gray-400";
-
   
-
+  
+  
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [start, setStart] = useState(null);
   const [end, setEnd] = useState(null);
   const [location, setLocation] = useState('');
-
+  
   const [errors, setErrors] = useState({});
   const [shake, setShake] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -57,13 +53,17 @@ export default function EventPopover({
       setTitle(initialEvent.title);
       setDescription(initialEvent.description || '');
       setStart(new Date(initialEvent.start));
-      setEnd(new Date(initialEvent.end));
+      setEnd(
+        initialEvent.end
+          ? new Date(initialEvent.end)
+          : new Date(initialEvent.start)
+      );
       setLocation(initialEvent.location || '');
     } else {
       setTitle('');
       setDescription('');
-      setStart(null);
-      setEnd(null);
+      setStart(defaultStart ? new Date(defaultStart) : null);
+      setEnd(defaultEnd ? new Date(defaultEnd) : null);
       setLocation('');
     }
 
@@ -174,10 +174,16 @@ export default function EventPopover({
   };
 
 
+
+  const bg = LightMode ? "bg-white" : "bg-black";
+  const shadow = LightMode ? "shadow-darkSM" : "shadow-lightSM";
+  const text = LightMode ? "text-black" : "text-white";
+  const placeholder = LightMode ? "placeholder:text-gray-500" : "placeholder:text-gray-400";
+  
   return (
     <>
       <Transition show={isOpen} as={Fragment}>
-        <Dialog className="relative z-2000" onClose={() => {}}>
+        <Dialog className="relative z-100" onClose={() => {}}>
           <TransitionChild
             as={Fragment}
             enter="ease-out duration-300"
@@ -382,7 +388,6 @@ export default function EventPopover({
                             type="button"
                             onClick={() => {
                               deleteClick(initialEvent.id);
-                              onClose();
                             }}
                             className="ClickAnimationNoti px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg cursor-pointer transition-all duration-200 ease-in-out"
                           >
@@ -426,7 +431,7 @@ export default function EventPopover({
         type={type}
         setType={setType}
         onClick={() => {
-          onDelete(initialEvent.id);
+          onDelete(selected);
           setOpenDialog(false);
           onClose();
         }}

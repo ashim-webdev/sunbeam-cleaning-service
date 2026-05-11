@@ -4,8 +4,9 @@ import { Badge } from "../ui/badge";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import { Clock, Calendar, CheckCircle } from "lucide-react";
-import { setSelectUserDashInfo } from "../../redux/slices/authSlice";
+import { setSelectUserDashInfo, setUserViewInfo } from "../../redux/slices/authSlice";
 import { useGetTeamListsQuery } from "../../redux/slices/api/userApiSlice";
+import { useGetLeavesByUserQuery } from "../../redux/slices/api/leaveApiSlice";
 import { getInitials } from "../../utils/index";
 
 
@@ -74,9 +75,11 @@ const EmployeeList = ({ user, title, popUpUserInfo, useInfo }) => {
 
 
 const LeaveRequests = ({ user, title, popUpUserInfo, useInfo }) => {
-  const { LightMode, SelectUserDashInfo } = useSelector((state) => state.auth);
+  const { LightMode, selectedUserId } = useSelector((state) => state.auth);
 
-  const leaveData = SelectUserDashInfo?.dummyLeave || []
+  const { data: leaveData = [] } = useGetLeavesByUserQuery(selectedUserId, {
+    skip: !selectedUserId || typeof selectedUserId !== "string",
+  });
 
   // console.log(leaveData)
 
@@ -128,7 +131,7 @@ const LeaveRequests = ({ user, title, popUpUserInfo, useInfo }) => {
 
   // sort newest first
   const sortedLeaves = [...leaveData].sort(
-    (a, b) => new Date(b.created_at) - new Date(a.created_at)
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
 
 
@@ -176,7 +179,7 @@ const LeaveRequests = ({ user, title, popUpUserInfo, useInfo }) => {
           >
             {sortedLeaves.map((sortedLeaves) => (
               <motion.div
-                key={sortedLeaves.id}
+                key={sortedLeaves._id}
                 variants={item}
                 layout
                 className={`${bg} ${text} ${changeAnimation} border rounded-lg p-4 hover:shadow-md transition-all duration-300 cursor-pointer`}
@@ -215,7 +218,7 @@ const LeaveRequests = ({ user, title, popUpUserInfo, useInfo }) => {
                     <div className="flex items-center gap-1">
                       <Calendar size={14} />
                       <span>
-                        {new Date(sortedLeaves.created_at).toLocaleDateString()}
+                        {new Date(sortedLeaves.createdAt).toLocaleDateString()}
                       </span>
                     </div>
                   </div>
@@ -377,17 +380,49 @@ const DisabledEmployees = ({ user, title, popUpUserInfo, useInfo }) => {
   )
 }
 
-const Components = ({ user, title, popUpUserInfo, useInfo, leaveData }) => {
-  {if (title === "Employee's List") {
-      return <EmployeeList user={user} title={title} popUpUserInfo={popUpUserInfo} useInfo={useInfo}/>
-    } else if (title === "Active Employee's") {
-      return <ActiveEmployees user={user} title={title} popUpUserInfo={popUpUserInfo} useInfo={useInfo}/>
-    } else if (title === "Disabled Employee's") {
-      return <DisabledEmployees user={user} title={title} popUpUserInfo={popUpUserInfo} useInfo={useInfo}/>
-    }
+
+
+const Components = ({
+  user,
+  title,
+  popUpUserInfo,
+  useInfo,
+}) => {
+
+  if (title === "Employee's List") {
+    return (
+      <EmployeeList
+        user={user}
+        title={title}
+        popUpUserInfo={popUpUserInfo}
+        useInfo={useInfo}
+      />
+    );
   }
 
-  return null
+  if (title === "Active Employee's") {
+    return (
+      <ActiveEmployees
+        user={user}
+        title={title}
+        popUpUserInfo={popUpUserInfo}
+        useInfo={useInfo}
+      />
+    );
+  }
+
+  if (title === "Disabled Employee's") {
+    return (
+      <DisabledEmployees
+        user={user}
+        title={title}
+        popUpUserInfo={popUpUserInfo}
+        useInfo={useInfo}
+      />
+    );
+  }
+
+  return null;
 };
 
 
@@ -408,8 +443,7 @@ const CardList = ({
     });
   
 
-  const users = data
-  console.log(data)
+  const users = data || []
 
   const dispatch = useDispatch()
 
@@ -419,8 +453,9 @@ const CardList = ({
   }
 
   const popUpUserInfo = (user) => {
-    console.log(user)
+    // console.log(user)
     openInfoClick(user)
+    dispatch(setUserViewInfo(user))
   }
 
   const filteredUsers = users.filter((user) => {
@@ -446,7 +481,7 @@ const CardList = ({
       
       <div 
         className={`
-          ${users.length >= 6 || title === "Employee Leave  Requests" 
+          ${users.length >= 6 || title === "Employee Leave Requests" 
             ?
             "overflow-y-auto h-131 overflow-x-hidden"
             :

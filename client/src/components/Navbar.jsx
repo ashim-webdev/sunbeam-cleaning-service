@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import NotificationPanel from "./NotificationPanel";
 import UserAvatar from "./UserAvatar";
 import Dark_Light_Btn from "./Dark_Light_Btn";
+import ConnectionStatus from "./ConnectionStatus";
 
 const Navbar = ({ isScrolled, isSearchPanelOpen, setIsSearchPanelOpen }) => {
   const { LightMode } = useSelector((state) => state.auth);
@@ -108,38 +109,44 @@ const Navbar = ({ isScrolled, isSearchPanelOpen, setIsSearchPanelOpen }) => {
 
         <div className='sm:mr-8 mr-2'>
           <div className="flex justify-evenly items-center">
+            <div className="hidden xl:flex flex-col justify-center item-center mr-10">
+              <ConnectionStatus />
+            </div>
+
             <div className="sm:block hidden mr-5 ">
               <span className={`
-                  ${LightMode 
-                    ? "border-2 border-amber-300 shadow-black/80"
-                    : "border-2 border-white shadow-white/60"
-                  }
                   ClickAnimationNoti flex justify-center items-center rounded-full transition-colors ease-in-out duration-300 shadow-md 
                 `}>
                   <Dark_Light_Btn />
               </span>
             </div>
 
-          {!focus && (
-            <span 
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsSearchPanelOpen((prev) => !prev);
-              }}
-              className={`
-                ${LightMode 
-                  ? "text-gray-500"
-                  : "text-gray-300"
-                } 
-                sm:hidden mr-3 hover:text-blue-600 hover:scale-105 active:scale-95 cursor-pointer  transition-all duration-300 ease-in-out
-              `}> 
-              <i className="fa-solid fa-magnifying-glass text-xl"></i>
-            </span>
-          )}
-          
-          <NotificationPanel />
+            {!focus && (
+              <span 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsSearchPanelOpen((prev) => !prev);
+                }}
+                className={`
+                  ${LightMode 
+                    ? "text-gray-500"
+                    : "text-gray-300"
+                  } 
+                  sm:hidden mr-3 hover:text-blue-600 hover:scale-105 active:scale-95 cursor-pointer  transition-all duration-300 ease-in-out
+                `}> 
+                <i className="fa-solid fa-magnifying-glass text-xl"></i>
+              </span>
+            )}
+            
+            <div className="mt-1 flex justify-center item-center gap-3">
+              <span className="flex justify-center item-center">
+                <NotificationPanel />
+              </span>
 
-          <UserAvatar />
+              <span className="">
+                <UserAvatar />
+              </span>
+            </div>
           </div>
 
         </div>

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { getInitials } from "../../utils/index";
 import { useDispatch, useSelector } from "react-redux";
+import { useGetTeamListsQuery } from "../../redux/slices/api/userApiSlice";
 import { Badge } from "../../components/ui/badge";
 import { 
   UserPen,
@@ -47,11 +48,26 @@ const ProfileCard = ({
   header
 }) => {
   const [swap, setSwap] = useState(false);
-  const { LightMode, SelectUserDashInfo }  = useSelector((state) => state.auth);
+  const { LightMode, selectedUserInfo }  = useSelector((state) => state.auth);
 
-  const selectedUser = SelectUserDashInfo || null;
+  const selectedUser = selectedUserInfo || null;
+
+  // console.log("UserInfo:",selectedUserInfo)
 
   const compare = componentType === "Profile Overview" ? selectedUser : profileSelected
+
+  const { data: users = [] } = useGetTeamListsQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
+
+
+  const freshUser = users.find(
+    (user) => user._id === compare?._id
+  );
+
+
 
   useEffect(() => {
     setSwap(true)
@@ -71,7 +87,7 @@ const ProfileCard = ({
       <h1 className="absolute -top-6.5 text-lg font-medium ">{header}</h1>
       <div onClick={onClick} className={`${componentType === "Profile Overview" ? "mt-16" : "mt-10"} ${cardBg} ${changeAnimation} relative flex justify-center w-80 h-116  flex-col rounded-xl bg-clip-border`}>
 
-        {compare ? (
+        {freshUser ? (
             swap ? (
               <span className="flex justify-center items-center pr-5">
                 <Loading />
@@ -88,25 +104,25 @@ const ProfileCard = ({
                   >
                   <div className='relative flex justify-center items-center rounded-xl w-full h-50 mx-4 -mt-10 shadow-darkSM'>
                     <div 
-                      key={compare?._id} 
-                      className={`outline-0 border-2 ${compare?.isActive ? "border-green-600" : "border-red-600"} relative flex justify-center overflow-hidden items-center w-full h-50  rounded-xl bg-blue-gray-500 bg-clip-border text-white bg-blue-600 shadow-inner`}
+                      key={freshUser?._id} 
+                      className={`outline-0 border-2 ${freshUser?.isActive ? "border-green-600" : "border-red-600"} relative flex justify-center overflow-hidden items-center w-full h-50  rounded-xl bg-blue-gray-500 bg-clip-border text-white bg-blue-600 shadow-inner`}
                     >
-                    <span  className={`${compare?.profileImage ? "mt-20" : ""} text-white font-semibold`}>
-                      {compare?.profileImage ? 
+                    <span  className={`${freshUser?.profileImage ? "mt-20" : ""} text-white font-semibold`}>
+                      {freshUser?.profileImage ? 
                         <img
-                          src={compare?.profileImage}
+                          src={freshUser?.profileImage}
                           className="h-full w-full object-cover"
                         />
                         :
                         <span className="h-full w-full text-4xl">
-                          {getInitials(compare?.name || "Unknown User")}
+                          {getInitials(freshUser?.name || "Unknown User")}
                         </span>
                       }
                       </span>
                     </div> 
 
 
-                    {compare ? (
+                    {freshUser ? (
                         swap ? (
                           <span className="flex justify-center items-center pr-5">
                             <Loading />
@@ -161,14 +177,14 @@ const ProfileCard = ({
         <div className="px-6 pt-6 pb-2">
           <h5 className="flex items-center gap-2 mb-2 font-sans text-xl font-semibold leading-snug tracking-normal text-blue-gray-900 antialiased ">
             <User size={23} /> 
-            {compare ? (
+            {freshUser ? (
                 swap ? (
                   <span className="flex flex-1 justify-end items-center pr-5">
                     <Loading />
                   </span>
                   
                 ) : (
-                  <span className="line-clamp-1">{compare?.name}</span>
+                  <span className="line-clamp-1">{freshUser?.name}</span>
                 )
               )
                 :
@@ -179,14 +195,14 @@ const ProfileCard = ({
           </h5>
           <h5 className="flex items-center gap-2 mb-2 font-sans text-md font-semibold leading-snug tracking-normal text-blue-gray-900 antialiased">
             <MailCheck size={23} />
-            {compare ? (
+            {freshUser ? (
                 swap ? (
                   <span className="flex flex-1 justify-end items-center pr-5">
                     <Loading />
                   </span>
                   
                 ) : (
-                  <span className="line-clamp-1">{compare?.email}</span>
+                  <span className="line-clamp-1">{freshUser?.email}</span>
                 )
               )
               :
@@ -199,7 +215,7 @@ const ProfileCard = ({
         </div>
 
 
-        {compare ? (
+        {freshUser ? (
             swap ? (
               <span className="flex justify-center items-center pr-5">
                 <Loading />
@@ -220,11 +236,11 @@ const ProfileCard = ({
                     <div className={`
                         w-full flex justify-start items-center gap-2 transition-all duration-300 ease-in-out
                       `}>
-                      <div className="text-sm font-semibold">{compare?.title}</div>
+                      <div className="text-sm font-semibold">{freshUser?.title}</div>
 
-                      <div className={`w-0.5 h-8 ${compare?.isActive ? "bg-linear-to-b from-green-400/10 via-green-500 to-green-400/10" : "bg-linear-to-b from-red-400/10 via-red-500 to-red-400/10" } `} />
+                      <div className={`w-0.5 h-8 ${freshUser?.isActive ? "bg-linear-to-b from-green-400/10 via-green-500 to-green-400/10" : "bg-linear-to-b from-red-400/10 via-red-500 to-red-400/10" } `} />
 
-                      <div className="text-sm font-semibold">{compare?.role}</div>
+                      <div className="text-sm font-semibold">{freshUser?.role}</div>
                     </div>
                   </Badge>            
                 </motion.span>
@@ -242,7 +258,7 @@ const ProfileCard = ({
         </div>
 
         <div className="">
-          <LinearSocial tiktok={compare?.tiktok} x={compare?.x} whatsApp={compare?.whatsApp} telegram={compare?.telegram} noBG={false}/>
+          <LinearSocial tiktok={freshUser?.tiktok} x={freshUser?.x} whatsApp={freshUser?.whatsApp} telegram={freshUser?.telegram} noBG={false}/>
         </div>
 
         <div className='px-10 mb-2'>
@@ -252,7 +268,7 @@ const ProfileCard = ({
 
         <div className="px-6 mt-2 mb-4 pt-0 flex justify-between items-center sm:flex-row-reverse gap-4">
 
-          {compare ? (
+          {freshUser ? (
               swap ? (
                 <span className="flex justify-center items-center pr-5">
                   <Loading />
@@ -272,7 +288,7 @@ const ProfileCard = ({
                       className='ClickAnimation flex flex-row-reverse gap-2 items-center bg-blue-600 text-white rounded-md py-2 px-5 shadow-darkSM hover:shadow-inner transition-all duration-300 ease-in-out'
                       onClick={(e) => {
                         e.stopPropagation()
-                        editClick(compare)
+                        editClick(freshUser)
                       }}
                     />           
                   </motion.span>
@@ -285,7 +301,7 @@ const ProfileCard = ({
             </span>
           }
 
-          {compare ? (
+          {freshUser ? (
               swap ? (
                 <span className="flex justify-center items-center pr-5">
                   <Loading />
@@ -307,7 +323,7 @@ const ProfileCard = ({
                           className='ClickAnimation flex flex-row-reverse gap-1 items-center bg-red-600 text-white rounded-md py-2 px-4 shadow-darkSM hover:shadow-inner transition-all duration-300 ease-in-out'
                           onClick={(e) => {
                             e.stopPropagation()
-                            deleteClick(compare?._id)
+                            deleteClick(freshUser?._id)
                           }}
                         />
                         :

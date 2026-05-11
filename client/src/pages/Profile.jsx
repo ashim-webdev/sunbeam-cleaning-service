@@ -55,7 +55,6 @@ const Profile = () => {
         open={openEdit || CPEditPopUp}
         setOpen={setOpenEdit}
         userData={selected}
-        key={new Date().getTime().toString()}
       />
     </div>
   )

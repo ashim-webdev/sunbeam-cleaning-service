@@ -36,6 +36,13 @@ export const leaveApiSlice = apiSlice.injectEndpoints({
       invalidatesTags: ["Leave"]
     }),
 
+    // get user leave request by user id
+    getLeavesByUser: builder.query({
+      query: (id) => ({
+        url: `${LEAVES_URL}/user/${id}`,
+      }),
+    }),
+
   }),
 });
 
@@ -44,4 +51,5 @@ export const {
   useGetAllLeavesQuery,
   useGetMyLeavesQuery,
   useUpdateLeaveMutation,
+  useGetLeavesByUserQuery
 } = leaveApiSlice;

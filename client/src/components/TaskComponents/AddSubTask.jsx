@@ -37,17 +37,17 @@ const AddSubTask = ({ open, setOpen, id }) => {
     }, 1000);
   };
 
-  const handleFormError = () => {    
-    if (errors.title && errors.date && errors.tag) {
+  const handleFormError = (formErrors) => {    
+    if (formErrors.title && formErrors.date && formErrors.tag) {
       toast.error("Please fill in all required fields");
       triggerShake()
-    } else if (errors.title) {
+    } else if (formErrors.title) {
       toast.error("Title field is required");
       triggerShake()
-    } else if (errors.date) {
+    } else if (formErrors.date) {
       toast.error("Date field is required");
       triggerShake()
-    } else if (errors.tag) {
+    } else if (formErrors.tag) {
       toast.error("Tag field is required");
       triggerShake()
     }

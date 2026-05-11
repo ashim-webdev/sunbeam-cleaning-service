@@ -70,7 +70,7 @@ const UserAvatar = () => {
 
   return (
     <>
-      <div className=''>
+      <div className='flex justify-center item-center'>
         <Menu as='div' className='relative inline-block text-left outline-0'>
           <div className="ClickAnimationNoti outline-0">
             <Menu.Button className={`outline-0 border-2 ${user?.isActive ? "border-green-600" : "border-red-600"} w-10 h-10 2xl:w-12 2xl:h-12 flex items-center justify-center rounded-full bg-[#005FFB] hover:bg-blue-800 hover:shadow-innerWH cursor-pointer transition-all hover:scale-105 ease-in-out duration-200 shadow-inner overflow-hidden`}>

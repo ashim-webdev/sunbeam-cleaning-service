@@ -7,7 +7,7 @@ import cloudinary from "../utils/cloudinary.js";
 // Changed
 const createTask = asyncHandler(async (req, res) => {
   try {
-    const { userId } = req.user;
+    const userId = req.user._id;
 
     const {
       title,
@@ -115,7 +115,7 @@ const createTask = asyncHandler(async (req, res) => {
 const duplicateTask = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
-    const { userId } = req.user;
+    const userId = req.user._id;
 
     const task = await Task.findById(id);
 
@@ -365,7 +365,7 @@ const createSubTask = asyncHandler(async (req, res) => {
 
 // Changed some
 const getTasks = asyncHandler(async (req, res) => {
-  const { userId, isAdmin } = req.user;
+  const { _id: userId, isAdmin } = req.user;
   const { stage, isTrashed, search } = req.query;
 
   let query = { isTrashed: isTrashed ? true : false };
@@ -434,7 +434,7 @@ const getTask = asyncHandler(async (req, res) => {
 // Get analytics for user tasks (for last 5 months)
 const getUserAnalytics = async (req, res) => {
   try {
-    const { userId } = req.user;
+    const userId = req.user._id;
 
     const tasks = await Task.find({
       "team.members": userId,
@@ -502,7 +502,7 @@ const getUserAnalytics = async (req, res) => {
 
 const postTaskActivity = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { userId } = req.user;
+  const userId = req.user._id;
   const { type, activity } = req.body;
 
   try {
@@ -577,7 +577,7 @@ const deleteRestoreTask = asyncHandler(async (req, res) => {
 
 const dashboardStatistics = asyncHandler(async (req, res) => {
   try {
-    const { userId, isAdmin } = req.user;
+    const { _id: userId, isAdmin } = req.user;
 
     // Fetch all tasks from the database
     const allTasks = isAdmin

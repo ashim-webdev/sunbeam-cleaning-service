@@ -8,40 +8,29 @@ import EventPopover from "./EventPopover";
 import EventViewPopover from "./EventViewPopover";
 import { Plus } from "lucide-react";
 import { useSelector } from "react-redux";
+import {
+  useGetEventsQuery,
+  useCreateEventMutation,
+  useUpdateEventMutation,
+  useDeleteEventMutation,
+} from "../../redux/slices/api/eventApiSlice";
 import { toast } from "sonner";
 
 export default function ScheduleCalendar({ role }) {
   const { LightMode } = useSelector((state) => state.auth);
+  const { data: rawEvents = [] } = useGetEventsQuery();
 
-  const bg = LightMode ? "bg-white" : "bg-black";
-  const shadow = LightMode ? "" : "";
-  const text = LightMode ? "text-black" : "text-white";
-  const gray = LightMode ? "text-black/80" : "text-white/80";
+  const events = rawEvents.map((event) => ({
+    ...event,
+    id: event._id,
+  }));
 
-
-
+  const [createEvent] = useCreateEventMutation();
+  const [updateEvent] = useUpdateEventMutation();
+  const [deleteEvent] = useDeleteEventMutation();
 
 
   const FullCalendarAny = FullCalendar;
-
-  const [events, setEvents] = useState([
-    {
-      id: "1",
-      title: "Board Meeting",
-      start: "2026-03-10T08:00:00",
-      end: "2026-03-10T09:00:00",
-      location: "Conference Room",
-      description: "Very important meeting for management staff",
-    },
-    {
-      id: "2",
-      title: "Staff Training",
-      start: "2026-03-12T10:00:00",
-      end: "2026-03-12T12:00:00",
-      location: "Training Hall B",
-      description: "Quarterly compliance training",
-    },
-  ]);
 
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isViewOpen, setIsViewOpen] = useState(false);
@@ -119,10 +108,17 @@ export default function ScheduleCalendar({ role }) {
   };
 
   const handleEventClick = (arg) => {
-    const event = events.find((e) => e.id === arg.event.id);
-    if (!event) return;
 
-    setSelectedEvent(event);
+    const clickedEvent = {
+      id: arg.event.id,
+      title: arg.event.title,
+      start: arg.event.startStr,
+      end: arg.event.endStr || arg.event.startStr,
+      description: arg.event.extendedProps.description,
+      location: arg.event.extendedProps.location,
+    };
+
+    setSelectedEvent(clickedEvent);
 
     if (isAdmin) {
       setIsEditOpen(true);
@@ -131,61 +127,90 @@ export default function ScheduleCalendar({ role }) {
     }
   };
 
-  const handleEventDrop = (arg) => {
+  // Drag & Drop
+  const handleEventDrop = async (arg) => {
     if (!isAdmin) return;
 
     const { event } = arg;
 
-    setEvents((prev) =>
-      prev.map((e) =>
-        e.id === event.id
-          ? {
-              ...e,
-              start: event.startStr,
-              end: event.endStr || event.startStr,
-            }
-          : e
-      )
-    );
-  };
+    try {
 
-  const handleEventResize = (arg) => {
-    if (!isAdmin) return;
+      await updateEvent({
+        id: event.id,
+        title: event.title,
+        description: event.extendedProps.description,
+        location: event.extendedProps.location,
+        start: event.startStr,
+        end: event.endStr || event.startStr,
+      }).unwrap();
 
-    const { event } = arg;
-
-    setEvents((prev) =>
-      prev.map((e) =>
-        e.id === event.id
-          ? {
-              ...e,
-              start: event.startStr,
-              end: event.endStr || event.startStr,
-            }
-          : e
-      )
-    );
-  };
-
-  const handleSaveEvent = (eventData) => {
-    if (eventData.id) {
-      setEvents((prev) =>
-        prev.map((e) => (e.id === eventData.id ? eventData : e))
-      );
-    } else {
-      const newEvent = {
-        ...eventData,
-        id: Math.random().toString(36).substr(2, 9),
-      };
-
-      setEvents((prev) => [...prev, newEvent]);
+    } catch (error) {
+      toast.error(error?.data?.message || error.message);
     }
   };
 
-  const handleDeleteEvent = (id) => {
-    setEvents((prev) => prev.filter((e) => e.id !== id));
-    toast.success("Even deleted successfully")
+  
+  const handleEventResize = async (arg) => {
+    if (!isAdmin) return;
+
+    const { event } = arg;
+
+    try {
+
+      await updateEvent({
+        id: event.id,
+        title: event.title,
+        description: event.extendedProps.description,
+        location: event.extendedProps.location,
+        start: event.startStr,
+        end: event.endStr || event.startStr,
+      }).unwrap();
+
+    } catch (error) {
+      toast.error(error?.data?.message || error.message);
+    }
   };
+
+  // Save Even
+  const handleSaveEvent = async (eventData) => {
+    try {
+
+      if (eventData.id) {
+
+        await updateEvent({
+          id: eventData.id,
+          ...eventData,
+        }).unwrap();
+
+      } else {
+
+        await createEvent(eventData).unwrap();
+
+      }
+
+    } catch (error) {
+      toast.error(error?.data?.message || error.message);
+    }
+  };
+
+  // Delete Event
+  const handleDeleteEvent = async (id) => {
+    try {
+
+      await deleteEvent(id).unwrap();
+
+      toast.success("Event deleted successfully");
+
+    } catch (error) {
+      toast.error(error?.data?.message || error.message);
+    }
+  };
+
+
+  const bg = LightMode ? "bg-white" : "bg-black";
+  const shadow = LightMode ? "" : "";
+  const text = LightMode ? "text-black" : "text-white";
+  const gray = LightMode ? "text-black/80" : "text-white/80";
 
   return (
     <div className={`${bg} ${shadow} ${text} rounded-2xl border border-slate-200 overflow-hidden flex flex-col h-200 transition-all duration-300 ease-in-out`}>

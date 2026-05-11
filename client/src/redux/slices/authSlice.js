@@ -9,8 +9,10 @@ const initialState = {
   isProfileOpen: false,
   LightMode: JSON.parse(localStorage.getItem("lightMode")) ?? true,
   MiniMenu: true,
-  SelectUserDashInfo: null,
-  CPEditPopUp: false
+  selectedUserId: null,
+  selectedUserInfo: null,
+  userViewInfo: null,
+  CPEditPopUp: false,
 };
 
 
@@ -49,13 +51,28 @@ const authSlice = createSlice ({
       state.CPEditPopUp = action.payload;
     },
 
-    setSelectUserDashInfo : (state, action) => {
-      state.SelectUserDashInfo = action.payload;
-    }
+    setSelectUserDashInfo: (state, action) => {
+      state.selectedUserId = action.payload._id;
+      state.selectedUserInfo = action.payload;
+    },
+
+    setUserViewInfo: (state, action) => {
+      state.userViewInfo = action.payload;
+    },
   },
 })
 
 
-export const { setCredentials, logout, setOpenSidebar, setOpenProfile, setLightMode, setMiniMenu, setSelectUserDashInfo, setCPEditPopUp } = authSlice.actions
+export const { 
+  setCredentials,
+  logout,
+  setOpenSidebar, 
+  setOpenProfile, 
+  setLightMode, 
+  setMiniMenu, 
+  setSelectUserDashInfo, 
+  setCPEditPopUp,
+  setUserViewInfo
+} = authSlice.actions
 
 export default authSlice.reducer

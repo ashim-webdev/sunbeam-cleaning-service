@@ -92,11 +92,11 @@ export default function NotificationPanel() {
 
   return (
     <>
-      <Popover className='relative mr-3'>
+      <Popover className='relative flex justify-center item-center'>
         <Popover.Button className='inline-flex items-center outline-none'>
           <div className={`
               ${LightMode 
-                ? "text-"
+                ? "text-black"
                 : "text-white"
               }
               ClickAnimationNoti w-8 h-8 flex items-center justify-center  relative cursor-pointer  transition-transform hover:scale-105 ease-in-out duration-300

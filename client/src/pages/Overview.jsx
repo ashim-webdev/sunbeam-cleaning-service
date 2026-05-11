@@ -1,5 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  useDeleteUserMutation
+} from "../redux/slices/api/userApiSlice";
+import { toast } from "sonner";
 import AppAreaChart from "../components/OverviewComponents/AppAreaChart";
 import AppBarChart from "../components/OverviewComponents/AppBarChart";
 import AppPieChart from "../components/OverviewComponents/AppPieChart";
@@ -10,31 +14,50 @@ import ProfileCard from "../components/ProfileComponents/ProfileCard";
 import AddUser from "../components/AddUser";
 
 const Overview = () => {
-  const { LightMode } = useSelector((state) => state.auth);
+  const { LightMode, selectedUserInfo, selectedUserId, userViewInfo } = useSelector((state) => state.auth);
+
+  const [deleteUser] = useDeleteUserMutation();
+
+  const selectedUser = selectedUserInfo
   
+  // console.log("selectedUser",selectedUser, "selectedId", selectedUserId)
+
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-  const [selected, setSelected] = useState(null);
-
+  const [selected, setSelected] = useState(null)
 
   const openInfoClick = (el) => {
-    console.log(el)
-    setSelected(el);
     setOpen(true);
   };
 
   const deleteClick = (id) => {
-    // console.log(setOpenDialog)
-    setSelected(id);
+    setSelected(id)
     setOpenDialog(true);
   };
 
-  const editClick = (el) => {
-    // console.log(el)
-    setSelected(el);
+  const editClick = (id) => {
+    setSelected(id)
     setOpenEdit(true);
   };
+
+
+  const deleteHandler = async () => {
+    try {
+      const res = await deleteUser(selected);
+
+      toast.success(res?.data?.message);
+
+      setOpenDialog(false);
+      setSelected(null);
+      setOpen(false)
+
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    }
+  };
+
+
 
   const bg = LightMode ? "bg-primary-foreground" : "bg-black/90"
   const changeAnimation = "transition-all duration-300 ease-in-out"
@@ -64,7 +87,7 @@ const Overview = () => {
             </span>
 
             <div className="flex justify-center items-center w-full h-full px-4 pt-10 pb-2 rounded-lg">
-              <ProfileCard header="Employee's Profile" componentType="Profile Overview" onClick={(e) => e.stopPropagation()} profileSelected={selected} editClick={editClick} deleteClick={deleteClick} setOpen={setOpen}  />
+              <ProfileCard header="Employee's Profile" componentType="Profile Overview" onClick={(e) => e.stopPropagation()} profileSelected={selectedUser} editClick={editClick} deleteClick={deleteClick} setOpen={setOpen}  />
             </div>
           </div>
         </div>
@@ -89,21 +112,24 @@ const Overview = () => {
       <ConfirmationDialog
         open={openDialog}
         setOpen={setOpenDialog}
+        onClick={deleteHandler}
       />
 
       <AddUser
         open={openEdit}
         setOpen={setOpenEdit}
-        userData={selected}
-        key={new Date().getTime().toString()}
+        userData={selectedUser}
       />
 
       <ViewUserProfile 
         open={open}
         setOpen={setOpen}
-        profileSelected={selected}
+        profileSelected={userViewInfo}
         openDialog={openDialog}
         setOpenDialog={setOpenDialog}
+        deleteHandler={deleteHandler}
+        setSelected = {setSelected}
+        selected = {selected}
       />
     </div>
   );

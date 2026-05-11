@@ -12,7 +12,7 @@ const ModalWrapper = ({ open, setOpen, children, profile }) => {
     <Transition.Root show={open} as={Fragment}>
       <Dialog
         as='div'
-        className='relative z-80 w-full'
+        className='relative z-200 w-full'
         initialFocus={cancelButtonRef}
         onClose={() => {}}
       >
