@@ -11,7 +11,7 @@ import Dark_Light_Btn from "./Dark_Light_Btn";
 import ConnectionStatus from "./ConnectionStatus";
 
 const Navbar = ({ isScrolled, isSearchPanelOpen, setIsSearchPanelOpen }) => {
-  const { LightMode } = useSelector((state) => state.auth);
+  const { LightMode, user, onlineUsers } = useSelector((state) => state.auth);
   const [focus, setFocus] = useState(false);
 
   const dispatch = useDispatch();
@@ -109,9 +109,26 @@ const Navbar = ({ isScrolled, isSearchPanelOpen, setIsSearchPanelOpen }) => {
 
         <div className='sm:mr-8 mr-2'>
           <div className="flex justify-evenly items-center">
-            <div className="hidden xl:flex flex-col justify-center item-center mr-10">
-              <ConnectionStatus />
-            </div>
+
+            <AnimatePresence>
+              <motion.div
+                initial={{ opacity: 0, x: 80 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 120 }}
+                transition={{
+                  delay: 2,
+                  type: "spring",
+                  stiffness: 60,
+                  damping: 14,
+                  mass: 1.2,
+                }}
+                className="hidden xl:flex flex-col justify-center items-center mr-10"
+              >
+                <ConnectionStatus
+                  isOnline={onlineUsers.includes(user._id.toString())}
+                />
+              </motion.div>
+            </AnimatePresence>
 
             <div className="sm:block hidden mr-5 ">
               <span className={`
@@ -121,22 +138,28 @@ const Navbar = ({ isScrolled, isSearchPanelOpen, setIsSearchPanelOpen }) => {
               </span>
             </div>
 
-            {!focus && (
-              <span 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsSearchPanelOpen((prev) => !prev);
-                }}
-                className={`
-                  ${LightMode 
-                    ? "text-gray-500"
-                    : "text-gray-300"
-                  } 
-                  sm:hidden mr-3 hover:text-blue-600 hover:scale-105 active:scale-95 cursor-pointer  transition-all duration-300 ease-in-out
-                `}> 
-                <i className="fa-solid fa-magnifying-glass text-xl"></i>
-              </span>
-            )}
+            <AnimatePresence>
+              {!focus && (
+                <motion.span 
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.8 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsSearchPanelOpen((prev) => !prev);
+                  }}
+                  className={`
+                    ${LightMode 
+                      ? "text-gray-500"
+                      : "text-gray-300"
+                    } 
+                    sm:hidden mr-3 mt-2 hover:text-blue-600 hover:scale-105 active:scale-95 cursor-pointer  transition-all duration-300 ease-in-out
+                  `}> 
+                  <i className="fa-solid fa-magnifying-glass text-xl"></i>
+                </motion.span>
+              )}
+            </AnimatePresence>
             
             <div className="mt-1 flex justify-center item-center gap-3">
               <span className="flex justify-center item-center">

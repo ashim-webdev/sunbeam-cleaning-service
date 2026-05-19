@@ -26,7 +26,7 @@ const Status = () => {
 
   const deleteHandler = async () => {
     try {
-      const res = await deleteUser(selected);
+      const res = await deleteUser(selected?._id);
 
       toast.success(res?.data?.message);
 

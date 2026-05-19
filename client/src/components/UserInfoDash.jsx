@@ -16,7 +16,23 @@ import GroupedTeam from "./GroupedTeam";
 export default function UserInfoDash({ task }) {
   const { LightMode } = useSelector((state) => state.auth);
   
-  const team = task.team;
+  // Merging Members and Leader together
+  const members = (task.team?.members || []).map((member) => ({
+    ...member,
+    isLeader: false,
+  }));
+
+  const leader = task.team?.leader
+    ? {
+        ...task.team.leader,
+        isLeader: true,
+      }
+    : null;
+
+  const team = leader
+    ? [...members, leader]
+    : members;
+    
 
   // Displaying the remaining team members
   const visibleCount = 3;
@@ -39,6 +55,8 @@ export default function UserInfoDash({ task }) {
     whileElementsMounted: autoUpdate,
   })
 
+  // console.log(team)
+
   return (
     <div className="relative flex items-center -mr-6 ml-4">
       {/* Show first 2 avatars */}
@@ -51,8 +69,8 @@ export default function UserInfoDash({ task }) {
             "w-9 h-9 rounded-full border border-white flex items-center justify-center text-white text-sm -ml-4 shadow-inner overflow-hidden",
             BGS[index % BGS.length]
           )}>
-            {member?.img ? 
-              <img src={member?.img} alt="Avatar" className="w-full h-full object-cover "/>
+            {member?.profileImage ? 
+              <img src={member?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
             :
               <span>
                 {getInitials(member?.name || "Unknown User")}

@@ -4,7 +4,6 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import { useSelector } from "react-redux";
 import { Bar, Pie } from "react-chartjs-2";
 import { chartData } from "../assets/data";
-import { pieData } from "../assets/data";
 
 
 
@@ -12,10 +11,52 @@ ChartJS.register(ArcElement, Tooltip, Legend, LinearScale, CategoryScale, BarEle
 defaults.maintainAspectRatio = false;
 defaults.responsive = true;
 
-const Chart = () => {
-  const { LightMode } = useSelector((state) => state.auth);
-  
 
+
+
+
+const LoadingCircle = () => {
+  const { LightMode }  = useSelector((state) => state.auth);
+
+  const smallLoader = LightMode ? "dot-spinner" : "dot-spinnerDark"
+
+  return (
+    <div className='w-full py-3 flex items-center justify-center'>
+      <div className={`${smallLoader} transition-colors duration-300 ease-in-out animate-UpDown`}>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+      </div>
+    </div>
+  )
+}
+
+
+
+const Chart = ({ summary }) => {
+  const { LightMode } = useSelector((state) => state.auth);
+
+  console.log(summary)
+  
+  const pieData = [
+    {
+      name: "Todo",
+      total: summary?.tasks?.todo || 0,
+    },
+    {
+      name: "Progress",
+      total: summary?.tasks?.["in progress"] || 0,
+    },
+    {
+      name: "Completed",
+      total: summary?.tasks?.completed || 0,
+    },
+  ];
 
   return (
     <div className={`
@@ -132,60 +173,73 @@ const Chart = () => {
             }
             absolute -top-4 left-5 text-md inline-block px-2 py-1 rounded-full text-gray-700 font-bold transition-colors ease-in-out duration-300
           `}>Task Overview</h3>
-          <Pie
-            data={{
-              labels: pieData.map((data) => data.name),
-              datasets: [
-                {
-                  label: "Count",
-                  data: pieData.map((data) => data.total),
 
-                  backgroundColor: [
-                    "#0050D7",
-                    "#FF9900",
-                    "#D30055",
-                    "#007870",
+          {!summary?.tasks ||
+            Object.values(summary.tasks).reduce((acc, curr) => acc + curr, 0) === 0 ? (
+              <span className="flex justify-center items-center absolute top-0 bottom-0 right-0 left-0 animate-bounce">
+                <LoadingCircle />
+              </span>
+            )
+              :
+            ( 
+              <Pie
+                data={{
+                  labels: pieData.map((data) => data.name),
+                  datasets: [
+                    {
+                      label: "Count",
+                      data: pieData.map((data) => data.total),
+    
+                      backgroundColor: [
+                        "#0050D7",
+                        "#FF9900",
+                        "#D30055",
+                        "#007870",
+                      ],
+                      offset: (ctx) =>
+                        ctx.dataIndex === 0 || ctx.dataIndex === 4 ? 20 : 10,
+    
+                      borderColor: LightMode ? "#D9D9D0" : "#ffffff",
+                      borderWidth: 2,
+                    },
                   ],
-                  offset: (ctx) =>
-                    ctx.dataIndex === 0 || ctx.dataIndex === 4 ? 20 : 10,
-
-                  borderColor: LightMode ? "#D9D9D0" : "#ffffff",
-                  borderWidth: 2,
-                },
-              ],
-              animation: {
-                duration: 300,
-                easing: "easeInOutQuad",
-                animateColor: true, 
-              },
-            }}
-            options={{
-              plugins: {
-                legend: {
-                  display: false,
-                },
-                datalabels: {
-                  color: "#fff",
-                  font: {
-                    weight: "bold",
-                    size: 10,
+                  animation: {
+                    duration: 300,
+                    easing: "easeInOutQuad",
+                    animateColor: true, 
                   },
-                  formatter: (value, context) => {
-                    return `${context.chart.data.labels[context.dataIndex]}\n${value}`;
+                }}
+                options={{
+                  plugins: {
+                    legend: {
+                      display: false,
+                    },
+                    datalabels: {
+                      color: "#fff",
+                      font: {
+                        weight: "bold",
+                        size: 10,
+                      },
+                      formatter: (value, context) => {
+                        return `${context.chart.data.labels[context.dataIndex]}\n${value}`;
+                      },
+                      align: "center",
+                      textAlign: "center",
+                      anchor: "center",
+                    },
+    
+                    // Optional title (you can remove if you want)
+                    title: {
+                      display: true,
+                      text: "Task Overview",
+                    },
                   },
-                  align: "center",
-                  textAlign: "center",
-                  anchor: "center",
-                },
-
-                // Optional title (you can remove if you want)
-                title: {
-                  display: true,
-                  text: "Task Overview",
-                },
-              },
-            }}
-          />
+                }}
+              />
+            )
+          }
+          
+          
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from 'framer-motion';
 
-// import { useCreateSubTaskMutation } from "../../redux/slices/api/taskApiSlice";
+import { useCreateSubTaskMutation } from "../../redux/slices/api/taskApiSlice";
 import Button from "../Button";
 import Loading from "../Loading";
 import ModalWrapper from "../ModalWrapper";
@@ -13,17 +13,18 @@ import Textbox from "../Textbox";
 
 const AddSubTask = ({ open, setOpen, id }) => {
   const { LightMode } = useSelector((state) => state.auth);
+  const [addSubTask, { isLoading }] = useCreateSubTaskMutation();
   
   const {
     control,
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
-  // const [addSbTask, { isLoading }] = useCreateSubTaskMutation();
-  const [isLoading, setIsLoading] = useState(false)
   const [shake, setShake] = useState(false);
+
 
   const triggerShake = () => {
     setShake(true);
@@ -53,27 +54,26 @@ const AddSubTask = ({ open, setOpen, id }) => {
     }
   };
 
+
   const handleOnSubmit = async (data) => {
-    // try {
-    //   const res = await addSbTask({ data, id }).unwrap();
+    try {
+      const res = await addSubTask({ data, id }).unwrap();
 
-    //   toast.success(res.message);
+      toast.success(res.message);
 
-    //   setTimeout(() => {
-    //     setOpen(false);
-    //   }, 500);
-    // } catch (err) {
-    //   console.log(err);
-    //   toast.error(err?.data?.message || err.error);
-    // }
+      reset();
 
-    toast.success(task ? "Task Updated Successfully!" : "Task Added Successfully!");
+      setTimeout(() => {
+        setOpen(false);
+      }, 500);
 
-    setTimeout(() => {
-      setOpen(false);
-    }, 800);
+    } catch (err) {
+      console.log(err);
 
-    reset();
+      toast.error(
+        err?.data?.message || "Failed to create subtask"
+      );
+    }
   };
 
 

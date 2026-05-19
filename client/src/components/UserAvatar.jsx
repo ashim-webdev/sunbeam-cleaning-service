@@ -9,9 +9,7 @@ import { useLogoutMutation } from "../redux/slices/api/authApiSlice";
 import {useGetUserProfileQuery} from "../redux/slices/api/userApiSlice"
 import { logout } from "../redux/slices/authSlice";
 import { getInitials } from "../utils";
-// import ChangePassword from "./ChangePassword";
 
-import img2 from "../img/m2.jpg"
 
 
 const LoadingCircle = () => {

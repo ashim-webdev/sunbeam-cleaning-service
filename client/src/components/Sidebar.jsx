@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion"
 import { FaTasks, FaRegTrashAlt, FaUsers, FaCalendarCheck } from "react-icons/fa";
 import { Briefcase, AlarmClock, ChevronsUp, ChevronsDown, ChevronDown, ChevronUp , Send, BarChart3, PieChart } from 'lucide-react';
@@ -27,7 +27,7 @@ import ConnectionStatus from "./ConnectionStatus";
 
 
 const Sidebar = () => {
-  const { user } = useSelector((state) => state.auth);
+  const { user, onlineUsers } = useSelector((state) => state.auth);
   // DarkMode Change
   const { LightMode, MiniMenu, isProfileOpen }  = useSelector((state) => state.auth);
 
@@ -40,6 +40,7 @@ const Sidebar = () => {
   const navigate = useNavigate()
 
   const SIDEBAR_ANIMATION_MS = 200;
+  const REFRESH_PAGE = 400;
 
   const handleNavClick = (path) => {
     dispatch(setOpenSidebar(false)); // start slide-out
@@ -78,13 +79,13 @@ const Sidebar = () => {
     },
     {
       label: "In Progress",
-      link: "in-progress/in-progress",
+      link: "in-progress/in progress",
       icon: <MdHourglassEmpty />,
       role: ["admin", "employee"]
     },
     {
       label: "To Do",
-      link: "todo/todo",
+      link: "todos/todo",
       icon: <MdOutlinePendingActions />,
       role: ["admin", "employee"]
     },
@@ -207,7 +208,7 @@ const Sidebar = () => {
         </div>
         
         <div className="xl:hidden flex sm:flex-col sm:mr-6 md:mr-10 lg:mr-20 justify-center item-center">
-          <ConnectionStatus />
+          <ConnectionStatus isOnline={onlineUsers.includes(user._id.toString())}/>
         </div>
       </div>
 
@@ -305,7 +306,7 @@ const Sidebar = () => {
       className={`
           relative flex flex-row justify-between items-center sm:mt-0 cursor-pointer transition-all duration-300 ease-in-out
         `}>
-        <div onClick={(e) => e.stopPropagation()} className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} rounded-2xl w-full transition-all duration-300 ease-in-out`}>
+        <div onClick={(e) => e.stopPropagation()} className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} parentDiv rounded-2xl w-full transition-all duration-300 ease-in-out`}>
           <ProfileDropdown />
         </div>
       </div>

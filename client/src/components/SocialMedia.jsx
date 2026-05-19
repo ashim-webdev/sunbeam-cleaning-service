@@ -5,6 +5,7 @@ const SocialMedia = ({tiktok, x, whatsApp, telegram}) => {
   const message = () => {
     toast.error("No available link")
   }
+
   return (
     <div className="tooltip-container">
       <span className="plane">

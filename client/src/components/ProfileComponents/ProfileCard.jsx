@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import Button from '../Button';
 import LinearSocial from "../LinearSocial";
+import OnlineStatus from "../OnlineStatus";
 
 
 const Loading = () => {
@@ -48,33 +49,44 @@ const ProfileCard = ({
   header
 }) => {
   const [swap, setSwap] = useState(false);
-  const { LightMode, selectedUserInfo }  = useSelector((state) => state.auth);
+  const {
+    LightMode,
+    selectedUserInfo,
+    onlineUsers
+  }  = useSelector((state) => state.auth);
 
   const selectedUser = selectedUserInfo || null;
 
   // console.log("UserInfo:",selectedUserInfo)
 
-  const compare = componentType === "Profile Overview" ? selectedUser : profileSelected
+  const compare =
+    componentType === "Profile Overview"
+      ? selectedUser
+      : profileSelected;
 
   const { data: users = [] } = useGetTeamListsQuery(undefined, {
+    skip: componentType === "Profile",
     refetchOnMountOrArgChange: true,
     refetchOnFocus: true,
     refetchOnReconnect: true,
   });
 
-
-  const freshUser = users.find(
-    (user) => user._id === compare?._id
-  );
+  const freshUser =
+    componentType === "Profile"
+      ? profileSelected
+      : users.find((user) => user._id === compare?._id);
 
 
 
   useEffect(() => {
-    setSwap(true)
-    setTimeout(() => {
-      setSwap(false)
-    }, 1000);
-  }, [selectedUser])
+    setSwap(true);
+
+    const timer = setTimeout(() => {
+      setSwap(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [freshUser]);
 
 
   const cardBg = LightMode ? "bg-white text-gray-700 shadow-darkSM" :  "bg-black/90 text-gray-200 shadow-lightSM"
@@ -119,7 +131,30 @@ const ProfileCard = ({
                         </span>
                       }
                       </span>
-                    </div> 
+
+                    </div>
+
+                    
+                    <AnimatePresence>
+                      <motion.div
+                        initial={{ opacity: 0, x: -80 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 120 }}
+                        transition={{
+                          delay: 2,
+                          type: "spring",
+                          stiffness: 60,
+                          damping: 14,
+                          mass: 1.2,
+                        }}
+                        className="absolute -top-2 -left-4 flex flex-col justify-center items-center mr-10"
+                      >
+                        <OnlineStatus
+                          isOnline={onlineUsers.includes(freshUser._id.toString())}
+                          type="Overview"
+                        />
+                      </motion.div>
+                    </AnimatePresence>
 
 
                     {freshUser ? (

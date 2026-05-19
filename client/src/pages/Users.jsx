@@ -37,6 +37,8 @@ const Users = () => {
     refetchOnReconnect: true,
     refetchOnFocus: true,
   });
+
+  // console.log(data)
   const [deleteUser] = useDeleteUserMutation();
   const [userAction] = useUserActionMutation();
 
@@ -47,6 +49,9 @@ const Users = () => {
   const [openAction, setOpenAction] = useState(false);
   const [selected, setSelected] = useState(null);
   const [profileSelected, setProfileSelected] = useState(null);
+
+  // console.log(selected)
+  // console.log(profileSelected)
 
   const deleteClick = (id) => {
     setSelected(id);
@@ -73,14 +78,21 @@ const Users = () => {
       const res = await deleteUser(selected);
 
       refetch();
+
       toast.success(res?.data?.message);
+
       setSelected(null);
+
+      setOpenProfile(false);
+
       setTimeout(() => {
         setOpenDialog(false);
       }, 500);
+
     } catch (error) {
-      console.log(err);
-      toast.error(err?.data?.message || err.error);
+      console.log(error);
+
+      toast.error(error?.data?.message || error?.error);
     }
   };
 
@@ -98,8 +110,8 @@ const Users = () => {
         setOpenAction(false);
       }, 500);
     } catch (error) {
-      console.log(err);
-      toast.error(err?.data?.message || err.error);
+      console.log(error);
+      toast.error(error?.data?.message || error.error);
     }
   };
 
@@ -198,32 +210,27 @@ const Users = () => {
       </td>
       <td className={`p-2 px-6 whitespace-nowrap text-start ${user.isActive ? "" : "blur-[2px]"}`}>{user.title}</td>
       <td className={`p-2 px-4 text-start ${user.isActive ? "" : "blur-[2px]"}`}>{user.email}</td>
-      <td className={`p-2 line-clamp-2 whitespace-nowrap text-center ${user.isActive ? "" : "blur-[2px]"}`}>{user.role}</td>
+      <td className={`p-2 pr-4 pl-8  text-center whitespace-nowrap ${user.isActive ? "" : "blur-[2px]"}`}>{user.role}</td>
       <td className="px-8">
         <div className="flex justify-center items-center">
-          <button 
-            onClick={(e) => {
-              e.stopPropagation()
-              userStatusClick(user)
-            }} 
-            className="cursor-pointer active:scale-103"
-            >
-            <Badge 
-              className={`${user.isActive ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"} text-white text-[16px] hover:scale-103 shadow-darkSM transition-all duration-100 ease-in-out`}
-            >
-              {user.isActive ? "Active" : "Disabled"}
-            </Badge>     
-          </button>       
+          <div className="cursor-pointer active:scale-103 w-22 flex justify-center item-center">
+            {/* Disable User Button */}
+            <span className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} transition-all duration-300 ease-in-out rounded-xl`}>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  userStatusClick(user)
+                }}
+                className={`${user.isActive ? "vista-buttonActive" : "vista-buttonDisabled"} transition-all duration-300 ease-in-out`}
+              >
+                <span>{user.isActive ? "Active" : "Disabled"}</span>
+              </button> 
+            </span>    
+          </div>       
         </div>
         
       </td>
       <td className='p-2 flex gap-3 justify-center'>
-        {/* <Button
-          className='text-blue-600 hover:text-blue-500 font-semibold sm:px-0'
-          label='Edit'
-          type='button'
-          onClick={() => editClick(user)}
-        /> */}
         <EditBtn 
           onClick={(e) => {
             e.stopPropagation()
@@ -231,12 +238,6 @@ const Users = () => {
           }}
         />
 
-        {/* <Button
-          className='text-red-700 hover:text-red-500 font-semibold sm:px-0'
-          label='Delete'
-          type='button'
-          onClick={() => deleteClick(user?._id)}
-        /> */}
         <DeleteBtn
           onClick={(e) => {
             e.stopPropagation()
@@ -290,12 +291,6 @@ const Users = () => {
         </div>
 
         <div className='absolute -top-6 -right-6 p-2 flex flex-col gap-1.5 justify-center'>
-          {/* <Button
-            className='text-blue-600 hover:text-blue-500 font-semibold sm:px-0'
-            label='Edit'
-            type='button'
-            onClick={() => editClick(user)}
-          /> */}
           <span className={`
               ${LightMode
                 ? "border-[#E8E8E8]"
@@ -311,12 +306,6 @@ const Users = () => {
           />
           </span>
 
-          {/* <Button
-            className='text-red-700 hover:text-red-500 font-semibold sm:px-0'
-            label='Delete'
-            type='button'
-            onClick={() => deleteClick(user?._id)}
-          /> */}
           <span className={`
               ${LightMode
                 ? "border-[#E8E8E8]"
@@ -371,7 +360,7 @@ const Users = () => {
                 ? "border-[#E8E8E8] bg-[#E8E8E8]"
                 : "border-[#3D3D3D] bg-[#3D3D3D]"
               }
-              absolute -bottom-6 -right-4 flex justify-center items-center rounded-md border-6 transition-all duration-300 ease-in-out
+              absolute -bottom-6 -right-4 w-fit flex justify-center items-center rounded-2xl border-6 transition-all duration-300 ease-in-out
             `}>
             <AnimatePresence>
               <motion.span
@@ -380,19 +369,20 @@ const Users = () => {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5 }}
               >
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    userStatusClick(user)
-                  }} 
-                  className="cursor-pointer active:scale-103"
-                  >
-                  <Badge 
-                    className={`${user.isActive ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"} text-white text-[16px] hover:scale-103 shadow-darkSM transition-all duration-100 ease-in-out`}
-                  >
-                    {user.isActive ? "Active" : "Disabled"}
-                  </Badge>     
-                </button>       
+                <div className="cursor-pointer active:scale-103 flex justify-center item-center">
+                  {/* Disable User Button */}
+                  <span className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} transition-all duration-300 ease-in-out rounded-xl`}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        userStatusClick(user)
+                      }}
+                      className={`${user.isActive ? "vista-buttonActive" : "vista-buttonDisabled"} transition-all duration-300 ease-in-out`}
+                    >
+                      <span>{user.isActive ? "Active" : "Disabled"}</span>
+                    </button>
+                  </span>  
+                </div>
               </motion.span>
             </AnimatePresence>
           </div>
@@ -485,6 +475,8 @@ const Users = () => {
         openDialog={openDialog}
         setOpenDialog={setOpenDialog}
         deleteHandler={deleteHandler}
+        setSelected = {setSelected}
+        selected = {selected}
       />
     </>
   );

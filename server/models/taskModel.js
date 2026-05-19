@@ -3,6 +3,19 @@ import mongoose, { Schema } from "mongoose";
 const taskSchema = new Schema(
   {
     title: { type: String, required: true },
+
+    clientName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    address: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
     date: { type: Date, default: new Date() },
 
     priority: {
@@ -26,9 +39,12 @@ const taskSchema = new Schema(
             "assigned",
             "started",
             "in progress",
-            "bug",
+            "problem",
             "completed",
             "commented",
+            "duplicated",
+            "trashed",
+            "restored",
           ],
         },
         activity: String,
@@ -47,12 +63,19 @@ const taskSchema = new Schema(
     ],
 
     description: String,
-    equipments: [String], // ✅ changed from links → equipments
-    assets: [String],
+
+    equipments: [String],
+
+    assets: [
+      {
+        url: String,
+        public_id: String,
+      },
+    ],
 
     team: {
-      members: [{ type: Schema.Types.ObjectId, ref: "User" }],
-      leader: { type: Schema.Types.ObjectId, ref: "User" },
+      members: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+      leader: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
     },
 
     isTrashed: { type: Boolean, default: false },

@@ -54,7 +54,7 @@ export default function EventViewPopover({
                   {event.title}
                 </DialogTitle>
 
-                <button onClick={onClose} className={`${text} p-1 rounded-full hover:bg-slate-100 transition-colors duration-300 ease-in-out text-slate-500 hover:text-slate-600`}>
+                <button onClick={onClose} className={`${text} p-1 rounded-full hover:bg-slate-100 transition-colors duration-300 ease-in-out text-slate-500 hover:text-slate-600 cursor-pointer`}>
                   <X size={25} />
                 </button>
               </div>
@@ -63,15 +63,15 @@ export default function EventViewPopover({
                 <div className="flex flex-col justify-start items-start gap-3">
                   
                   <span className='flex flex-col justify-center items-start mb-2'>
-                    <span className='italic'>Start Date & Time</span>
+                    <span className='italic pb-1'>Start Date & Time</span>
 
                     <span className='flex justify-center items-center gap-4 text-green-600'>
                       <span className='flex justify-center items-center gap-3 whitespace-nowrap'>
-                        <i className="fa-solid fa-calendar text-lg text-blue-600"></i>
+                        <i className="fa-solid fa-calendar text-lg text-gray-400"></i>
                         {start.datePart}
                       </span>
                       <span className='flex justify-center items-center gap-3 whitespace-nowrap'>
-                        <i className="fa-regular fa-clock text-lg text-blue-600"></i>
+                        <i className="fa-regular fa-clock text-lg text-gray-400"></i>
                         {start.timePart}
                       </span>
                     </span>
@@ -79,15 +79,15 @@ export default function EventViewPopover({
                   </span>
 
                   <span className='flex flex-col justify-center items-start'>
-                    <span className='italic'>End Date & Time</span>
+                    <span className='italic pb-1'>End Date & Time</span>
 
                     <span className='flex justify-center items-center gap-4 text-red-600'>
                       <span className='flex justify-center items-center gap-3 whitespace-nowrap'>
-                        <i className="fa-solid fa-calendar text-lg text-blue-600"></i>
+                        <i className="fa-solid fa-calendar text-lg text-gray-400"></i>
                         {end.datePart}
                       </span>
                       <span className='flex justify-center items-center gap-3 whitespace-nowrap'>
-                        <i className="fa-regular fa-clock text-lg text-blue-600"></i>
+                        <i className="fa-regular fa-clock text-lg text-gray-400"></i>
                         {end.timePart}
                       </span>
                     </span>
@@ -97,14 +97,14 @@ export default function EventViewPopover({
 
                 {event.location && (
                   <div className={`flex mt-6 pt-6 justify-start items-center gap-3 border-t ${border} transition-colors duration-300 ease-in-out`}>
-                    <MapPin size={20} />
+                    <MapPin size={20} className='text-gray-400'/>
                     <span>{event.location}</span>
                   </div>
                 )}
 
                 {event.description && (
                   <div className="flex mt-8 justify-start items-start gap-3">
-                    <span className='pl-px'><AlignLeft size={20} /></span>
+                    <span className='pl-px'><AlignLeft size={20} className='text-gray-400' /></span>
                     <span className='-mt-0.5'>{event.description}</span>
                   </div>
                 )}

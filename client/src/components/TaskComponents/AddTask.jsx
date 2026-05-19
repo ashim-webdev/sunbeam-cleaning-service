@@ -1,21 +1,15 @@
 import { useEffect } from "react";
 import { Dialog } from "@headlessui/react";
-// import {
-//   getDownloadURL,
-//   getStorage,
-//   ref,
-//   uploadBytesResumable,
-// } from "firebase/storage";
 import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { BiImages } from "react-icons/bi";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from 'framer-motion';
 
-// import {
-//   useCreateTaskMutation,
-//   useUpdateTaskMutation,
-// } from "../../redux/slices/api/taskApiSlice";
+import {
+  useCreateTaskMutation,
+  useUpdateTaskMutation,
+} from "../../redux/slices/api/taskApiSlice";
 import { dateFormatter } from "../../utils";
 import { useSelector } from "react-redux";
 // import { app } from "../../utils/firebase";
@@ -25,58 +19,49 @@ import ModalWrapper from "../ModalWrapper";
 import SelectList from "../SelectList";
 import Textbox from "../Textbox";
 import UserList from "./UserList";
-import { tasks } from "@/assets/data";
+
+
+
 
 const LISTS = ["TODO", "IN PROGRESS", "COMPLETED"];
 const PRIORITY = ["HIGH", "MEDIUM", "NORMAL", "LOW"];
 
-const uploadedFileURLs = [];
 
-// const uploadFile = async (file) => {
-//   const storage = getStorage(app);
-
-//   const name = new Date().getTime() + file.name;
-//   const storageRef = ref(storage, name);
-
-//   const uploadTask = uploadBytesResumable(storageRef, file);
-
-//   return new Promise((resolve, reject) => {
-//     uploadTask.on(
-//       "state_changed",
-//       (snapshot) => {
-//         console.log("Uploading");
-//       },
-//       (error) => {
-//         reject(error);
-//       },
-//       () => {
-//         getDownloadURL(uploadTask.snapshot.ref)
-//           .then((downloadURL) => {
-//             uploadedFileURLs.push(downloadURL);
-//             resolve();
-//           })
-//           .catch((error) => {
-//             reject(error);
-//           });
-//       }
-//     );
-//   });
-// };
 
 const AddTask = ({ open, setOpen, task }) => {
   const { LightMode } = useSelector((state) => state.auth);
+
+  const [createTask, { isLoading }] = useCreateTaskMutation();
+  const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
+
+
+  // image field
+  const [assets, setAssets] = useState([]);
+
+  const [stage, setStage] = useState(task?.stage?.toUpperCase() || LISTS[0]);
+  const [team, setTeam] = useState({
+    members: task?.team?.members || [],
+    leader: task?.team?.leader || null,
+  });
+  const [priority, setPriority] = useState(
+    task?.priority?.toUpperCase() || PRIORITY[2]
+  );
+
+  const [uploading, setUploading] = useState(false);
+  const [shake, setShake] = useState(false);
+  
+
   // const task = ""
   const defaultValues = {
     title: task?.title || "",
     clientName: task?.clientName || "",
     address: task?.address || "",
     date: dateFormatter(task?.date || new Date()),
-    team: [],
     stage: "",
     priority: "",
     assets: [],
     description: task?.description || "",
-    equipments: task?.equipments || "",
+    equipments: task?.equipments?.join(", ") || "",
   };
   const {
     control,
@@ -86,16 +71,31 @@ const AddTask = ({ open, setOpen, task }) => {
     formState: { errors },
   } = useForm({ defaultValues });
 
-  const [stage, setStage] = useState(task?.stage?.toUpperCase() || LISTS[0]);
-  const [team, setTeam] = useState(task?.team || []);
-  const [priority, setPriority] = useState(
-    task?.priority?.toUpperCase() || PRIORITY[2]
-  );
+  // Make members & leader show up when editing task
+  useEffect(() => {
+    if (task) {
+      setTeam({
+        members: task?.team?.members || [],
+        leader: task?.team?.leader || null,
+      });
 
-  const [uploading, setUploading] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [shake, setShake] = useState(false);
+      setStage(task?.stage?.toUpperCase() || LISTS[0]);
+
+      setPriority(
+        task?.priority?.toUpperCase() || PRIORITY[2]
+      );
+
+      reset({
+        title: task?.title || "",
+        clientName: task?.clientName || "",
+        address: task?.address || "",
+        date: dateFormatter(task?.date || new Date()),
+        description: task?.description || "",
+        equipments: task?.equipments?.join(", ") || "",
+      });
+    }
+  }, [task, reset]);
+
 
   const triggerShake = () => {
     setShake(true);
@@ -140,58 +140,93 @@ const AddTask = ({ open, setOpen, task }) => {
       formData.append("clientName", data.clientName);
       formData.append("address", data.address);
       formData.append("date", data.date);
-      formData.append("stage", stage);
-      formData.append("priority", priority);
+      formData.append("stage", stage.toLowerCase());
+      formData.append("priority", priority.toLowerCase());
       formData.append("description", data.description);
 
       // ✅ equipments
-      formData.append("equipments", JSON.stringify([data.equipments]));
+      const equipmentsArray = data.equipments
+        .split(",")
+        .map(item => item.trim());
+
+      formData.append(
+        "equipments",
+        JSON.stringify(equipmentsArray)
+      );
+
+      // ✅ Remove leader form members
+      const filteredMembers = (team.members || []).filter(
+        (id) => id !== team.leader
+      );
 
       // ✅ team
       formData.append(
         "team",
         JSON.stringify({
-          members: team,
-          leader: team[0] || null,
+          members: filteredMembers,
+          leader: team.leader || null,
         })
       );
 
-      // 🔥 NEW IMAGES ONLY
+      // // ✅ team
+      // formData.append(
+      //   "team",
+      //   JSON.stringify({
+      //     members: team.members || [],
+      //     leader: team.leader || null,
+      //   })
+      // );
+
+      // NEW FILES ONLY
       assets.forEach((item) => {
-        if (item.file) {
+        if (!item.isExisting && item.file) {
           formData.append("assets", item.file);
         }
       });
 
-      // ✅ IMPORTANT: send old images when editing
-      if (task?.assets) {
-        formData.append("existingAssets", JSON.stringify(task.assets));
+      // EXISTING CLOUDINARY FILES ONLY
+      const existingAssets = assets
+        .filter((item) => item.isExisting)
+        .map((item) => ({
+          url: item.preview,
+          public_id: item.public_id,
+        }));
+
+      formData.append(
+        "existingAssets",
+        JSON.stringify(existingAssets)
+      );
+
+      // Sending data to RTK redux endpoint
+      if (task?._id) {
+        await updateTask({
+          id: task._id,
+          formData,
+        }).unwrap();
+
+      } else {
+        await createTask(formData).unwrap();
       }
-
-      const url = task?._id
-        ? `/api/tasks/${task._id}` // UPDATE
-        : `/api/tasks/create`;     // CREATE
-
-      const method = task?._id ? "PUT" : "POST";
-
-      const res = await fetch(url, {
-        method,
-        body: formData,
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) throw new Error(result.message);
 
       toast.success(
         task ? "Task Updated Successfully!" : "Task Added Successfully!"
       );
 
-      setTimeout(() => setOpen(false), 800);
+      setTimeout(() => {
+        setOpen(false)
+      }, 800);
 
       reset();
+
+      setTeam({
+        members: [],
+        leader: null,
+      });
+
       setAssets([]);
-      setImages([]);
+
+      setStage(LISTS[0]);
+      setPriority(PRIORITY[2]);
 
     } catch (err) {
       console.log(err);
@@ -199,21 +234,16 @@ const AddTask = ({ open, setOpen, task }) => {
     }
   };
 
-  // const [createTask, { isLoading }] = useCreateTaskMutation();
-  // const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
-  // const URLS = task?.assets ? [...task.assets] : [];
-
-  // image field
-  const [assets, setAssets] = useState([]);
-  const [images, setImages] = useState([]);
-
+  // Cleanup Effect
   useEffect(() => {
     return () => {
-      images.forEach((fileObj) => {
-        URL.revokeObjectURL(fileObj.preview);
+      assets.forEach((item) => {
+        if (!item.isExisting && item.preview) {
+          URL.revokeObjectURL(item.preview);
+        }
       });
     };
-  }, [images]);
+  }, [assets]);
 
   const MAX_FILES = 10;
   const MAX_SIZE = 2 * 1024 * 1024; // 2MB
@@ -221,14 +251,14 @@ const AddTask = ({ open, setOpen, task }) => {
   const handleSelect = (e) => {
     const files = Array.from(e.target.files);
 
-    // ❌ Limit number of files
-    if (files.length > MAX_FILES) {
-      toast.error(`You can upload a maximum of ${MAX_FILES} images`);
+    const remainingSlots = MAX_FILES - assets.length;
+
+    if (files.length > remainingSlots) {
+      toast.error(`You can only add ${remainingSlots} more images`);
       return;
     }
 
-    // ✅ Filter only images
-    const imageFiles = files.filter(file =>
+    const imageFiles = files.filter((file) =>
       file.type.startsWith("image/")
     );
 
@@ -237,35 +267,38 @@ const AddTask = ({ open, setOpen, task }) => {
       return;
     }
 
-    // ❌ File size validation
-    const validFiles = imageFiles.filter(file => file.size <= MAX_SIZE);
+    const validFiles = imageFiles.filter(
+      (file) => file.size <= MAX_SIZE
+    );
 
     if (validFiles.length !== imageFiles.length) {
       toast.error("Each image must be less than 2MB");
       return;
     }
 
-    // ✅ Add preview URL (important for memory fix later)
-    const filesWithPreview = validFiles.map(file => ({
+    const newAssets = validFiles.map((file) => ({
       file,
       preview: URL.createObjectURL(file),
+      isExisting: false,
     }));
 
-    setAssets(filesWithPreview);   // store objects now
-    setImages(filesWithPreview);   // same structure
+    setAssets((prev) => [...prev, ...newAssets]);
   };
 
   // ✅ Load existing images on edit from task.assets URLs in Cloudinary (no file objects, just URLs)
   useEffect(() => {
-    if (open && task?.assets?.length) {
-      const existingImages = task.assets.map((url) => ({
-        file: null,
-        preview: url,
-        isExisting: true,
-      }));
+    if (open) {
+      if (task?.assets?.length) {
+        const existingAssets = task.assets.map((item) => ({
+          preview: item.url,
+          public_id: item.public_id,
+          isExisting: true,
+        }));
 
-      setImages(existingImages);
-      setAssets(existingImages);
+        setAssets(existingAssets);
+      } else {
+        setAssets([]);
+      }
     }
   }, [open, task]);
 
@@ -273,22 +306,20 @@ const AddTask = ({ open, setOpen, task }) => {
   const handleRemoveImage = (e, index) => {
     e.stopPropagation();
 
-    setImages(prev => {
+    setAssets((prev) => {
       const updated = [...prev];
 
-      // 🔥 clean memory for removed image
-      URL.revokeObjectURL(updated[index].preview);
+      const removed = updated[index];
+
+      if (!removed.isExisting) {
+        URL.revokeObjectURL(removed.preview);
+      }
 
       updated.splice(index, 1);
-      return updated;
-    });
 
-    setAssets(prev => {
-      const updated = [...prev];
-      updated.splice(index, 1);
       return updated;
     });
-  }
+  };
 
   const today = new Date();
   const safeToday = new Date(
@@ -411,7 +442,7 @@ const AddTask = ({ open, setOpen, task }) => {
                     className='flex flex-col items-center gap-1 text-base text-ascent-2 hover:text-ascent-1 cursor-pointer my-4'
                     htmlFor='imgUpload'
                   >
-                    {images.length === 0 
+                    {assets.length === 0 
                       ?
                       <div className="flex flex-col items-center gap-1 text-base text-ascent-2 hover:text-ascent-1 hover:text-blue-600 transition-all duration-200 ease-in-out cursor-pointer">
                       <input
@@ -436,7 +467,7 @@ const AddTask = ({ open, setOpen, task }) => {
                       <div onClick={(e) => e.stopPropagation()}>
                         {/* Preview Grid */}
                         <div className="flex flex-wrap justify-center items-center mt-2">
-                          {images.map((file, index) => (
+                          {assets.map((file, index) => (
                             <div 
                               key={index}
                               className="relative transition-all duration-300 ease-in-out hover:scale-125 hover:z-50 mb-2 -ml-2"
@@ -457,9 +488,9 @@ const AddTask = ({ open, setOpen, task }) => {
                           ))}
                         </div>
                         {/* Selected count */}
-                        {images.length > 0 && (
+                        {assets.length > 0 && (
                           <p className={`${LightMode ? "text-gray-500" : "text-gray-300"} mb-1 text-sm mt-0.5 text-center`}>
-                            {`${images.length} ${images.length >= 2 ? "images selected" : "image selected"}`}
+                            {`${assets.length} ${assets.length >= 2 ? "images selected" : "image selected"}`}
                           </p>
                         )}
                       </div>
@@ -558,6 +589,7 @@ const AddTask = ({ open, setOpen, task }) => {
                 <Button
                   label='Submit'
                   type='submit'
+                  disable={isLoading || isUpdating}
                   className='ClickAnimationNoti bg-blue-600 px-5 shadow-inner hover:shadow-innerWH transition-colors duration-200 ease-in-out text-sm rounded-sm font-semibold text-white hover:bg-blue-700  sm:w-auto'
                 />
 

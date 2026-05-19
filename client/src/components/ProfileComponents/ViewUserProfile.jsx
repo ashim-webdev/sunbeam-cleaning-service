@@ -33,7 +33,6 @@ const ViewUserProfile = ({
   ) || profileSelected;
 
 
-
   const [openEdit, setOpenEdit] = useState(false);
 
   const deleteClick = (id) => {
@@ -42,7 +41,6 @@ const ViewUserProfile = ({
   };
 
   const editClick = (el) => {
-    // console.log(el)
     setSelected(el);
     setOpenEdit(true);
   };

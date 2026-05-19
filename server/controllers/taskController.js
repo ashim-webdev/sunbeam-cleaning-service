@@ -3,14 +3,41 @@ import Notice from "../models/notis.js";
 import Task from "../models/taskModel.js";
 import User from "../models/userModel.js";
 import cloudinary from "../utils/cloudinary.js";
+import {
+  canAccessTask,
+  adminOnly,
+  canCompleteSubTask
+} from "../utils/taskAuthorization.js";
+
+// Socket.io
+import {
+  emitTaskCreated,
+  emitTaskUpdated,
+  emitTaskDeleted,
+  emitDashboardUpdate,
+} from "../utils/socketEvents.js";
+
+
+
+
 
 // Changed
 const createTask = asyncHandler(async (req, res) => {
   try {
+    // ADMIN ONLY
+    if (!adminOnly(req.user)) {
+      return res.status(403).json({
+        status: false,
+        message: "Only admins can create tasks",
+      });
+    }
+
     const userId = req.user._id;
 
     const {
       title,
+      clientName,
+      address,
       stage,
       date,
       priority,
@@ -18,27 +45,106 @@ const createTask = asyncHandler(async (req, res) => {
       description,
     } = req.body;
 
-    // ✅ parse JSON fields
+    // VALIDATION
+    if  (
+      !title ||
+      !clientName ||
+      !address ||
+      !date ||
+      !priority ||
+      !stage
+    ) {
+      return res.status(400).json({
+        status: false,
+        message: "Required fields missing",
+      });
+    }
+
+    const allowedStages = [
+      "todo",
+      "in progress",
+      "completed",
+    ];
+
+    if (!allowedStages.includes(stage.toLowerCase())) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid stage value",
+      });
+    }
+
+    // PARSE TEAM
     let team = { members: [], leader: null };
 
     try {
       team = JSON.parse(req.body.team || "{}");
-    } catch (e) {
-      team = { members: [], leader: null };
+    } catch (error) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid team data",
+      });
     }
 
+    // PARSE EQUIPMENTS
     let parsedEquipments = [];
 
     try {
       parsedEquipments = JSON.parse(equipments || "[]");
-    } catch (e) {
-      parsedEquipments = [];
+    } catch (error) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid equipments data",
+      });
     }
 
-    const members = team.members || [];
-    const leader = team.leader || null;
 
-    // 🔥 Upload images to Cloudinary
+    const leader =
+    typeof team.leader === "object"
+      ? team.leader?._id?.toString()
+      : team.leader?.toString() || null;
+
+    // REMOVE leader from members
+    const members = (team.members || [])
+    .map((member) =>
+      typeof member === "object"
+        ? member._id?.toString()
+        : member?.toString()
+    )
+    .filter(Boolean)
+    .filter(
+      (member) => member !== leader?.toString()
+    );
+
+    const specialMembers = [...new Set(members)];
+    
+    if (specialMembers.length !== members.length) {
+      return res.status(400).json({
+        status: false,
+        message: "Duplicate team members are not allowed",
+      });
+    }
+
+
+    // FINAL TEAM USERS (members + leader)
+    const uniqueMembers = leader
+      ? [...specialMembers, leader]
+      : specialMembers;
+
+
+
+    // VALIDATE MEMBERS EXIST
+    const validUsers = await User.find({
+      _id: { $in: uniqueMembers },
+    }).select("_id");
+
+    if (validUsers.length !== uniqueMembers.length) {
+      return res.status(400).json({
+        status: false,
+        message: "Some team members are invalid",
+      });
+    }
+
+    // UPLOAD IMAGES
     let assetUrls = [];
 
     if (req.files && req.files.length > 0) {
@@ -49,7 +155,11 @@ const createTask = asyncHandler(async (req, res) => {
               { folder: "tasks" },
               (error, result) => {
                 if (error) reject(error);
-                else resolve(result.secure_url);
+
+                resolve({
+                  url: result.secure_url,
+                  public_id: result.public_id,
+                });
               }
             );
 
@@ -60,55 +170,82 @@ const createTask = asyncHandler(async (req, res) => {
       assetUrls = await Promise.all(uploadPromises);
     }
 
+    // NOTIFICATION TEXT
     let text = "New task has been assigned to you";
 
-    if (members.length > 1) {
-      text += ` and ${members.length - 1} others.`;
+    if (uniqueMembers.length > 1) {
+      text += ` and ${uniqueMembers.length - 1} others.`;
     }
 
-    text += ` Priority: ${priority}, Date: ${new Date(date).toDateString()}`;
+    text += ` Priority: ${priority}, Date: ${new Date(
+      date
+    ).toDateString()}`;
 
+    // ACTIVITY
     const activity = {
       type: "assigned",
       activity: text,
       by: userId,
     };
 
+    // CREATE TASK
     const task = await Task.create({
       title,
-      team: { members, leader },
+      clientName,
+      address,
+      team: { 
+        members: specialMembers,
+        leader 
+      },
       stage: stage.toLowerCase(),
       date,
       priority: priority.toLowerCase(),
-      assets: assetUrls, // ✅ SAVE URLS HERE
+      assets: assetUrls,
       equipments: parsedEquipments,
-      activities: activity,
+      activities: [activity],
       description,
     });
 
+    // CREATE NOTICE
     await Notice.create({
-      team: members,
+      team: uniqueMembers,
       text,
       task: task._id,
     });
 
-    for (const user of members) {
-      await User.findByIdAndUpdate(user, {
-        $push: { tasks: task._id },
-      });
-    }
+    // PUSH TASK TO USERS
+    await Promise.all(
+      uniqueMembers.map((user) =>
+        User.findByIdAndUpdate(user, {
+          $addToSet: { tasks: task._id },
+        })
+      )
+    );
 
-    res.status(200).json({
+
+
+    // socket.io getting task
+    emitTaskCreated(task);
+    emitDashboardUpdate();
+
+
+
+    res.status(201).json({
       status: true,
       task,
-      message: "Task created successfully.",
+      message: "Task created successfully",
     });
 
   } catch (error) {
     console.log(error);
-    res.status(500).json({ status: false, message: error.message });
+
+    res.status(500).json({
+      status: false,
+      message: error.message,
+    });
   }
 });
+
 
 
 // Changed
@@ -117,6 +254,7 @@ const duplicateTask = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const userId = req.user._id;
 
+    // FIND ORIGINAL TASK
     const task = await Task.findById(id);
 
     if (!task) {
@@ -126,65 +264,94 @@ const duplicateTask = asyncHandler(async (req, res) => {
       });
     }
 
-    // 🔥 activity text
-    let text = "New task has been assigned to you";
-
-    if (task.team?.members?.length > 1) {
-      text += ` and ${task.team.members.length - 1} others.`;
+    // ADMIN ONLY
+    if (!adminOnly(req.user)) {
+      return res.status(403).json({
+        status: false,
+        message: "Only admins can duplicate tasks",
+      });
     }
 
-    text += ` The task priority is set as ${
-      task.priority
-    }, so check and act accordingly. The task date is ${new Date(
-      task.date
-    ).toDateString()}. Thank you!!!`;
+    // NOTIFICATION TEXT
+    let text = "New duplicated task has been assigned to you";
 
+    if (task.team?.members?.length > 1) {
+      text += ` and ${
+        task.team.members.length - 1
+      } others.`;
+    }
+
+    text += ` Priority: ${
+      task.priority
+    }, Date: ${new Date(task.date).toDateString()}`;
+
+    // NEW ACTIVITY
     const activity = {
-      type: "assigned",
+      type: "duplicated",
       activity: text,
       by: userId,
     };
 
-    // ⚠️ IMPORTANT: convert mongoose doc → plain object
+    // CONVERT TASK TO PLAIN OBJECT
     const taskObj = task.toObject();
 
-    // remove MongoDB identity fields
+    // REMOVE FIELDS THAT SHOULD NOT BE COPIED
     delete taskObj._id;
     delete taskObj.createdAt;
     delete taskObj.updatedAt;
+    delete taskObj.activities;
+    delete taskObj.__v;
 
-    // 🟢 create duplicate safely
+    // CLEAN TITLE
+    const cleanTitle = task.title.replace(
+      /^Duplicate\s-\s/,
+      ""
+    );
+
+    // CREATE DUPLICATED TASK
     const newTask = await Task.create({
       ...taskObj,
-      title: "Duplicate - " + task.title,
-      activities: [activity], // reset activity properly
+
+      title: `Duplicate - ${cleanTitle}`,
+
+      activities: [activity],
     });
 
-    // 🟢 reassign correct fields explicitly (safe override)
-    newTask.team = task.team;
-    newTask.subTasks = task.subTasks;
-    newTask.assets = task.assets;
-    newTask.equipments = task.equipments; // ✅ FIXED (replaces links)
-    newTask.priority = task.priority;
-    newTask.stage = task.stage;
-    newTask.description = task.description;
-
-    await newTask.save();
-
-    // 🔔 notification
+    // CREATE NOTICE
     await Notice.create({
       team: newTask.team.members,
       text,
       task: newTask._id,
     });
 
-    res.status(200).json({
+    // UPDATE USER TASK ARRAYS
+    await Promise.all(
+      newTask.team.members.map((user) =>
+        User.findByIdAndUpdate(user, {
+          $addToSet: {
+            tasks: newTask._id,
+          },
+        })
+      )
+    );
+
+
+    // socket.io getting duplicated task
+    emitTaskCreated(newTask);
+    emitDashboardUpdate();
+
+
+
+    res.status(201).json({
       status: true,
-      message: "Task duplicated successfully.",
+      message: "Task duplicated successfully",
       task: newTask,
     });
+
   } catch (error) {
-    return res.status(500).json({
+    console.log(error);
+
+    res.status(500).json({
       status: false,
       message: error.message,
     });
@@ -195,9 +362,10 @@ const duplicateTask = asyncHandler(async (req, res) => {
 
 // Changed
 const updateTask = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-
   try {
+    const { id } = req.params;
+
+    // FIND TASK
     const task = await Task.findById(id);
 
     if (!task) {
@@ -207,22 +375,128 @@ const updateTask = asyncHandler(async (req, res) => {
       });
     }
 
-    // ✅ Parse incoming fields
+    // AUTHORIZATION
+    if (!adminOnly(req.user)) {
+      return res.status(403).json({
+        status: false,
+        message: "Only admins can update tasks",
+      });
+    }
+
+    // EXTRACT BODY
     const {
       title,
-      date,
+      clientName,
+      address,
       stage,
+      date,
       priority,
       description,
     } = req.body;
 
-    const team = req.body.team ? JSON.parse(req.body.team) : {};
-    const equipments = req.body.equipments
-      ? JSON.parse(req.body.equipments)
-      : [];
+    // VALIDATION
+    if  (
+      !title ||
+      !clientName ||
+      !address ||
+      !date ||
+      !priority ||
+      !stage
+    ) {
+      return res.status(400).json({
+        status: false,
+        message: "Required fields missing",
+      });
+    }
 
-    // 🔥 1. Upload NEW images
-    let assetUrls = [];
+    // VALIDATE STAGE
+    const allowedStages = [
+      "todo",
+      "in progress",
+      "completed",
+    ];
+
+    if (!allowedStages.includes(stage.toLowerCase())) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid stage",
+      });
+    }
+
+    // PARSE TEAM
+    let team = {};
+
+    try {
+      team = req.body.team
+        ? JSON.parse(req.body.team)
+        : {};
+    } catch (error) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid team data",
+      });
+    }
+
+    // PARSE EQUIPMENTS
+    let parsedEquipments = [];
+
+    try {
+      parsedEquipments = req.body.equipments
+        ? JSON.parse(req.body.equipments)
+        : [];
+    } catch (error) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid equipments data",
+      });
+    }
+
+    const leader =
+    typeof team.leader === "object"
+      ? team.leader?._id?.toString()
+      : team.leader?.toString() || null;
+
+    // REMOVE leader from members
+    const members = (team.members || [])
+    .map((member) =>
+      typeof member === "object"
+        ? member._id?.toString()
+        : member?.toString()
+    )
+    .filter(Boolean)
+    .filter(
+      (member) => member !== leader?.toString()
+    );
+
+    const specialMembers = [...new Set(members)];
+    
+    if (specialMembers.length !== members.length) {
+      return res.status(400).json({
+        status: false,
+        message: "Duplicate team members are not allowed",
+      });
+    }
+
+
+    // FINAL TEAM USERS (members + leader)
+    const uniqueMembers = leader
+      ? [...specialMembers, leader]
+      : specialMembers;
+
+
+    const validUsers = await User.find({
+      _id: { $in: uniqueMembers },
+    }).select("_id");
+
+    if (validUsers.length !== uniqueMembers.length) {
+      return res.status(400).json({
+        status: false,
+        message: "Some team members are invalid",
+      });
+    }
+
+    // UPLOAD NEW IMAGES
+    let newAssets = [];
 
     if (req.files && req.files.length > 0) {
       const uploadPromises = req.files.map(
@@ -232,7 +506,11 @@ const updateTask = asyncHandler(async (req, res) => {
               { folder: "tasks" },
               (error, result) => {
                 if (error) reject(error);
-                else resolve(result.secure_url);
+
+                resolve({
+                  url: result.secure_url,
+                  public_id: result.public_id,
+                });
               }
             );
 
@@ -240,42 +518,370 @@ const updateTask = asyncHandler(async (req, res) => {
           })
       );
 
-      assetUrls = await Promise.all(uploadPromises);
+      newAssets = await Promise.all(uploadPromises);
     }
 
-    // 🔥 2. Keep EXISTING images
-    const existingAssets = req.body.existingAssets
-      ? JSON.parse(req.body.existingAssets)
-      : [];
+    // EXISTING ASSETS
+    let existingAssets = [];
 
-    // 🔥 3. Merge both
-    const finalAssets = [...existingAssets, ...assetUrls];
+    try {
+      existingAssets = req.body.existingAssets
+        ? JSON.parse(req.body.existingAssets)
+        : [];
+    } catch (error) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid existing assets data",
+      });
+    }
 
-    // ✅ Update fields
+    // FIND REMOVED ASSETS
+    const removedAssets = task.assets.filter(
+      (oldAsset) =>
+        !existingAssets.some(
+          (asset) => asset.public_id === oldAsset.public_id
+        )
+    );
+
+    // DELETE REMOVED IMAGES FROM CLOUDINARY
+    if (removedAssets.length > 0) {
+      await Promise.all(
+        removedAssets.map((asset) =>
+          cloudinary.uploader.destroy(asset.public_id)
+        )
+      );
+    }
+
+    // FINAL ASSETS
+    const finalAssets = [
+      ...existingAssets,
+      ...newAssets,
+    ];
+
+    // SUPPORT OLD + NEW TASK STRUCTURE
+    let oldMembers = [];
+
+    if (Array.isArray(task.team)) {
+      // OLD TASK STRUCTURE
+      oldMembers = task.team.map((m) => m.toString());
+    } else {
+      // NEW TASK STRUCTURE
+      oldMembers = [
+        ...(task.team?.members || []).map((m) => m.toString()),
+        ...(task.team?.leader
+          ? [task.team.leader.toString()]
+          : []),
+      ];
+    }
+
+    const newMembers = uniqueMembers.map((m) =>
+      m.toString()
+    );
+
+    // USERS REMOVED FROM TASK
+    const removedUsers = oldMembers.filter(
+      (member) => !newMembers.includes(member)
+    );
+
+    // USERS NEWLY ADDED
+    const addedUsers = newMembers.filter(
+      (member) => !oldMembers.includes(member)
+    );
+
+    // REMOVE TASK FROM REMOVED USERS
+    await Promise.all(
+      removedUsers.map((userId) =>
+        User.findByIdAndUpdate(userId, {
+          $pull: { tasks: task._id },
+        })
+      )
+    );
+
+    // ADD TASK TO NEW USERS
+    await Promise.all(
+      addedUsers.map((userId) =>
+        User.findByIdAndUpdate(userId, {
+          $addToSet: { tasks: task._id },
+        })
+      )
+    );
+
+    // UPDATE TASK
     task.title = title;
+    task.clientName = clientName;
+    task.address = address;
     task.date = date;
-    task.priority = priority.toLowerCase();
     task.stage = stage.toLowerCase();
-    task.assets = finalAssets;
+    task.priority = priority.toLowerCase();
+    task.description = description;
 
     task.team = {
-      members: team.members || [],
-      leader: team.leader || null,
+      members: specialMembers,
+      leader,
     };
 
-    task.equipments = equipments;
-    task.description = description;
+    task.equipments = parsedEquipments;
+    task.assets = finalAssets;
 
     await task.save();
 
+
+    // Socket.io getting updated task
+    emitTaskUpdated(task);
+    emitDashboardUpdate();
+
+
+
     res.status(200).json({
       status: true,
-      message: "Task updated successfully.",
+      message: "Task updated successfully",
       task,
     });
 
   } catch (error) {
     console.log(error);
+
+    res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+  }
+});
+
+
+
+const updateTaskStage = asyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { stage } = req.body;
+
+    if (!stage) {
+      return res.status(400).json({
+        status: false,
+        message: "Stage is required",
+      });
+    }
+
+    // VALID STAGES
+    const allowedStages = [
+      "todo",
+      "in progress",
+      "completed",
+    ];
+
+    if (
+      !allowedStages.includes(stage.toLowerCase())
+    ) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid stage value",
+      });
+    }
+
+    // FIND TASK
+    const task = await Task.findById(id);
+
+    if (!task) {
+      return res.status(404).json({
+        status: false,
+        message: "Task not found",
+      });
+    }
+
+    // AUTHORIZATION
+    if (!canAccessTask(task, req.user)) {
+      return res.status(403).json({
+        status: false,
+        message: "Unauthorized",
+      });
+    }
+
+    // UPDATE STAGE
+    task.stage = stage.toLowerCase();
+
+    // ACTIVITY
+    task.activities.push({
+      type: "in progress",
+      activity: `Task stage updated to ${stage}`,
+      by: req.user._id,
+    });
+
+    await task.save();
+
+    // Socket.io updating task stage
+    emitTaskUpdated(task);
+    emitDashboardUpdate();
+
+
+    res.status(200).json({
+      status: true,
+      message: "Task stage changed successfully",
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+  }
+});
+
+
+
+const updateSubTaskStage = asyncHandler(async (req, res) => {
+  try {
+    const { taskId, subTaskId } = req.params;
+    const { status } = req.body;
+
+    if (typeof status !== "boolean") {
+      return res.status(400).json({
+        status: false,
+        message: "Status must be boolean",
+      });
+    }
+
+    // FIRST fetch task
+    const task = await Task.findById(taskId);
+
+    if (!task) {
+      return res.status(404).json({
+        status: false,
+        message: "Task not found",
+      });
+    }
+
+    // ONLY ADMIN OR LEADER
+    if (!canCompleteSubTask(task, req.user)) {
+      return res.status(403).json({
+        status: false,
+        message: "Only admin or leader can complete subtasks",
+      });
+    }
+
+    // Update subtask
+    const updatedTask = await Task.findOneAndUpdate(
+      {
+        _id: taskId,
+        "subTasks._id": subTaskId,
+      },
+      {
+        $set: {
+          "subTasks.$.isCompleted": status,
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedTask) {
+      return res.status(404).json({
+        status: false,
+        message: "Task or Subtask not found",
+      });
+    }
+
+
+    const taskUpdate = await Task.findById(taskId)
+      .populate("team.members", "name title email profileImage")
+      .populate("team.leader", "name title email profileImage")
+      .populate("activities.by", "name profileImage");
+
+
+    // Socket.io updating subTask stage
+    emitTaskUpdated(taskUpdate);
+    emitDashboardUpdate();
+
+    res.status(200).json({
+      status: true,
+      message: status
+        ? "Task has been marked completed"
+        : "Task has been marked uncompleted",
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    res.status(400).json({
+      status: false,
+      message: error.message,
+    });
+  }
+});
+
+const createSubTask = asyncHandler(async (req, res) => {
+  try {
+    const { title, tag, date } = req.body;
+    const { id } = req.params;
+
+    if (!title || !date) {
+      return res.status(400).json({
+        status: false,
+        message: "Required fields missing",
+      });
+    }
+
+    // FIRST fetch task
+    const task = await Task.findById(id);
+
+    if (!task) {
+      return res.status(404).json({
+        status: false,
+        message: "Task not found",
+      });
+    }
+
+    // THEN authorize
+    if (!canAccessTask(task, req.user)) {
+      return res.status(403).json({
+        status: false,
+        message: "Unauthorized",
+      });
+    }
+
+    if (isNaN(new Date(date).getTime())) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid date",
+      });
+    }
+
+    const newSubTask = {
+      title,
+      date,
+      tag,
+      isCompleted: false,
+    };
+
+    task.subTasks.push(newSubTask);
+
+    await task.save();
+
+    const updatedTask = await Task.findById(id);
+
+    if (updatedTask?.team?.members) {
+      await updatedTask.populate({
+        path: "team.members",
+        select: "name title role email profileImage",
+      });
+
+      await updatedTask.populate({
+        path: "team.leader",
+        select: "name title role email profileImage",
+      });
+    }
+
+
+    // SOCKET.IO REALTIME
+    emitTaskUpdated(updatedTask);
+    emitDashboardUpdate();
+
+    res.status(200).json({
+      status: true,
+      message: "SubTask added successfully.",
+    });
+
+  } catch (error) {
     res.status(400).json({
       status: false,
       message: error.message,
@@ -286,121 +892,95 @@ const updateTask = asyncHandler(async (req, res) => {
 
 
 
-const updateTaskStage = asyncHandler(async (req, res) => {
+// Changed some
+const getTasks = asyncHandler(async (req, res) => {
   try {
-    const { id } = req.params;
-    const { stage } = req.body;
+    const { _id: userId, isAdmin } = req.user;
+    const { stage, isTrashed, search } = req.query;
 
-    const task = await Task.findById(id);
-
-    task.stage = stage.toLowerCase();
-
-    await task.save();
-
-    res
-      .status(200)
-      .json({ status: true, message: "Task stage changed successfully." });
-  } catch (error) {
-    return res.status(400).json({ status: false, message: error.message });
-  }
-});
-
-const updateSubTaskStage = asyncHandler(async (req, res) => {
-  try {
-    const { taskId, subTaskId } = req.params;
-    const { status } = req.body;
-
-    await Task.findOneAndUpdate(
-      {
-        _id: taskId,
-        "subTasks._id": subTaskId,
-      },
-      {
-        $set: {
-          "subTasks.$.isCompleted": status,
-        },
-      }
+    // Pagination
+    const page = Math.max(
+      Number(req.query.page) || 1,
+      1
     );
+    const limit = Math.min(
+      Number(req.query.limit) || 10,
+      50
+    );
+    const skip = (page - 1) * limit;
+
+    let query = {
+      isTrashed: isTrashed === "true",
+    };
+
+    const searchConditions = search
+      ? [
+          { title: { $regex: search, $options: "i" } },
+          { stage: { $regex: search, $options: "i" } },
+          { priority: { $regex: search, $options: "i" } },
+        ]
+      : [];
+
+    if (!isAdmin) {
+      query.$and = [
+        {
+          $or: [
+            { "team.members": userId },
+            { "team.leader": userId },
+          ],
+        },
+      ];
+
+      if (searchConditions.length > 0) {
+        query.$and.push({
+          $or: searchConditions,
+        });
+      }
+    } else if (searchConditions.length > 0) {
+      query.$or = searchConditions;
+    }
+
+    // Filter by stage
+    if (stage) {
+      query.stage = stage;
+    }
+
+    // Total count
+    const totalTasks = await Task.countDocuments(query);
+
+    // Fetch tasks
+    const tasks = await Task.find(query)
+      .populate({
+        path: "team.members",
+        select: "name title role email profileImage",
+      })
+      .populate({
+        path: "team.leader",
+        select: "name title role email profileImage",
+      })
+      .populate({
+        path: "activities.by",
+        select: "name email profileImage",
+      })
+      .sort({ _id: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
       status: true,
-      message: status
-        ? "Task has been marked completed"
-        : "Task has been marked uncompleted",
+      tasks,
+      page,
+      limit,
+      totalTasks,
+      totalPages: Math.ceil(totalTasks / limit),
     });
+
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    res.status(400).json({
+      status: false,
+      message: error.message,
+    });
   }
-});
-
-const createSubTask = asyncHandler(async (req, res) => {
-  const { title, tag, date } = req.body;
-  const { id } = req.params;
-
-  try {
-    const newSubTask = {
-      title,
-      date,
-      tag,
-      isCompleted: false,
-    };
-
-    const task = await Task.findById(id);
-
-    task.subTasks.push(newSubTask);
-
-    await task.save();
-
-    res
-      .status(200)
-      .json({ status: true, message: "SubTask added successfully." });
-  } catch (error) {
-    return res.status(400).json({ status: false, message: error.message });
-  }
-});
-
-
-
-
-// Changed some
-const getTasks = asyncHandler(async (req, res) => {
-  const { _id: userId, isAdmin } = req.user;
-  const { stage, isTrashed, search } = req.query;
-
-  let query = { isTrashed: isTrashed ? true : false };
-
-  if (!isAdmin) {
-    query["team.members"] = { $all: [userId] };
-  }
-  if (stage) {
-    query.stage = stage;
-  }
-
-  if (search) {
-    const searchQuery = {
-      $or: [
-        { title: { $regex: search, $options: "i" } },
-        { stage: { $regex: search, $options: "i" } },
-        { priority: { $regex: search, $options: "i" } },
-      ],
-    };
-    query = { ...query, ...searchQuery };
-  }
-
-  let queryResult = Task.find(query)
-    .populate({
-      path: "team",
-      select: "name title email",
-    })
-    .sort({ _id: -1 });
-
-  const tasks = await queryResult;
-
-  res.status(200).json({
-    status: true,
-    tasks,
-  });
 });
 
 
@@ -412,21 +992,44 @@ const getTask = asyncHandler(async (req, res) => {
     const task = await Task.findById(id)
       .populate({
         path: "team.members",
-        select: "name title role email",
+        select: "name title role email profileImage",
       })
       .populate({
         path: "team.leader",
-        select: "name title role email",
+        select: "name title role email profileImage",
       })
-      .sort({ _id: -1 });
+      .populate({
+        path: "activities.by",
+        select: "name email profileImage",
+      });
+
+    if (!task) {
+      return res.status(404).json({
+        status: false,
+        message: "Task not found",
+      });
+    }
+
+    // Authorization
+    if (!canAccessTask(task, req.user)) {
+      return res.status(403).json({
+        status: false,
+        message: "Unauthorized",
+      });
+    }
 
     res.status(200).json({
       status: true,
       task,
     });
+
   } catch (error) {
     console.log(error);
-    throw new Error("Failed to fetch task", error);
+
+    res.status(500).json({
+      status: false,
+      message: error.message,
+    });
   }
 });
 
@@ -437,8 +1040,11 @@ const getUserAnalytics = async (req, res) => {
     const userId = req.user._id;
 
     const tasks = await Task.find({
-      "team.members": userId,
       isTrashed: false,
+      $or: [
+        { "team.members": userId },
+        { "team.leader": userId },
+      ],
     });
 
     // ✅ Get last 5 months
@@ -501,106 +1107,388 @@ const getUserAnalytics = async (req, res) => {
 
 
 const postTaskActivity = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const userId = req.user._id;
-  const { type, activity } = req.body;
-
   try {
+    const { id } = req.params;
+    const userId = req.user._id;
+    const { type, activity } = req.body;
+
+    if (!type || !activity) {
+      return res.status(400).json({
+        status: false,
+        message: "Required fields missing",
+      });
+    }
+
+    // FIRST fetch task
     const task = await Task.findById(id);
+
+    if (!task) {
+      return res.status(404).json({
+        status: false,
+        message: "Task not found",
+      });
+    }
+
+    // THEN authorize
+    if (!canAccessTask(task, req.user)) {
+      return res.status(403).json({
+        status: false,
+        message: "Unauthorized",
+      });
+    }
 
     const data = {
       type,
       activity,
       by: userId,
     };
+
     task.activities.push(data);
 
     await task.save();
 
-    res
-      .status(200)
-      .json({ status: true, message: "Activity posted successfully." });
+    const updatedTask = await Task.findById(id)
+      .populate({
+        path: "team.members",
+        select: "name title role email profileImage",
+      })
+      .populate({
+        path: "team.leader",
+        select: "name title role email profileImage",
+      })
+      .populate({
+        path: "activities.by",
+        select: "name email profileImage",
+      });
+
+
+    // Socket.io updating postActivities
+    emitTaskUpdated(updatedTask);
+
+
+    res.status(200).json({
+      status: true,
+      message: "Activity posted successfully.",
+    });
+
   } catch (error) {
-    return res.status(400).json({ status: false, message: error.message });
+    res.status(400).json({
+      status: false,
+      message: error.message,
+    });
   }
 });
 
-const trashTask = asyncHandler(async (req, res) => {
-  const { id } = req.params;
 
+
+const trashTask = asyncHandler(async (req, res) => {
   try {
+    const { id } = req.params;
+
+    // FIND TASK
     const task = await Task.findById(id);
 
+    if (!task) {
+      return res.status(404).json({
+        status: false,
+        message: "Task not found",
+      });
+    }
+
+    // ADMIN ONLY
+    if (!adminOnly(req.user)) {
+      return res.status(403).json({
+        status: false,
+        message: "Only admins can trash tasks",
+      });
+    }
+
+    // ALREADY TRASHED
+    if (task.isTrashed) {
+      return res.status(400).json({
+        status: false,
+        message: "Task is already trashed",
+      });
+    }
+
+    // ACTIVITY
+    const activity = {
+      type: "trashed",
+      activity: `Task moved to trash by ${req.user.name}`,
+      by: req.user._id,
+    };
+
+    task.activities.push(activity);
+
+    // MOVE TO TRASH
     task.isTrashed = true;
 
     await task.save();
 
+    // OPTIONAL NOTICE
+    await Notice.create({
+      team: task.team.members,
+      text: `Task "${task.title}" has been moved to trash.`,
+      task: task._id,
+    });
+
+
+    // Socket.io updating task after trashed
+    emitTaskUpdated(task);
+    emitDashboardUpdate();
+
+
     res.status(200).json({
       status: true,
-      message: `Task trashed successfully.`,
+      message: "Task trashed successfully",
     });
+
   } catch (error) {
-    return res.status(400).json({ status: false, message: error.message });
+    console.log(error);
+
+    res.status(500).json({
+      status: false,
+      message: error.message,
+    });
   }
 });
+
+
 
 const deleteRestoreTask = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
     const { actionType } = req.query;
 
-    if (actionType === "delete") {
-      await Task.findByIdAndDelete(id);
-    } else if (actionType === "deleteAll") {
-      await Task.deleteMany({ isTrashed: true });
-    } else if (actionType === "restore") {
-      const resp = await Task.findById(id);
-
-      resp.isTrashed = false;
-
-      resp.save();
-    } else if (actionType === "restoreAll") {
-      await Task.updateMany(
-        { isTrashed: true },
-        { $set: { isTrashed: false } }
-      );
+    // ADMIN ONLY
+    if (!adminOnly(req.user)) {
+      return res.status(403).json({
+        status: false,
+        message: "Only admins can perform this action",
+      });
     }
 
-    res.status(200).json({
-      status: true,
-      message: `Operation performed successfully.`,
-    });
+    // VALID ACTION TYPES
+    const allowedActions = [
+      "delete",
+      "deleteAll",
+      "restore",
+      "restoreAll",
+    ];
+
+    if (!allowedActions.includes(actionType)) {
+      return res.status(400).json({
+        status: false,
+        message: "Invalid action type",
+      });
+    }
+
+    // =========================================
+    // DELETE SINGLE TASK
+    // =========================================
+    if (actionType === "delete") {
+
+      const task = await Task.findById(id);
+
+      if (!task) {
+        return res.status(404).json({
+          status: false,
+          message: "Task not found",
+        });
+      }
+
+      // DELETE CLOUDINARY ASSETS
+      if (task.assets?.length > 0) {
+        await Promise.all(
+          task.assets.map((asset) =>
+            cloudinary.uploader.destroy(
+              asset.public_id
+            )
+          )
+        );
+      }
+
+      // REMOVE TASK FROM USERS
+      await Promise.all(
+        task.team.members.map((userId) =>
+          User.findByIdAndUpdate(userId, {
+            $pull: { tasks: task._id },
+          })
+        )
+      );
+
+      // DELETE TASK
+      await Task.findByIdAndDelete(id);
+
+      
+      // Socket.io getting single task delete ID
+      emitTaskDeleted(id);
+      emitDashboardUpdate();
+
+
+      return res.status(200).json({
+        status: true,
+        message: "Task permanently deleted",
+      });
+    }
+
+    // =========================================
+    // DELETE ALL TRASHED TASKS
+    // =========================================
+    if (actionType === "deleteAll") {
+
+      const trashedTasks = await Task.find({
+        isTrashed: true,
+      });
+
+      // DELETE CLOUDINARY FILES
+      for (const task of trashedTasks) {
+        if (task.assets?.length > 0) {
+          await Promise.all(
+            task.assets.map((asset) =>
+              cloudinary.uploader.destroy(
+                asset.public_id
+              )
+            )
+          );
+        }
+
+        // REMOVE TASK REFERENCES
+        const taskUsers = Array.isArray(task.team)
+          ? task.team
+          : [
+              ...(task.team?.members || []),
+              ...(task.team?.leader
+                ? [task.team.leader]
+                : []),
+            ];
+
+        await Promise.all(
+          taskUsers.map((userId) =>
+            User.findByIdAndUpdate(userId, {
+              $pull: { tasks: task._id },
+            })
+          )
+        );
+      }
+
+      // DELETE TASKS
+      await Task.deleteMany({
+        isTrashed: true,
+      });
+
+      return res.status(200).json({
+        status: true,
+        message: "All trashed tasks deleted",
+      });
+    }
+
+    // =========================================
+    // RESTORE SINGLE TASK
+    // =========================================
+    if (actionType === "restore") {
+
+      const task = await Task.findById(id);
+
+      if (!task) {
+        return res.status(404).json({
+          status: false,
+          message: "Task not found",
+        });
+      }
+
+      if (!task.isTrashed) {
+        return res.status(400).json({
+          status: false,
+          message: "Task is not trashed",
+        });
+      }
+
+      // ACTIVITY
+      task.activities.push({
+        type: "restored",
+        activity: `Task restored by ${req.user.name}`,
+        by: req.user._id,
+      });
+
+      task.isTrashed = false;
+
+      await task.save();
+
+      return res.status(200).json({
+        status: true,
+        message: "Task restored successfully",
+      });
+    }
+
+    // =========================================
+    // RESTORE ALL TASKS
+    // =========================================
+    if (actionType === "restoreAll") {
+
+      await Task.updateMany(
+        { isTrashed: true },
+        {
+          $set: { isTrashed: false },
+        }
+      );
+
+      return res.status(200).json({
+        status: true,
+        message: "All tasks restored successfully",
+      });
+    }
+
   } catch (error) {
-    return res.status(400).json({ status: false, message: error.message });
+    console.log(error);
+
+    return res.status(500).json({
+      status: false,
+      message: error.message,
+    });
   }
 });
+
+
 
 const dashboardStatistics = asyncHandler(async (req, res) => {
   try {
     const { _id: userId, isAdmin } = req.user;
 
     // Fetch all tasks from the database
-    const allTasks = isAdmin
-      ? await Task.find({
-          isTrashed: false,
-        })
-          .populate({
-            path: "team",
-            select: "name role title email",
-          })
-          .sort({ _id: -1 })
-      : await Task.find({
-          isTrashed: false,
-          team: { $all: [userId] },
-        })
-          .populate({
-            path: "team",
-            select: "name role title email",
-          })
-          .sort({ _id: -1 });
+const allTasks = isAdmin
+  ? await Task.find({
+      isTrashed: false,
+    })
+      .populate({
+        path: "team.members",
+        select: "name title role email profileImage isActive",
+      })
+      .populate({
+        path: "team.leader",
+        select: "name title role email profileImage isActive",
+      })
+      .sort({ _id: -1 })
 
-    const users = await User.find({ isActive: true })
-      .select("name title role isActive createdAt")
+  : await Task.find({
+      isTrashed: false,
+      $or: [
+        { "team.members": userId },
+        { "team.leader": userId },
+      ],
+    })
+      .populate({
+        path: "team.members",
+        select: "name title role email profileImage isActive",
+      })
+      .populate({
+        path: "team.leader",
+        select: "name title role email profileImage isActive",
+      })
+      .sort({ _id: -1 });
+
+    const users = await User.find({})
+      .select("name title role isActive email profileImage createdAt tiktok x whatsApp telegram")
       .limit(10)
       .sort({ _id: -1 });
 
@@ -633,7 +1521,7 @@ const dashboardStatistics = asyncHandler(async (req, res) => {
     const summary = {
       totalTasks,
       last10Task,
-      users: isAdmin ? users : [],
+      users: users,
       tasks: groupedTasks,
       graphData,
     };
@@ -645,6 +1533,60 @@ const dashboardStatistics = asyncHandler(async (req, res) => {
     console.log(error);
     return res.status(400).json({ status: false, message: error.message });
   }
+});
+
+
+const deleteTaskActivity = asyncHandler(async (req, res) => {
+  const { taskId, activityId } = req.params;
+
+  const task = await Task.findById(taskId);
+
+  if (!task) {
+    res.status(404);
+    throw new Error("Task not found");
+  }
+
+  const activity = task.activities.id(activityId);
+
+  if (!activity) {
+    res.status(404);
+    throw new Error("Activity not found");
+  }
+
+  const isOwner =
+    activity.by.toString() === req.user._id.toString();
+
+  const isAdmin = req.user.isAdmin;
+
+  if (!isOwner && !isAdmin) {
+    res.status(403);
+    throw new Error("Unauthorized");
+  }
+
+  task.activities.pull(activityId);
+
+  await task.save();
+
+  const updatedTask = await Task.findById(taskId)
+    .populate({
+      path: "team.members",
+      select: "name title role email profileImage",
+    })
+    .populate({
+      path: "team.leader",
+      select: "name title role email profileImage",
+    })
+    .populate({
+      path: "activities.by",
+      select: "name email profileImage",
+    });
+
+  emitTaskUpdated(updatedTask);
+
+  res.status(200).json({
+    status: true,
+    message: "Comment deleted successfully",
+  });
 });
 
 export {
@@ -660,4 +1602,6 @@ export {
   updateSubTaskStage,
   updateTask,
   updateTaskStage,
+  getUserAnalytics,
+  deleteTaskActivity
 };

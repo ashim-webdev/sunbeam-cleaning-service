@@ -52,8 +52,8 @@ const Overview = () => {
       setSelected(null);
       setOpen(false)
 
-    } catch (err) {
-      toast.error(err?.data?.message || err.error);
+    } catch (error) {
+      toast.error(error?.data?.message || error.error);
     }
   };
 

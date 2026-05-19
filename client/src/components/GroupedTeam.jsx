@@ -32,8 +32,8 @@ export default function GroupedTeam({ team = [] }) {
                       "relative w-10 h-10 rounded-full flex items-center justify-center shadow-inner transition-colors ease-in-out duration-300 overflow-hidden",
                       BGS[index % BGS.length]
                     )}>
-                      {member?.img ? 
-                        <img src={member?.img} alt="Avatar" className="w-full h-full object-cover "/>
+                      {member?.profileImage ? 
+                        <img src={member?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
                       :
                         <span>
                           {getInitials(member?.name || "Unknown User")}

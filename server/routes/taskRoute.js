@@ -12,6 +12,7 @@ import {
   updateSubTaskStage,
   updateTask,
   updateTaskStage,
+  deleteTaskActivity
 } from "../controllers/taskController.js";
 import { isAdminRoute, protectRoute } from "../middlewares/authMiddleware.js";
 import upload from "../middlewares/uploadMiddleware.js";
@@ -19,6 +20,7 @@ import upload from "../middlewares/uploadMiddleware.js";
 
 const router = express.Router();
 
+router.get("/dashboard", protectRoute, dashboardStatistics);
 router.post("/create", protectRoute, isAdminRoute, upload.array("assets", 10), createTask);
 router.post("/duplicate/:id", protectRoute, isAdminRoute, duplicateTask);
 router.post("/activity/:id", protectRoute, postTaskActivity);
@@ -36,6 +38,12 @@ router.put(
   updateSubTaskStage
 );
 router.put("/:id", protectRoute, isAdminRoute, trashTask);
+
+router.delete(
+  "/activity/:taskId/:activityId",
+  protectRoute,
+  deleteTaskActivity
+);
 
 router.delete(
   "/delete-restore/:id",

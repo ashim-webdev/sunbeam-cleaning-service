@@ -1,10 +1,11 @@
+import { socket } from "./socket";
 import { Transition } from "@headlessui/react";
 import { Fragment, useRef, useEffect } from "react";
 import { useState } from 'react'
 import { Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import { setOpenSidebar, setOpenProfile } from "./redux/slices/authSlice";
+import { setOpenSidebar, setOpenProfile, setOnlineUsers } from "./redux/slices/authSlice";
 import { Toaster } from 'sonner' // Notification library
 import Login from './pages/Login'
 import TaskDetails from './pages/TaskDetails'
@@ -23,16 +24,21 @@ import Status from "./pages/Status";
 
 
 function Layout() {
+  const { LightMode } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
+  
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchPanelOpen, setIsSearchPanelOpen] = useState(false);
   
-  const { LightMode } = useSelector((state) => state.auth);
+  // Socket.io user connection
+  useEffect(() => {
+    if (user?._id) {
+      socket.emit("userConnected", user._id);
+    }
+  }, [user]);
+
+  
   const dispatch = useDispatch();
-
-  // const { user } = useSelector((state) => state.auth);
-
-  const user = true;
-
   const location = useLocation()
 
   // Navbar Scroll Color Change
@@ -159,6 +165,26 @@ const MobileSidebar = () => {
 
 function App() {
   const { LightMode } = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
+
+  // Socket.io Online/Offline connection
+  useEffect(() => {
+
+    // Request current online users
+    socket.emit("getOnlineUsers");
+
+    // Listen for updates
+    socket.on("onlineUsers", (users) => {
+      dispatch(setOnlineUsers(users));
+    });
+
+    return () => {
+      socket.off("onlineUsers");
+    };
+
+  }, [dispatch]);
+
   
   return (
     <>

@@ -209,6 +209,19 @@ const AddUser = ({ open, setOpen, userData }) => {
     }
   };
 
+
+
+  // What Admin & Employees can edit
+  const isEditing = !!userData;
+
+  const isOwnProfile = userData?._id === user?._id;
+
+  const isEmployee = !user?.isAdmin;
+
+  const employeeRestrictedEdit =
+    isEditing && isEmployee && isOwnProfile;
+
+
   return (
     <>
       <ModalWrapper open={open} setOpen={setOpen}>
@@ -290,6 +303,7 @@ const AddUser = ({ open, setOpen, userData }) => {
                 type='text'
                 name='title'
                 label='Title'
+                disabled={employeeRestrictedEdit}
                   className={`w-full border rounded-md outline-0 ${
                   errors.title
                     ? `border-2 border-red-500 focus:border-red-500 ${
@@ -298,7 +312,9 @@ const AddUser = ({ open, setOpen, userData }) => {
                     : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
                 }`}
                 register={register("title", {
-                  required: "Title is required!",
+                  required: employeeRestrictedEdit
+                    ? false
+                    : "Title is required!",
                 })}
                 error={errors.title ? errors.title.message : ""}
               />
@@ -308,7 +324,7 @@ const AddUser = ({ open, setOpen, userData }) => {
                 type='email'
                 name='email'
                 label='Email Address'
-                disabled={userData} // Disable email field when editing
+                disabled={isEditing} // Disable email field when editing
                   className={`w-full border rounded-md outline-0 ${
                   errors.email
                     ? `border-2 border-red-500 focus:border-red-500 ${
@@ -385,6 +401,7 @@ const AddUser = ({ open, setOpen, userData }) => {
                 type='text'
                 name='role'
                 label='Role'
+                disabled={employeeRestrictedEdit}
                   className={`w-full border rounded-md outline-0 ${
                   errors.role
                     ? `border-2 border-red-500 focus:border-red-500 ${
@@ -393,7 +410,9 @@ const AddUser = ({ open, setOpen, userData }) => {
                     : "border-gray-300 focus:ring-1 focus:ring-blue-500 focus:border-transparent"
                 }`}
                 register={register("role", {
-                  required: "User role is required!",
+                  required: employeeRestrictedEdit
+                    ? false
+                    : "User role is required!",
                 })}
                 error={errors.role ? errors.role.message : ""}
               />

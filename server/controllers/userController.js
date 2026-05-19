@@ -228,17 +228,23 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(id);
 
   if (user) {
+    // Everybody
     user.name = req.body.name || user.name;
-    // user.email = req.body.email || user.email;
-    user.title = req.body.title || user.title;
-    user.role = req.body.role || user.role;
+
     if (imageUrl) {
       user.profileImage = imageUrl;
     }
+
     user.tiktok = req.body.tiktok || user.tiktok;
     user.x = req.body.x || user.x;
     user.whatsApp = req.body.whatsApp || user.whatsApp;
     user.telegram = req.body.telegram || user.telegram;
+
+    // Admin only
+    if (isAdmin) {
+      user.title = req.body.title || user.title;
+      user.role = req.body.role || user.role;
+    }
 
     const updatedUser = await user.save();
 

@@ -1,8 +1,10 @@
+import { socket } from "../socket";
 import clsx from "clsx";
 import moment from "moment";
 import { Popover, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tilt } from "react-tilt"
 import { useDispatch, useSelector } from "react-redux";
@@ -17,26 +19,81 @@ import {
   MdKeyboardArrowUp,
   MdKeyboardDoubleArrowUp,
 } from "react-icons/md";
+import { 
+  ChevronsRight
+} from 'lucide-react';
 import { PRIORITY_STYLES, TASK_TYPE, getInitials } from "../utils";
+import { formatDistanceToNow } from "date-fns";
 
-import { summary, tasks } from "../assets/data";
+import { useGetDashboardStatsQuery } from "../redux/slices/api/taskApiSlice";
+
 import Chart from "../components/Chart"
 import UserInfoDash from "../components/UserInfoDash"
 import SocialMedia from "../components/SocialMedia";
+import Loading from "../components/Loading";
+import OnlineStatus from "../components/OnlineStatus";
 
-
-
-
-import { Link } from "react-router-dom";
 
 
 
 
 const Dashboard = () => {
-  const { LightMode } = useSelector((state) => state.auth);
+  const { 
+    LightMode,
+    user,
+    onlineUsers,
+  } = useSelector((state) => state.auth);
 
-  const totals = summary.tasks
-  const lastMonth = summary.lastMonth
+  const admin = user.isAdmin
+  
+
+  const {
+    data: summary,
+    isLoading,
+    refetch,
+  } = useGetDashboardStatsQuery();
+
+
+  // Update everything in real time
+  useEffect(() => {
+  socket.on("dashboardUpdated", () => {
+    refetch();
+  });
+
+  socket.on("taskCreated", () => {
+    refetch();
+  });
+
+  socket.on("taskUpdated", () => {
+    refetch();
+  });
+
+  socket.on("taskDeleted", () => {
+    refetch();
+  });
+
+  return () => {
+    socket.off("dashboardUpdated");
+    socket.off("taskCreated");
+    socket.off("taskUpdated");
+    socket.off("taskDeleted");
+  };
+}, [refetch]);
+
+  // console.log(summary)
+
+  const totals = summary?.tasks || {};
+  const lastMonth = summary?.lastMonth || {
+    totalTasks: 0,
+    tasks: {
+      completed: 0,
+      "in progress": 0,
+      todo: 0,
+    },
+  };
+
+  // console.log(summary)
+
 
   const stats = [
     {
@@ -69,11 +126,11 @@ const Dashboard = () => {
     {
       _id: "4",
       label: "TODO",
-      total: totals["todo"],
+      total: totals["todo"] || 0,
       lastMonth: lastMonth.tasks.todo,
       icon: <FaArrowsToDot />,
-      bg: "bg-[#be185d]" || 0,
-      tx: "text-[#be185d]" || 0,
+      bg: "bg-[#be185d]",
+      tx: "text-[#be185d]",
     },
   ];
 
@@ -343,6 +400,7 @@ const Dashboard = () => {
 
 
   const UserTable = ({ users }) => {
+
     const TableHeader = () => (
       <thead className={`
         ${LightMode 
@@ -358,7 +416,7 @@ const Dashboard = () => {
             } text-left transition-all ease-in-out duration-300
           `}>
           <th className='py-2 pl-4'>Full Name</th>
-          <th className='py-2 pl-2 text-start'>Status</th>
+          <th className='py-2 pl-4.5 text-start'>Status</th>
           <th className='py-2 pl-3 hidden sm:block'>Created At</th>
         </tr>
       </thead>
@@ -375,39 +433,49 @@ const Dashboard = () => {
         <td className='py-2 px-6'>
           <div className='flex items-center gap-3'>
             <div className={clsx(
-              "w-9 h-9 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
-              user.isActive ? "border-green-500" : "border-red-600"
+              "w-12 h-12 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
+              user?.isActive ? "border-green-500" : "border-red-600"
             )}>
-              {user?.img ? 
-                <img src={user?.img} alt="Avatar" className="w-full h-full object-cover "/>
+              {user?.profileImage ? 
+                <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
               :
                 <span className='text-xs md:text-sm text-center'>
                   {getInitials(user?.name || "Unknown User")}
                 </span>
               }
             </div>
-            <div className={`${user.isActive ? "" : "blur-[2px]"}`}>
-              <p className="whitespace-nowrap"> {user.name}</p>
+            <div className={`${user?.isActive ? "" : "blur-[2px]"} flex flex-col justify-center items-start gap-1`}>
+              <p className="whitespace-nowrap"> {user?.name}</p>
               <span className={`
                 ${LightMode 
                     ? "text-black"
                     : "text-white"
                 }
-                text-xs transition-all ease-in-out duration-300
+                text-xs h-fit transition-all ease-in-out duration-300
               `}>{user?.role}</span>
-            </div>
+              <span className="py-0.5 ml-1">
+                <OnlineStatus
+                  isOnline={onlineUsers.includes(user?._id.toString())}
+                  type="Dashboard"
+                />
+              </span>
+            </div> 
           </div>
         </td>
 
         <td className="">
-          <DisabledComponentTable user={user.isActive} />
+          <DisabledComponentTable user={user?.isActive} />
         </td>
 
-        <td className={`w-32 px-3 whitespace-nowrap ${user.isActive ? "" : "blur-[2px]"}`}>{moment(user?.createdAt).fromNow()}</td>
+        <td className={`w-32 px-3 whitespace-nowrap ${user.isActive ? "" : "blur-[2px]"}`}>
+          {formatDistanceToNow(new Date(user?.createdAt), {
+            addSuffix: true,
+          })}
+        </td>
 
         <td className="">
           <div className="flex justify-center px-2">
-            <SocialMedia tiktok={user?.tiktok} youtube={user?.youtube} whatsApp={user?.whatsApp} telegram={user?.telegram} />
+            <SocialMedia tiktok={user?.tiktok} x={user?.x} whatsApp={user?.whatsApp} telegram={user?.telegram} />
           </div>
         </td>
       </tr>
@@ -415,7 +483,7 @@ const Dashboard = () => {
 
 
 
-  const UserCard = ({ user }) => (
+  const UserCard = ({ user, admin }) => (    
     <div className={`
       ${LightMode
         ? "bg-white shadow-darkSM"
@@ -430,8 +498,8 @@ const Dashboard = () => {
               : "shadow-lightSM border-black",
             "w-30 h-30 rounded-full border-8 flex items-center justify-center text-white text-sm overflow-hidden bg-blue-600 transition-all duration-300 ease-in-out",
           )}>
-            {user?.img ? 
-              <img src={user?.img} alt="Avatar" className="w-full h-full object-cover "/>
+            {user?.profileImage ? 
+              <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
             :
               <span className='text-2xl md:text-sm text-center'>
                 {getInitials(user?.name || "Unknown User")}
@@ -447,7 +515,7 @@ const Dashboard = () => {
           }
           absolute border-2 p-2 rounded-full -top-8 -right-4 flex justify-center transition-all duration-300 ease-in-out
         `}>
-          <SocialMedia tiktok={user?.tiktok} youtube={user?.youtube} whatsApp={user?.whatsApp} telegram={user?.telegram} />
+          <SocialMedia tiktok={user?.tiktok} x={user?.x} whatsApp={user?.whatsApp} telegram={user?.telegram} />
         </div>
 
         <div className={`
@@ -455,15 +523,31 @@ const Dashboard = () => {
             ? "text-black"
             : "text-white"
           }
-            w-full mt-4 transition-all duration-300 ease-in-out
+            w-full ml-2 transition-all duration-300 ease-in-out
             ${user.isActive ? "" : "blur-[2px]"}
           `}>
           <div className="ml-30 w-40 flex flex-col justify-center items-start gap-0">
             <div className="text-xl font-semibold font-serif whitespace-nowrap [@media(min-width:400px)_and_(min-width:500px)]:hidden">{user.name.slice(0, 12) + "..."}</div>
             <div className="text-xl font-semibold font-serif whitespace-nowrap [@media(min-width:400px)_and_(min-width:500px)]:block hidden">{user.name}</div>
             
-            <div className="text-lg [@media(min-width:400px)_and_(min-width:500px)]:hidden">{user.email.slice(0, 1) + "......@gmail.com"}</div>
-            <div className="text-lg [@media(min-width:400px)_and_(min-width:500px)]:block hidden">{user.email.slice(0, 1) + "......@gmail.com"}</div>
+            <div className="text-lg line-clamp-1">
+              {admin ?
+                user?.email
+                  ? user?.email
+                  :
+                  "No Email"
+                :
+                user?.email
+                  ? user.email.slice(0, 1) + "......@gmail.com"
+                  :
+                  "No Email"
+              }
+            </div>
+            <div className="pt-1 ml-1">
+              <OnlineStatus
+                isOnline={onlineUsers.includes(user._id.toString())}
+              />
+            </div>
           </div>
         </div>
 
@@ -472,7 +556,7 @@ const Dashboard = () => {
               ? "text-black"
               : "text-white"
             }
-            w-full mt-4 ml-5 flex justify-start items-center gap-2 transition-all duration-300 ease-in-out
+            w-full mt-2 ml-8 flex justify-start items-center gap-2 transition-all duration-300 ease-in-out
             ${user.isActive ? "" : "blur-[2px]"}
           `}>
           <div className="text-sm font-semibold">{user.title}</div>
@@ -488,7 +572,7 @@ const Dashboard = () => {
   )
 
     return (
-      <div className="md:px-30 py-5 pt-26 overflow-hidden">
+      <div className="md:px-15 lg:px-30 py-5 pt-26 overflow-hidden">
         <div className={`
             ${LightMode 
               ? "bg-white shadow-md shadow-black/30"
@@ -514,17 +598,19 @@ const Dashboard = () => {
           relative flex flex-col justify-center gap-15 px-4 pt-20 pb-15 mx-1 sm:hidden rounded-2xl transition-all duration-300 ease-in-out
         `}>
           {users?.map((user, index) => (
-            <UserCard key={index} user={user} />
+            <UserCard key={index} user={user} admin={admin} />
           ))}
 
-          <span className="absolute z-0 text-center -top-6 left-0 right-0">
+          <span className="absolute z-0 text-center -top-5 left-0 right-0">
             <span className={`
               ${LightMode
                 ? "text-black bg-[#E8E8E8]"
                 : "text-white bg-[#3D3D3D]"
               }
-              py-2 px-4 text-3xl font-semibold font-sans transition-all duration-300 ease-in-out
-            `}>Users</span>
+              py-2 px-4 w-fit text-3xl font-semibold font-sans transition-all duration-300 ease-in-out
+            `}>
+              {admin ? "Employees" : "Colleagues"}
+            </span>
           </span>
         </div>
       </div>
@@ -538,8 +624,6 @@ const Dashboard = () => {
 
 
   const TaskTable = ({ tasks }) => {
-    // const { user } = useSelector((state) => state.auth);
-
 
     const ICONS = {
       high: <MdKeyboardDoubleArrowUp />,
@@ -574,11 +658,13 @@ const Dashboard = () => {
 
     const TableRow = ({ task }) => {
       // console.log(taskInfo)
-      const textPriority = task?.priority;
+      const textPriority = task?.priority || "";
       const TextPriShort = textPriority.slice(0, 4) + "...";
-      const titleShort = task.title.split(" ").length > 4 ? task.title.split(" ").slice(0, 5).join(" ") + "..." : task.title;
-      const nameShort = task.clientName.split(" ").length > 2 ? task.clientName.split(" ").slice(0, 2).join(" ") + "..." : task.clientName;
-      const addressShort = task.address.split(" ").length > 2 ? task.address.split(" ").slice(0, 2).join(" ") + "..." : task.address;
+      const titleShort = task.title.split(" ").length > 4 ? task.title.split(" ").slice(0, 5).join(" ") + "..." : task.title || "";
+
+      const nameShort = task.clientName.split(" ").length > 2 ? task.clientName.split(" ").slice(0, 2).join(" ") + "..." : task.clientName || "";
+
+      const addressShort = task.address.split(" ").length > 2 ? task.address.split(" ").slice(0, 2).join(" ") + "..." : task.address || "";
 
       return (
         <tr className={`
@@ -669,7 +755,9 @@ const Dashboard = () => {
                   }
                   whitespace-nowrap text-base transition-all ease-in-out duration-300
                 `}>
-                {moment(task?.date).fromNow()}
+                {formatDistanceToNow(new Date(task?.createdAt), {
+                  addSuffix: true,
+                })}
               </span>
             </td>
         </tr>
@@ -680,30 +768,54 @@ const Dashboard = () => {
       <>
         <div
           className={clsx(
-            "w-full px-2 md:px-4 pt-4 pb-4 shadow-md rounded transition-all ease-in-out duration-300",
+            "w-full px-2 md:px-4 pt-4 pb-4 rounded transition-all ease-in-out duration-300",
             LightMode 
               ? "bg-white shadow-md shadow-black/30"
               : "bg-black/90 shadow-md shadow-white/30",
-            // user?.isAdmin ? "md:w-2/3" : ""
+            tasks.length === 0 ? 
+              LightMode 
+              ? "shadow-md shadow-black/30"
+              : "shadow-md shadow-white/30"
+            :
+              ""
           )}
         >
           <div className='overflow-x-auto overflow-y-visible'>
-            <table className='w-full '>
-              <TableHeader />
-              <tbody className=''>
-                {tasks.map((task, id) => (
-                  <TableRow key={task?._id + id} task={task} />
-                ))}
-              </tbody>
-            </table>
+            {tasks.length === 0 ?
+              (
+                <span className={`${LightMode ? "text-black/60" : "text-white/60"} h-100 flex flex-col justify-center item-center`}>
+                  <span className="flex justify-center items-center gap-3">
+                    <span className="text-center animate-bounce">
+                      {admin ? "Create task :)" : "No assigned task yet :("}
+                    </span>
+                    {admin && (
+                      <Link to={"/tasks"}>
+                        <button className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} bg-teal-300 rounded-full p-2 hover:scale-102 active:scale-95 transition-all duration-300 ease-in-out cursor-pointer`}>
+                          <ChevronsRight size={25} />
+                        </button>
+                      </Link>
+                    )}
+                  </span>
+                </span>
+              )
+                :
+              (
+                <table className='w-full '>
+                  <TableHeader />
+                  <tbody className=''>
+                    {tasks?.map((task, id) => (
+                      <TableRow key={task?._id + id} task={task} />
+                    ))}
+                  </tbody>
+                </table>
+              )
+            }
+            
           </div>
         </div>
       </>
     );
   };
-
-
-
 
 
 
@@ -734,14 +846,54 @@ const Dashboard = () => {
             `}>
             Task Analytics
           </h4>
-          <Chart />
+          <Chart  summary={summary} />
         </div>
         <div className='w-full flex flex-col gap-4 2xl:gap-10 py-8'>
           {/* RECENT AUTHORS */}
-          <TaskTable tasks={summary.last10Task} />
+          {isLoading ? (
+            <div className="h-100">
+              <Loading />
+            </div>
+          )
+            :
+          (
+            <TaskTable 
+              tasks={summary?.last10Task || []}
+            />
+          )}
 
           {/* RECENT USERS */}
-          <UserTable users={summary.users} />
+          {isLoading ? (
+            <div className="h-100">
+              <Loading />
+            </div>
+          )
+            :
+          (
+            summary?.users.length === 0 ?
+              (
+                <span className={`${LightMode ? "text-black/60" : "text-white/60"} h-100 flex flex-col justify-center item-center`}>
+                  <span className="flex justify-center items-center gap-3">
+                    <span className="text-center animate-bounce">
+                      {admin ? "Create an employee :)" : "No Employees created yet :("}
+                    </span>
+                    {admin && (
+                      <Link to={"/team"}>
+                        <button className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} bg-teal-300 rounded-full p-2 hover:scale-102 active:scale-95 transition-all duration-300 ease-in-out cursor-pointer`}>
+                          <ChevronsRight size={25} />
+                        </button>
+                      </Link>
+                    )}
+                  </span>
+                </span>
+              )
+                :
+              (
+                <UserTable 
+                  users={summary?.users || []}
+                />
+              )
+          )}
         </div>
       </>
     </div>

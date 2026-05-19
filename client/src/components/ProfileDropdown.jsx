@@ -20,6 +20,9 @@ import { setLightMode } from "../redux/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {useGetUserProfileQuery} from "../redux/slices/api/userApiSlice"
 import { setOpenSidebar, setOpenProfile, setCPEditPopUp } from "../redux/slices/authSlice";
+import { useLogoutMutation } from "../redux/slices/api/authApiSlice";
+import { logout } from "../redux/slices/authSlice";
+
 
 
 import { cn } from "@/lib/utils";
@@ -60,6 +63,23 @@ export default function ProfileDropdown({ className }) {
   const { user: storedUser } = useSelector((state) => state.auth);
   const { data: freshUser, isLoading } = useGetUserProfileQuery();
   const user = freshUser ?? storedUser;
+
+
+  // LogOut
+  const [logoutUser] = useLogoutMutation();
+
+  const logoutHandler = async () => {
+    try {
+      await logoutUser().unwrap();
+      dispatch(logout());
+
+      navigate("/log-in");
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+    }
+  };
+
+
 
   const USER_DETAILS = {
   name: user?.name,
@@ -188,7 +208,7 @@ export default function ProfileDropdown({ className }) {
                       ? "bg-white text-black hover:bg-zinc-50 border-zinc-200"
                       : "bg-black/90 text-white hover:bg-black/95 border-zinc-500"
                     }
-                    flex justify-between items-center gap-6 rounded-2xl border  outline-0  w-full p-3 transition-all duration-300 ease-in-out cursor-pointer 
+                    ScaleChange flex justify-between items-center gap-6 rounded-2xl border outline-0 w-full p-3 transition-all duration-300 ease-in-out cursor-pointer 
                   `}
               >
                 <div className="text-left">
@@ -337,7 +357,11 @@ export default function ProfileDropdown({ className }) {
 
                     <div asChild className="relative text-red-600">
                       <>
-                        <button className={`${LightMode ? "hover:shadow-darkSM" : "hover:shadow-light"} flex items-center gap-2 w-full py-2 pl-6 pr-4 rounded-xl bg-red-100 text-red-600 hover:bg-red-300 hover:text-red-600 focus:bg-red-300 focus:text-red-600 cursor-pointer`}>
+                        <button 
+                        onClick={logoutHandler}
+                        className={`
+                          ${LightMode ? "hover:shadow-darkSM" : "hover:shadow-light"} flex items-center gap-2 w-full py-2 pl-6 pr-4 rounded-xl active:scale-95 transition-all duration-300 ease-in-out bg-red-100 text-red-600 hover:bg-red-300 hover:text-red-600 focus:bg-red-300 focus:text-red-600 cursor-pointer`
+                        }>
                           <LogOut className="h-4 w-4 " />
                           Log Out
                         </button>

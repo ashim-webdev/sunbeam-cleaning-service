@@ -9,11 +9,11 @@ import { MdAdd, MdOutlineEdit } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-// import {
-//   useChangeTaskStageMutation,
-//   useDuplicateTaskMutation,
-//   useTrashTastMutation,
-// } from "../../redux/slices/api/taskApiSlice";
+import {
+  useChangeTaskStageMutation,
+  useDuplicateTaskMutation,
+  useTrashTaskMutation,
+} from "../../redux/slices/api/taskApiSlice";
 import ConfirmationDialog from "../ConfirmationDialog";
 import { useSelector } from "react-redux";
 import AddSubTask from "./AddSubTask";
@@ -34,29 +34,37 @@ const CustomTransition = ({ children }) => (
   </Transition>
 );
 
-const ChangeTaskActions = ({ _id, stage }) => {
-  const { LightMode } = useSelector((state) => state.auth);
 
-  // const [changeStage] = useChangeTaskStageMutation();
+
+
+const ChangeTaskActions = ({ _id, stage }) => {
+  const { LightMode, user } = useSelector((state) => state.auth);
+
+  const [changeStage] = useChangeTaskStageMutation();
+
+  const [openStageMenu, setOpenStageMenu] = useState(false);
+
+
 
   const changeHandler = async (val) => {
-    // try {
-    //   const data = {
-    //     id: _id,
-    //     stage: val,
-    //   };
-    //   const res = await changeStage(data).unwrap();
+    try {
+      const data = {
+        id: _id,
+        stage: val,
+      };
 
-    //   toast.success(res?.message);
+      const res = await changeStage(data).unwrap();
 
-    //   setTimeout(() => {
-    //     window.location.reload();
-    //   }, 500);
-    // } catch (err) {
-    //   console.log(err);
-    //   toast.error(err?.data?.message || err.error);
-    // }
+      toast.success(res?.message);
+
+      setOpenStageMenu(false);
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.data?.message || err.error);
+    }
   };
+
+
 
   const items = [
     {
@@ -79,121 +87,174 @@ const ChangeTaskActions = ({ _id, stage }) => {
     },
   ];
 
-  return (
-    <>
-      <Menu as='div' className='relative inline-block text-left'>
-        <Menu.Button
-          className={clsx(
-            LightMode ? "text-gray-600" : "text-gray-300",
-            "inline-flex cursor-pointer w-full items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-all duration-300 ease-in-out"
-          )}
-        >
-          <FaExchangeAlt />
-          <span>Change Task</span>
-        </Menu.Button>
+  if (!user?.isAdmin) return null;
 
-        <CustomTransition>
-          <Menu.Items className='absolute p-4 left-0 mt-2 w-40 divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none'>
-            <div className='px-1 py-1 space-y-2'>
-              {items.map((el) => (
-                <Menu.Item key={el.label} disabled={stage === el.stage}>
-                  {({ active }) => (
-                    <button
-                      disabled={stage === el.stage}
-                      onClick={el?.onClick}
-                      className={clsx(
-                        active ? "bg-gray-200 text-gray-900" : "text-gray-900",
-                        "group flex gap-2 w-full items-center rounded-md px-2 py-2 text-sm disabled:opacity-50"
-                      )}
-                    >
-                      {el.icon}
-                      {el.label}
-                    </button>
-                  )}
-                </Menu.Item>
-              ))}
-            </div>
-          </Menu.Items>
-        </CustomTransition>
-      </Menu>
-    </>
+
+  const closeMiniMenu = () => {
+    setTimeout(() => {
+      setOpenStageMenu(false)
+    }, 500);
+  }
+
+  return (
+    <div className='relative'>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpenStageMenu((prev) => !prev);
+        }}
+        className={clsx(
+          LightMode ? "text-gray-600 hover:text-black focus:text-black" : "text-gray-300 hover:text-black focus:text-black",
+          "inline-flex cursor-pointer w-full items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-all duration-300 ease-in-out hover:scale-105 active:scale-95 hover:bg-blue-200 focus:bg-blue-200"
+        )}
+      >
+        <FaExchangeAlt />
+        <span>Change Task</span>
+      </button>
+
+      {openStageMenu && (
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className={`
+            ${LightMode 
+              ? "bg-white shadow-darkSM text-black"
+              : "bg-black/80 shadow-lightSM text-white"
+            }
+            absolute right-18 -top-36 border border-white ml-2 w-44 rounded-md z-[999] transition-all duration-300 ease-in-out
+          `}
+        >
+          <div className='p-2 space-y-1'>
+            {items.map((el) => (
+              <button
+                key={el.label}
+                disabled={stage === el.stage}
+                onClick={ (e) => {
+                  e.stopPropagation()
+                  el?.onClick?.()
+                  closeMiniMenu()
+                }}
+                className={clsx(
+                  "flex items-center gap-2 w-full rounded-md px-3 py-2 text-sm transition-all duration-300 ease-in-out",
+                  stage === el.stage
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-gray-100 hover:text-black cursor-pointer hover:scale-105 active:scale-95"
+                )}
+              >
+                {el.icon}
+                {el.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
-export default function TaskDialog({ task }) {
-  const { LightMode } = useSelector((state) => state.auth);
 
-  const { user } = useSelector((state) => state.auth);
+
+
+export default function TaskDialog({ task }) {
+  const { LightMode, user } = useSelector((state) => state.auth);
+
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
 
   const navigate = useNavigate();
 
-  // const [deleteTask] = useTrashTastMutation();
-  // const [duplicateTask] = useDuplicateTaskMutation();
+  const [trashTask] = useTrashTaskMutation();
+  const [duplicateTask] = useDuplicateTaskMutation();
+
 
   const deleteClicks = () => {
     setOpenDialog(true);
   };
 
+
+
   const deleteHandler = async () => {
-    // try {
-    //   const res = await deleteTask({
-    //     id: task._id,
-    //     isTrashed: "trash",
-    //   }).unwrap();
+    try {
+      const res = await trashTask({
+        id: task._id,
+      }).unwrap();
 
-    //   toast.success(res?.message);
+      toast.success(res?.message);
 
-    //   setTimeout(() => {
-    //     setOpenDialog(false);
-    //     window.location.reload();
-    //   }, 500);
-    // } catch (err) {
-    //   console.log(err);
-    //   toast.error(err?.data?.message || err.error);
-    // }
+      setOpenDialog(false);
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.data?.message || err.error);
+    }
   };
+
+
 
   const duplicateHandler = async () => {
-    // try {
-    //   const res = await duplicateTask(task._id).unwrap();
+    try {
+      const res = await duplicateTask(task._id).unwrap();
 
-    //   toast.success(res?.message);
-
-    //   setTimeout(() => {
-    //     setOpenDialog(false);
-    //     window.location.reload();
-    //   }, 500);
-    // } catch (err) {
-    //   console.log(err);
-    //   toast.error(err?.data?.message || err.error);
-    // }
+      toast.success(res?.message);
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.data?.message || err.error);
+    }
   };
 
-  const items = [
-    {
-      label: "Open Task",
-      icon: <AiTwotoneFolderOpen className='mr-2 h-5 w-5' aria-hidden='true' />,
-      onClick: () => navigate(`/task/${task._id}`),
-    },
-    {
-      label: "Edit",
-      icon: <MdOutlineEdit className='mr-2 h-5 w-5' aria-hidden='true' />,
-      onClick: () => setOpenEdit(true),
-    },
-    {
-      label: "Add Sub-Task",
-      icon: <MdAdd className='mr-2 h-5 w-5' aria-hidden='true' />,
-      onClick: () => setOpen(true),
-    },
-    {
-      label: "Duplicate",
-      icon: <HiDuplicate className='mr-2 h-5 w-5' aria-hidden='true' />,
-      onClick: () => duplicateHandler(),
-    },
-  ];
+
+
+const items = [
+  {
+    label: "Open Task",
+    icon: (
+      <AiTwotoneFolderOpen
+        className='mr-2 h-5 w-5'
+        aria-hidden='true'
+      />
+    ),
+    onClick: () => navigate(`/task/${task._id}`),
+  },
+
+  ...(user?.isAdmin
+      ? [
+          {
+            label: "Edit",
+            icon: (
+              <MdOutlineEdit
+                className='mr-2 h-5 w-5'
+                aria-hidden='true'
+              />
+            ),
+            onClick: () => setOpenEdit(true),
+          },
+          {
+            label: "Add Sub-Task",
+            icon: (
+              <MdAdd
+                className='mr-2 h-5 w-5'
+                aria-hidden='true'
+              />
+            ),
+            onClick: () => setOpen(true),
+          },
+          {
+            label: "Duplicate",
+            icon: (
+              <HiDuplicate
+                className='mr-2 h-5 w-5'
+                aria-hidden='true'
+              />
+            ),
+            onClick: () => duplicateHandler(),
+          },
+        ]
+      : []),
+];
+
+
+
+  const activeHover = LightMode ? "bg-blue-600/90 text-white  hover:shadow-dark" : " text-white bg-blue-600/90 hover:shadow-light "
+  const text = LightMode ? "text-black" : "text-white"
 
   return (
     <>
@@ -211,7 +272,8 @@ export default function TaskDialog({ task }) {
                   ? "bg-white shadow-darkSM"
                   : "bg-black/80 shadow-lightSM"
                 }
-                z-50 cursor-default border border-white absolute p-4 right-0 w-56 origin-top-right divide-y divide-gray-100 rounded-md ring-1 ring-black/5 focus:outline-none transition-all duration-300 ease-in-out
+                ${user?.isAdmin ? "divide-y divide-gray-100 pb-2 right-10 origin-top-right" : "pb-0 -right-2 top-9"}
+                z-50 cursor-default border border-white absolute px-4 pt-2 -top-6 w-56  rounded-md ring-1 ring-black/5 focus:outline-none transition-all duration-300 ease-in-out
               `}>
               <div className='px-1 py-1 space-y-2'>
                 {items.map((el, index) => (
@@ -221,9 +283,12 @@ export default function TaskDialog({ task }) {
                         // disabled={index === 0 ? false : !user.isAdmin}
                         onClick={el?.onClick}
                         className={`${
-                            active ? LightMode ? "bg-blue-600 text-white  hover:shadow-dark" : " text-white bg-blue-600 hover:shadow-light "  : LightMode ? "text-black" : " text-white"
+                            active ? 
+                              `${activeHover}` 
+                            :
+                              `${text}`
                           }
-                          hover:scale-110 group cursor-pointer flex w-full items-center rounded-md px-2 py-2 text-sm disabled:text-gray-400 transition-all duration-50 ease-in-out
+                          hover:scale-110 active:scale-95 group cursor-pointer flex w-full items-center rounded-md px-2 py-2 text-sm transition-all duration-50 ease-in-out
                         `}
                       >
                         {el.icon}
@@ -235,30 +300,33 @@ export default function TaskDialog({ task }) {
               </div>
 
               <div className='px-1 py-1'>
-                <Menu.Item>
-                  <ChangeTaskActions id={task._id} {...task} />
-                </Menu.Item>
+                <div>
+                  <ChangeTaskActions _id={task._id} stage={task.stage} />
+                </div>
               </div>
 
-              <div className='px-1 py-1'>
-                <Menu.Item>
-                  {({ active }) => (
-                    <button
-                      // disabled={!user.isAdmin}
-                      onClick={() => deleteClicks()}
-                      className={`${
-                        active ? LightMode ? "bg-red-300 text-red-900  hover:shadow-dark" : " text-red-900 bg-red-300 hover:shadow-light"  : "text-red-600"
-                      } group hover:scale-110 transition-all duration-50 ease-in-out cursor-pointer flex w-full items-center rounded-md px-2 py-2 text-sm disabled:text-gray-400`}
-                    >
-                      <RiDeleteBin6Line
-                        className='mr-2 h-5 w-5 text-red-600'
-                        aria-hidden='true'
-                      />
-                      Delete
-                    </button>
-                  )}
-                </Menu.Item>
-              </div>
+                {user?.isAdmin && (
+                  <div className='px-1 py-1'>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <button
+                          // disabled={!user.isAdmin}
+                          onClick={() => deleteClicks()}
+                          className={`${
+                            active ? LightMode ? "bg-red-300 text-red-900  hover:shadow-dark" : " text-red-900 bg-red-300 hover:shadow-light"  : "text-red-600"
+                          } group hover:scale-110 transition-all duration-300 ease-in-out cursor-pointer flex w-full items-center rounded-md px-2 py-2 text-sm disabled:text-gray-400 active:scale-95`
+                        }
+                        >
+                          <RiDeleteBin6Line
+                            className='mr-2 h-5 w-5 text-red-600'
+                            aria-hidden='true'
+                          />
+                          Delete
+                        </button>
+                      )}
+                    </Menu.Item>
+                  </div>
+                )}
             </Menu.Items>
           </CustomTransition>
         </Menu>
@@ -270,7 +338,11 @@ export default function TaskDialog({ task }) {
         task={task}
         key={new Date().getTime()}
       />
-      <AddSubTask open={open} setOpen={setOpen} />
+      <AddSubTask 
+        open={open}
+        setOpen={setOpen}
+        id={task._id}
+      />
       <ConfirmationDialog
         open={openDialog}
         setOpen={setOpenDialog}

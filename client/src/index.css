@@ -20,6 +20,26 @@
   }
 }
 
+/* Scale Change User Dropdown Menu */
+.ScaleChange {
+  transition: transform 0.15s ease;
+  user-select: none
+}
+
+.parentDiv {
+  transition: transform 0.15s ease
+}
+
+.ScaleChange:active {
+  transform: scale(1)
+}
+
+.parentDiv:has(.ScaleChange:active) {
+  transform: scale(0.96)
+}
+
+
+
 @import "tailwindcss";
 
 @import "tw-animate-css";
@@ -164,7 +184,7 @@
   }
 
   .text-shadow-glow {
-    text-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
+    text-shadow: 0 0 8px rgba(59, 130, 246, 0.8) #0022ff56;
   }
 }
 
@@ -1013,4 +1033,160 @@ html {
   html {
     @apply font-sans;
   }
+}
+
+
+/* Active/Disable User Button Style */ 
+.vista-buttonActive {
+  position: relative;
+  cursor: pointer;
+  padding: 2px 8px;
+  /* border: 1px solid blueviolet; */
+  border-radius: 20px;
+  color: #fff;
+  text-shadow: 1px 1px #000;
+  box-shadow:
+    inset 0px 4px 4px -3px #fff0,
+    inset 0px -3px 4px -3px #fff;
+  background: green;
+  isolation: isolate;
+  transition:
+    0.25s all,
+    0.1s background-position;
+}
+
+.vista-buttonActive::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(circle at 50% 150%, #4856ef8a, #0000 50%);
+  background-size: 300% 50%;
+  border-radius: 20px;
+  background-position: 50% 100%;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: inherit;
+}
+
+.vista-buttonActive::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(circle at 50% 320%, #48b9ef, #0000 50%);
+  background-size: 300% 50%;
+  background-position: 50% 0%;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: inherit;
+}
+
+.vista-buttonActive:hover {
+  box-shadow:
+    inset 0px 4px 4px -3px #fff5,
+    inset 0px -3px 4px -3px #fff;
+}
+.vista-buttonActive:hover::before,
+.vista-buttonActive:hover::after {
+  opacity: 1;
+}
+
+.vista-buttonActive:active::before,
+.vista-buttonActive:active::after {
+  opacity: 0;
+}
+
+.vista-buttonActive:active {
+  box-shadow:
+    inset 0px 4px 4px -3px #000,
+    inset 0px -4px 4px -3px #000c,
+    inset 0px 0px 24px -3px #000a;
+  background-position: 1px 1px;
+}
+
+.vista-buttonActive div {
+  transition: 0.1s translate;
+}
+
+.vista-buttonActive:active div {
+  translate: 1px 1px;
+}
+
+
+
+.vista-buttonDisabled {
+  position: relative;
+  cursor: pointer;
+  padding: 2px 8px;
+  /* border: 1px solid blueviolet; */
+  border-radius: 20px;
+  color: #fff;
+  text-shadow: 1px 1px #000;
+  box-shadow:
+    inset 0px 4px 4px -3px #fff0,
+    inset 0px -3px 4px -3px #fff;
+  background: red;
+  isolation: isolate;
+  transition:
+    0.25s all,
+    0.1s background-position;
+}
+
+.vista-buttonDisabled::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(circle at 50% 150%, #4856ef8a, #0000 50%);
+  background-size: 300% 50%;
+  border-radius: 20px;
+  background-position: 50% 100%;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: inherit;
+}
+
+.vista-buttonDisabled::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(circle at 50% 320%, #48b9ef, #0000 50%);
+  background-size: 300% 50%;
+  background-position: 50% 0%;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: inherit;
+}
+
+.vista-buttonDisabled:hover {
+  box-shadow:
+    inset 0px 4px 4px -3px #fff5,
+    inset 0px -3px 4px -3px #fff;
+}
+.vista-buttonDisabled:hover::before,
+.vista-buttonDisabled:hover::after {
+  opacity: 1;
+}
+
+.vista-buttonDisabled:active::before,
+.vista-buttonDisabled:active::after {
+  opacity: 0;
+}
+
+.vista-buttonDisabled:active {
+  box-shadow:
+    inset 0px 4px 4px -3px #000,
+    inset 0px -4px 4px -3px #000c,
+    inset 0px 0px 24px -3px #000a;
+  background-position: 1px 1px;
+}
+
+.vista-buttonDisabled div {
+  transition: 0.1s translate;
+}
+
+.vista-buttonDisabled:active div {
+  translate: 1px 1px;
 }

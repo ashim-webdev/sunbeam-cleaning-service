@@ -13,6 +13,7 @@ const initialState = {
   selectedUserInfo: null,
   userViewInfo: null,
   CPEditPopUp: false,
+  onlineUsers: []
 };
 
 
@@ -59,6 +60,10 @@ const authSlice = createSlice ({
     setUserViewInfo: (state, action) => {
       state.userViewInfo = action.payload;
     },
+
+    setOnlineUsers: (state, action) => {
+      state.onlineUsers = action.payload;
+    },
   },
 })
 
@@ -72,7 +77,8 @@ export const {
   setMiniMenu, 
   setSelectUserDashInfo, 
   setCPEditPopUp,
-  setUserViewInfo
+  setUserViewInfo,
+  setOnlineUsers
 } = authSlice.actions
 
 export default authSlice.reducer

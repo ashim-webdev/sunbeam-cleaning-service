@@ -1,6 +1,10 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+//Socket.io
+import http from "http";
+import { initializeSocket } from "./socket.js";
+
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
@@ -18,7 +22,11 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["https://mern-task-manager-app.netlify.app", "http://localhost:3000", "http://localhost:3001"],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://mern-task-manager-app.netlify.app"
+    ],
     methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true,
   })
@@ -35,4 +43,12 @@ app.use("/api", routes);
 app.use(routeNotFound);
 app.use(errorHandler);
 
-app.listen(port, () => console.log(`Server listening on ${port}`));
+
+// Socket.io
+const server = http.createServer(app);
+
+initializeSocket(server);
+
+server.listen(port, () =>
+  console.log(`Server listening on ${port}`)
+);
