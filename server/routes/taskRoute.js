@@ -23,7 +23,12 @@ const router = express.Router();
 router.get("/dashboard", protectRoute, dashboardStatistics);
 router.post("/create", protectRoute, isAdminRoute, upload.array("assets", 10), createTask);
 router.post("/duplicate/:id", protectRoute, isAdminRoute, duplicateTask);
-router.post("/activity/:id", protectRoute, postTaskActivity);
+router.post(
+  "/activity/:id",
+  protectRoute,
+  upload.array("images", 10),
+  postTaskActivity
+);
 
 router.get("/dashboard", protectRoute, dashboardStatistics);
 router.get("/", protectRoute, getTasks);

@@ -20,9 +20,14 @@ import { useDispatch, useSelector } from "react-redux";
 import CircularBar from "../ui/circularBar";
 
 
-const Loading = () => (
+const Loading = () => {
+  const { LightMode }  = useSelector((state) => state.auth);
+
+  const smallLoader = LightMode ? "dot-spinner" : "dot-spinnerDark"
+
+  return (
     <>
-      <div className="dot-spinner transition-colors duration-300 ease-in-out animate-UpDown">
+      <div className={`${smallLoader} transition-colors duration-300 ease-in-out animate-UpDown`}>
         <div className="dot-spinner__dot"></div>
         <div className="dot-spinner__dot"></div>
         <div className="dot-spinner__dot"></div>
@@ -34,6 +39,7 @@ const Loading = () => (
       </div>
     </>
   )
+}
 
 
 

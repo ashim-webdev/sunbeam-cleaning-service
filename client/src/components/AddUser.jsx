@@ -40,6 +40,8 @@ const AddUser = ({ open, setOpen, userData }) => {
   const [shake, setShake] = useState(false);
   const [spinner, setSpinner] = useState(false);
   const [tempPassword, setTempPassword] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false)
+
 
   const generateSpinner = () => {
     setSpinner(true);
@@ -82,6 +84,8 @@ const AddUser = ({ open, setOpen, userData }) => {
       // Editing
       reset(userData);
 
+      setIsAdmin(userData.isAdmin || false);
+
       // ✅ Set preview from existing image
       if (userData.profileImage || userData.img) {
         setPreview(userData.profileImage || userData.img);
@@ -102,6 +106,8 @@ const AddUser = ({ open, setOpen, userData }) => {
         x: "",
         telegram: "",
       });
+
+      setIsAdmin(false)
 
       setImage(null);
       setPreview(null);
@@ -159,6 +165,7 @@ const AddUser = ({ open, setOpen, userData }) => {
       formData.append("email", data.email);
       formData.append("title", data.title);
       formData.append("role", data.role);
+      formData.append("isAdmin", isAdmin);
 
       if (data.tiktok) formData.append("tiktok", data.tiktok);
       if (data.whatsApp) formData.append("whatsApp", data.whatsApp);
@@ -182,7 +189,19 @@ const AddUser = ({ open, setOpen, userData }) => {
         formData.append("_id", userData._id); // Append user ID for update
 
         res = await updateUser(formData).unwrap();
-        toast.success(res?.message);
+        if (userData) {
+          if (isAdmin) {
+            toast.success(`${data.name} is now an admin`);
+          } else {
+            toast.success(`${data.name} profile updated successfully`);
+          }
+        } else {
+          if (isAdmin) {
+            toast.success("New admin user created successfully");
+          } else {
+            toast.success("New User added successfully");
+          }
+        }
 
         // 🔥 If updating self, refresh redux user
         if (userData?._id === user?._id) {
@@ -192,7 +211,19 @@ const AddUser = ({ open, setOpen, userData }) => {
         // ✅ CREATE USER
         res = await addNewUser(formData).unwrap();
 
-        toast.success("New User added successfully");
+        if (userData) {
+          if (isAdmin) {
+            toast.success(`${data.name} is now an admin`);
+          } else {
+            toast.success(`${data.name} profile updated successfully`);
+          }
+        } else {
+          if (isAdmin) {
+            toast.success("New admin user created successfully");
+          } else {
+            toast.success("New User added successfully");
+          }
+        }
       }
 
       setTimeout(() => {
@@ -221,6 +252,12 @@ const AddUser = ({ open, setOpen, userData }) => {
   const employeeRestrictedEdit =
     isEditing && isEmployee && isOwnProfile;
 
+
+
+  // Toggle Admin - Employee OR Employee - Admin
+  const adminEmployeeToggle = () => {
+    setIsAdmin(prev => !prev)
+  }
 
   return (
     <>
@@ -416,6 +453,94 @@ const AddUser = ({ open, setOpen, userData }) => {
                 })}
                 error={errors.role ? errors.role.message : ""}
               />
+
+              {user?.isAdmin && (
+                <div className={`
+                  ${
+                    LightMode ? "text-black" : "text-white"
+                  }
+                  w-full
+                `}>
+                  <span className="">Make Admin</span>
+                  <div className="w-full flex justify-start items-center gap-2">
+
+                    <div class="checkbox-con">
+                      <input 
+                        id="checkbox"
+                        type="checkbox"
+                        className="cursor-pointer"
+                        checked={isAdmin}
+                        onChange={adminEmployeeToggle}
+                      />
+                    </div>
+
+                    <div className="w-full flex  justify-center items-start text-[13px]">
+                      
+                      <motion.div
+                        animate={{
+                          flex: isAdmin === true ? 2 : 1,
+                        }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 120,
+                          damping: 15,
+                          ease: "easeInOut",
+                        }}
+                        className="overflow-hidden h-10 w-full flex justify-start items-center gap-2"
+                      >
+                        {isAdmin === true ? (
+                          <div className="flex justify-center item-center pl-2">
+                            <span 
+                              className="w-2.5 h-2.5 bg-green-500 mr-1 rounded-full animate-pulseOnline"
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex justify-center item-center">
+                            <span 
+                              className="w-1.5 h-1.5 bg-red-500 ml-2 mr-3  rounded-full animate-pulseOnline"
+                            />
+                          </div>
+                        )}
+                        <span className="-ml-1">Admin</span>
+                        <div className={`${isAdmin === true ? "" : "pr-8"} py-2 w-full flex justify-center items-center`}>
+                          <span className={`${isAdmin === true ? "bg-linear-to-l from-green-400/10 via-green-500 to-green-400/10" : "bg-linear-to-l from-red-400/10 via-red-500 to-red-400/10"} w-full h-0.5`} />
+                        </div>
+                      </motion.div>
+
+                      <motion.div 
+                        animate={{
+                          flex: isAdmin === false ? 2 : 1,
+                        }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 120,
+                          damping: 15,
+                          ease: "easeInOut",
+                        }}
+                        className="overflow-hidden h-10 w-full flex justify-start items-center gap-2"
+                      >
+                        {isAdmin  === false ? (
+                          <div className="flex justify-center item-center pl-2">
+                            <span 
+                              className="w-2.5 h-2.5 bg-green-500 mr-1 rounded-full animate-pulseOnline"
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex justify-center item-center">
+                            <span 
+                              className="w-1.5 h-1.5 bg-red-500 ml-2 mr-3 rounded-full animate-pulseOnline"
+                            />
+                          </div>
+                        )}
+                        <span className="-ml-1">Employee</span>
+                        <div className={`${isAdmin === false ? "" : "pr-6"} py-2 w-full flex justify-center items-center pr-2`}>
+                          <span className={`${isAdmin === false ? "bg-linear-to-l from-green-400/10 via-green-500 to-green-400/10" : "bg-linear-to-l from-red-400/10 via-red-500 to-red-400/10"} w-full h-0.5`} />
+                        </div>
+                      </motion.div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="flex justify-center items-center gap-2">
                 <Textbox

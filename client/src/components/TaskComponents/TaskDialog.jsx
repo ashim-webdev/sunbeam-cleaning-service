@@ -1,6 +1,6 @@
 import { Menu, Transition } from "@headlessui/react";
 import clsx from "clsx";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { AiTwotoneFolderOpen } from "react-icons/ai";
 import { BsThreeDots } from "react-icons/bs";
 import { FaExchangeAlt } from "react-icons/fa";
@@ -20,6 +20,35 @@ import AddSubTask from "./AddSubTask";
 import AddTask from "./AddTask";
 import TaskColor from "./TaskColor";
 
+
+
+
+
+
+const LoadingCircle = () => {
+  const { LightMode }  = useSelector((state) => state.auth);
+
+  const smallLoader = LightMode ? "dot-spinner" : "dot-spinnerDark"
+
+  return (
+    <div className='w-full py-3 flex items-center justify-center'>
+      <div className={`${smallLoader} transition-colors duration-300 ease-in-out animate-UpDown`}>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+      </div>
+    </div>
+  )
+}
+
+
+
+
 const CustomTransition = ({ children }) => (
   <Transition
     as={Fragment}
@@ -37,17 +66,20 @@ const CustomTransition = ({ children }) => (
 
 
 
-const ChangeTaskActions = ({ _id, stage }) => {
+const ChangeTaskActions = ({ _id, stage, isLocked }) => {
   const { LightMode, user } = useSelector((state) => state.auth);
 
-  const [changeStage] = useChangeTaskStageMutation();
+  const [changeStage, { isLoading }] = useChangeTaskStageMutation();
 
   const [openStageMenu, setOpenStageMenu] = useState(false);
+  const [loadingStage, setLoadingStage] = useState("");
 
 
 
   const changeHandler = async (val) => {
     try {
+      setLoadingStage(val);
+
       const data = {
         id: _id,
         stage: val,
@@ -57,10 +89,17 @@ const ChangeTaskActions = ({ _id, stage }) => {
 
       toast.success(res?.message);
 
-      setOpenStageMenu(false);
+      // Wait 1 second after success
+      setTimeout(() => {
+        setOpenStageMenu(false);
+        setLoadingStage("");
+      }, 1000);
+
     } catch (err) {
       console.log(err);
       toast.error(err?.data?.message || err.error);
+
+      setLoadingStage("");
     }
   };
 
@@ -70,31 +109,28 @@ const ChangeTaskActions = ({ _id, stage }) => {
     {
       label: "To-Do",
       stage: "todo",
+      disabled: isLocked,
       icon: <TaskColor className='bg-blue-600' />,
       onClick: () => changeHandler("todo"),
     },
     {
       label: "In Progress",
       stage: "in progress",
+      disabled: isLocked,
       icon: <TaskColor className='bg-yellow-600' />,
       onClick: () => changeHandler("in progress"),
     },
     {
       label: "Completed",
       stage: "completed",
+      completed: "fa-solid fa-check-double text-green-600 text-lg",
+      disabled: false,
       icon: <TaskColor className='bg-green-600' />,
       onClick: () => changeHandler("completed"),
     },
   ];
 
-  if (!user?.isAdmin) return null;
-
-
-  const closeMiniMenu = () => {
-    setTimeout(() => {
-      setOpenStageMenu(false)
-    }, 500);
-  }
+  // if (!user?.isAdmin) return null;
 
   return (
     <div className='relative'>
@@ -105,6 +141,7 @@ const ChangeTaskActions = ({ _id, stage }) => {
         }}
         className={clsx(
           LightMode ? "text-gray-600 hover:text-black focus:text-black" : "text-gray-300 hover:text-black focus:text-black",
+          !user.isAdmin ? "mb-3" : "",
           "inline-flex cursor-pointer w-full items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-all duration-300 ease-in-out hover:scale-105 active:scale-95 hover:bg-blue-200 focus:bg-blue-200"
         )}
       >
@@ -124,25 +161,41 @@ const ChangeTaskActions = ({ _id, stage }) => {
           `}
         >
           <div className='p-2 space-y-1'>
-            {items.map((el) => (
-              <button
-                key={el.label}
-                disabled={stage === el.stage}
-                onClick={ (e) => {
-                  e.stopPropagation()
-                  el?.onClick?.()
-                  closeMiniMenu()
-                }}
-                className={clsx(
-                  "flex items-center gap-2 w-full rounded-md px-3 py-2 text-sm transition-all duration-300 ease-in-out",
-                  stage === el.stage
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-gray-100 hover:text-black cursor-pointer hover:scale-105 active:scale-95"
-                )}
-              >
-                {el.icon}
-                {el.label}
-              </button>
+            {items.map((el, index) => (
+              <div key={index}>
+                <button
+                    key={el.label}
+                    disabled={stage === el.stage || isLoading}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      el?.onClick?.();
+                    }}
+                    className={clsx(
+                      "flex items-center gap-2 w-full rounded-md px-3 py-2 text-sm transition-all duration-300 ease-in-out",
+                      stage === el.stage ?
+                      `text-black bg-blue-200 focus:bg-blue-200`
+                      :
+                      el.disabled
+                        ? "opacity-50 cursor-not-allowed"
+                        : "hover:bg-gray-100 hover:text-black cursor-pointer hover:scale-105 active:scale-95",
+                      isLoading ? "cursor-not-allowed" : ""
+                    )}
+                  >
+                    {loadingStage === el.stage && isLoading ? (
+                      <span className="w-full h-5 flex justify-center items-center">
+                        <LoadingCircle />
+                      </span>
+                    ) : (
+                      <>
+                        {el.icon}
+                        {el.label}
+                        {isLocked && (
+                          <i className={el?.completed}></i>
+                        )}
+                      </>
+                    )}
+                  </button>
+                </div>
             ))}
           </div>
         </div>
@@ -159,16 +212,29 @@ export default function TaskDialog({ task }) {
 
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openDialog1, setOpenDialog1] = useState(false);
+  const [openDialog2, setOpenDialog2] = useState(false);
+  const [type, setType] = useState("");
+  const [msg, setMsg] = useState(null);
+  
+  
 
   const navigate = useNavigate();
 
-  const [trashTask] = useTrashTaskMutation();
-  const [duplicateTask] = useDuplicateTaskMutation();
+  const [trashTask, { isLoading: deleteLoading }] = useTrashTaskMutation();
+  const [duplicateTask, { isLoading: duplicateLoading }] = useDuplicateTaskMutation();
 
 
   const deleteClicks = () => {
-    setOpenDialog(true);
+    setType("delete");
+    setMsg("Are you sure you want to delete the selected record?");
+    setOpenDialog1(true);
+  };
+
+  const duplicationClicks = () => {
+    setType("duplicate");
+    setMsg("Are you sure you want to duplicate this task?");
+    setOpenDialog2(true);
   };
 
 
@@ -181,7 +247,7 @@ export default function TaskDialog({ task }) {
 
       toast.success(res?.message);
 
-      setOpenDialog(false);
+      setOpenDialog1(false);
     } catch (err) {
       console.log(err);
       toast.error(err?.data?.message || err.error);
@@ -195,6 +261,8 @@ export default function TaskDialog({ task }) {
       const res = await duplicateTask(task._id).unwrap();
 
       toast.success(res?.message);
+
+      setOpenDialog2(false);
     } catch (err) {
       console.log(err);
       toast.error(err?.data?.message || err.error);
@@ -245,7 +313,7 @@ const items = [
                 aria-hidden='true'
               />
             ),
-            onClick: () => duplicateHandler(),
+            onClick: () => duplicationClicks(),
           },
         ]
       : []),
@@ -255,12 +323,16 @@ const items = [
 
   const activeHover = LightMode ? "bg-blue-600/90 text-white  hover:shadow-dark" : " text-white bg-blue-600/90 hover:shadow-light "
   const text = LightMode ? "text-black" : "text-white"
+  
+  const threeDotStyles = "transition-all duration-300 ease-in-out outline-none cursor-pointer hover:scale-110 hover:text-blue-600 inline-flex w-full justify-center sm:text-2xl text-xl rounded-md  px-1 py-0.5 font-medium"
+  const menuPanelStyle = "z-50 cursor-default border border-white absolute px-4 pt-2 -top-6 w-56  rounded-md ring-1 ring-black/5 focus:outline-none transition-all duration-300 ease-in-out"
+  const menuLinksStyle = "hover:scale-110 active:scale-95 cursor-pointer flex w-full items-center rounded-md my-2 px-2 py-2 text-sm transition-all duration-50 ease-in-out"
 
   return (
     <>
       <div className=''>
         <Menu as='div' className='relative inline-block text-left'>
-          <Menu.Button onClick={(e) => e.stopPropagation()} className={`${LightMode ? "text-gray-600 shadow-inner" : "text-gray-100 shadow-innerWH"} transition-all duration-300 ease-in-out outline-none cursor-pointer hover:scale-110 hover:text-blue-600 inline-flex w-full justify-center sm:text-2xl text-xl rounded-md  px-1 py-0.5 font-medium `}>
+          <Menu.Button onClick={(e) => e.stopPropagation()} className={`${LightMode ? "text-gray-600 shadow-inner" : "text-gray-100 shadow-innerWH"} ${threeDotStyles}`}>
             <BsThreeDots />
           </Menu.Button>
 
@@ -272,8 +344,7 @@ const items = [
                   ? "bg-white shadow-darkSM"
                   : "bg-black/80 shadow-lightSM"
                 }
-                ${user?.isAdmin ? "divide-y divide-gray-100 pb-2 right-10 origin-top-right" : "pb-0 -right-2 top-9"}
-                z-50 cursor-default border border-white absolute px-4 pt-2 -top-6 w-56  rounded-md ring-1 ring-black/5 focus:outline-none transition-all duration-300 ease-in-out
+                ${user?.isAdmin ? "divide-y divide-gray-100 pb-2 right-10 origin-top-right" : "pb-0 -right-2 top-9"} ${menuPanelStyle}
               `}>
               <div className='px-1 py-1 space-y-2'>
                 {items.map((el, index) => (
@@ -281,14 +352,17 @@ const items = [
                     {({ active }) => (
                       <button
                         // disabled={index === 0 ? false : !user.isAdmin}
-                        onClick={el?.onClick}
+                        onClick={(e) => {
+                          el?.onClick()
+                          e.stopPropagation()
+                        }}
                         className={`${
                             active ? 
                               `${activeHover}` 
                             :
                               `${text}`
                           }
-                          hover:scale-110 active:scale-95 group cursor-pointer flex w-full items-center rounded-md px-2 py-2 text-sm transition-all duration-50 ease-in-out
+                          ${menuLinksStyle}
                         `}
                       >
                         {el.icon}
@@ -301,7 +375,7 @@ const items = [
 
               <div className='px-1 py-1'>
                 <div>
-                  <ChangeTaskActions _id={task._id} stage={task.stage} />
+                  <ChangeTaskActions _id={task._id} stage={task.stage} isLocked={task.isLocked} />
                 </div>
               </div>
 
@@ -344,9 +418,23 @@ const items = [
         id={task._id}
       />
       <ConfirmationDialog
-        open={openDialog}
-        setOpen={setOpenDialog}
+        msg={msg}
+        setMsg={setMsg}
+        type={type}
+        isLoading={deleteLoading}
+        open={openDialog1}
+        setOpen={setOpenDialog1}
         onClick={deleteHandler}
+      />
+
+      <ConfirmationDialog
+        msg={msg}
+        setMsg={setMsg}
+        type={type}
+        isLoading={duplicateLoading}
+        open={openDialog2}
+        setOpen={setOpenDialog2}
+        onClick={duplicateHandler}
       />
     </>
   );

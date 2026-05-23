@@ -6,7 +6,8 @@ import cloudinary from "../utils/cloudinary.js";
 import {
   canAccessTask,
   adminOnly,
-  canCompleteSubTask
+  canCompleteSubTask,
+  canChangeTaskStage
 } from "../utils/taskAuthorization.js";
 
 // Socket.io
@@ -144,6 +145,15 @@ const createTask = asyncHandler(async (req, res) => {
       });
     }
 
+    // GET ALL ADMINS
+    const admins = await User.find({
+      isAdmin: true,
+    }).select("_id");
+
+    const adminIds = admins.map(
+      (admin) => admin._id
+    );
+
     // UPLOAD IMAGES
     let assetUrls = [];
 
@@ -195,7 +205,8 @@ const createTask = asyncHandler(async (req, res) => {
       address,
       team: { 
         members: specialMembers,
-        leader 
+        leader,
+        admins: adminIds,
       },
       stage: stage.toLowerCase(),
       date,
@@ -309,24 +320,55 @@ const duplicateTask = asyncHandler(async (req, res) => {
     );
 
     // CREATE DUPLICATED TASK
+    // GET REAL ADMINS
+    const admins = await User.find({
+      isAdmin: true,
+    }).select("_id");
+
+    const adminIds = admins.map(
+      (admin) => admin._id
+    );
+
+    // CREATE DUPLICATED TASK
     const newTask = await Task.create({
       ...taskObj,
 
       title: `Duplicate - ${cleanTitle}`,
 
+      stage: "todo",
+
+      isLocked: false,
+
+      completedAt: null,
+
+      completedBy: null,
+
+      team: {
+        members: task.team?.members || [],
+        leader: task.team?.leader || null,
+        admins: adminIds,
+      },
+
       activities: [activity],
     });
 
+
     // CREATE NOTICE
+    const taskUsers = [
+      ...(newTask.team?.members || []),
+      ...(newTask.team?.leader
+        ? [newTask.team.leader]
+        : []),
+    ];
+
     await Notice.create({
-      team: newTask.team.members,
+      team: taskUsers,
       text,
       task: newTask._id,
     });
 
-    // UPDATE USER TASK ARRAYS
     await Promise.all(
-      newTask.team.members.map((user) =>
+      taskUsers.map((user) =>
         User.findByIdAndUpdate(user, {
           $addToSet: {
             tasks: newTask._id,
@@ -380,6 +422,14 @@ const updateTask = asyncHandler(async (req, res) => {
       return res.status(403).json({
         status: false,
         message: "Only admins can update tasks",
+      });
+    }
+
+    // LOCKED TASKS CANNOT BE EDITED
+    if (task.isLocked) {
+      return res.status(400).json({
+        status: false,
+        message: "Completed tasks cannot be edited",
       });
     }
 
@@ -494,6 +544,15 @@ const updateTask = asyncHandler(async (req, res) => {
         message: "Some team members are invalid",
       });
     }
+
+    // GET ALL ADMINS
+    const admins = await User.find({
+      isAdmin: true,
+    }).select("_id");
+
+    const adminIds = admins.map(
+      (admin) => admin._id
+    );
 
     // UPLOAD NEW IMAGES
     let newAssets = [];
@@ -618,6 +677,7 @@ const updateTask = asyncHandler(async (req, res) => {
     task.team = {
       members: specialMembers,
       leader,
+      admins: adminIds,
     };
 
     task.equipments = parsedEquipments;
@@ -688,23 +748,50 @@ const updateTaskStage = asyncHandler(async (req, res) => {
       });
     }
 
-    // AUTHORIZATION
-    if (!canAccessTask(task, req.user)) {
+    // ONLY ADMIN OR LEADER
+    if (!canChangeTaskStage(task, req.user)) {
       return res.status(403).json({
         status: false,
-        message: "Unauthorized",
+        message: "Only admin and leader are authorized",
+      });
+    }
+
+    // LOCKED TASKS ARE PERMANENT
+    if (task.isLocked) {
+      return res.status(400).json({
+        status: false,
+        message: "This task has already been completed permanently",
       });
     }
 
     // UPDATE STAGE
     task.stage = stage.toLowerCase();
 
-    // ACTIVITY
-    task.activities.push({
-      type: "in progress",
-      activity: `Task stage updated to ${stage}`,
-      by: req.user._id,
-    });
+    // HANDLE TASK COMPLETION
+    if (stage.toLowerCase() === "completed") {
+
+      // LOCK TASK
+      task.isLocked = true;
+
+      // SAVE COMPLETION INFO
+      task.completedAt = new Date();
+
+      task.completedBy = req.user._id;
+
+      task.activities.push({
+        type: "task_completed",
+        activity: `${req.user.name} marked this task as permanently completed`,
+        by: req.user._id,
+      });
+
+    } else { task.activities.push({
+        type: "in progress",
+
+        activity: `Task stage updated to ${stage}`,
+
+        by: req.user._id,
+      });
+    }
 
     await task.save();
 
@@ -760,6 +847,14 @@ const updateSubTaskStage = asyncHandler(async (req, res) => {
       });
     }
 
+    // LOCKED TASKS CANNOT MODIFY SUBTASKS
+    if (task.isLocked) {
+      return res.status(400).json({
+        status: false,
+        message: "Completed task subtasks cannot be modified",
+      });
+    }
+
     // Update subtask
     const updatedTask = await Task.findOneAndUpdate(
       {
@@ -785,6 +880,7 @@ const updateSubTaskStage = asyncHandler(async (req, res) => {
     const taskUpdate = await Task.findById(taskId)
       .populate("team.members", "name title email profileImage")
       .populate("team.leader", "name title email profileImage")
+      .populate("team.admins", "name title email profileImage")
       .populate("activities.by", "name profileImage");
 
 
@@ -839,6 +935,14 @@ const createSubTask = asyncHandler(async (req, res) => {
       });
     }
 
+    // LOCKED TASKS CANNOT RECEIVE SUBTASKS
+    if (task.isLocked) {
+      return res.status(400).json({
+        status: false,
+        message: "Cannot add subtasks to completed task",
+      });
+    }
+
     if (isNaN(new Date(date).getTime())) {
       return res.status(400).json({
         status: false,
@@ -867,6 +971,11 @@ const createSubTask = asyncHandler(async (req, res) => {
 
       await updatedTask.populate({
         path: "team.leader",
+        select: "name title role email profileImage",
+      });
+
+      await updatedTask.populate({
+        path: "team.admins",
         select: "name title role email profileImage",
       });
     }
@@ -962,6 +1071,14 @@ const getTasks = asyncHandler(async (req, res) => {
         path: "activities.by",
         select: "name email profileImage",
       })
+      .populate({
+        path: "team.admins",
+        select: "name title role email profileImage",
+      })
+      .populate({
+        path: "completedBy",
+        select: "name title role email profileImage isAdmin",
+      })
       .sort({ _id: -1 })
       .skip(skip)
       .limit(limit);
@@ -1001,7 +1118,15 @@ const getTask = asyncHandler(async (req, res) => {
       .populate({
         path: "activities.by",
         select: "name email profileImage",
-      });
+      })
+      .populate({
+        path: "team.admins",
+        select: "name title role email profileImage",
+      })
+      .populate({
+        path: "completedBy",
+        select: "name title role email profileImage isAdmin",
+      })
 
     if (!task) {
       return res.status(404).json({
@@ -1110,7 +1235,7 @@ const postTaskActivity = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user._id;
-    const { type, activity } = req.body;
+    const { type, activity } = req.body || {};
 
     if (!type || !activity) {
       return res.status(400).json({
@@ -1137,15 +1262,66 @@ const postTaskActivity = asyncHandler(async (req, res) => {
       });
     }
 
+    // LOCKED TASKS CANNOT RECEIVE NEW ACTIVITIES
+    if (task.isLocked) {
+      return res.status(400).json({
+        status: false,
+        message: "Completed task cannot receive new activities",
+      });
+    }
+
+
+    let uploadedImages = [];
+
+    if (req.files && req.files.length > 0) {
+      const uploadPromises = req.files.map(
+        (file) =>
+          new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+              { folder: "task-activities" },
+              (error, result) => {
+                if (error) reject(error);
+
+                resolve({
+                  url: result.secure_url,
+                  public_id: result.public_id,
+                });
+              }
+            );
+
+            stream.end(file.buffer);
+          })
+      );
+
+      uploadedImages = await Promise.all(uploadPromises);
+    }
+
+
+    // ONLY ADMIN AND LEADER CAN COMPLETE
+    if (
+      type?.toLowerCase() === "task_completed" &&
+      !canChangeTaskStage(task, req.user)
+    ) {
+      return res.status(403).json({
+        status: false,
+        message: "Only admin or leader can complete tasks",
+      });
+    }
+
     const data = {
       type,
       activity,
       by: userId,
+      images: uploadedImages,
     };
 
+
+    // just log activity — NO SIDE EFFECTS
     task.activities.push(data);
 
+
     await task.save();
+
 
     const updatedTask = await Task.findById(id)
       .populate({
@@ -1159,7 +1335,11 @@ const postTaskActivity = asyncHandler(async (req, res) => {
       .populate({
         path: "activities.by",
         select: "name email profileImage",
-      });
+      })
+      .populate({
+        path: "team.admins",
+        select: "name title role email profileImage",
+      })
 
 
     // Socket.io updating postActivities
@@ -1202,6 +1382,13 @@ const trashTask = asyncHandler(async (req, res) => {
         message: "Only admins can trash tasks",
       });
     }
+
+    // if (task.isLocked) {
+    //   return res.status(400).json({
+    //     status: false,
+    //     message: "Completed tasks cannot be trashed",
+    //   });
+    // }
 
     // ALREADY TRASHED
     if (task.isTrashed) {
@@ -1309,8 +1496,15 @@ const deleteRestoreTask = asyncHandler(async (req, res) => {
       }
 
       // REMOVE TASK FROM USERS
+      const taskUsers = [
+        ...(task.team?.members || []),
+        ...(task.team?.leader
+          ? [task.team.leader]
+          : []),
+      ];
+
       await Promise.all(
-        task.team.members.map((userId) =>
+        taskUsers.map((userId) =>
           User.findByIdAndUpdate(userId, {
             $pull: { tasks: task._id },
           })
@@ -1377,6 +1571,8 @@ const deleteRestoreTask = asyncHandler(async (req, res) => {
         isTrashed: true,
       });
 
+      emitDashboardUpdate()
+
       return res.status(200).json({
         status: true,
         message: "All trashed tasks deleted",
@@ -1415,6 +1611,9 @@ const deleteRestoreTask = asyncHandler(async (req, res) => {
 
       await task.save();
 
+      emitTaskUpdated(task)
+      emitDashboardUpdate()
+
       return res.status(200).json({
         status: true,
         message: "Task restored successfully",
@@ -1432,6 +1631,8 @@ const deleteRestoreTask = asyncHandler(async (req, res) => {
           $set: { isTrashed: false },
         }
       );
+
+      emitDashboardUpdate()
 
       return res.status(200).json({
         status: true,
@@ -1468,6 +1669,14 @@ const allTasks = isAdmin
         path: "team.leader",
         select: "name title role email profileImage isActive",
       })
+      .populate({
+        path: "team.admins",
+        select: "name title role email profileImage",
+      })
+      .populate({
+        path: "completedBy",
+        select: "name title role email profileImage isAdmin",
+      })
       .sort({ _id: -1 })
 
   : await Task.find({
@@ -1485,10 +1694,14 @@ const allTasks = isAdmin
         path: "team.leader",
         select: "name title role email profileImage isActive",
       })
+      .populate({
+        path: "completedBy",
+        select: "name title role email profileImage isAdmin",
+      })
       .sort({ _id: -1 });
 
     const users = await User.find({})
-      .select("name title role isActive email profileImage createdAt tiktok x whatsApp telegram")
+      .select("name title role isActive email profileImage createdAt isAdmin tiktok x whatsApp telegram")
       .limit(10)
       .sort({ _id: -1 });
 
@@ -1546,6 +1759,11 @@ const deleteTaskActivity = asyncHandler(async (req, res) => {
     throw new Error("Task not found");
   }
 
+  if (task.isLocked) {
+    res.status(400);
+    throw new Error("Cannot modify activities of completed task");
+  }
+
   const activity = task.activities.id(activityId);
 
   if (!activity) {
@@ -1579,7 +1797,11 @@ const deleteTaskActivity = asyncHandler(async (req, res) => {
     .populate({
       path: "activities.by",
       select: "name email profileImage",
-    });
+    })
+    .populate({
+      path: "team.admins",
+      select: "name title role email profileImage",
+    })
 
   emitTaskUpdated(updatedTask);
 

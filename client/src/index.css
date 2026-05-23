@@ -70,8 +70,9 @@
   --color-edge: #a855f7;
   --color-other: #eab308;
 
-  --color-desktop: #3b82f6 ;
+  --color-desktop: #3b82f6;
   --color-mobile: #a855f7;
+  
 }
 
   @theme {

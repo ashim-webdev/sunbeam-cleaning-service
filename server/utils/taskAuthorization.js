@@ -39,6 +39,23 @@ export const canAccessTask = (task, user) => {
   return isMember || leaderId === userId;
 };
 
+export const canChangeTaskStage = (task, user) => {
+  if (!task || !user) return false;
+
+  // ADMIN
+  if (user.isAdmin) return true;
+
+  const userId = user._id.toString();
+
+  // TASK LEADER
+  const leaderId =
+    typeof task.team?.leader === "object"
+      ? task.team?.leader?._id?.toString()
+      : task.team?.leader?.toString();
+
+  return leaderId === userId;
+};
+
 export const adminOnly = (user) => {
   return user?.isAdmin;
 };

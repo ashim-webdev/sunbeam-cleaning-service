@@ -14,6 +14,7 @@ import {
   Lock,
   UserPen
 } from "lucide-react";
+import { FaCrown } from "react-icons/fa";
 import { FaUsers, FaCalendarCheck } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion"
 import { setLightMode } from "../redux/slices/authSlice";
@@ -86,6 +87,7 @@ export default function ProfileDropdown({ className }) {
   email: user?.email,
   avatar: user?.profileImage,
   isActive: user?.isActive,
+  isAdmin: user?.isAdmin,
   mode: <Dark_Light_Btn />,
 };
 
@@ -223,21 +225,29 @@ export default function ProfileDropdown({ className }) {
                 {isLoading ? (
                   <LoadingCircle />
                 ) : (
-                  <div className={`outline-0 border-2 ${data.isActive ? "border-green-600" : "border-red-600"} w-11 h-11 2xl:w-13 2xl:h-13 flex items-center justify-center rounded-full bg-[#005FFB] hover:bg-blue-800 hover:shadow-innerWH cursor-pointer transition-all hover:scale-105 ease-in-out duration-300 shadow-inner overflow-hidden`}>
-                    <span className='text-white font-semibold '>
-                      {data.avatar ? 
-                        <img
-                          src={data.avatar}
-                          alt={data.name}
-                          className="h-full w-full rounded-full object-cover"
-                        />
-                      :
-                        <span>
-                          {getInitials(data?.name || "Unknown User")}
-                        </span>
-                      }
-                    </span>
-                  </div>              
+                  <div className="relative">
+                    <div className={`outline-0 border-2 ${data.isActive ? "border-green-600" : "border-red-600"} w-11 h-11 2xl:w-13 2xl:h-13 flex items-center justify-center rounded-full bg-[#005FFB] hover:bg-blue-800 hover:shadow-innerWH cursor-pointer transition-all hover:scale-105 ease-in-out duration-300 shadow-inner overflow-hidden`}>
+                      <span className='text-white font-semibold '>
+                        {data.avatar ? 
+                          <img
+                            src={data.avatar}
+                            alt={data.name}
+                            className="h-full w-full rounded-full object-cover"
+                          />
+                        :
+                          <span>
+                            {getInitials(data?.name || "Unknown User")}
+                          </span>
+                        }
+                      </span>
+                    </div> 
+
+                    {data?.isAdmin && (
+                      <span className="absolute -top-3 rotate-25 right-0">
+                        <FaCrown className="text-yellow-500 text-lg"/>
+                      </span>
+                    )}
+                  </div>             
                 )}
               </button>
             </div>

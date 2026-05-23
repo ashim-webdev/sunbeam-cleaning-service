@@ -19,17 +19,15 @@ import Del_Res from "../components/Del_Res";
 import RestoreBtn from "../components/RestoreBtn";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import AddUser from "../components/AddUser";
-// import {
-//   useDeleteRestoreTastMutation,
-//   useGetAllTaskQuery,
-// } from "../redux/slices/api/taskApiSlice";
+import {
+  useDeleteRestoreTaskMutation,
+  useGetAllTaskQuery,
+} from "../redux/slices/api/taskApiSlice";
 import { PRIORITY_STYLES, TASK_TYPE, TASK_ICON } from "../utils/index";
 import { useSearchParams } from "react-router-dom";
 
 import { useSelector } from "react-redux";
 
-
-import { tasks } from "../assets/data";
 
 
 const ICONS = {
@@ -42,7 +40,6 @@ const ICONS = {
 const Trash = () => {
   const { LightMode } = useSelector((state) => state.auth);
   
-  const [isLoading, setIsLoading] = useState(false)
   const [openDialog, setOpenDialog] = useState(false);
   const [open, setOpen] = useState(false);
   const [msg, setMsg] = useState(null);
@@ -51,27 +48,33 @@ const Trash = () => {
   const [searchParams] = useSearchParams();
   const [searchTerm] = useState(searchParams.get("search") || "");
 
-  // const { data, isLoading, refetch } = useGetAllTaskQuery({
-  //   strQuery: "",
-  //   isTrashed: "true",
-  //   search: searchTerm,
-  // });
-  // const [deleteRestoreTask] = useDeleteRestoreTastMutation();
+  const { data, isLoading, refetch } = useGetAllTaskQuery({
+    strQuery: "",
+    isTrashed: "true",
+    search: searchTerm,
+  });
+
+  const [deleteRestoreTask, { isLoading: deleteLoading }] = useDeleteRestoreTaskMutation();
+
+  const tasks = data?.tasks || [];
+
+
 
   const deleteAllClick = () => {
     setType("deleteAll");
-    setMsg("Do you want to permenantly delete all items?");
+    setMsg("Do you want to permanently delete all records?");
     setOpenDialog(true);
   };
 
   const restoreAllClick = () => {
     setType("restoreAll");
-    setMsg("Do you want to restore all items in the trash?");
+    setMsg("Do you want to restore all records in the trash?");
     setOpenDialog(true);
   };
 
   const deleteClick = (id) => {
     setType("delete");
+    setMsg("Are you sure you want to delete the selected record?")
     setSelected(id);
     setOpenDialog(true);
   };
@@ -79,52 +82,62 @@ const Trash = () => {
   const restoreClick = (id) => {
     setSelected(id);
     setType("restore");
-    setMsg("Do you want to restore the selected item?");
+    setMsg("Do you want to restore the selected record?");
     setOpenDialog(true);
   };
-  // WE GO HERE ON RESUME
-  // const deleteRestoreHandler = async () => {
-  //   try {
-  //     let res = null;
 
-  //     switch (type) {
-  //       case "delete":
-  //         res = await deleteRestoreTask({
-  //           id: selected,
-  //           actionType: "delete",
-  //         }).unwrap();
-  //         break;
-  //       case "deleteAll":
-  //         res = await deleteRestoreTask({
-  //           id: "",
-  //           actionType: "deleteAll",
-  //         }).unwrap();
-  //         break;
-  //       case "restore":
-  //         res = await deleteRestoreTask({
-  //           id: selected,
-  //           actionType: "restore",
-  //         }).unwrap();
-  //         break;
-  //       case "restoreAll":
-  //         res = await deleteRestoreTask({
-  //           id: "",
-  //           actionType: "restoreAll",
-  //         }).unwrap();
-  //         break;
-  //     }
 
-  //     toast.success(res?.message);
+const deleteRestoreHandler = async () => {
+  try {
+    let res = null;
 
-  //     setTimeout(() => {
-  //       setOpenDialog(false);
-  //       refetch();
-  //     }, 500);
-  //   } catch (err) {
-  //     console.log(err);
-  //     toast.error(err?.data?.message || err.error);
-  //   }
-  // };
+    switch (type) {
+      case "delete":
+        res = await deleteRestoreTask({
+          id: selected,
+          actionType: "delete",
+        }).unwrap();
+        break;
+
+      case "deleteAll":
+        res = await deleteRestoreTask({
+          id: "",
+          actionType: "deleteAll",
+        }).unwrap();
+        break;
+
+      case "restore":
+        res = await deleteRestoreTask({
+          id: selected,
+          actionType: "restore",
+        }).unwrap();
+        break;
+
+      case "restoreAll":
+        res = await deleteRestoreTask({
+          id: "",
+          actionType: "restoreAll",
+        }).unwrap();
+        break;
+
+      default:
+        break;
+    }
+
+    toast.success(res?.message);
+
+    setOpenDialog(false);
+
+    refetch();
+
+  } catch (err) {
+    console.log(err);
+
+    toast.error(
+      err?.data?.message || err.error
+    );
+  }
+};
 
   const TableHeader = () => (
     <thead className={`
@@ -428,6 +441,7 @@ const Trash = () => {
       <AddUser open={open} setOpen={setOpen} />
 
       <ConfirmationDialog
+        isLoading={deleteLoading}
         open={openDialog}
         setOpen={setOpenDialog}
         msg={msg}

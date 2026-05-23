@@ -2,6 +2,7 @@ import { Listbox, Transition } from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
 import { BsChevronExpand } from "react-icons/bs";
 import { MdCheck } from "react-icons/md";
+import { FaCrown } from "react-icons/fa";
 import { useGetTeamListsQuery } from "../../redux/slices/api/userApiSlice.js";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
@@ -263,19 +264,26 @@ export default function UserList({ team, setTeam }) {
                         `}
                       >
                         <div className="relative">
-                          <div
-                            className={`
-                              ${LightMode ? "shadow-inner" : "shadow-innerWH"}
-                              w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-inner transition-colors ease-in-out duration-300 overflow-hidden `
-                            }
-                          >
-                            {user?.profileImage ? 
-                              <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
-                            :
-                              <span className='text-center text-[10px]'>
-                                {getInitials(user?.name || "Unknown User")}
+                          <div className="relative">
+                            <div
+                              className={`
+                                ${LightMode ? "shadow-inner" : "shadow-innerWH"}
+                                w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-inner transition-colors ease-in-out duration-300 overflow-hidden `
+                              }
+                            >
+                              {user?.profileImage ? 
+                                <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                              :
+                                <span className='text-center text-[10px]'>
+                                  {getInitials(user?.name || "Unknown User")}
+                                </span>
+                              }
+                            </div>
+                            {user?.isAdmin && (
+                              <span className="absolute -top-3 rotate-10 right-0">
+                                <FaCrown className="text-yellow-500 text-md"/>
                               </span>
-                            }
+                            )}
                           </div>
 
                           <div className={`${selected && user.isActive ? "block" : "hidden"} absolute -top-1 left-1.5 flex`}>

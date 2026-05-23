@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import React, { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
+import { FaCrown } from "react-icons/fa";
 import { ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "../components/ui/badge"
@@ -39,8 +40,8 @@ const Users = () => {
   });
 
   // console.log(data)
-  const [deleteUser] = useDeleteUserMutation();
-  const [userAction] = useUserActionMutation();
+  const [deleteUser, { isLoading: deleteLoading }] = useDeleteUserMutation();
+  const [userAction, { isLoading: userActiveLoading }] = useUserActionMutation();
 
   const [showSocial, setShowSocial] = useState(null)
   const [openDialog, setOpenDialog] = useState(false);
@@ -180,8 +181,14 @@ const Users = () => {
           </div>
             
           {showSocial !== user._id && (
-            <span className="absolute top-2 left-11  text-blue-600">
+            <span className="absolute  top-2 left-11  text-blue-600">
               <ChevronRight size={18} className="animate-LeftRight"/>
+            </span>
+          )}
+
+          {user?.isAdmin && (
+            <span className="absolute -top-2.5 -rotate-25 left-2">
+              <FaCrown className="text-yellow-500 text-sm"/>
             </span>
           )}
             
@@ -276,6 +283,12 @@ const Users = () => {
               </span>
             }
           </div>
+
+          {user?.isAdmin && (
+            <span className="absolute -top-3 rotate-25 right-5">
+              <FaCrown className="text-yellow-500 text-xl"/>
+            </span>
+          )}
         </div>
 
         <div 
@@ -457,12 +470,14 @@ const Users = () => {
       />
 
       <ConfirmationDialog
+        isLoading={deleteLoading}
         open={openDialog}
         setOpen={setOpenDialog}
         onClick={deleteHandler}
       />
 
       <UserAction
+        isLoading={userActiveLoading}
         open={openAction}
         setOpen={setOpenAction}
         onClick={userActionHandler}

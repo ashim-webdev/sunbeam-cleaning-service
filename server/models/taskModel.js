@@ -2,7 +2,11 @@ import mongoose, { Schema } from "mongoose";
 
 const taskSchema = new Schema(
   {
-    title: { type: String, required: true },
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
     clientName: {
       type: String,
@@ -16,7 +20,10 @@ const taskSchema = new Schema(
       trim: true,
     },
 
-    date: { type: Date, default: new Date() },
+    date: {
+      type: Date,
+      default: new Date(),
+    },
 
     priority: {
       type: String,
@@ -30,6 +37,24 @@ const taskSchema = new Schema(
       enum: ["todo", "in progress", "completed"],
     },
 
+    // LOCK TASK AFTER FINAL COMPLETION
+    isLocked: {
+      type: Boolean,
+      default: false,
+    },
+
+    // FINAL COMPLETION INFO
+    completedAt: {
+      type: Date,
+      default: null,
+    },
+
+    completedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+
     activities: [
       {
         type: {
@@ -39,48 +64,108 @@ const taskSchema = new Schema(
             "assigned",
             "started",
             "in progress",
+            "task_completed",
             "problem",
-            "completed",
             "commented",
             "duplicated",
             "trashed",
             "restored",
           ],
         },
-        activity: String,
-        date: { type: Date, default: new Date() },
-        by: { type: Schema.Types.ObjectId, ref: "User" },
+
+        activity: {
+          type: String,
+          trim: true,
+        },
+
+        date: {
+          type: Date,
+          default: new Date(),
+        },
+
+        by: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+        },
+
+        // COMPLETION / ACTIVITY IMAGES
+        images: [
+          {
+            url: String,
+
+            public_id: String,
+          },
+        ],
       },
     ],
 
     subTasks: [
       {
-        title: String,
+        title: {
+          type: String,
+          trim: true,
+        },
+
         date: Date,
+
         tag: String,
-        isCompleted: Boolean,
+
+        isCompleted: {
+          type: Boolean,
+          default: false,
+        },
       },
     ],
 
-    description: String,
+    description: {
+      type: String,
+      trim: true,
+    },
 
     equipments: [String],
 
+    // MAIN TASK ASSETS
     assets: [
       {
         url: String,
+
         public_id: String,
       },
     ],
 
     team: {
-      members: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-      leader: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
+      members: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+      ],
+
+      leader: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+
+      admins: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+      ],
     },
 
-    isTrashed: { type: Boolean, default: false },
+    // OPTIONAL SUPPORT LINKS
+    links: [String],
+
+    isTrashed: {
+      type: Boolean,
+      default: false,
+    },
   },
-  { timestamps: true }
+
+  {
+    timestamps: true,
+  }
 );
 
 const Task = mongoose.model("Task", taskSchema);

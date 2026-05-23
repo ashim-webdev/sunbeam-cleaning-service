@@ -4,6 +4,7 @@ import { Badge } from "../ui/badge";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import { Clock, Calendar, CheckCircle } from "lucide-react";
+import { FaCrown } from "react-icons/fa";
 import { setSelectUserDashInfo, setUserViewInfo } from "../../redux/slices/authSlice";
 import { useGetTeamListsQuery } from "../../redux/slices/api/userApiSlice";
 import { useGetLeavesByUserQuery } from "../../redux/slices/api/leaveApiSlice";
@@ -31,18 +32,25 @@ const EmployeeList = ({ user, title, popUpUserInfo, useInfo }) => {
         }}
         className={`${hover} ${changeAnimation} ${bg} ${text} flex-row justify-between gap-4 p-4 cursor-pointer  active:scale-95`}
         >
-          <div 
-            className={clsx(
-              "w-11 h-11 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
-              user.isActive ? "border-green-500" : "border-red-600"
-          )}>
-            {user?.profileImage ? 
-              <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
-            :
-              <span className='text-xs md:text-sm text-center'>
-                {getInitials(user?.name || "Unknown User")}
+          <div className="relative">
+            <div 
+              className={clsx(
+                "w-11 h-11 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
+                user.isActive ? "border-green-500" : "border-red-600"
+            )}>
+              {user?.profileImage ? 
+                <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+              :
+                <span className='text-xs md:text-sm text-center'>
+                  {getInitials(user?.name || "Unknown User")}
+                </span>
+              }
+            </div>
+            {user?.isAdmin && (
+              <span className="absolute -top-3 rotate-25 right-0">
+                <FaCrown className="text-yellow-500 text-lg"/>
               </span>
-            }
+            )}
           </div>
           <CardContent className="flex-1 p-0">
             <CardTitle className="text-sm font-medium line-clamp-1">
@@ -269,18 +277,25 @@ const ActiveEmployees = ({ user, title, popUpUserInfo, useInfo }) => {
             }}
             className={`${hover} ${changeAnimation} ${bg} ${text} flex-row users-center justify-between gap-4 p-4  active:scale-95 cursor-pointer`}
           >
-            <div 
-              className={clsx(
-                "w-11 h-11 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
-                user.isActive ? "border-green-500" : "border-red-600"
-            )}>
-              {user?.profileImage ? 
-                <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
-              :
-                <span className='text-xs md:text-sm text-center'>
-                  {getInitials(user?.name || "Unknown User")}
+            <div className="relative">
+              <div 
+                className={clsx(
+                  "w-11 h-11 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
+                  user.isActive ? "border-green-500" : "border-red-600"
+              )}>
+                {user?.profileImage ? 
+                  <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                :
+                  <span className='text-xs md:text-sm text-center'>
+                    {getInitials(user?.name || "Unknown User")}
+                  </span>
+                }
+              </div>
+              {user?.isAdmin && (
+                <span className="absolute -top-3 rotate-25 right-0">
+                  <FaCrown className="text-yellow-500 text-lg"/>
                 </span>
-              }
+              )}
             </div>
             <CardContent className="flex-1 p-0">
               <CardTitle className="text-sm font-medium line-clamp-1">
@@ -333,18 +348,25 @@ const DisabledEmployees = ({ user, title, popUpUserInfo, useInfo }) => {
             }}
             className={`${hover} ${changeAnimation} ${bg} ${text} flex-row users-center justify-between gap-4 p-4  active:scale-95 cursor-pointer`}
           >
-            <div 
-              className={clsx(
-                "w-11 h-11 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
-                user.isActive ? "border-green-500" : "border-red-600"
-            )}>
-              {user?.profileImage ? 
-                <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
-              :
-                <span className='text-xs md:text-sm text-center'>
-                  {getInitials(user?.name || "Unknown User")}
+            <div className="relative">
+              <div 
+                className={clsx(
+                  "w-11 h-11 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
+                  user.isActive ? "border-green-500" : "border-red-600"
+              )}>
+                {user?.profileImage ? 
+                  <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                :
+                  <span className='text-xs md:text-sm text-center'>
+                    {getInitials(user?.name || "Unknown User")}
+                  </span>
+                }
+              </div>
+              {user?.isAdmin && (
+                <span className="absolute -top-3 rotate-25 right-0">
+                  <FaCrown className="text-yellow-500 text-lg"/>
                 </span>
-              }
+              )}
             </div>
             <CardContent className="flex-1 p-0">
               <CardTitle className="text-sm font-medium line-clamp-1">

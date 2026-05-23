@@ -102,8 +102,8 @@ const Dashboard = () => {
       total: summary?.totalTasks || 0,
       lastMonth: lastMonth.totalTasks,
       icon: <FaNewspaper />,
-      bg: "bg-[#1d4ed8]",
-      tx: "text-[#1d4ed8]",
+      bg: "bg-[#be185d]",
+      tx: "text-[#be185d]",
     },
     {
       _id: "2",
@@ -129,8 +129,8 @@ const Dashboard = () => {
       total: totals["todo"] || 0,
       lastMonth: lastMonth.tasks.todo,
       icon: <FaArrowsToDot />,
-      bg: "bg-[#be185d]",
-      tx: "text-[#be185d]",
+      bg: "bg-[#1d4ed8]",
+      tx: "text-[#1d4ed8]",
     },
   ];
 
@@ -400,6 +400,8 @@ const Dashboard = () => {
 
 
   const UserTable = ({ users }) => {
+    const employees = users?.filter((user) => !user?.isAdmin);
+    const Administrators = users?.filter((user) => user?.isAdmin);
 
     const TableHeader = () => (
       <thead className={`
@@ -489,7 +491,7 @@ const Dashboard = () => {
         ? "bg-white shadow-darkSM"
         : "bg-black/90 shadow-lightSM"
       }
-      relative w-full rounded-2xl h-35 flex flex-col justify-center items-center transition-all duration-300 ease-in-out
+      relative w-full rounded-2xl h-40 flex flex-col justify-center items-center transition-all duration-300 ease-in-out
     `}>
         <div className={`${user.isActive ? "border-green-500" : "border-red-600"} border-2 rounded-full absolute -top-10 -left-2 flex flex-col justify-center items-center gap-3 whitespace-nowrap`}>
           <div className={clsx(
@@ -573,23 +575,73 @@ const Dashboard = () => {
 
     return (
       <div className="md:px-15 lg:px-30 py-5 pt-26 overflow-hidden">
+        {/* Employee table */}
         <div className={`
             ${LightMode 
               ? "bg-white shadow-md shadow-black/30"
               : "bg-black/90 shadow-md shadow-white/30"
             }
-            hidden sm:block w-full h-fit px-2 md:px-6 py-4 shadow-md rounded transition-all ease-in-out duration-300
+            relative hidden sm:block w-full h-fit px-2 md:px-6 py-4 shadow-md rounded transition-all ease-in-out duration-300
           `}>
           <table className='w-full mb-5'>
             <TableHeader />
             <tbody>
-              {users?.map((user, index) => (
+              {employees?.map((user, index) => (
                 <TableRow key={index + user?._id} user={user} />
               ))}
             </tbody>
           </table>
+
+          <div className={`
+              ${LightMode 
+                ? "bg-white shadow-darkSM"
+                : "bg-black/90 border border-white"
+              }
+              absolute -top-4 -right-3 text-md inline-block px-2 py-1 rounded-full text-gray-700 font-bold transition-colors ease-in-out duration-300
+            `}>
+            Employee's Table
+          </div>
         </div>
 
+        {user?.isAdmin && (
+          <>
+            <div className="my-15 px-15 hidden sm:block">
+              <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10" />
+            </div>
+
+            {/* Administrator table */}
+            <div className={`
+                ${LightMode 
+                  ? "bg-white shadow-md shadow-black/30"
+                  : "bg-black/90 shadow-md shadow-white/30"
+                }
+                relative hidden sm:block w-full h-fit px-2 md:px-6 py-4 shadow-md rounded transition-all ease-in-out duration-300
+              `}>
+              <table className='w-full mb-5'>
+                <TableHeader />
+                <tbody>
+                  {Administrators?.map((user, index) => (
+                    <TableRow key={index + user?._id} user={user} />
+                  ))}
+                </tbody>
+              </table>
+
+              <div className={`
+                  ${LightMode 
+                    ? "bg-white shadow-darkSM"
+                    : "bg-black/90 border border-white"
+                  }
+                  absolute -top-4 -right-3 text-md inline-block px-2 py-1 rounded-full text-gray-700 font-bold transition-colors ease-in-out duration-300
+                `}>
+                Admin's Table
+              </div>
+            </div>
+          </>
+        )}
+
+
+        
+        {/* Employee user card */}
         <div className={`
           ${LightMode
             ? "shadow-darkSM "
@@ -597,7 +649,7 @@ const Dashboard = () => {
           }
           relative flex flex-col justify-center gap-15 px-4 pt-20 pb-15 mx-1 sm:hidden rounded-2xl transition-all duration-300 ease-in-out
         `}>
-          {users?.map((user, index) => (
+          {employees?.map((user, index) => (
             <UserCard key={index} user={user} admin={admin} />
           ))}
 
@@ -613,6 +665,39 @@ const Dashboard = () => {
             </span>
           </span>
         </div>
+
+        {user.isAdmin && (
+          <>
+            <div className="my-15 px-5 sm:hidden">
+              <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10" />
+            </div>
+
+            {/* Admin user card */}
+            <div className={`
+              ${LightMode
+                ? "shadow-darkSM "
+                : "shadow-lightSM"
+              }
+              relative flex flex-col justify-center gap-15 px-4 pt-20 pb-15 mx-1 sm:hidden rounded-2xl transition-all duration-300 ease-in-out
+            `}>
+              {Administrators?.map((user, index) => (
+                <UserCard key={index} user={user} admin={admin} />
+              ))}
+
+              <span className="absolute z-0 text-center -top-5 left-0 right-0">
+                <span className={`
+                  ${LightMode
+                    ? "text-black bg-[#E8E8E8]"
+                    : "text-white bg-[#3D3D3D]"
+                  }
+                  py-2 px-4 w-fit text-3xl font-semibold font-sans transition-all duration-300 ease-in-out
+                `}>
+                  Administrators
+                </span>
+              </span>
+            </div>
+          </>
+        )}
       </div>
     );
   };
@@ -819,6 +904,7 @@ const Dashboard = () => {
 
 
 
+  const employees = summary?.users?.filter((user) => !user?.isAdmin);
 
 
   return (
@@ -870,7 +956,8 @@ const Dashboard = () => {
           )
             :
           (
-            summary?.users.length === 0 ?
+            <>
+              {employees?.length === 0 ?
               (
                 <span className={`${LightMode ? "text-black/60" : "text-white/60"} h-100 flex flex-col justify-center item-center`}>
                   <span className="flex justify-center items-center gap-3">
@@ -892,7 +979,8 @@ const Dashboard = () => {
                 <UserTable 
                   users={summary?.users || []}
                 />
-              )
+              )}
+            </>
           )}
         </div>
       </>

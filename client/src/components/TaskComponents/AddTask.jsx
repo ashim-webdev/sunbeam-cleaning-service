@@ -214,7 +214,7 @@ const AddTask = ({ open, setOpen, task }) => {
 
       setTimeout(() => {
         setOpen(false)
-      }, 800);
+      }, 300);
 
       reset();
 

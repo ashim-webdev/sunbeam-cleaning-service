@@ -34,7 +34,7 @@ const ModalWrapper = ({ open, setOpen, children, profile }) => {
             `} />
         </Transition.Child>
 
-        <div className='fixed inset-0 z-120 w-screen overflow-y-auto overflow-x-hidden '>
+        <div className='fixed inset-0 z-120 w-screen overflow-y-auto overflow-x-hidden'>
           <div className='flex min-h-full items-center justify-center p-4 text-center sm:p-0'>
             <Transition.Child
               as={Fragment}
@@ -62,7 +62,7 @@ const ModalWrapper = ({ open, setOpen, children, profile }) => {
                     px-4 pb-4 pt-5 sm:p-6 sm:pb-4 rounded-lg transition-colors duration-300 ease-in-out
                   `}>
                   <div className='sm:flex sm:items-start'>
-                    <div className='w-full mt-3  sm:ml-4 sm:mt-0 sm:text-left'>
+                    <div className='w-full'>
                       {children}
                     </div>
                   </div>

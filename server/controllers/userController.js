@@ -94,7 +94,7 @@ const registerUser = asyncHandler(async (req, res) => {
     name,
     email,
     password,
-    isAdmin,
+    isAdmin: isAdmin === "true",
     role,
     title,
     profileImage: imageUrl, // ✅ SAVE URL
@@ -145,7 +145,7 @@ const getTeamList = asyncHandler(async (req, res) => {
     query = { ...query, ...searchQuery };
   }
 
-  const user = await User.find(query).select("name title role email isActive profileImage tiktok x whatsApp telegram").sort({ createdAt: -1 });
+  const user = await User.find(query).select("name title role email isActive isAdmin createdAt profileImage tiktok x whatsApp telegram").sort({ createdAt: -1 });
 
   res.status(201).json(user);
 });
@@ -244,6 +244,10 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     if (isAdmin) {
       user.title = req.body.title || user.title;
       user.role = req.body.role || user.role;
+
+      if (req.body.isAdmin !== undefined) {
+        user.isAdmin = req.body.isAdmin === "true";
+      }
     }
 
     const updatedUser = await user.save();

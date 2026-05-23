@@ -111,12 +111,15 @@ export const postApiSlice = apiSlice.injectEndpoints({
 
     deleteRestoreTask: builder.mutation({
       query: ({ id, actionType }) => ({
-        url: `${TASKS_URL}/delete-restore/${id}?actionType=${actionType}`,
+        url: id
+          ? `${TASKS_URL}/delete-restore/${id}?actionType=${actionType}`
+          : `${TASKS_URL}/delete-restore?actionType=${actionType}`,
+
         method: "DELETE",
         credentials: "include",
       }),
 
-      invalidatesTags: ["Task", "Dashboard"]
+      invalidatesTags: ["Task", "Dashboard"],
     }),
 
     changeTaskStage: builder.mutation({

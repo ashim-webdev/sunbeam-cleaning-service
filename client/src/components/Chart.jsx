@@ -193,8 +193,8 @@ const Chart = ({ summary }) => {
                       backgroundColor: [
                         "#0050D7",
                         "#FF9900",
-                        "#D30055",
                         "#007870",
+                        "#D30055",
                       ],
                       offset: (ctx) =>
                         ctx.dataIndex === 0 || ctx.dataIndex === 4 ? 20 : 10,

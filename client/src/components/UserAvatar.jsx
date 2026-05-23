@@ -1,6 +1,6 @@
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
-import { FaUser, FaUserLock } from "react-icons/fa";
+import { FaCrown } from "react-icons/fa";
 import { IoLogOutOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -37,16 +37,16 @@ const LoadingCircle = () => {
 
 
 const UserAvatar = () => {
-  const [open, setOpen] = useState(false);
-  const [openPassword, setOpenPassword] = useState(false);
   const { LightMode } = useSelector((state) => state.auth);
 
   const { user: storedUser } = useSelector((state) => state.auth);
   const { data: freshUser, isLoading } = useGetUserProfileQuery();
 
-  // console.log(user)
   
   const user = freshUser ?? storedUser;
+
+  // console.log(user)
+
   const [logoutUser] = useLogoutMutation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -70,7 +70,7 @@ const UserAvatar = () => {
     <>
       <div className='flex justify-center item-center'>
         <Menu as='div' className='relative inline-block text-left outline-0'>
-          <div className="ClickAnimationNoti outline-0">
+          <div className="ClickAnimationNoti relative outline-0">
             <Menu.Button className={`outline-0 border-2 ${user?.isActive ? "border-green-600" : "border-red-600"} w-10 h-10 2xl:w-12 2xl:h-12 flex items-center justify-center rounded-full bg-[#005FFB] hover:bg-blue-800 hover:shadow-innerWH cursor-pointer transition-all hover:scale-105 ease-in-out duration-200 shadow-inner overflow-hidden`}>
               <span className='text-white font-semibold '>
                 {user?.profileImage ? 
@@ -82,6 +82,12 @@ const UserAvatar = () => {
                 }
               </span>
             </Menu.Button>
+
+            {user?.isAdmin && (
+              <span className="absolute -top-3 rotate-25 right-0">
+                <FaCrown className="text-yellow-500 text-lg"/>
+              </span>
+            )}
           </div>
 
           <Transition

@@ -12,6 +12,7 @@ import {
   X,
   Trash2
 } from 'lucide-react';
+import { FaCrown } from "react-icons/fa";
 import Button from '../Button';
 import LinearSocial from "../LinearSocial";
 import OnlineStatus from "../OnlineStatus";
@@ -57,7 +58,7 @@ const ProfileCard = ({
 
   const selectedUser = selectedUserInfo || null;
 
-  // console.log("UserInfo:",selectedUserInfo)
+  console.log("profile:",profileSelected)
 
   const compare =
     componentType === "Profile Overview"
@@ -211,7 +212,14 @@ const ProfileCard = ({
 
         <div className="px-6 pt-6 pb-2">
           <h5 className="flex items-center gap-2 mb-2 font-sans text-xl font-semibold leading-snug tracking-normal text-blue-gray-900 antialiased ">
-            <User size={23} /> 
+            <span className="relative">
+              <User size={23} /> 
+              {freshUser?.isAdmin && (
+                <span className="absolute -top-3 rotate-28 -right-0.5">
+                  <FaCrown className="text-yellow-500 text-lg"/>
+                </span>
+              )}
+            </span>
             {freshUser ? (
                 swap ? (
                   <span className="flex flex-1 justify-end items-center pr-5">
