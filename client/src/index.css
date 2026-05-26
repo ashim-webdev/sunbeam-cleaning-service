@@ -1191,3 +1191,14 @@ html {
 .vista-buttonDisabled:active div {
   translate: 1px 1px;
 }
+
+
+
+
+
+
+
+/* DuplicateDot style */
+.Duplicate:hover .DuplicateDot {
+  background-color: white;
+}

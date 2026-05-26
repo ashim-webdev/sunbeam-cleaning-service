@@ -212,9 +212,7 @@ const AddTask = ({ open, setOpen, task }) => {
         task ? "Task Updated Successfully!" : "Task Added Successfully!"
       );
 
-      setTimeout(() => {
-        setOpen(false)
-      }, 300);
+      setOpen(false)
 
       reset();
 

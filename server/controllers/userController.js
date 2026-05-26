@@ -152,16 +152,19 @@ const getTeamList = asyncHandler(async (req, res) => {
 
 // @GET  - get user notifications
 const getNotificationsList = asyncHandler(async (req, res) => {
+
   const userId = req.user._id;
 
   const notice = await Notice.find({
-    team: userId,
+    team: { $in: [userId] },
     isRead: { $nin: [userId] },
   })
-    .populate("task", "title")
+    .populate("team", "name email profileImage")
+    .populate("sender", "name profileImage email")
     .sort({ _id: -1 });
 
   res.status(200).json(notice);
+
 });
 
 // @GET  - get user task status

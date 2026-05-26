@@ -7,7 +7,8 @@ import {
   canAccessTask,
   adminOnly,
   canCompleteSubTask,
-  canChangeTaskStage
+  canChangeTaskStage,
+  getTaskUsers
 } from "../utils/taskAuthorization.js";
 
 // Socket.io
@@ -183,13 +184,10 @@ const createTask = asyncHandler(async (req, res) => {
     // NOTIFICATION TEXT
     let text = "New task has been assigned to you";
 
-    if (uniqueMembers.length > 1) {
-      text += ` and ${uniqueMembers.length - 1} others.`;
-    }
+    text += `\npriority: ${priority}`;
+    text += `\ndate: ${new Date(date).toDateString()}`;
 
-    text += ` Priority: ${priority}, Date: ${new Date(
-      date
-    ).toDateString()}`;
+
 
     // ACTIVITY
     const activity = {
@@ -217,9 +215,12 @@ const createTask = asyncHandler(async (req, res) => {
       description,
     });
 
+    // ALL USERS TO NOTIFY
+    const taskUsers = getTaskUsers(task);
+
     // CREATE NOTICE
     await Notice.create({
-      team: uniqueMembers,
+      team: taskUsers,
       text,
       task: task._id,
     });
@@ -286,15 +287,10 @@ const duplicateTask = asyncHandler(async (req, res) => {
     // NOTIFICATION TEXT
     let text = "New duplicated task has been assigned to you";
 
-    if (task.team?.members?.length > 1) {
-      text += ` and ${
-        task.team.members.length - 1
-      } others.`;
-    }
+    text += `\npriority: ${task.priority}`;
+    text += `\ndate: ${new Date(task.date).toDateString()}`;
 
-    text += ` Priority: ${
-      task.priority
-    }, Date: ${new Date(task.date).toDateString()}`;
+
 
     // NEW ACTIVITY
     const activity = {
@@ -354,12 +350,7 @@ const duplicateTask = asyncHandler(async (req, res) => {
 
 
     // CREATE NOTICE
-    const taskUsers = [
-      ...(newTask.team?.members || []),
-      ...(newTask.team?.leader
-        ? [newTask.team.leader]
-        : []),
-    ];
+    const taskUsers = getTaskUsers(newTask);
 
     await Notice.create({
       team: taskUsers,
@@ -665,6 +656,15 @@ const updateTask = asyncHandler(async (req, res) => {
       )
     );
 
+    // NOTIFY NEW USERS
+    if (addedUsers.length > 0) {
+      await Notice.create({
+        team: addedUsers,
+        text: `You have been added to task "${task.title}"`,
+        task: task._id,
+      });
+    }
+
     // UPDATE TASK
     task.title = title;
     task.clientName = clientName;
@@ -685,9 +685,22 @@ const updateTask = asyncHandler(async (req, res) => {
 
     await task.save();
 
+    await Notice.create({
+      team: getTaskUsers(task),
+      text: `Task "${task.title}" has been updated`,
+      task: task._id,
+    });
+
 
     // Socket.io getting updated task
-    emitTaskUpdated(task);
+    const updatedTask = await Task.findById(task._id)
+      .populate("team.members", "name title role email profileImage")
+      .populate("team.leader", "name title role email profileImage")
+      .populate("team.admins", "name title role email profileImage")
+      .populate("activities.by", "name email profileImage")
+      .populate("completedBy", "name title role email profileImage");
+
+    emitTaskUpdated(updatedTask);
     emitDashboardUpdate();
 
 
@@ -770,6 +783,33 @@ const updateTaskStage = asyncHandler(async (req, res) => {
     // HANDLE TASK COMPLETION
     if (stage.toLowerCase() === "completed") {
 
+      // CHECK FOR INCOMPLETE SUBTASKS
+      const incompleteSubTasks = task.subTasks.filter(
+        (t) => !t.isCompleted
+      );
+
+      if (incompleteSubTasks.length > 0) {
+        return res.status(400).json({
+          status: false,
+          message:
+            "Cannot complete task. All subtasks must be completed first.",
+        });
+      }
+
+      // CHECK IF COMPLETION ACTIVITY EXISTS
+      const hasCompletionActivity = task.activities.some(
+        (activity) =>
+          activity.type?.toLowerCase() === "task_completed"
+      );
+
+      if (!hasCompletionActivity) {
+        return res.status(400).json({
+          status: false,
+          message:
+            "Task cannot be completed until a completion activity is posted.",
+        });
+      }
+
       // LOCK TASK
       task.isLocked = true;
 
@@ -784,19 +824,35 @@ const updateTaskStage = asyncHandler(async (req, res) => {
         by: req.user._id,
       });
 
-    } else { task.activities.push({
+    } else {
+
+      task.activities.push({
         type: "in progress",
-
         activity: `Task stage updated to ${stage}`,
-
         by: req.user._id,
       });
+
     }
 
     await task.save();
 
+    const taskUsers = getTaskUsers(task);
+
+    await Notice.create({
+      team: taskUsers,
+      text: `Task "${task.title}" stage changed to ${stage}`,
+      task: task._id,
+    });
+
     // Socket.io updating task stage
-    emitTaskUpdated(task);
+    const updatedTask = await Task.findById(task._id)
+      .populate("team.members", "name title role email profileImage")
+      .populate("team.leader", "name title role email profileImage")
+      .populate("team.admins", "name title role email profileImage")
+      .populate("activities.by", "name email profileImage")
+      .populate("completedBy", "name title role email profileImage");
+
+    emitTaskUpdated(updatedTask);
     emitDashboardUpdate();
 
 
@@ -883,10 +939,16 @@ const updateSubTaskStage = asyncHandler(async (req, res) => {
       .populate("team.admins", "name title email profileImage")
       .populate("activities.by", "name profileImage");
 
+      await Notice.create({
+        team: getTaskUsers(task),
+        text: `${req.user.name} updated a subtask in "${task.title}"`,
+        task: task._id,
+      });
 
     // Socket.io updating subTask stage
     emitTaskUpdated(taskUpdate);
     emitDashboardUpdate();
+
 
     res.status(200).json({
       status: true,
@@ -960,6 +1022,14 @@ const createSubTask = asyncHandler(async (req, res) => {
     task.subTasks.push(newSubTask);
 
     await task.save();
+
+    const taskUsers = getTaskUsers(task);
+
+    await Notice.create({
+      team: taskUsers,
+      text: `New subtask added to "${task.title}"`,
+      task: task._id,
+    });
 
     const updatedTask = await Task.findById(id);
 
@@ -1296,6 +1366,18 @@ const postTaskActivity = asyncHandler(async (req, res) => {
       uploadedImages = await Promise.all(uploadPromises);
     }
 
+    // REQUIRE 5 IMAGES FOR TASK COMPLETION
+    if (
+      type?.toLowerCase() === "task_completed" &&
+      uploadedImages.length < 5
+    ) {
+      return res.status(400).json({
+        status: false,
+        message:
+          "At least 5 after-cleaning images are required.",
+      });
+    }
+
 
     // ONLY ADMIN AND LEADER CAN COMPLETE
     if (
@@ -1321,6 +1403,14 @@ const postTaskActivity = asyncHandler(async (req, res) => {
 
 
     await task.save();
+
+    const taskUsers = getTaskUsers(task);
+
+    await Notice.create({
+      team: taskUsers,
+      text: `${req.user.name} posted a new activity in "${task.title}"`,
+      task: task._id,
+    });
 
 
     const updatedTask = await Task.findById(id)
@@ -1413,15 +1503,24 @@ const trashTask = asyncHandler(async (req, res) => {
     await task.save();
 
     // OPTIONAL NOTICE
+    const taskUsers = getTaskUsers(task);
+
     await Notice.create({
-      team: task.team.members,
+      team: taskUsers,
       text: `Task "${task.title}" has been moved to trash.`,
       task: task._id,
     });
 
 
     // Socket.io updating task after trashed
-    emitTaskUpdated(task);
+    const updatedTask = await Task.findById(task._id)
+      .populate("team.members", "name title role email profileImage")
+      .populate("team.leader", "name title role email profileImage")
+      .populate("team.admins", "name title role email profileImage")
+      .populate("activities.by", "name email profileImage")
+      .populate("completedBy", "name title role email profileImage");
+
+    emitTaskUpdated(updatedTask);
     emitDashboardUpdate();
 
 
@@ -1496,12 +1595,7 @@ const deleteRestoreTask = asyncHandler(async (req, res) => {
       }
 
       // REMOVE TASK FROM USERS
-      const taskUsers = [
-        ...(task.team?.members || []),
-        ...(task.team?.leader
-          ? [task.team.leader]
-          : []),
-      ];
+      const taskUsers = getTaskUsers(task);
 
       await Promise.all(
         taskUsers.map((userId) =>
@@ -1548,14 +1642,7 @@ const deleteRestoreTask = asyncHandler(async (req, res) => {
         }
 
         // REMOVE TASK REFERENCES
-        const taskUsers = Array.isArray(task.team)
-          ? task.team
-          : [
-              ...(task.team?.members || []),
-              ...(task.team?.leader
-                ? [task.team.leader]
-                : []),
-            ];
+        const taskUsers = getTaskUsers(task);
 
         await Promise.all(
           taskUsers.map((userId) =>
@@ -1611,7 +1698,20 @@ const deleteRestoreTask = asyncHandler(async (req, res) => {
 
       await task.save();
 
-      emitTaskUpdated(task)
+      await Notice.create({
+        team: getTaskUsers(task),
+        text: `Task "${task.title}" has been restored`,
+        task: task._id,
+      });
+
+      const updatedTask = await Task.findById(task._id)
+        .populate("team.members", "name title role email profileImage")
+        .populate("team.leader", "name title role email profileImage")
+        .populate("team.admins", "name title role email profileImage")
+        .populate("activities.by", "name email profileImage")
+        .populate("completedBy", "name title role email profileImage");
+
+      emitTaskUpdated(updatedTask);
       emitDashboardUpdate()
 
       return res.status(200).json({

@@ -1,5 +1,7 @@
 import { Popover, Transition } from "@headlessui/react";
+import { useEffect } from "react";
 import moment from "moment";
+import { socket } from "../socket";
 import { Fragment, useState } from "react";
 import { BiSolidMessageRounded } from "react-icons/bi";
 import { HiBellAlert } from "react-icons/hi2";
@@ -32,6 +34,55 @@ export default function NotificationPanel() {
   const { data, refetch } = useGetNotificationsQuery();
   const [markAsRead] = useMarkNotiAsReadMutation();
 
+  console.log(data);
+
+  // Listen for real-time updates to notifications
+  useEffect(() => {
+    socket.on("leaveCreated", () => {
+      refetch();
+    });
+
+    return () => {
+      socket.off("leaveCreated");
+    };
+  }, [refetch]);
+
+  // Listen for real-time updates to notifications
+  useEffect(() => {
+    socket.on("leaveUpdated", () => {
+      refetch();
+    });
+
+    return () => {
+      socket.off("leaveUpdated");
+    };
+  }, [refetch]);
+
+
+  // Socket.io real time task update
+  useEffect(() => {
+    socket.on("taskCreated", () => {
+      refetch();
+    });
+
+    socket.on("taskUpdated", () => {
+      refetch();
+    });
+
+    socket.on("taskDeleted", () => {
+      refetch();
+    });
+
+    return () => {
+      socket.off("taskCreated");
+      socket.off("taskUpdated");
+      socket.off("taskDeleted");
+    };
+  }, [refetch]);
+
+
+
+  
   const viewHandler = (el) => {
     setSelected(el);
     readHandler("one", el._id);
@@ -40,8 +91,6 @@ export default function NotificationPanel() {
 
   const readHandler = async (type, id) => {
     await markAsRead({ type, id }).unwrap();
-
-    refetch();
   };
 
   const callsToAction = [

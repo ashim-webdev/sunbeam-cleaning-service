@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-// import { LeaveRequest } from './lib/supabase';
+import { socket } from "../socket";
 import { useSelector } from "react-redux";
 import {
   useGetAllLeavesQuery,
@@ -22,6 +22,7 @@ const LeaveRequest = () => {
   const {
     data: adminLeaves = [],
     isLoading: adminLoading,
+    refetch: refetchAdminLeaves,
   } = useGetAllLeavesQuery(undefined, {
     skip: !user?.isAdmin,
   });
@@ -29,11 +30,12 @@ const LeaveRequest = () => {
   const {
     data: employeeLeaves = [],
     isLoading: employeeLoading,
+    refetch: refetchEmployeeLeaves,
   } = useGetMyLeavesQuery(undefined, {
     skip: user?.isAdmin,
   });
 
-  console.log(employeeLeaves)
+  // console.log(employeeLeaves)
 
   const requests = user?.isAdmin ? adminLeaves : employeeLeaves;
 
@@ -44,7 +46,53 @@ const LeaveRequest = () => {
     document.body.classList.toggle("overflow-hidden", selectedRequest !== null);
   }, [selectedRequest]);
 
-  console.log(selectedRequest)
+
+  // Listen for real-time updates to leave requests
+  useEffect(() => {
+
+    socket.on("leaveCreated", (data) => {
+
+      console.log("Leave created:", data);
+
+      if (user?.isAdmin) {
+        refetchAdminLeaves();
+      } else {
+        refetchEmployeeLeaves();
+      }
+    });
+
+    return () => {
+      socket.off("leaveCreated");
+    };
+
+  }, [
+    user,
+    refetchAdminLeaves,
+    refetchEmployeeLeaves,
+  ]);
+
+  // Listen for real-time updates to leave requests
+  useEffect(() => {
+    socket.on("leaveUpdated", (data) => {
+      console.log("Leave updated:", data);
+
+      if (user?.isAdmin) {
+        refetchAdminLeaves();
+      } else {
+        refetchEmployeeLeaves();
+      }
+    });
+
+    return () => {
+      socket.off("leaveUpdated");
+    };
+  }, [
+    user,
+    refetchAdminLeaves,
+    refetchEmployeeLeaves,
+  ]);
+
+  // console.log(selectedRequest)
 
   const handleRequestClick = (request) => {
     setSelectedRequest(request);

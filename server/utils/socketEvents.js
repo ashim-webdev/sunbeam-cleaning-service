@@ -1,4 +1,5 @@
-import { getIO } from "../socket.js";
+import { getIO, onlineUsers } from "../socket.js";
+import User from "../models/userModel.js";
 
 export const emitTaskCreated = (task) => {
   const io = getIO();
@@ -22,4 +23,42 @@ export const emitDashboardUpdate = () => {
   const io = getIO();
 
   io.emit("dashboardUpdated");
+};
+
+
+export const emitLeaveCreated = (payload) => {
+  const io = getIO();
+
+  const { recipients } = payload;
+
+  recipients.forEach((userId) => {
+    const socketId = onlineUsers.get(userId.toString());
+
+    if (socketId) {
+      io.to(socketId).emit("leaveCreated", payload);
+    }
+  });
+};
+
+
+export const emitLeaveStatusUpdate = async (payload) => {
+  const io = getIO();
+
+  // 1. notify employee
+  const userSocketId = onlineUsers.get(payload.userId.toString());
+
+  if (userSocketId) {
+    io.to(userSocketId).emit("leaveUpdated", payload);
+  }
+
+  // 2. notify all admins
+  const admins = await User.find({ isAdmin: true }).select("_id");
+
+  admins.forEach((admin) => {
+    const adminSocketId = onlineUsers.get(admin._id.toString());
+
+    if (adminSocketId) {
+      io.to(adminSocketId).emit("leaveUpdated", payload);
+    }
+  });
 };

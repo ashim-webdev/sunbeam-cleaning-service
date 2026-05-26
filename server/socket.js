@@ -3,7 +3,7 @@ import { Server } from "socket.io";
 let io;
 
 // Store online users
-const onlineUsers = new Map();
+export const onlineUsers = new Map();
 
 export const initializeSocket = (server) => {
   io = new Server(server, {

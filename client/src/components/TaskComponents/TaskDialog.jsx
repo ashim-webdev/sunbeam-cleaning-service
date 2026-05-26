@@ -124,9 +124,8 @@ const ChangeTaskActions = ({ _id, stage, isLocked }) => {
       label: "Completed",
       stage: "completed",
       completed: "fa-solid fa-check-double text-green-600 text-lg",
-      disabled: false,
+      disabled: true,
       icon: <TaskColor className='bg-green-600' />,
-      onClick: () => changeHandler("completed"),
     },
   ];
 
@@ -165,7 +164,11 @@ const ChangeTaskActions = ({ _id, stage, isLocked }) => {
               <div key={index}>
                 <button
                     key={el.label}
-                    disabled={stage === el.stage || isLoading}
+                    disabled={
+                      stage === el.stage ||
+                      isLoading ||
+                      el.disabled
+                    }
                     onClick={(e) => {
                       e.stopPropagation();
                       el?.onClick?.();
@@ -293,7 +296,13 @@ const items = [
                 aria-hidden='true'
               />
             ),
-            onClick: () => setOpenEdit(true),
+            onClick: () => {
+              if (task?.isLocked) {
+                toast.error("Task is locked. Further changes are disabled.");
+                return;
+              }
+              setOpenEdit(true)
+            },
           },
           {
             label: "Add Sub-Task",
@@ -303,7 +312,13 @@ const items = [
                 aria-hidden='true'
               />
             ),
-            onClick: () => setOpen(true),
+            onClick: () => {
+              if (task?.isLocked) {
+                toast.error("Task is locked. Further changes are disabled.");
+                return;
+              }
+              setOpen(true)
+            },
           },
           {
             label: "Duplicate",
@@ -313,6 +328,7 @@ const items = [
                 aria-hidden='true'
               />
             ),
+            stillActiveIcon: <span className='DuplicateDot bg-blue-600 w-2 h-2 px-1 rounded-full whitespace-nowrap shadow-inner' />,
             onClick: () => duplicationClicks(),
           },
         ]
@@ -326,7 +342,7 @@ const items = [
   
   const threeDotStyles = "transition-all duration-300 ease-in-out outline-none cursor-pointer hover:scale-110 hover:text-blue-600 inline-flex w-full justify-center sm:text-2xl text-xl rounded-md  px-1 py-0.5 font-medium"
   const menuPanelStyle = "z-50 cursor-default border border-white absolute px-4 pt-2 -top-6 w-56  rounded-md ring-1 ring-black/5 focus:outline-none transition-all duration-300 ease-in-out"
-  const menuLinksStyle = "hover:scale-110 active:scale-95 cursor-pointer flex w-full items-center rounded-md my-2 px-2 py-2 text-sm transition-all duration-50 ease-in-out"
+  const menuLinksStyle = "Duplicate hover:scale-110 active:scale-95 cursor-pointer flex w-full items-center rounded-md my-2 px-2 py-2 text-sm transition-all duration-50 ease-in-out"
 
   return (
     <>
@@ -351,7 +367,6 @@ const items = [
                   <Menu.Item key={el.label}>
                     {({ active }) => (
                       <button
-                        // disabled={index === 0 ? false : !user.isAdmin}
                         onClick={(e) => {
                           el?.onClick()
                           e.stopPropagation()
@@ -367,6 +382,9 @@ const items = [
                       >
                         {el.icon}
                         {el.label}
+                        {task?.isLocked && el.label === "Duplicate" && (
+                          <span className='ml-auto p-2 flex justify-center items-center'>{el.stillActiveIcon}</span>
+                        )}
                       </button>
                     )}
                   </Menu.Item>
@@ -375,7 +393,7 @@ const items = [
 
               <div className='px-1 py-1'>
                 <div>
-                  <ChangeTaskActions _id={task._id} stage={task.stage} isLocked={task.isLocked} />
+                  <ChangeTaskActions _id={task._id} stage={task.stage} isLocked={task?.isLocked} />
                 </div>
               </div>
 

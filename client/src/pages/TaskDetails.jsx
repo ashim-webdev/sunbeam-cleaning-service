@@ -165,7 +165,7 @@ const ACTIVITY_LABELS = {
 const Activities = ({ activity, id, refetch, task, isLocked }) => {
   const { LightMode, user } = useSelector((state) => state.auth);
 
-  console.log(task)
+  // console.log(task)
 
   const [postActivity, { isLoading }] = usePostTaskActivityMutation();
 
@@ -340,6 +340,12 @@ const Activities = ({ activity, id, refetch, task, isLocked }) => {
 
   // handle completion model pop up
   const handleOpenCompletionDialog = () => {
+
+    if (!allSubTasksCompleted) {
+      toast.error("Please complete all sub-tasks before submitting completion images.");
+      return;
+    }
+
     if (isLocked) {
       toast.error("Task is locked. Further changes are disabled.");
       return;
@@ -365,6 +371,11 @@ const Activities = ({ activity, id, refetch, task, isLocked }) => {
 
   // handle image submit
   const handleFinalSubmission = async () => {
+    if (!allSubTasksCompleted) {
+      toast.error("Please complete all sub-tasks before submitting completion images.");
+      return;
+    }
+
     const hasCompletedComment = activity?.some(
       (item) => item?.type?.toLowerCase() === "task_completed"
     );
@@ -454,6 +465,11 @@ const Activities = ({ activity, id, refetch, task, isLocked }) => {
     (item) => item?.type?.toLowerCase() === "task_completed"
   );
 
+
+  // Check if sub-task has all be marked as completed
+  const allSubTasksCompleted =
+    task?.subTasks?.length === 0 ||
+    task?.subTasks?.every((t) => t.isCompleted);
 
 
   const Card = ({ item }) => {
@@ -869,7 +885,8 @@ const Activities = ({ activity, id, refetch, task, isLocked }) => {
                     !canManageTask ||
                     isLoading ||
                     isLocked ||
-                    hasSubmittedCompletionImages
+                    hasSubmittedCompletionImages ||
+                    !allSubTasksCompleted
                   }
                   className={`
                     rounded shadow-inner transition-all duration-300 ease-in-out
@@ -1054,8 +1071,8 @@ const TaskDetail = () => {
 
 
 
-  console.log(isLocked)
-  console.log(task)
+  // console.log(isLocked)
+  // console.log(task)
 
   // Only admin and leader can make changes
   const isAdmin = user?.isAdmin;
@@ -1181,6 +1198,9 @@ const TaskDetail = () => {
     title.split(" ").length > 3
       ? title.split(" ").slice(0, 3).join(" ") + "..."
       : title;
+
+
+  console.log(task.activity)
 
   return (
     <>

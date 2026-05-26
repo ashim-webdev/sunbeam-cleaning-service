@@ -1,9 +1,12 @@
-import { useState } from "react";
+import clsx from "clsx";
+import { useState, useEffect } from "react";
 import { Send } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { useCreateLeaveMutation } from "../../redux/slices/api/leaveApiSlice";
 import { toast } from "sonner";
+import DatePicker from "react-datepicker";
+
 
 
 
@@ -14,6 +17,9 @@ export function LeaveForm() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [shake, setShake] = useState(false);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   const {
     register,
@@ -21,6 +27,20 @@ export function LeaveForm() {
     reset,
     formState: { errors },
   } = useForm();
+
+
+  // Calender "withPortal" Screen Sizing
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 600);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+  // End
 
   // Shake animation trigger
   const handleErrorAnimation = () => {
@@ -39,26 +59,38 @@ export function LeaveForm() {
   const onError = (errors) => {
     handleErrorAnimation();
 
-    if (errors.reason && errors.duration && errors.description) {
+    if (errors.reason && errors.description) {
       toast.error("Please fill in all required fields");
     } else if (errors.reason) {
       toast.error("Reason for leave is required");
-    } else if (errors.duration) {
-      toast.error("Duration is required");
     } else if (errors.description) {
       toast.error("Detailed description is required");
     }
   };
 
+  // Date validation
+  const validateDates = () => {
+    if (!startDate || !endDate) {
+      toast.error("Start and end dates are required");
+      handleErrorAnimation();
+      return false;
+    }
+
+    if (endDate < startDate) {
+      toast.error("End date cannot be before start date");
+      handleErrorAnimation();
+      return false;
+    }
+
+    return true;
+  };
+
   // Submit Handler
   const submitHandler = async (data) => {
+    // console.log("Form Data:", data);
     setIsSubmitting(true);
 
-    const durationNum = parseInt(data.duration);
-
-    if (durationNum <= 0) {
-      toast.error("Duration must be greater than 0");
-      handleErrorAnimation();
+    if (!validateDates()) {
       setIsSubmitting(false);
       return;
     }
@@ -66,11 +98,15 @@ export function LeaveForm() {
     try {
       await createLeave({
         reason: data.reason,
-        duration: durationNum,
         description: data.description,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
       }).unwrap();
 
       reset();
+
+      setStartDate(null);
+      setEndDate(null);
 
       toast.success("Leave request submitted successfully");
 
@@ -80,6 +116,23 @@ export function LeaveForm() {
       setIsSubmitting(false);
     }
   };
+  
+
+  // Calculate duration based on selected dates
+  const calculatedDuration =
+    startDate && endDate
+      ? Math.ceil(
+          (endDate - startDate) /
+            (1000 * 60 * 60 * 24)
+        ) + 1
+      : 0;
+
+
+  const text = LightMode ? "text-black" : "text-white";
+
+  const placeholder = LightMode
+    ? "placeholder:text-gray-500"
+    : "placeholder:text-gray-400";
 
   return (
     <div className={`${LightMode ? "bg-white shadow-darkSM" : "bg-black/90 shadow-lightSM"} w-full rounded-lg p-6 transition-colors duration-300 ease-in-out`}>
@@ -118,31 +171,105 @@ export function LeaveForm() {
           )}
         </div>
 
+        <div className="grid grid-cols-2 gap-4">
+
+          <div>
+            <label className={`block text-sm font-medium ${LightMode ? "text-black/80" : "text-white/80"} mb-1 transition-colors duration-300 ease-in-out`}>
+              Start Date
+            </label>
+
+            <div className="relative">
+              <DatePicker
+                selected={startDate}
+                onChange={(date) => {
+                  setStartDate(date);
+                }}
+                dateFormat="dd/MM/yyyy"
+                placeholderText="start date"
+                withPortal={isMobile}
+                minDate={new Date()}
+                calendarClassName={clsx(
+                  LightMode
+                    ? "light-calendar"
+                    : "dark-calendar"
+                )}
+                className={`w-full ${text} ${placeholder} px-3 py-2 border rounded-md outline-0 transition-all duration-50 ease-in-out ${
+                  !startDate && shake
+                    ? "border-2 border-red-500 animate-shake"
+                    : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                }`}
+              />
+              <i className={`
+                ${LightMode ? "text-black/50" : "text-white/50"}
+                fa-solid fa-calendar sm:text-xl text-lg absolute top-2.75 [@media(min-width:500px)_and_(max-width:767px)]:right-4 right-2 shadow-2xl transition-all duration-300 ease-in-out
+              `}></i>
+            </div>
+          </div>
+
+          <div>
+            <label className={`block text-sm font-medium ${LightMode ? "text-black/80" : "text-white/80"} mb-1 transition-colors duration-300 ease-in-out`}>
+              End Date
+            </label>
+
+            <div className="relative">
+              <DatePicker
+                selected={endDate}
+                onChange={(date) => {
+                  setEndDate(date);
+                }}
+                dateFormat="dd/MM/yyyy"
+                placeholderText="end date"
+                withPortal={isMobile}
+                minDate={startDate || new Date()}
+                minTime={
+                  startDate && endDate && startDate.toDateString() === endDate.toDateString()
+                    ? startDate
+                    : new Date(0, 0, 0, 0, 0)
+                }
+                maxTime={new Date(0, 0, 0, 23, 45)}
+                calendarClassName={clsx(
+                  LightMode
+                    ? "light-calendar"
+                    : "dark-calendar"
+                )}
+                className={`w-full ${text} ${placeholder} px-3 py-2 border rounded-md outline-0 transition-all duration-50 ease-in-out ${
+                  !endDate && shake
+                    ? "border-2 border-red-500 animate-shake"
+                    : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                }`}
+              />
+              <i className={`
+                ${LightMode ? "text-black/50" : "text-white/50"}
+                fa-solid fa-calendar sm:text-xl text-lg absolute top-2.75 [@media(min-width:500px)_and_(max-width:767px)]:right-4 right-2 shadow-2xl transition-all duration-300 ease-in-out
+              `}></i>
+              </div>
+          </div>
+
+        </div>
+
         {/* Duration */}
         <div>
-          <label className={`block text-sm font-medium ${LightMode ? "text-black/80" : "text-white/80"} mb-1 transition-colors duration-300 ease-in-out`}>
+          <label
+            className={`block text-sm font-medium ${
+              LightMode ? "text-black/80" : "text-white/80"
+            } mb-1 transition-colors duration-300 ease-in-out`}
+          >
             Duration (days)
           </label>
-          <input
-            type="number"
-            min="1"
-            placeholder="Number of days"
-            {...register("duration", {
-              required: "Duration is required",
-            })}
-            className={`${LightMode ? "placeholder-black/40 text-black" : "placeholder-white/40 text-white"}  w-full px-4 py-2 border rounded-md outline-0 transition-all duration-300 ease-in-out ${
-              errors.duration
-                ? `border-2 border-red-500 focus:border-red-500 ${
-                    shake ? "animate-shake" : ""
-                  }`
-                : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+
+          <div
+            className={`w-full px-4 py-2 rounded-md border transition-all duration-300 ease-in-out ${
+              LightMode
+                ? "bg-gray-100 text-black border-gray-300"
+                : "bg-zinc-900 text-white border-gray-700"
             }`}
-          />
-          {errors.duration && (
-            <p className="text-red-500 text-sm mt-1 italic">
-              {errors.duration.message}
-            </p>
-          )}
+          >
+            {calculatedDuration > 0
+              ? `${calculatedDuration} day${
+                  calculatedDuration > 1 ? "s" : ""
+                }`
+              : "Select start and end dates"}
+          </div>
         </div>
 
         {/* Description */}

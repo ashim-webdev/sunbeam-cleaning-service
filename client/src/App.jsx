@@ -6,6 +6,10 @@ import { Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { setOpenSidebar, setOpenProfile, setOnlineUsers } from "./redux/slices/authSlice";
+import {
+  incrementTaskNotifications,
+  incrementLeaveNotifications,
+} from "./redux/slices/authSlice";
 import { Toaster } from 'sonner' // Notification library
 import Login from './pages/Login'
 import TaskDetails from './pages/TaskDetails'
@@ -181,6 +185,27 @@ function App() {
 
     return () => {
       socket.off("onlineUsers");
+    };
+
+  }, [dispatch]);
+
+
+  // Socket.io real time notification update
+  useEffect(() => {
+
+    // TASK
+    socket.on("taskCreated", () => {
+      dispatch(incrementTaskNotifications());
+    });
+
+    // LEAVE
+    socket.on("leaveCreated", () => {
+      dispatch(incrementLeaveNotifications());
+    });
+
+    return () => {
+      socket.off("taskCreated");
+      socket.off("leaveCreated");
     };
 
   }, [dispatch]);

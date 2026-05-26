@@ -1,8 +1,10 @@
 // import { LeaveRequest } from '../lib/supabase';
 import clsx from "clsx";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, Clock, CheckCircle, XCircle, Hourglass } from 'lucide-react';
+import { Calendar, Clock, CheckCircle, XCircle, Hourglass, ChevronsUp, ChevronDown } from 'lucide-react';
 import { Card, CardContent, CardFooter, CardTitle } from "../ui/card";
+import { formatDistanceToNow } from "date-fns";
 import { Badge } from "../ui/badge";
 import { useSelector } from "react-redux";
 import { getInitials } from "../../utils/index";
@@ -12,9 +14,13 @@ import { getInitials } from "../../utils/index";
 export function LeaveList({ requests, isAdmin, onRequestClick }) {
   const { LightMode } = useSelector((state) => state.auth);
 
+  const [openRequestId, setOpenRequestId] = useState(null);
+
   const sortedRequests = [...requests].sort(
     (a, b) => new Date(b.created_at) - new Date(a.created_at)
   );
+
+  console.log(sortedRequests)
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -62,6 +68,11 @@ export function LeaveList({ requests, isAdmin, onRequestClick }) {
     );
   }
 
+  const toggleSwitchArrow = (requestId) => {
+    setOpenRequestId((prev) =>
+      prev === requestId ? null : requestId
+    );
+  };
 
   const hover = LightMode ? "hover:shadow-darkSM hover:bg-gray-50" : "hover:shadow-lightSM hover:bg-white/20"
   const changeAnimation = "transition-all duration-300 ease-in-out"
@@ -84,7 +95,10 @@ export function LeaveList({ requests, isAdmin, onRequestClick }) {
         {sortedRequests.map((request) => (
           <div
             key={request._id}
-            onClick={() => onRequestClick(request)}
+            onClick={() => {
+              onRequestClick(request)
+              setOpenRequestId(null);
+            }}
             className={`${isAdmin ? "mt-12 mb-6" : "my-9"} ${bg} ListHB border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all duration-300 cursor-pointer`}
           >
             <div className="relative flex items-start justify-between">
@@ -145,15 +159,81 @@ export function LeaveList({ requests, isAdmin, onRequestClick }) {
                   )}
                 </div>
 
-                <div className={`flex items-center gap-4 text-sm ${LightMode ? "text-gray-800" : "text-gray-300"} mb-3 transition-colors duration-300 ease-in-out`}>
+                <div className={`flex flex-wrap items-center gap-4 text-sm ${LightMode ? "text-gray-800" : "text-gray-300"} mb-3 transition-colors duration-300 ease-in-out`}>
+                  <div className="relative flex items-center gap-1 whitespace-nowrap">
+
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleSwitchArrow(request._id);
+                      }}
+                      className={`${LightMode ? "bg-gray-600/80 hover:bg-gray-700" : "bg-gray-600/80 hover:bg-gray-800"} flex items-center gap-3 py-0.5 px-2 cursor-pointer rounded text-white text-xs font-medium active:scale-95 transition-all duration-300 ease-in-out`}
+                    >
+                      <span className="flex items-center gap-1">
+                      <Hourglass size={16} />
+                      <span>{request.duration} {request.duration === 1 ? 'day' : 'days'}</span>
+                      </span>
+                      
+                      <span className="w-full flex justify-end items-center transition-colors duration-300 ease-in-out">
+                        {openRequestId === request._id ? <ChevronsUp size={22} className="font-bold animate-UpDown" /> : <ChevronDown size={22} className="font-bold" />}
+                      </span>
+                    </button>
+
+                    <AnimatePresence>
+                      {openRequestId === request._id && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          transition={{ duration: 0.2 }}
+                          onMouseOver={(e) => e.stopPropagation()} 
+                          className={`
+                            ${LightMode 
+                              ? "bg-white shadow-darkSM"
+                              : "bg-black/90 shadow-lightSM border border-white"
+                            }
+                            absolute -top-26 -right-30 sm:-top-11 sm:-right-55 w-fit z-50 mt-3 flex flex-col justify-center items-start gap-2 rounded p-4 cursor-pointer
+                          `}
+                          >
+                          <span className="flex justify-center items-center gap-2 whitespace-nowrap">
+                            <span className="w-8">start:</span>
+                            <span className="flex justify-center items-center gap-1 whitespace-nowrap">
+                              <span className="pb-0.5"><Calendar size={16} /></span>
+                              <span>{new Date(request.startDate).toDateString()}
+                              </span>
+                            </span>
+                          </span>
+                          <div className="px-2 w-full">
+                            <div className={`${LightMode ? "bg-linear-to-l from-gray-700/10 via-gray-800 to-gray-700/10 h-[1px]" : "bg-linear-to-l from-gray-400/10 via-gray-500 to-gray-400 h-0.5"} w-full transition-all duration-300 ease-in-out`} />
+                          </div>
+                          <span className="flex justify-center items-center gap-2 whitespace-nowrap">
+                            <span className="w-8">End:</span>
+                            <span className="flex justify-center items-center gap-1 whitespace-nowrap">
+                              <span className="pb-0.5"><Calendar size={16} /></span>
+                              <span>{new Date(request.endDate).toDateString()}</span>
+                            </span>
+                          </span>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                  </div>
                   <div className="flex items-center gap-1 whitespace-nowrap">
+                    <span className="pb-0.5"><Calendar size={16} /></span>
+                    <span>{new Date(request.createdAt).toDateString()}</span>
+                  </div>
+                  <div className="flex justify-center items-center gap-1 whitespace-nowrap">
                     <Clock size={16} />
-                    <span>{request.duration} {request.duration === 1 ? 'day' : 'days'}</span>
+                    <span>
+                      {formatDistanceToNow(new Date(request.createdAt), {
+                        addSuffix: true,
+                      })}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-1 whitespace-nowrap">
-                    <Calendar size={16} />
-                    <span>{new Date(request.created_at).toLocaleDateString()}</span>
-                  </div>
+                </div>
+
+                <div className="pr-5 pl-2 w-full py-2 mt-1 mb-2">
+                  <div className={`${LightMode ? "bg-linear-to-l from-gray-700/10 via-gray-800 to-gray-600 h-[1px]" : "bg-linear-to-l from-gray-400/10 via-gray-500 to-gray-400 h-0.5"} w-full transition-all duration-300 ease-in-out`} />
                 </div>
 
                 <p className={`${LightMode ? "text-gray-800" : "text-gray-300"} text-sm line-clamp-2 transition-colors duration-300 ease-in-out`}>{request.description}</p>

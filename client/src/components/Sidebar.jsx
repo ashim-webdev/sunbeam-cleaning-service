@@ -14,7 +14,7 @@ import {
 } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { setOpenSidebar, setMiniMenu, setOpenProfile } from "../redux/slices/authSlice";
+import { setOpenSidebar, setMiniMenu, setOpenProfile, clearTaskNotifications, clearLeaveNotifications } from "../redux/slices/authSlice";
 import { IoCheckmarkDoneOutline } from "react-icons/io5";
 import "./components.css";
 import ProfileDropdown from "./ProfileDropdown";
@@ -27,7 +27,12 @@ import ConnectionStatus from "./ConnectionStatus";
 
 
 const Sidebar = () => {
-  const { user, onlineUsers } = useSelector((state) => state.auth);
+  const {
+    user, 
+    onlineUsers,
+    taskNotifications,
+    leaveNotifications,
+  } = useSelector((state) => state.auth);
   // DarkMode Change
   const { LightMode, MiniMenu, isProfileOpen }  = useSelector((state) => state.auth);
 
@@ -43,7 +48,19 @@ const Sidebar = () => {
   const REFRESH_PAGE = 400;
 
   const handleNavClick = (path) => {
-    dispatch(setOpenSidebar(false)); // start slide-out
+
+    // CLEAR TASK NOTIFICATIONS
+    if (path.includes("tasks")) {
+      dispatch(clearTaskNotifications());
+    }
+
+    // CLEAR LEAVE NOTIFICATIONS
+    if (path.includes("leaves")) {
+      dispatch(clearLeaveNotifications());
+    }
+
+    dispatch(setOpenSidebar(false));
+
     setTimeout(() => {
       navigate(`/${path}`);
     }, SIDEBAR_ANIMATION_MS);
@@ -149,7 +166,7 @@ const Sidebar = () => {
           dispatch(setOpenProfile(false))
         }}
         className={clsx(
-          "ClickAnimationNoti w-full flex gap-2 px-5 py-1.25 rounded-xl items-center text-base cursor-pointer transition-colors ease-in-out duration-300 ",
+          "ClickAnimationNoti w-full flex gap-2 px-5 py-1.25 rounded-xl justify-between items-center text-base cursor-pointer transition-colors ease-in-out duration-300 ",
           LightMode 
             ? "text-black"
             : "text-white "
@@ -157,8 +174,32 @@ const Sidebar = () => {
           path === el.link.split("/")[0] ? ` ClickAnimationNoti transition-colors ease-in-out bg-[#005FFB] text-white duration-75  ${LightMode ? "shadow-darkSM" : "shadow-blueSM"}` : `transition-colors ease-in-out duration-75 ${LightMode ? "hover:shadow-darkSM hover:bg-[#0004fc4e]" : "hover:shadow-blueSM hover:bg-white hover:text-black"}`
         )}
       >
-        {el.icon}
-        <span className='whitespace-nowrap'>{el.label}</span>
+        <div className="flex gap-2 items-center">
+          {el.icon}
+          <span className='whitespace-nowrap'>{el.label}</span>
+        </div>
+
+        {el.label === "Tasks" && taskNotifications > 0 && (
+          <div className="flex items-center justify-center">
+
+            <span className={`
+                ${LightMode 
+                  ? "text-black shadow-darkSM"
+                  : "text-white shadow-lightSM"
+                }
+                flex justify-center items-center text-center text-[9px] text-white font-semibold w-5 h-5 rounded-full bg-red-600 pt-0.5 transition-all duration-300 ease-in-out
+              `}
+            >
+              <span>
+                {el.label === "Tasks"
+                  ? taskNotifications > 99
+                    ? "99+"
+                    : taskNotifications
+                  : 0}
+              </span>
+            </span>
+          </div>
+        )}
       </div>
     );
   };
@@ -169,7 +210,7 @@ const Sidebar = () => {
         key={el.label}
         onClick={() => handleNavClick(el.link)}
         className={clsx(
-          "ClickAnimationNoti w-full flex gap-2 px-5 py-1.25 rounded-xl items-center text-base cursor-pointer transition-colors ease-in-out duration-300 ",
+          "ClickAnimationNoti relative w-full flex gap-2 px-5 py-1.25 rounded-xl items-center text-base cursor-pointer transition-colors ease-in-out duration-300 ",
           LightMode 
             ? "text-black"
             : "text-white "
@@ -179,6 +220,45 @@ const Sidebar = () => {
       >
         {el.icon}
         <span className='whitespace-nowrap'>{el.label}</span>
+
+        {/* <div className={`
+            absolute -top-2.5 right-4 flex items-center justify-center
+          `}>
+          <span className={`
+              ${LightMode 
+                ? "text-black shadow-darkSM"
+                : "text-white shadow-lightSM"
+              }
+              flex justify-center items-center text-center text-[9px] text-white font-semibold w-5 h-5 rounded-full bg-red-600 pt-0.5 transition-all duration-300 ease-in-out
+            `}
+          >
+            <span>35</span>
+          </span>
+        </div> */}
+
+        {el.label === "Leave Requests" && leaveNotifications > 0 && (
+          <div className={`
+            absolute -top-2.5 right-4 flex items-center justify-center
+          `}>
+
+            <span className={`
+                ${LightMode 
+                  ? "text-black shadow-darkSM"
+                  : "text-white shadow-lightSM"
+                }
+                flex justify-center items-center text-center text-[9px] text-white font-semibold w-5 h-5 rounded-full bg-red-600 pt-0.5 transition-all duration-300 ease-in-out
+              `}
+            >
+              <span>
+                {el.label === "Leave Requests"
+                  ? leaveNotifications > 99
+                    ? "99+"
+                    : leaveNotifications
+                  : 0}
+              </span>
+            </span>
+          </div>
+        )}
       </div>
     );
   };

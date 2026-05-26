@@ -186,14 +186,25 @@ const TaskCard = ({ task }) => {
 
         <div className='w-full '>
           <button
-            disabled={user.isAdmin ? false : true}
+            disabled={user.isAdmin || task?.isLocked ? false : true}
             onClick={(e) => {
+              if (task?.isLocked) {
+                toast.error("Task is locked. Further changes are disabled.");
+                return;
+              }
+
               setOpen(true);
               e.stopPropagation()
-
             }}
             className={`
-              ${user.isAdmin ? "hover:scale-103 hover:text-blue-600 active:scale-95" : "disabled:cursor-not-allowed disabled:text-gray-600"}
+              ${user.isAdmin ? 
+                "hover:scale-103 hover:text-blue-600 active:scale-95"
+                :
+                task?.isLocked ?
+                "disabled:cursor-not-allowed disabled:text-gray-600"
+                :
+                "disabled:cursor-not-allowed disabled:text-gray-600"
+              }
               py-2 cursor-pointer w-full flex gap-4 items-center text-sm text-gray-500 font-semibold transition-all duration-300 ease-in-out 
             `}
           >
@@ -222,7 +233,7 @@ const TaskCard = ({ task }) => {
                     ? "text-gray-50"
                     : "text-white"
                   }
-                  border-white/50 pl-2 pb-0.5 font-mono text-md font-semibold border-b capitalize transition-colors duration-300 ease-in-out
+                  border-white/50 pl-4 pb-0.5 font-mono text-md font-semibold border-b capitalize transition-colors duration-300 ease-in-out
                 `}>
                 {task?.clientName}
               </div>

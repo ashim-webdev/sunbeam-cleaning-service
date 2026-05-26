@@ -77,3 +77,22 @@ export const canCompleteSubTask = (task, user) => {
 
   return leaderId === userId;
 };
+
+
+
+// GET ALL TASK USERS
+export const getTaskUsers = (task) => {
+  const members = task.team?.members || [];
+
+  const leader = task.team?.leader
+    ? [task.team.leader]
+    : [];
+
+  const admins = task.team?.admins || [];
+
+  return [...new Set([
+    ...members.map((m) => m.toString()),
+    ...leader.map((l) => l.toString()),
+    ...admins.map((a) => a.toString()),
+  ])];
+};

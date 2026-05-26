@@ -13,7 +13,9 @@ const initialState = {
   selectedUserInfo: null,
   userViewInfo: null,
   CPEditPopUp: false,
-  onlineUsers: []
+  onlineUsers: [],
+  taskNotifications: 0,
+  leaveNotifications: 0,
 };
 
 
@@ -64,6 +66,22 @@ const authSlice = createSlice ({
     setOnlineUsers: (state, action) => {
       state.onlineUsers = action.payload;
     },
+
+    incrementTaskNotifications: (state) => {
+      state.taskNotifications += 1;
+    },
+
+    clearTaskNotifications: (state) => {
+      state.taskNotifications = 0;
+    },
+
+    incrementLeaveNotifications: (state) => {
+      state.leaveNotifications += 1;
+    },
+
+    clearLeaveNotifications: (state) => {
+      state.leaveNotifications = 0;
+    },
   },
 })
 
@@ -78,7 +96,11 @@ export const {
   setSelectUserDashInfo, 
   setCPEditPopUp,
   setUserViewInfo,
-  setOnlineUsers
+  setOnlineUsers,
+  incrementTaskNotifications,
+  clearTaskNotifications,
+  incrementLeaveNotifications,
+  clearLeaveNotifications,
 } = authSlice.actions
 
 export default authSlice.reducer

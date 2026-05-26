@@ -63,9 +63,7 @@ const AddSubTask = ({ open, setOpen, id }) => {
 
       reset();
 
-      setTimeout(() => {
-        setOpen(false);
-      }, 500);
+      setOpen(false);
 
     } catch (err) {
       console.log(err);
