@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { socket } from "../../socket";
+import { useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -18,7 +19,7 @@ import { toast } from "sonner";
 
 export default function ScheduleCalendar({ role }) {
   const { LightMode } = useSelector((state) => state.auth);
-  const { data: rawEvents = [] } = useGetEventsQuery();
+  const { data: rawEvents = [], refetch } = useGetEventsQuery();
 
   const events = rawEvents.map((event) => ({
     ...event,
@@ -38,6 +39,28 @@ export default function ScheduleCalendar({ role }) {
   const [newSelection, setNewSelection] = useState(null);
 
   const isAdmin = role === "admin";
+
+
+  // Listen for real-time updates to events
+  useEffect(() => {
+    socket.on("eventCreated", () => {
+      refetch();
+    });
+
+    socket.on("eventUpdated", () => {
+      refetch();
+    });
+
+    socket.on("eventDeleted", () => {
+      refetch();
+    });
+
+    return () => {
+      socket.off("eventCreated");
+      socket.off("eventUpdated");
+      socket.off("eventDeleted");
+    };
+  }, [refetch]);
 
   // Reusable function for past date No Click
   const openEventForm = (date) => {

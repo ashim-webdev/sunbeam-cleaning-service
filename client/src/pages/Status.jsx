@@ -44,8 +44,8 @@ const Status = () => {
   const changeAnimation = "transition-all duration-300 ease-in-out"
 
   return (
-    <div className="flex flex-col lg:flex-row justify-center items-center gap-5 mb-4 h-auto w-full overflow-x-hidden mt-6">
-      <div className={`${bg} ${changeAnimation} w-full h-fit px-4 pt-6 pb-2 rounded-lg`}>
+    <div className="flex flex-col lg:flex-row justify-center items-center gap-5 mb-4 h-full w-full overflow-x-hidden mt-6">
+      <div className={`${bg} ${changeAnimation} w-full h-fit px-4 pt-6 pb-4 rounded-lg`}>
         <CardList 
           title="Active Employee's" 
           openInfoClick={openInfoClick}
@@ -54,7 +54,7 @@ const Status = () => {
         />
       </div>
 
-      <div className={`${bg} ${changeAnimation} w-full h-fit px-4 pt-6 pb-2 rounded-lg`}>
+      <div className={`${bg} ${changeAnimation} w-full h-fit px-4 pt-6 pb-4 rounded-lg`}>
         <CardList 
           title="Disabled Employee's" 
           openInfoClick={openInfoClick}

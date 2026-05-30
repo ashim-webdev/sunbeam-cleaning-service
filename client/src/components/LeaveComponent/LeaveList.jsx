@@ -20,7 +20,7 @@ export function LeaveList({ requests, isAdmin, onRequestClick }) {
     (a, b) => new Date(b.created_at) - new Date(a.created_at)
   );
 
-  console.log(sortedRequests)
+  // console.log(sortedRequests)
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -192,7 +192,7 @@ export function LeaveList({ requests, isAdmin, onRequestClick }) {
                               ? "bg-white shadow-darkSM"
                               : "bg-black/90 shadow-lightSM border border-white"
                             }
-                            absolute -top-26 -right-30 sm:-top-11 sm:-right-55 w-fit z-50 mt-3 flex flex-col justify-center items-start gap-2 rounded p-4 cursor-pointer
+                            absolute -top-28 -right-30 sm:-top-11 sm:-right-55 w-fit z-50 mt-3 flex flex-col justify-center items-start gap-2 rounded p-4 cursor-pointer
                           `}
                           >
                           <span className="flex justify-center items-center gap-2 whitespace-nowrap">
@@ -204,7 +204,7 @@ export function LeaveList({ requests, isAdmin, onRequestClick }) {
                             </span>
                           </span>
                           <div className="px-2 w-full">
-                            <div className={`${LightMode ? "bg-linear-to-l from-gray-700/10 via-gray-800 to-gray-700/10 h-[1px]" : "bg-linear-to-l from-gray-400/10 via-gray-500 to-gray-400 h-0.5"} w-full transition-all duration-300 ease-in-out`} />
+                            <div className={`${LightMode ? "bg-linear-to-l from-gray-700/10 via-gray-800 to-gray-700/10 h-[1px]" : "bg-linear-to-l from-gray-400/10 via-gray-500 to-gray-400/10 h-1"} w-full transition-all duration-300 ease-in-out`} />
                           </div>
                           <span className="flex justify-center items-center gap-2 whitespace-nowrap">
                             <span className="w-8">End:</span>

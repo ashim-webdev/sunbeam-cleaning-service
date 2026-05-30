@@ -67,10 +67,10 @@ const Overview = () => {
   return (
     <div className="flex flex-col gap-4 mb-4 h-auto w-full overflow-x-hidden">
       <div className="p-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-2 gap-4">
-        <div className={`${bg} ${changeAnimation} w-full h-full px-4 pt-6 pb-2 rounded-lg col-span-1`}>
+        <div className={`${bg} ${changeAnimation} w-full h-full px-4 pt-6 pb-4 rounded-lg col-span-1`}>
           <AppBarChart />
         </div>
-        <div className={`${bg} ${changeAnimation} w-full h-full px-4 pt-6 pb-2 rounded-lg col-span-1`}>
+        <div className={`${bg} ${changeAnimation} w-full h-full px-4 pt-6 pb-4 rounded-lg col-span-1`}>
           <AppPieChart />
         </div>
       </div>
@@ -82,25 +82,31 @@ const Overview = () => {
               <CardList title="Employee's List" subtitle="Click to view employee stats" />
             </div>
             
-            <span className="absolute top-154  w-full px-10">
-              <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10 m-1" />
-            </span>
+            <div className="absolute hidden sm:flex top-175 w-full justify-center items-center px-20">
+              <div className=' bg-blue-600 w-2 h-2 px-1 rounded-full whitespace-nowrap shadow-inner' />
 
-            <div className="flex justify-center items-center w-full h-full px-4 pt-10 pb-2 rounded-lg">
+              <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-600 to-blue-400/10 m-1" />
+
+              <div className=' bg-blue-600 w-2 h-2 px-1 rounded-full whitespace-nowrap shadow-inner' />
+            </div>
+
+            
+
+            <div className="flex justify-center items-center w-full h-full px-4 pt-5 pb-4 rounded-lg">
               <ProfileCard header="Employee's Profile" componentType="Profile Overview" onClick={(e) => e.stopPropagation()} profileSelected={selectedUser} editClick={editClick} deleteClick={deleteClick} setOpen={setOpen}  />
             </div>
           </div>
         </div>
-        <div className={`${areaChartBg} backdrop-blur-[2px] border border-blue-200/30 shadow-lg shadow-blue-500/20 h-full py-4 px-4 pt-6 pb-2  rounded-lg col-span-1`}>
+        <div className={`${areaChartBg} backdrop-blur-[2px] border border-blue-200/30 shadow-lg shadow-blue-500/20 h-full py-4 px-4 pt-6 pb-4  rounded-lg col-span-1`}>
           <AppAreaChart />
         </div>
-        <div className={`${bg} ${changeAnimation} h-full px-4 pt-6 pb-2 rounded-lg col-span-1`}>
+        <div className={`${bg} ${changeAnimation} h-full px-4 pt-6 pb-4 rounded-lg col-span-1`}>
           <CardList title="Employee Leave Requests" subtitle="Click to view employee stats" />
         </div>
       </div>
 
 
-      <div className={`${bg} ${changeAnimation} h-fit px-4 pt-6 pb-2 rounded-lg`}>
+      <div className={`${bg} ${changeAnimation} h-fit px-4 pt-6 pb-4 rounded-lg`}>
         <CardList 
           title="Active Employee's" 
           openInfoClick={openInfoClick}

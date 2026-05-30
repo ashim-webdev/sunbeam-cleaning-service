@@ -12,23 +12,101 @@ import ConnectionStatus from "./ConnectionStatus";
 
 const Navbar = ({ isScrolled, isSearchPanelOpen, setIsSearchPanelOpen }) => {
   const { LightMode, user, onlineUsers } = useSelector((state) => state.auth);
-  const [focus, setFocus] = useState(false);
 
+
+  const [focus, setFocus] = useState(false);
+  const [showRecent, setShowRecent] = useState(false);
+
+
+
+
+  const isSubmittingRef = useRef(false);
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState(
+  const [searchParams, setSearchParams] = useSearchParams();
+
+
+  const [searchInput, setSearchInput] = useState(
     searchParams.get("search") || ""
   );
 
-  // useEffect(() => {
-  //   updateURL({ searchTerm, navigate, location });
-  // }, [searchTerm]);
+
+  const storageKey = location.pathname.includes("team")
+    ? "recentSearches_users"
+    : "recentSearches_tasks";
+
+  const [recentSearches, setRecentSearches] = useState(() => {
+    return JSON.parse(localStorage.getItem(storageKey)) || [];
+  });
+
+
+  // Determine if we're on the this page to conditionally show the search bar
+  const taskRoutes = [
+    "tasks",
+    "todos",
+    "in-progress",
+    "completed",
+    "team",
+  ];
+
+  const isTaskPage = taskRoutes.some((route) =>
+    location.pathname.includes(route)
+  );
+
+  // console.log(location.pathname)
+
+  
+  // reload the correct Recent search
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem(storageKey)) || [];
+    setRecentSearches(stored);
+  }, [storageKey]);
+
+  //clean search bar when routing to a new page
+  useEffect(() => {
+    setSearchInput(searchParams.get("search") || "");
+  }, [location.pathname]);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    window.location.reload();
+
+    // console.log("submitting", searchInput)
+
+    isSubmittingRef.current = true;
+
+    if (!searchInput.trim()) return;
+
+    const params = new URLSearchParams(searchParams);
+
+    if (!searchInput.trim()) {
+      params.delete("search");
+      setSearchParams(params);
+      return;
+    }
+
+    params.set("search", searchInput);
+    setSearchParams(params);
+
+    const updatedSearches = [
+      searchInput,
+      ...recentSearches.filter(
+        (item) =>
+          item.toLowerCase() !== searchInput.toLowerCase()
+      ),
+    ].slice(0, 6);
+
+    setRecentSearches(updatedSearches);
+
+    localStorage.setItem(
+      storageKey,
+      JSON.stringify(updatedSearches)
+    );
+
+    setTimeout(() => {
+      isSubmittingRef.current = false;
+    }, 300);
   };
 
 
@@ -53,7 +131,7 @@ const Navbar = ({ isScrolled, isSearchPanelOpen, setIsSearchPanelOpen }) => {
             LightMode ? "border-gray-300" : "border-gray-300/50"
             : "border-transparent"
           }
-          sticky flex justify-between items-center px-6 pt-4 pb-3 sm:py-3 2xl:py-4  z-50 top-0 transition-colors ease-in-out duration-300 border-b
+          sticky flex justify-between items-center px-6 pt-4 pb-3 sm:py-4 2xl:py-6  z-50 top-0 transition-colors ease-in-out duration-300 border-b
         `}>
         <div className='relative sm:ml-8 ml-2 flex gap-4'>
           <div className='flex justify-center items-center'>
@@ -71,17 +149,32 @@ const Navbar = ({ isScrolled, isSearchPanelOpen, setIsSearchPanelOpen }) => {
             </button>
           </div>
 
-          {/* {location?.pathname !== "/dashboard" && ( */}
-            <form
-              onSubmit={handleSubmit}
-              className='hidden sm:flex w-auto 2xl:w-100 items-center py-2 px-3 gap-2 rounded-full'
-            >
-              <div className="lg:pl-55 input-container">
+          <form
+            onSubmit={handleSubmit}
+            className={`
+              ${isTaskPage ? "hidden sm:flex" : "hidden"}
+              w-auto 2xl:w-100 items-center px-3 gap-2 rounded-full
+            `}
+          >
+            <div className="lg:pl-55 input-container relative">
+              <span className="relative">
                 <input
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  value={searchTerm}
+                  value={searchInput}
+                  onChange={(e) => {
+                    setSearchInput(e.target.value);
+                    setShowRecent(false);
+                  }}
                   type="text" 
                   name="text" 
+                  autoComplete="off"
+                  onFocus={() => {
+                    setFocus(true);
+                    setShowRecent(true);
+                  }}
+                  onBlur={(e) => {
+                    if (e.relatedTarget) return; // if clicking inside dropdown
+                    setFocus(false);
+                  }}
                   className={`
                       ${LightMode 
                         ? "border border-gray-300 bg-white"
@@ -91,20 +184,140 @@ const Navbar = ({ isScrolled, isSearchPanelOpen, setIsSearchPanelOpen }) => {
                     `} 
                   placeholder="search..." 
                 />
-                <span 
-                  className={`
-                    ${LightMode 
-                      ? "fill-gray-300"
-                      : "fill-white/50"
-                    }
-                    icon_search absolute right-2.5 bottom-1 -translate-y-1/2 transition-all duration-700 ease-in-out
+                
+                {/* Search icon button */}
+                <button type="submit" className="bg-[#E8E8E8] justify-center items-center p-3 absolute -top-2.25 -right-9 hidden sm:flex ml-2">
+                  <i 
+                    onClick={(e) => {
+                      if (!searchInput.trim()) return;
 
-                  `}> 
-                  <svg className="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M480 272C480 317.9 465.1 360.3 440 394.7L566.6 521.4C579.1 533.9 579.1 554.2 566.6 566.7C554.1 579.2 533.8 579.2 521.3 566.7L394.7 440C360.3 465.1 317.9 480 272 480C157.1 480 64 386.9 64 272C64 157.1 157.1 64 272 64C386.9 64 480 157.1 480 272zM272 416C351.5 416 416 351.5 416 272C416 192.5 351.5 128 272 128C192.5 128 128 192.5 128 272C128 351.5 192.5 416 272 416z"/></svg>
-                </span>
-              </div>
-            </form>
-          {/* )} */}
+                      handleSubmit(e);
+                    }}
+                    className={`
+                      ${searchInput 
+                        ? "text-blue-600 scale-105 hover:scale-107 active:scale-95 cursor-pointer" 
+                        : `text-gray-500 cursor-not-allowed`
+                      }
+                      transition-all duration-300 ease-in-out fa-solid fa-magnifying-glass
+                    `}
+                  ></i>
+                </button>
+
+                {/* Cancel search button */}
+                {searchInput && (
+                  <AnimatePresence>
+                    <motion.button
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 10 }}
+                      transition={{ duration: 0.3 }}
+                      type="button"
+                      onClick={() => {
+                        setSearchInput("");
+
+                        const params = new URLSearchParams(searchParams);
+                        params.delete("search");
+
+                        setSearchParams(params);
+
+                        setFocus(false);
+                      }}
+                      className={`
+                        ${LightMode 
+                          ? "text-gray-500"
+                          : "text-gray-300"
+                        } 
+                        absolute -right-20 top-1/2 -translate-y-1/2 hover:text-red-500 scale-105 hover:scale-110 active:scale-95 text-lg
+                        transition-all duration-200 cursor-pointer
+                      `}
+                    >
+                      <i className="fa-solid fa-xmark"></i>
+                    </motion.button>
+                  </AnimatePresence>
+                )}
+
+              </span>
+              <AnimatePresence>
+                {focus && showRecent && recentSearches.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.25 }}
+                    className={`
+                      absolute hidden sm:block top-14 -right-6 w-60 rounded-2xl overflow-hidden z-50
+                      ${LightMode
+                        ? "bg-white border border-gray-200 shadow-xl"
+                        : "bg-[#111] border border-gray-700 shadow-2xl"
+                      }
+                    `}
+                  >
+                    <div className="p-2">
+                      <p className="text-xs px-3 py-2 text-gray-400">
+                        Recent Searches
+                      </p>
+
+                      {recentSearches.map((item, index) => (
+                        <motion.button
+                          key={index}
+                          whileHover={{ scale: 1.03 }}
+                          onClick={() => {
+                            if (isSubmittingRef.current) return;
+
+                            setSearchInput(item);
+                            setFocus(false)
+
+                            const params = new URLSearchParams(searchParams);
+                            params.set("search", item);
+
+                            setSearchParams(params);
+                          }}
+                          className={`
+                            w-full flex justify-between items-center gap-3 px-3 py-2 rounded-xl
+                            transition-all duration-200 cursor-pointer
+                            ${LightMode
+                              ? "hover:bg-gray-100 text-gray-700"
+                              : "hover:bg-white/5 text-gray-200"
+                            }
+                          `}
+                        >
+                          <span className="w-full flex items-center gap-2 rounded-xl text-left">
+                            <i className="fa-solid fa-clock-rotate-left text-sm opacity-60"></i>
+
+                            <span className="truncate text-sm">
+                              {item}
+                            </span>
+                          </span>
+
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation();
+
+                              const filtered = recentSearches.filter(
+                                (_, i) => i !== index
+                              );
+
+                              setRecentSearches(filtered);
+
+                              localStorage.setItem(
+                                storageKey,
+                                JSON.stringify(filtered)
+                              );
+                            }}
+                            className={`
+                                font-bold bg-white shadow-inner text-red-600 rounded-full py-px cursor-pointer px-1 text-xs hover:scale-110 hover:shadow-innerGRN active:scale-95 transition-all duration-300 ease-in-out
+                              `}
+                          >
+                            ✕
+                          </span>
+                        </motion.button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </form>
         </div>
 
         <div className='sm:mr-8 mr-2'>
@@ -138,28 +351,57 @@ const Navbar = ({ isScrolled, isSearchPanelOpen, setIsSearchPanelOpen }) => {
               </span>
             </div>
 
-            <AnimatePresence>
-              {!focus && (
-                <motion.span 
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.8 }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsSearchPanelOpen((prev) => !prev);
-                  }}
-                  className={`
-                    ${LightMode 
-                      ? "text-gray-500"
-                      : "text-gray-300"
-                    } 
-                    sm:hidden mr-3 mt-2 hover:text-blue-600 hover:scale-105 active:scale-95 cursor-pointer  transition-all duration-300 ease-in-out
-                  `}> 
-                  <i className="fa-solid fa-magnifying-glass text-xl"></i>
-                </motion.span>
-              )}
-            </AnimatePresence>
+
+
+                {searchInput ? (
+                  <AnimatePresence>
+                    <motion.button
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 10 }}
+                      transition={{ duration: 0.3 }}
+                      type="button"
+                      onClick={() => {
+                        setSearchInput("");
+
+                        const params = new URLSearchParams(searchParams);
+                        params.delete("search");
+
+                        setSearchParams(params);
+
+                        setFocus(false);
+                      }}
+                      className={`
+                        sm:hidden mr-4 flex justify-center items-center text-red-500 scale-105 hover:scale-110 active:scale-95 text-lg
+                        transition-all duration-200 cursor-pointer
+                      `}
+                    >
+                      <i className="fa-solid fa-xmark"></i>
+                    </motion.button>
+                  </AnimatePresence>
+                ) : (
+                  <AnimatePresence>
+                    <motion.span 
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 10 }}
+                      transition={{ duration: 0.3 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsSearchPanelOpen((prev) => !prev);
+                      }}
+                      className={`
+                        ${LightMode 
+                          ? "text-gray-500"
+                          : "text-gray-300"
+                        } 
+                        sm:hidden mr-3 mt-2 hover:text-blue-600 hover:scale-105 active:scale-95 cursor-pointer transition-all duration-300 ease-in-out
+                      `}> 
+                      <i className="fa-solid fa-magnifying-glass text-xl"></i>
+                    </motion.span>
+                  </AnimatePresence>
+                )}
+
             
             <div className="mt-1 flex justify-center item-center gap-3">
               <span className="flex justify-center item-center">
@@ -182,45 +424,168 @@ const Navbar = ({ isScrolled, isSearchPanelOpen, setIsSearchPanelOpen }) => {
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -30 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.9 }}
             className=" px-2 absolute top-18 w-full flex justify-start items-center"
           >
-            <div onClick={(e) => e.stopPropagation()} className={`${focus ? 'w-62' : 'w-fit'} ${LightMode ? 'bg-white border-gray-300 shadow-darkSM' : 'bg-black/50 border-gray-300/30 shadow-lightSM'} border flex justify-start items-center p-1.5 pt-2 mx-auto rounded-b-xl`}>
+            <motion.div
+              onClick={(e) => e.stopPropagation()}
+              initial={false}
+              animate={{
+                width: focus ? 310 : 260,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 180,
+                damping: 18,
+                duration: 0.5,
+              }}
+              className={`
+                ${LightMode 
+                  ? 'bg-white border-gray-300 shadow-darkSM' 
+                  : 'bg-black/50 border-gray-300/30 shadow-lightSM'
+                }
+                border flex justify-center items-center p-1.5 pt-4 mx-auto rounded-b-xl overflow-hidden
+              `}
+            >
               <form
                 onSubmit={handleSubmit}
-                className='sm:hidden w-50 flex items-center py-2 px-3 gap-2 rounded-full'
+                className={`
+                  ${isTaskPage ? "sm:hidden flex" : "hidden"}
+                  w-50 flex items-center pt-3 pb-2 px-3 gap-2 rounded-full -ml-9
+                `}
               >
-                <div className="lg:pl-55 input-container">
-                  <input
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    value={searchTerm}
-                    type="text" 
-                    name="text" 
-                    onFocus={() => setFocus(true)}
-                    onBlur={() => setFocus(false)}
-                    className={`
-                        ${LightMode 
-                          ? "border border-gray-300 bg-white"
-                          : "bg-black/90 border border-white placeholder-white/40 text-white"
-                        }
-                        input_nav lowercase w-full md:w-60 lg:w-70 transition-colors ease-in-out duration-300
-                      `} 
-                    placeholder="search..." 
-                  />
-                  <span 
-                    className={`
-                      ${LightMode 
-                        ? "fill-gray-300"
-                        : "fill-white/50"
-                      }
-                      icon_search absolute right-2.5 bottom-1 -translate-y-1/2 transition-all duration-700 ease-in-out
+                <div className="input-container relative">
+                  <span className="relative">
+                    <input
+                      value={searchInput}
+                      onChange={(e) => {
+                        setSearchInput(e.target.value);
+                        setShowRecent(false);
+                      }}
+                      type="text" 
+                      name="text" 
+                      autoComplete="off"
+                      onFocus={() => {
+                        setFocus(true);
+                        setShowRecent(true);
+                      }}
+                      onBlur={(e) => {
+                        if (e.relatedTarget) return; // if clicking inside dropdown
+                        setFocus(false);
+                      }}
+                      className={`
+                          ${LightMode 
+                            ? "border border-gray-300 bg-white"
+                            : "bg-black/90 border border-white placeholder-white/40 text-white"
+                          }
+                          input_nav lowercase w-full transition-colors ease-in-out duration-300
+                        `} 
+                      placeholder="search..."
+                    />
+                    
+                    {/* Search icon button */}
+                    <button type="submit" className="bg-[#E8E8E8] flex justify-center items-center p-3 absolute -top-2.25 -right-9 sm:hidden ml-2">
+                      <i 
+                        onClick={(e) => {
+                          if (!searchInput.trim()) return;
 
-                    `}> 
-                    <svg className="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M480 272C480 317.9 465.1 360.3 440 394.7L566.6 521.4C579.1 533.9 579.1 554.2 566.6 566.7C554.1 579.2 533.8 579.2 521.3 566.7L394.7 440C360.3 465.1 317.9 480 272 480C157.1 480 64 386.9 64 272C64 157.1 157.1 64 272 64C386.9 64 480 157.1 480 272zM272 416C351.5 416 416 351.5 416 272C416 192.5 351.5 128 272 128C192.5 128 128 192.5 128 272C128 351.5 192.5 416 272 416z"/></svg>
+                          handleSubmit(e);
+                        }}
+                        className={`
+                          ${searchInput 
+                            ? "text-blue-600 scale-105 hover:scale-107 active:scale-95 cursor-pointer" 
+                            : "text-gray-600/40 cursor-not-allowed"
+                          }
+                          transition-all duration-300 ease-in-out fa-solid fa-magnifying-glass
+                        `}
+                      ></i>
+                    </button>
                   </span>
+
                 </div>
               </form>
-            </div>
+            </motion.div>
+
+            <AnimatePresence>
+              {focus && showRecent && recentSearches.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.25 }}
+                  className={`
+                    absolute top-20 sm:hidden right-8 w-60 rounded-2xl overflow-hidden z-50
+                    ${LightMode
+                      ? "bg-white border border-gray-200 shadow-xl"
+                      : "bg-[#111] border border-gray-700 shadow-2xl"
+                    }
+                  `}
+                >
+                  <div className="p-2">
+                    <p className="text-xs px-3 py-2 text-gray-400">
+                      Recent Searches
+                    </p>
+
+                    {recentSearches.map((item, index) => (
+                      <motion.button
+                        key={index}
+                        whileHover={{ scale: 1.03 }}
+                        onClick={() => {
+                          if (isSubmittingRef.current) return;
+
+                          setSearchInput(item);
+                          setFocus(false)
+
+                          const params = new URLSearchParams(searchParams);
+                          params.set("search", item);
+
+                          setSearchParams(params);
+                        }}
+                        className={`
+                          w-full flex justify-between items-center gap-3 px-3 py-2 rounded-xl
+                          transition-all duration-200 cursor-pointer
+                          ${LightMode
+                            ? "hover:bg-gray-100 text-gray-700"
+                            : "hover:bg-white/10 text-gray-200"
+                          }
+                        `}
+                      >
+                        <span className="w-full flex items-center gap-2 rounded-xl text-left">
+                          <i className="fa-solid fa-clock-rotate-left text-sm opacity-60"></i>
+
+                          <span className="truncate text-sm">
+                            {item}
+                          </span>
+                        </span>
+
+                        <span
+                          onClick={(e) => {
+                            e.stopPropagation();
+
+                            const filtered = recentSearches.filter(
+                              (_, i) => i !== index
+                            );
+
+                            setRecentSearches(filtered);
+                            setFocus(false)
+
+                            localStorage.setItem(
+                              storageKey,
+                              JSON.stringify(filtered)
+                            );
+                          }}
+                          className={`
+                              font-bold bg-white shadow-inner text-red-600 rounded-full py-px cursor-pointer px-1 text-xs hover:scale-110 hover:shadow-innerGRN active:scale-95 transition-all duration-300 ease-in-out
+                            `}
+                        >
+                          ✕
+                        </span>
+                      </motion.button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>

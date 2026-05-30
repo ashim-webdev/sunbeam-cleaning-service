@@ -54,7 +54,7 @@ export const createLeave = async (req, res) => {
       sender: req.user._id,
       refId: leave._id,
       refModel: "Leave",
-      notiType: "alert",
+      // notiType: "message",
     });
 
     emitLeaveCreated({
@@ -130,7 +130,7 @@ export const updateLeaveStatus = async (req, res) => {
         sender: req.user._id,
         refId: leave._id,
         refModel: "Leave",
-        notiType: "message",
+        // notiType: "message",
       });
     } else if (status === "denied") {
       await Notice.create({
@@ -139,7 +139,7 @@ export const updateLeaveStatus = async (req, res) => {
         sender: req.user._id,
         refId: leave._id,
         refModel: "Leave",
-        notiType: "message",
+        // notiType: "message",
       });
     }
 

@@ -62,3 +62,23 @@ export const emitLeaveStatusUpdate = async (payload) => {
     }
   });
 };
+
+
+
+export const emitEventCreated = (event) => {
+  const io = getIO();
+
+  io.emit("eventCreated", event);
+};
+
+export const emitEventUpdated = (event) => {
+  const io = getIO();
+
+  io.emit("eventUpdated", event);
+};
+
+export const emitEventDeleted = (eventId) => {
+  const io = getIO();
+
+  io.emit("eventDeleted", eventId);
+};

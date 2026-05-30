@@ -130,24 +130,70 @@ const getUserProfile = asyncHandler(async (req, res) => {
 });
 
 const getTeamList = asyncHandler(async (req, res) => {
-  const { search } = req.query;
+  const { search, type } = req.query;
+
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+
+  const skip = (page - 1) * limit;
+
   let query = {};
 
+  // FILTER TYPES
+  if (type === "active") {
+    query.isActive = true;
+  }
+
+  if (type === "disabled") {
+    query.isActive = false;
+  }
+
   if (search) {
+    const searchLower = search.toLowerCase();
+
     const searchQuery = {
       $or: [
         { title: { $regex: search, $options: "i" } },
         { name: { $regex: search, $options: "i" } },
         { role: { $regex: search, $options: "i" } },
         { email: { $regex: search, $options: "i" } },
+
+        ...(searchLower === "admin"
+          ? [{ isAdmin: true }]
+          : []),
+
+        ...(searchLower === "user"
+          ? [{ isAdmin: false }]
+          : []),
       ],
     };
+
     query = { ...query, ...searchQuery };
   }
 
-  const user = await User.find(query).select("name title role email isActive isAdmin createdAt profileImage tiktok x whatsApp telegram").sort({ createdAt: -1 });
+  // Total users count
+  const totalUsers = await User.countDocuments(query);
 
-  res.status(201).json(user);
+  // Paginated users
+  const users = await User.find(query)
+    .select(
+      "name title role email isActive isAdmin createdAt profileImage tiktok x whatsApp telegram"
+    )
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+
+  res.status(200).json({
+    users,
+    pagination: {
+      page,
+      limit,
+      totalUsers,
+      totalPages: Math.ceil(totalUsers / limit),
+      hasNextPage: page < Math.ceil(totalUsers / limit),
+      hasPrevPage: page > 1,
+    },
+  });
 });
 
 // @GET  - get user notifications
@@ -161,6 +207,8 @@ const getNotificationsList = asyncHandler(async (req, res) => {
   })
     .populate("team", "name email profileImage")
     .populate("sender", "name profileImage email")
+    .populate("createdBy", "name profileImage email")
+    .populate("event")
     .sort({ _id: -1 });
 
   res.status(200).json(notice);
@@ -177,27 +225,154 @@ const getUserTaskStatus = asyncHandler(async (req, res) => {
 });
 
 // @GET  - get user notifications
+// @GET  - mark notifications as read
 const markNotificationRead = asyncHandler(async (req, res) => {
   try {
-    const userId = req.user._id;
-    const { isReadType, id } = req.query;
 
+    const userId = req.user._id;
+
+    const { isReadType, id } = req.body;
+
+    // MARK ALL
     if (isReadType === "all") {
+
       await Notice.updateMany(
-        { team: userId, isRead: { $nin: [userId] } },
-        { $push: { isRead: userId } },
-        { new: true }
+        {
+          team: userId,
+          isRead: { $nin: [userId] },
+        },
+        {
+          $push: { isRead: userId },
+        }
       );
-    } else {
-      await Notice.findOneAndUpdate(
-        { _id: id, isRead: { $nin: [userId] } },
-        { $push: { isRead: userId } },
-        { new: true }
-      );
+
     }
-    res.status(201).json({ status: true, message: "Done" });
+
+    // MARK TASK
+    else if (isReadType === "task") {
+
+      await Notice.updateMany(
+        {
+          team: userId,
+          notificationType: "task",
+          isRead: { $nin: [userId] },
+        },
+        {
+          $push: { isRead: userId },
+        }
+      );
+
+    }
+
+    // MARK COMPLETED
+    else if (isReadType === "completed") {
+
+      await Notice.updateMany(
+        {
+          team: userId,
+          notificationType: "completed",
+          isRead: { $nin: [userId] },
+        },
+        {
+          $push: { isRead: userId },
+        }
+      );
+
+    }
+
+    // MARK IN PROGRESS
+    else if (isReadType === "in-progress") {
+
+      await Notice.updateMany(
+        {
+          team: userId,
+          notificationType: "in-progress",
+          isRead: { $nin: [userId] },
+        },
+        {
+          $push: { isRead: userId },
+        }
+      );
+
+    }
+
+    // MARK TODO
+    else if (isReadType === "todo") {
+
+      await Notice.updateMany(
+        {
+          team: userId,
+          notificationType: "todo",
+          isRead: { $nin: [userId] },
+        },
+        {
+          $push: { isRead: userId },
+        }
+      );
+
+    }
+
+    // MARK LEAVE
+    else if (isReadType === "leave") {
+
+      await Notice.updateMany(
+        {
+          team: userId,
+          refModel: "Leave",
+          isRead: { $nin: [userId] },
+        },
+        {
+          $push: { isRead: userId },
+        }
+      );
+
+    }
+
+    // MARK EVENT
+    else if (isReadType === "event") {
+
+      await Notice.updateMany(
+        {
+          team: userId,
+          refModel: "Event",
+          isRead: { $nin: [userId] },
+        },
+        {
+          $push: { isRead: userId },
+        }
+      );
+
+    }
+
+    // MARK SINGLE
+    else {
+
+      await Notice.findOneAndUpdate(
+        {
+          _id: id,
+          isRead: { $nin: [userId] },
+        },
+        {
+          $push: { isRead: userId },
+        }
+      );
+
+    }
+
+    res.status(201).json({
+      status: true,
+      message: "Done",
+    });
+
   } catch (error) {
+
     console.log(error);
+
+    res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+
   }
 });
 

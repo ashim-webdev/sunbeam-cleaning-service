@@ -13,7 +13,17 @@ import { getInitials } from "../../utils/index.js";
 
 export default function UserList({ team, setTeam }) {
   const { LightMode } = useSelector((state) => state.auth);
-  const { data, isLoading } = useGetTeamListsQuery({ search: "" });
+  
+  const { data, isLoading, refetch } = useGetTeamListsQuery(
+    {
+      search: ""
+    },
+    {
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+      refetchOnFocus: true,
+    }
+  );
 
   // console.log(data)
   // console.log(team)
@@ -98,7 +108,7 @@ export default function UserList({ team, setTeam }) {
 
 
   useEffect(() => {
-    if (!data?.length) return;
+    if (!data?.users?.length) return;
 
     // EDIT MODE
     if (team?.members?.length) {
@@ -111,7 +121,7 @@ export default function UserList({ team, setTeam }) {
             : member
         );
 
-      let selected = data.filter((user) =>
+      let selected = data.users.filter((user) =>
         memberIds.includes(user._id)
       );
 
@@ -122,7 +132,7 @@ export default function UserList({ team, setTeam }) {
           : team?.leader;
 
       if (leader && !selected.some(u => u._id === leader)) {
-        const leaderUser = data.find(u => u._id === leader);
+        const leaderUser = data.users.find(u => u._id === leader);
         if (leaderUser) {
           selected = [...selected, leaderUser];
         }
@@ -148,7 +158,7 @@ export default function UserList({ team, setTeam }) {
     }
 
     // CREATE MODE
-    const firstActiveUser = data.find(
+    const firstActiveUser = data.users.users.find(
       (user) => user.isActive
     );
 
@@ -161,7 +171,7 @@ export default function UserList({ team, setTeam }) {
       });
     }
 
-  }, [data]);
+  }, [data?.users, team]);
 
 
 
@@ -182,7 +192,7 @@ export default function UserList({ team, setTeam }) {
         <div className='relative mt-1'>
           <Listbox.Button 
             onClick={(e) => {
-              if (data?.length === 0) {
+              if (data?.users?.length === 0) {
                 e.preventDefault();
                 e.stopPropagation();
                 toast.error("No users available");
@@ -196,7 +206,7 @@ export default function UserList({ team, setTeam }) {
               relative w-full cursor-pointer rounded pl-3 pr-10 text-left px-3 py-2.5 2xl:py-3 border sm:text-sm transition-colors duration-300 ease-in-out
             `}>
             <span className="flex flex-wrap items-center gap-1">
-              {data?.length === 0 ? (
+              {data?.users?.length === 0 ? (
                 <span className="text-gray-400">No active users</span>
               ) : (
                 selectedUsers.length === 0 ? (
@@ -235,7 +245,7 @@ export default function UserList({ team, setTeam }) {
               }
               z-50 absolute mt-1 max-h-60 w-full overflow-auto rounded-md py-1 text-base shadow-lg ring-1 focus:outline-none sm:text-sm transition-colors duration-300 ease-in-out
             `}>
-              {data?.map((user) => (
+              {data?.users?.map((user) => (
                 <Listbox.Option
                   key={user._id}
                   className={({ active }) =>

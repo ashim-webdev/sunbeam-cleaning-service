@@ -223,6 +223,8 @@ const createTask = asyncHandler(async (req, res) => {
       team: taskUsers,
       text,
       task: task._id,
+      refModel: "Task",
+      notificationType: "task",
     });
 
     // PUSH TASK TO USERS
@@ -356,6 +358,8 @@ const duplicateTask = asyncHandler(async (req, res) => {
       team: taskUsers,
       text,
       task: newTask._id,
+      refModel: "Task",
+      notificationType: "task",
     });
 
     await Promise.all(
@@ -662,6 +666,8 @@ const updateTask = asyncHandler(async (req, res) => {
         team: addedUsers,
         text: `You have been added to task "${task.title}"`,
         task: task._id,
+        refModel: "Task",
+        notificationType: "task",
       });
     }
 
@@ -689,6 +695,8 @@ const updateTask = asyncHandler(async (req, res) => {
       team: getTaskUsers(task),
       text: `Task "${task.title}" has been updated`,
       task: task._id,
+      refModel: "Task",
+      notificationType: "task",
     });
 
 
@@ -838,10 +846,26 @@ const updateTaskStage = asyncHandler(async (req, res) => {
 
     const taskUsers = getTaskUsers(task);
 
+    let notificationType = "task";
+
+    if (stage.toLowerCase() === "completed") {
+      notificationType = "completed";
+    }
+
+    else if (stage.toLowerCase() === "in progress") {
+      notificationType = "in-progress";
+    }
+
+    else if (stage.toLowerCase() === "todo") {
+      notificationType = "todo";
+    }
+
     await Notice.create({
       team: taskUsers,
       text: `Task "${task.title}" stage changed to ${stage}`,
       task: task._id,
+      refModel: "Task",
+      notificationType,
     });
 
     // Socket.io updating task stage
@@ -943,6 +967,8 @@ const updateSubTaskStage = asyncHandler(async (req, res) => {
         team: getTaskUsers(task),
         text: `${req.user.name} updated a subtask in "${task.title}"`,
         task: task._id,
+        refModel: "Task",
+        notificationType: "task",
       });
 
     // Socket.io updating subTask stage
@@ -1029,6 +1055,8 @@ const createSubTask = asyncHandler(async (req, res) => {
       team: taskUsers,
       text: `New subtask added to "${task.title}"`,
       task: task._id,
+      refModel: "Task",
+      notificationType: "task",
     });
 
     const updatedTask = await Task.findById(id);
@@ -1095,7 +1123,15 @@ const getTasks = asyncHandler(async (req, res) => {
     const searchConditions = search
       ? [
           { title: { $regex: search, $options: "i" } },
+
+          { clientName: { $regex: search, $options: "i" } },
+
+          { address: { $regex: search, $options: "i" } },
+
+          { description: { $regex: search, $options: "i" } },
+
           { stage: { $regex: search, $options: "i" } },
+
           { priority: { $regex: search, $options: "i" } },
         ]
       : [];
@@ -1115,8 +1151,10 @@ const getTasks = asyncHandler(async (req, res) => {
           $or: searchConditions,
         });
       }
-    } else if (searchConditions.length > 0) {
-      query.$or = searchConditions;
+    } else {
+      if (searchConditions.length > 0) {
+        query.$or = searchConditions;
+      }
     }
 
     // Filter by stage
@@ -1160,6 +1198,8 @@ const getTasks = asyncHandler(async (req, res) => {
       limit,
       totalTasks,
       totalPages: Math.ceil(totalTasks / limit),
+      hasNextPage: page * limit < totalTasks,
+      hasPrevPage: page > 1,
     });
 
   } catch (error) {
@@ -1367,16 +1407,16 @@ const postTaskActivity = asyncHandler(async (req, res) => {
     }
 
     // REQUIRE 5 IMAGES FOR TASK COMPLETION
-    if (
-      type?.toLowerCase() === "task_completed" &&
-      uploadedImages.length < 5
-    ) {
-      return res.status(400).json({
-        status: false,
-        message:
-          "At least 5 after-cleaning images are required.",
-      });
-    }
+    // if (
+    //   type?.toLowerCase() === "task_completed" &&
+    //   uploadedImages.length < 5
+    // ) {
+    //   return res.status(400).json({
+    //     status: false,
+    //     message:
+    //       "At least 5 after-cleaning images are required.",
+    //   });
+    // }
 
 
     // ONLY ADMIN AND LEADER CAN COMPLETE
@@ -1410,6 +1450,8 @@ const postTaskActivity = asyncHandler(async (req, res) => {
       team: taskUsers,
       text: `${req.user.name} posted a new activity in "${task.title}"`,
       task: task._id,
+      refModel: "Task",
+      notificationType: "task",
     });
 
 
@@ -1509,6 +1551,8 @@ const trashTask = asyncHandler(async (req, res) => {
       team: taskUsers,
       text: `Task "${task.title}" has been moved to trash.`,
       task: task._id,
+      refModel: "Task",
+      notificationType: "task",
     });
 
 
@@ -1702,6 +1746,8 @@ const deleteRestoreTask = asyncHandler(async (req, res) => {
         team: getTaskUsers(task),
         text: `Task "${task.title}" has been restored`,
         task: task._id,
+        refModel: "Task",
+        notificationType: "task",
       });
 
       const updatedTask = await Task.findById(task._id)
@@ -1756,53 +1802,58 @@ const dashboardStatistics = asyncHandler(async (req, res) => {
   try {
     const { _id: userId, isAdmin } = req.user;
 
-    // Fetch all tasks from the database
-const allTasks = isAdmin
-  ? await Task.find({
-      isTrashed: false,
-    })
-      .populate({
-        path: "team.members",
-        select: "name title role email profileImage isActive",
-      })
-      .populate({
-        path: "team.leader",
-        select: "name title role email profileImage isActive",
-      })
-      .populate({
-        path: "team.admins",
-        select: "name title role email profileImage",
-      })
-      .populate({
-        path: "completedBy",
-        select: "name title role email profileImage isAdmin",
-      })
-      .sort({ _id: -1 })
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
 
-  : await Task.find({
-      isTrashed: false,
-      $or: [
-        { "team.members": userId },
-        { "team.leader": userId },
-      ],
-    })
-      .populate({
-        path: "team.members",
-        select: "name title role email profileImage isActive",
-      })
-      .populate({
-        path: "team.leader",
-        select: "name title role email profileImage isActive",
-      })
-      .populate({
-        path: "completedBy",
-        select: "name title role email profileImage isAdmin",
-      })
-      .sort({ _id: -1 });
+    const skip = (page - 1) * limit;
+
+    // Fetch all tasks from the database
+    const allTasks = isAdmin
+      ? await Task.find({
+          isTrashed: false,
+        })
+          .populate({
+            path: "team.members",
+            select: "name title role email profileImage isActive",
+          })
+          .populate({
+            path: "team.leader",
+            select: "name title role email profileImage isActive",
+          })
+          .populate({
+            path: "team.admins",
+            select: "name title role email profileImage",
+          })
+          .populate({
+            path: "completedBy",
+            select: "name title role email profileImage isAdmin",
+          })
+          .sort({ _id: -1 })
+
+      : await Task.find({
+          isTrashed: false,
+          $or: [
+            { "team.members": userId },
+            { "team.leader": userId },
+          ],
+        })
+          .populate({
+            path: "team.members",
+            select: "name title role email profileImage isActive",
+          })
+          .populate({
+            path: "team.leader",
+            select: "name title role email profileImage isActive",
+          })
+          .populate({
+            path: "completedBy",
+            select: "name title role email profileImage isAdmin",
+          })
+          .sort({ _id: -1 });
 
     const users = await User.find({})
       .select("name title role isActive email profileImage createdAt isAdmin tiktok x whatsApp telegram")
-      .limit(10)
+      .limit(100)
       .sort({ _id: -1 });
 
     // Group tasks by stage and calculate counts
@@ -1828,15 +1879,29 @@ const allTasks = isAdmin
 
     // Calculate total tasks
     const totalTasks = allTasks.length;
-    const last10Task = allTasks?.slice(0, 10);
+    // Get last 10 tasks for pagination
+    const recentTasks = allTasks.slice(skip, skip + limit);
+
+    const totalRecentTasks = allTasks.length;
+
+    const totalPages = Math.ceil(totalRecentTasks / limit);
 
     // Combine results into a summary object
     const summary = {
       totalTasks,
-      last10Task,
+      recentTasks,
       users: users,
       tasks: groupedTasks,
       graphData,
+
+      pagination: {
+        page,
+        limit,
+        totalRecentTasks,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
     };
 
     res

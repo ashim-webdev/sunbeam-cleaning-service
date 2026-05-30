@@ -58,19 +58,29 @@ const ProfileCard = ({
 
   const selectedUser = selectedUserInfo || null;
 
-  console.log("profile:",profileSelected)
+  // console.log("profile:",profileSelected)
+  // console.log("selectedUser:",selectedUser)
 
   const compare =
     componentType === "Profile Overview"
       ? selectedUser
       : profileSelected;
 
-  const { data: users = [] } = useGetTeamListsQuery(undefined, {
-    skip: componentType === "Profile",
-    refetchOnMountOrArgChange: true,
-    refetchOnFocus: true,
-    refetchOnReconnect: true,
-  });
+  const { data } = useGetTeamListsQuery(
+    {
+      page: 1,
+      limit: 100,
+      type: "",
+    },
+    {
+      skip: componentType === "Profile",
+      refetchOnMountOrArgChange: true,
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+    }
+  );
+
+  const users = data?.users || [];
 
   const freshUser =
     componentType === "Profile"
@@ -97,8 +107,10 @@ const ProfileCard = ({
   
   return (
     <div className="relative">
-      <h1 className="absolute -top-6.5 text-lg font-medium ">{header}</h1>
-      <div onClick={onClick} className={`${componentType === "Profile Overview" ? "mt-16" : "mt-10"} ${cardBg} ${changeAnimation} relative flex justify-center w-80 h-116  flex-col rounded-xl bg-clip-border`}>
+      <h1 className="absolute -top-10 left-0 right-0 text-lg font-medium text-center">
+        {header}
+      </h1>
+      <div onClick={onClick} className={`${componentType === "Profile Overview" ? "mt-0" : "mt-10"} ${cardBg} ${changeAnimation} relative flex justify-center w-80 h-116  flex-col rounded-xl bg-clip-border`}>
 
         {freshUser ? (
             swap ? (

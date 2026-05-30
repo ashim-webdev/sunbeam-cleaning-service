@@ -277,6 +277,7 @@ export default function TaskDialog({ task }) {
 const items = [
   {
     label: "Open Task",
+    stillActiveIcon: <span className='DuplicateDot bg-blue-600 w-2 h-2 px-1 rounded-full whitespace-nowrap shadow-inner' />,
     icon: (
       <AiTwotoneFolderOpen
         className='mr-2 h-5 w-5'
@@ -382,9 +383,19 @@ const items = [
                       >
                         {el.icon}
                         {el.label}
-                        {task?.isLocked && el.label === "Duplicate" && (
-                          <span className='ml-auto p-2 flex justify-center items-center'>{el.stillActiveIcon}</span>
-                        )}
+                        {
+                          task?.isLocked && el.label === "Duplicate" ? 
+                            (
+                              <span className='ml-auto p-2 flex justify-center items-center'>{el.stillActiveIcon}</span>
+                            )
+                          :
+                          task?.isLocked && el.label === "Open Task" ? 
+                            (
+                              <span className='ml-auto p-2 flex justify-center items-center'>{el.stillActiveIcon}</span>
+                            )
+                          :
+                          null
+                        }
                       </button>
                     )}
                   </Menu.Item>

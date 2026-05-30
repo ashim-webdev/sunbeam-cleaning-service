@@ -1,9 +1,10 @@
 import { socket } from "../socket";
 import React, { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { FaList } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
 import { MdGridView } from "react-icons/md";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import Button from "../components/Button"
 import Loading from "../components/Loading"
 import Tabs from "../components/Tabs"
@@ -12,6 +13,7 @@ import Table from "../components/Table";
 import TaskTitle from "../components/TaskComponents/TaskTitle"
 import BoardView from "../components/TaskComponents/BoardView";
 import AddTask from "../components/TaskComponents/AddTask";
+import Pagination from "../components/Pagination";
 import { useGetAllTaskQuery } from "../redux/slices/api/taskApiSlice";
 
 import { TASK_TYPE } from "../utils";
@@ -29,12 +31,22 @@ const TABS = [
 
 const Tasks = () => {
   const params = useParams();
+  const [searchParams] = useSearchParams();
   const { LightMode, user } = useSelector((state) => state.auth);
 
   const [selected, setSelected] = useState(0);
   const [open, setOpen] = useState(false);
+  const [page, setPage] = useState(1);
 
   const status = params?.status || "";
+
+  const search = searchParams.get("search") || "";
+
+  
+  // Reset to page 1 when search or status changes
+  useEffect(() => {
+    setPage(1);
+  }, [search, status]);
 
   const {
     data,
@@ -43,9 +55,9 @@ const Tasks = () => {
   } = useGetAllTaskQuery({
     strQuery: status,
     isTrashed: "",
-    search: "",
-    page: 1,
-    limit: 20,
+    search,
+    page,
+    limit: 12,
   });
 
   // Socket.io real time task update
@@ -75,7 +87,7 @@ const Tasks = () => {
   return isLoading ? (
     <Loading />
   ) : (
-    <div className='w-full'>
+    <div className='w-full overflow-hidden'>
       <div className='flex items-center justify-between mb-4'>
         <Title title={status ? `${status}` : "Tasks"} />
 
@@ -108,15 +120,42 @@ const Tasks = () => {
 
           {tasks.length === 0 ? 
             (
-              <span className={`${LightMode ? "text-black/60" : "text-white/60"} w-full block text-center mt-20 p-2 text-lg animate-bounce`}>{user.isAdmin ? "Create a task :)" : "No assigned task yet :("}</span>
+              <span className={`${LightMode ? "text-black/60" : "text-white/60"} w-full block text-center mt-20 p-2 text-lg animate-bounce`}>
+                {
+                  search
+                  ? `No tasks found for "${search}" :(`
+                  : user.isAdmin
+                    ? "Create a task :)"
+                    : "No assigned task yet :("
+                }
+              </span>
             )
               :
             (
               <>
-                {selected === 0 ? (
-                  <BoardView tasks={tasks} />
-                ) : (
-                  <Table tasks={tasks} />
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={`${page}-${search}-${status}`} // Refetch data when page, search, or status changes
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -50 }}
+                    transition={{ duration: 0.8 }}
+                    className="mb-12"
+                  >
+                    {selected === 0 ? (
+                      <BoardView tasks={tasks} />
+                    ) : (
+                      <Table tasks={tasks} tableSize={data.totalPages > 1} />
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+
+                {data.totalPages > 1 && (
+                  <Pagination
+                    page={page}
+                    setPage={setPage}
+                    totalPages={data?.totalPages || 1}
+                  />
                 )}
               </>
             )

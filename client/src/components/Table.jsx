@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   MdKeyboardDoubleArrowDown,
   MdKeyboardArrowDown,
@@ -8,7 +9,7 @@ import {
   MdKeyboardDoubleArrowUp,
 } from "react-icons/md";
 import { toast } from "sonner";
-// import { useTrashTastMutation } from "../redux/slices/api/taskApiSlice.js";
+import { useTrashTaskMutation } from "../redux/slices/api/taskApiSlice.js";
 import { BGS, PRIORITY_STYLES, TASK_TYPE, formatDate } from "../utils/index.js";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -30,17 +31,17 @@ const ICONS = {
   normal: <MdKeyboardArrowDown />
 };
 
-const Table = ({ tasks }) => {
+const Table = ({ tasks, tableSize }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [selected, setSelected] = useState(null);
   const [openEdit, setOpenEdit] = useState(false);
 
-  const { LightMode } = useSelector((state) => state.auth);
+  const { LightMode, user } = useSelector((state) => state.auth);
 
   const navigate = useNavigate();
   
 
-  // const [deleteTask] = useTrashTastMutation();
+  const [trashTask, { isLoading: deleteLoading }] = useTrashTaskMutation();
 
   const deleteClicks = (id) => {
     setSelected(id);
@@ -53,22 +54,19 @@ const Table = ({ tasks }) => {
   };
 
   const deleteHandler = async () => {
-    // try {
-    //   const res = await deleteTask({
-    //     id: selected,
-    //     isTrashed: "trash",
-    //   }).unwrap();
+    try {
+      const res = await trashTask({
+        id: selected,
+        isTrashed: "trash",
+      }).unwrap();
 
-    //   toast.success(res?.message);
+      toast.success(res?.message);
 
-    //   setTimeout(() => {
-    //     setOpenDialog(false);
-    //     window.location.reload();
-    //   }, 500);
-    // } catch (err) {
-    //   console.log(err);
-    //   toast.error(err?.data?.message || err.error);
-    // }
+      setOpenDialog(false);
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.data?.message || err.error);
+    }
   };
 
   const TableHeader = () => (
@@ -80,14 +78,16 @@ const Table = ({ tasks }) => {
           }
           w-full  text-left
         `}>
-        <th className='py-2 pl-3'>Task Title</th>
+        <th className='py-2 pl-3 whitespace-nowrap'>Task Title</th>
         <th className='py-2 px-6 whitespace-nowrap'>Client Names</th>
         <th className='py-2 px-4'>Address</th>
         <th className='py-2 px-6.5'>Priority</th>
         <th className='py-2 text-center line-clamp-1 whitespace-nowrap'>Created At</th>
         <th className='py-2 text-center'>Assets</th>
         <th className='py-2 text-center'>Team</th>
-        <th className='py-2 text-center'>Actions</th>
+        {user.isAdmin && (
+          <th className='py-2 text-center'>Actions</th>
+        )}
       </tr>
     </thead>
   );
@@ -100,15 +100,7 @@ const Table = ({ tasks }) => {
 
 
     return(
-      <tr 
-        onClick={() => navigate(`/task/${task._id}`)}
-        className={`
-          ${LightMode 
-            ? "border-gray-300 text-gray-600 hover:bg-gray-300/50 hover:shadow-dark"
-            : "border-gray-600 text-white hover:bg-white/30 hover:shadow-light"
-          }
-          tableRow border hover:bg-gray-300/50 cursor-pointer transition-colors ease-in-out duration-300
-        `}>
+      <>
         <td className='py-2 pl-4'>
           <div className='flex items-center gap-2'>
             <TaskColor className={TASK_TYPE[task.stage]} />
@@ -188,7 +180,7 @@ const Table = ({ tasks }) => {
           />
         </td>
 
-        <td className='py-2 pr-4 pl-0'>
+        <td className={`${user?.isAdmin ? "pr-4" : "pr-8"} py-2 pl-0`}>
           <div className=' px-8 w-fit flex flex-row justify-center items-center'>
             <div
               className={clsx(
@@ -200,29 +192,18 @@ const Table = ({ tasks }) => {
           </div>
         </td>
 
-        <td className='py-2 pr-6 pl-8 flex justify-center items-center gap-2 md:gap-3'>
-          {/* <Button
-            className='text-blue-600 hover:text-blue-500 sm:px-0 text-sm md:text-base'
-            label='Edit'
-            type='button'
-            onClick={() => editClickHandler(task)}
-          /> */}
-          <EditBtn 
-            onClick={() => editClickHandler(task)}
-          />
+        {user.isAdmin && (
+          <td className='py-2 pr-6 pl-8 flex justify-center items-center gap-2 md:gap-3'>
+            <EditBtn 
+              onClick={() => editClickHandler(task)}
+            />
 
-          {/* <Button
-            className='text-red-700 hover:text-red-500 sm:px-0 text-sm md:text-base'
-            label='Delete'
-            type='button'
-            onClick={() => deleteClicks(task._id)}
-          /> */}
-
-          <DeleteBtn
-            onClick={() => deleteClicks(task._id)}
-          />
-        </td>
-      </tr>
+            <DeleteBtn
+              onClick={() => deleteClicks(task._id)}
+            />
+          </td>
+        )}
+      </>
     );
   }
 
@@ -233,15 +214,37 @@ const Table = ({ tasks }) => {
             ? "bg-white"
             : "bg-black/90"
           }
-          px-2 h-fit xl:px-4 pt-4 pb-9 my-2 shadow-md rounded transition-colors ease-in-out duration-300
+          ${tableSize ? "h-192" : "h-fit"}
+          px-2 xl:px-4 pt-4 pb-9 my-2 shadow-md rounded transition-colors ease-in-out duration-300
         `}>
         <div className='overflow-x-auto'>
           <table className='w-full'>
             <TableHeader />
             <tbody>
-              {tasks.map((task, index) => (
-                <TableRow key={index} task={task} />
-              ))}
+              <AnimatePresence mode="wait">
+                {tasks.map((task, index) => (
+                  <motion.tr
+                    key={task._id}
+                    initial={{ opacity: 0, x: 40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -40 }}
+                    transition={{
+                      duration: 0.4,
+                      delay: index * 0.1, // stagger effect
+                    }}
+                    onClick={() => navigate(`/task/${task._id}`)}
+                    className={`
+                      ${LightMode 
+                        ? "border-gray-300 text-gray-600 hover:bg-gray-300/50 hover:shadow-dark"
+                        : "border-gray-600 text-white hover:bg-white/30 hover:shadow-light"
+                      }
+                      tableRow border hover:bg-gray-300/50 cursor-pointer transition-colors ease-in-out duration-300
+                    `}
+                  >
+                    <TableRow task={task} />
+                  </motion.tr>
+                ))}
+              </AnimatePresence>
             </tbody>
           </table>
         </div>
@@ -251,6 +254,7 @@ const Table = ({ tasks }) => {
         open={openDialog}
         setOpen={setOpenDialog}
         onClick={deleteHandler}
+        isLoading={deleteLoading}
       />
 
       <AddTask

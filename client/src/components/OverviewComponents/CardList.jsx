@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { useState } from "react";
 import { Card, CardContent, CardFooter, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,10 +10,11 @@ import { setSelectUserDashInfo, setUserViewInfo } from "../../redux/slices/authS
 import { useGetTeamListsQuery } from "../../redux/slices/api/userApiSlice";
 import { useGetLeavesByUserQuery } from "../../redux/slices/api/leaveApiSlice";
 import { getInitials } from "../../utils/index";
+import Pagination from "../Pagination";
 
 
 
-const EmployeeList = ({ user, title, popUpUserInfo, useInfo }) => {
+const EmployeeList = ({ user, title, popUpUserInfo, useInfo, index }) => {
   const { LightMode } = useSelector((state) => state.auth);
 
   const hover = LightMode ? "hover:shadow-darkSM hover:bg-gray-50" : "hover:shadow-lightSM hover:bg-white/20"
@@ -23,6 +25,15 @@ const EmployeeList = ({ user, title, popUpUserInfo, useInfo }) => {
 
   return (
     <>
+      <motion.div
+        key={user._id}
+        initial={{ opacity: 0, x: 40 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -40 }}
+        transition={{
+          duration: 0.4,
+          delay: index * 0.1, // stagger effect
+        }}>
       <Card 
         onClick={(e) => {
           if (title === "Employee's List") {
@@ -77,6 +88,7 @@ const EmployeeList = ({ user, title, popUpUserInfo, useInfo }) => {
             }
           </CardFooter>
       </Card>
+      </motion.div>
     </>
   )
 }
@@ -259,7 +271,7 @@ const LeaveRequests = ({ user, title, popUpUserInfo, useInfo }) => {
   )
 }
 
-const ActiveEmployees = ({ user, title, popUpUserInfo, useInfo }) => {
+const ActiveEmployees = ({ user, title, popUpUserInfo, useInfo, index }) => {
   const { LightMode } = useSelector((state) => state.auth);
 
   const hover = LightMode ? "hover:shadow-darkSM hover:bg-gray-50" : "hover:shadow-lightSM hover:bg-white/20"
@@ -270,67 +282,77 @@ const ActiveEmployees = ({ user, title, popUpUserInfo, useInfo }) => {
   return (
     <>
       {user.isActive && (
-        <Card 
-            onClick={(e) => {
-              e.stopPropagation()
-              popUpUserInfo(user)
-            }}
-            className={`${hover} ${changeAnimation} ${bg} ${text} flex-row users-center justify-between gap-4 p-4  active:scale-95 cursor-pointer`}
-          >
-            <div className="relative">
-              <div 
-                className={clsx(
-                  "w-11 h-11 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
-                  user.isActive ? "border-green-500" : "border-red-600"
-              )}>
-                {user?.profileImage ? 
-                  <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
-                :
-                  <span className='text-xs md:text-sm text-center'>
-                    {getInitials(user?.name || "Unknown User")}
+        <motion.div
+        key={user._id}
+        initial={{ opacity: 0, x: 40 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -40 }}
+        transition={{
+          duration: 0.4,
+          delay: index * 0.1, // stagger effect
+        }}>
+          <Card 
+              onClick={(e) => {
+                e.stopPropagation()
+                popUpUserInfo(user)
+              }}
+              className={`${hover} ${changeAnimation} ${bg} ${text} flex-row users-center justify-between gap-4 p-4  active:scale-95 cursor-pointer`}
+            >
+              <div className="relative">
+                <div 
+                  className={clsx(
+                    "w-11 h-11 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
+                    user.isActive ? "border-green-500" : "border-red-600"
+                )}>
+                  {user?.profileImage ? 
+                    <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                  :
+                    <span className='text-xs md:text-sm text-center'>
+                      {getInitials(user?.name || "Unknown User")}
+                    </span>
+                  }
+                </div>
+                {user?.isAdmin && (
+                  <span className="absolute -top-3 rotate-25 right-0">
+                    <FaCrown className="text-yellow-500 text-lg"/>
                   </span>
-                }
+                )}
               </div>
-              {user?.isAdmin && (
-                <span className="absolute -top-3 rotate-25 right-0">
-                  <FaCrown className="text-yellow-500 text-lg"/>
-                </span>
-              )}
-            </div>
-            <CardContent className="flex-1 p-0">
-              <CardTitle className="text-sm font-medium line-clamp-1">
-                {user.name}
-              </CardTitle>
-              <Badge variant="secondary" className="hidden sm:block">{user.title}</Badge>
-              <Badge variant="secondary" className="sm:hidden">{user.title.slice(0,10) + "..."}</Badge>
-            </CardContent>
-            <CardFooter className="pr-4 -mr-9 sm:mr-0 text-xl text-blue-600">
-              {title === "Employee's List" ?
-                <i className="fa-solid fa-chart-simple drop-shadow-[-2px_0.5px_1px_w]"></i>
-                :
-                <AnimatePresence>
-                  <motion.span
-                    initial={{ opacity: 0, x: -30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -30 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <Badge 
-                      className={`${user.isActive ? "bg-green-600" : "bg-red-600"} text-white text-[16px] shadow-darkSM`}
+              <CardContent className="flex-1 p-0">
+                <CardTitle className="text-sm font-medium line-clamp-1">
+                  {user.name}
+                </CardTitle>
+                <Badge variant="secondary" className="hidden sm:block">{user.title}</Badge>
+                <Badge variant="secondary" className="sm:hidden">{user.title.slice(0,10) + "..."}</Badge>
+              </CardContent>
+              <CardFooter className="pr-4 -mr-9 sm:mr-0 text-xl text-blue-600">
+                {title === "Employee's List" ?
+                  <i className="fa-solid fa-chart-simple drop-shadow-[-2px_0.5px_1px_w]"></i>
+                  :
+                  <AnimatePresence>
+                    <motion.span
+                      initial={{ opacity: 0, x: -30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -30 }}
+                      transition={{ duration: 0.5 }}
                     >
-                      {user.isActive ? "Active" : "Disabled"}
-                    </Badge>            
-                  </motion.span>
-                </AnimatePresence>
-              }
-            </CardFooter>
-        </Card>
+                      <Badge 
+                        className={`${user.isActive ? "bg-green-600" : "bg-red-600"} text-white text-[16px] shadow-darkSM`}
+                      >
+                        {user.isActive ? "Active" : "Disabled"}
+                      </Badge>            
+                    </motion.span>
+                  </AnimatePresence>
+                }
+              </CardFooter>
+          </Card>
+        </motion.div>
       )}
     </>
   )
 }
 
-const DisabledEmployees = ({ user, title, popUpUserInfo, useInfo }) => {
+const DisabledEmployees = ({ user, title, popUpUserInfo, useInfo, index }) => {
   const { LightMode } = useSelector((state) => state.auth);
 
   const hover = LightMode ? "hover:shadow-darkSM hover:bg-gray-50" : "hover:shadow-lightSM hover:bg-white/20"
@@ -341,62 +363,72 @@ const DisabledEmployees = ({ user, title, popUpUserInfo, useInfo }) => {
   return (
     <>
       {!user.isActive && (
-        <Card 
-            onClick={(e) => {
-              e.stopPropagation()
-              popUpUserInfo(user)
-            }}
-            className={`${hover} ${changeAnimation} ${bg} ${text} flex-row users-center justify-between gap-4 p-4  active:scale-95 cursor-pointer`}
-          >
-            <div className="relative">
-              <div 
-                className={clsx(
-                  "w-11 h-11 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
-                  user.isActive ? "border-green-500" : "border-red-600"
-              )}>
-                {user?.profileImage ? 
-                  <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
-                :
-                  <span className='text-xs md:text-sm text-center'>
-                    {getInitials(user?.name || "Unknown User")}
+        <motion.div
+        key={user._id}
+        initial={{ opacity: 0, x: 40 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -40 }}
+        transition={{
+          duration: 0.4,
+          delay: index * 0.1, // stagger effect
+        }}>
+          <Card 
+              onClick={(e) => {
+                e.stopPropagation()
+                popUpUserInfo(user)
+              }}
+              className={`${hover} ${changeAnimation} ${bg} ${text} flex-row users-center justify-between gap-4 p-4  active:scale-95 cursor-pointer`}
+            >
+              <div className="relative">
+                <div 
+                  className={clsx(
+                    "w-11 h-11 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
+                    user.isActive ? "border-green-500" : "border-red-600"
+                )}>
+                  {user?.profileImage ? 
+                    <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                  :
+                    <span className='text-xs md:text-sm text-center'>
+                      {getInitials(user?.name || "Unknown User")}
+                    </span>
+                  }
+                </div>
+                {user?.isAdmin && (
+                  <span className="absolute -top-3 rotate-25 right-0">
+                    <FaCrown className="text-yellow-500 text-lg"/>
                   </span>
-                }
+                )}
               </div>
-              {user?.isAdmin && (
-                <span className="absolute -top-3 rotate-25 right-0">
-                  <FaCrown className="text-yellow-500 text-lg"/>
-                </span>
-              )}
-            </div>
-            <CardContent className="flex-1 p-0">
-              <CardTitle className="text-sm font-medium line-clamp-1">
-                {user.name}
-              </CardTitle>
-              <Badge variant="secondary" className="hidden sm:block">{user.title}</Badge>
-              <Badge variant="secondary" className="sm:hidden">{user.title.slice(0,10) + "..."}</Badge>
-            </CardContent>
-            <CardFooter className="pr-4 -mr-9 sm:mr-0 text-xl text-blue-600">
-              {title === "Employee's List" ?
-                <i className="fa-solid fa-chart-simple drop-shadow-[-2px_0.5px_1px_w]"></i>
-                :
-                <AnimatePresence>
-                  <motion.span
-                    initial={{ opacity: 0, x: -30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -30 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <Badge 
-                      
-                      className={`${user.isActive ? "bg-green-600" : "bg-red-600"} text-white text-[16px] shadow-darkSM`}
+              <CardContent className="flex-1 p-0">
+                <CardTitle className="text-sm font-medium line-clamp-1">
+                  {user.name}
+                </CardTitle>
+                <Badge variant="secondary" className="hidden sm:block">{user.title}</Badge>
+                <Badge variant="secondary" className="sm:hidden">{user.title.slice(0,10) + "..."}</Badge>
+              </CardContent>
+              <CardFooter className="pr-4 -mr-9 sm:mr-0 text-xl text-blue-600">
+                {title === "Employee's List" ?
+                  <i className="fa-solid fa-chart-simple drop-shadow-[-2px_0.5px_1px_w]"></i>
+                  :
+                  <AnimatePresence>
+                    <motion.span
+                      initial={{ opacity: 0, x: -30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -30 }}
+                      transition={{ duration: 0.5 }}
                     >
-                      {user.isActive ? "Active" : "Disabled"}
-                    </Badge>            
-                  </motion.span>
-                </AnimatePresence>
-              }
-            </CardFooter>
-        </Card>
+                      <Badge 
+                        
+                        className={`${user.isActive ? "bg-green-600" : "bg-red-600"} text-white text-[16px] shadow-darkSM`}
+                      >
+                        {user.isActive ? "Active" : "Disabled"}
+                      </Badge>            
+                    </motion.span>
+                  </AnimatePresence>
+                }
+              </CardFooter>
+          </Card>
+        </motion.div>
       )}
     </>
   )
@@ -409,22 +441,27 @@ const Components = ({
   title,
   popUpUserInfo,
   useInfo,
+  index
 }) => {
 
   if (title === "Employee's List") {
     return (
-      <EmployeeList
-        user={user}
-        title={title}
-        popUpUserInfo={popUpUserInfo}
-        useInfo={useInfo}
-      />
+      <AnimatePresence mode="wait">
+        <EmployeeList
+          index={index}
+          user={user}
+          title={title}
+          popUpUserInfo={popUpUserInfo}
+          useInfo={useInfo}
+        />
+      </AnimatePresence>
     );
   }
 
   if (title === "Active Employee's") {
     return (
       <ActiveEmployees
+        index={index}
         user={user}
         title={title}
         popUpUserInfo={popUpUserInfo}
@@ -436,6 +473,7 @@ const Components = ({
   if (title === "Disabled Employee's") {
     return (
       <DisabledEmployees
+        index={index}
         user={user}
         title={title}
         popUpUserInfo={popUpUserInfo}
@@ -458,14 +496,35 @@ const CardList = ({
   setOpen
 }) => {
   const { LightMode } = useSelector((state) => state.auth);
-  const { data = [], refetch } = useGetTeamListsQuery(undefined, {
+
+  const [page, setPage] = useState(1);
+
+  const type =
+  title === "Active Employee's"
+    ? "active"
+    : title === "Disabled Employee's"
+    ? "disabled"
+    : "";
+
+  const { data, isLoading, refetch } = useGetTeamListsQuery(
+    {
+      page,
+      limit: 6,
+      type,
+    },
+    {
       refetchOnMountOrArgChange: true,
       refetchOnReconnect: true,
       refetchOnFocus: true,
-    });
+    }
+  );
+
+  // console.log(data)
   
 
-  const users = data || []
+  const users = data?.users || []
+
+  const pagination = data?.pagination;
 
   const dispatch = useDispatch()
 
@@ -480,13 +539,9 @@ const CardList = ({
     dispatch(setUserViewInfo(user))
   }
 
-  const filteredUsers = users.filter((user) => {
-    if (title === "Active Employee's") return user.isActive;
-    if (title === "Disabled Employee's") return !user.isActive;
-    return true;
-  });
 
-  const isEmpty = filteredUsers.length === 0;
+
+  const isEmpty = users.length === 0;
 
 
   const bg = LightMode ? "bg-gray-100" : "bg-blue-600/20"
@@ -494,8 +549,18 @@ const CardList = ({
   const text = LightMode ? "text-black" : "text-white"
 
   return (
+    <>
     <div className={`${text}`}>
-      <h1 className={`${title === "Employee's List" ? "text-center" : ""} text-lg font-medium mb-6`}>{title}</h1>
+      <h1
+        className={`${title === "Employee's List" ? "text-center mt-0 mb-2" : "mb-6"} text-lg font-medium`}>
+        {title}
+      </h1>
+
+      {subtitle && title === "Employee's List" ? (
+        <p className=" text-center text-sm opacity-70">
+          {subtitle}
+        </p>
+      ) : null}
 
       <div className="px-3">
         <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10 mt-6" />
@@ -505,7 +570,7 @@ const CardList = ({
         className={`
           ${users.length >= 6 || title === "Employee Leave Requests" 
             ?
-            "overflow-y-auto h-131 overflow-x-hidden"
+            "h-131 overflow-x-hidden"
             :
             `${title !== "Employee's Profile" ? "h-131" : "h-full" }`
           } 
@@ -523,13 +588,14 @@ const CardList = ({
               : "No users found"}
           </div>
         ) : (
-          filteredUsers.map((user) => (
+          users.map((user, index) => (
             <div key={user._id}>
               <Components
                 user={user}
                 title={title}
                 popUpUserInfo={popUpUserInfo}
                 useInfo={useInfo}
+                index={index}
               />
             </div>
           ))
@@ -537,6 +603,22 @@ const CardList = ({
         
       </div>
     </div>
+
+    {pagination?.totalPages > 1 && title !== "Employee Leave Requests" && (
+      <div className={`
+        ${title !== "Employee Leave Requests" ? "-mt-2" : "mt-4"}
+        w-full flex justify-center items-center
+      `}>
+        <span>
+          <Pagination
+            page={page}
+            setPage={setPage}
+            totalPages={pagination?.totalPages || 1}
+          />
+        </span>
+      </div>
+    )}
+    </>
   );
 };
 

@@ -33,8 +33,10 @@ export default function NotificationPanel() {
 
   const { data, refetch } = useGetNotificationsQuery();
   const [markAsRead] = useMarkNotiAsReadMutation();
+  
+  const dispatch = useDispatch();
 
-  console.log(data);
+  // console.log(data);
 
   // Listen for real-time updates to notifications
   useEffect(() => {
@@ -81,6 +83,27 @@ export default function NotificationPanel() {
   }, [refetch]);
 
 
+  // Socket.io real time event update
+  useEffect(() => {
+    socket.on("eventCreated", () => {
+      refetch();
+    });
+
+    socket.on("eventUpdated", () => {
+      refetch();
+    });
+
+    socket.on("eventDeleted", () => {
+      refetch();
+    });
+
+    return () => {
+      socket.off("eventCreated");
+      socket.off("eventUpdated");
+      socket.off("eventDeleted");
+    };
+  }, [refetch]);
+
 
   
   const viewHandler = (el) => {
@@ -90,7 +113,7 @@ export default function NotificationPanel() {
   };
 
   const readHandler = async (type, id) => {
-    await markAsRead({ type, id }).unwrap();
+    await markAsRead({ isReadType: type, id }).unwrap();
   };
 
   const callsToAction = [

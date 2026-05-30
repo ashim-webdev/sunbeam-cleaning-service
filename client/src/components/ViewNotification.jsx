@@ -25,8 +25,9 @@ const ViewNotification = ({ open, setOpen, el }) => {
 
   const lines = el?.text?.split("\n");
   const isLeave = el?.refModel === "Leave";
+  const isEvent = el?.refModel === "Event";
 
-  // console.log(el)
+  
 
   const assignedUsers = (el?.team || []).filter(
     (u) => u?._id?.toString() !== user?._id?.toString()
@@ -37,8 +38,16 @@ const ViewNotification = ({ open, setOpen, el }) => {
     <>
       <ModalWrapper open={open} setOpen={setOpen}>
         <div className='py-4 w-full flex flex-col gap-4 items-center justify-center'>
-          <Dialog.Title as='h3' className={`font-semibold text-lg ${LightMode ? "text-black" : "text-white"}`}>
-            {el?.task?.title}
+          <Dialog.Title
+            as="h3"
+            className={`font-semibold text-lg ${LightMode ? "text-black" : "text-white"}`}
+          >
+            {isEvent
+              ? "Event Notification"
+              : isLeave
+              ? "Leave Notification"
+              : el?.task?.title || el?.title || "Notification"
+            }
           </Dialog.Title>
 
 
@@ -74,28 +83,38 @@ const ViewNotification = ({ open, setOpen, el }) => {
 
             {isLeave ? (
               <div className="flex flex-col items-center gap-2 mt-2">
-
                 <img
                   src={el?.sender?.profileImage}
                   alt={el?.sender?.name}
                   className="w-14 h-14 rounded-full object-cover border-2 border-white"
                 />
 
+                <p className="font-semibold">{el?.sender?.name}</p>
+              </div>
+            ) : isEvent ? (
+              <div className="flex flex-col items-center gap-2 mt-2">
+
+                <img
+                  src={el?.createdBy?.profileImage}
+                  alt={el?.createdBy?.name}
+                  className="w-14 h-14 rounded-full object-cover border-2 border-white"
+                />
+
                 <p className="font-semibold">
-                  {el?.sender?.name}
+                  {el?.createdBy?.name}
+                </p>
+
+                <p className="text-sm opacity-70">
+                  Event Creator
                 </p>
 
               </div>
-
             ) : (
-
               <>
                 <p className="flex items-center gap-1">
                   Assigned to you
                   {assignedUsers.length > 1 && (
-                    <span>
-                      and {assignedUsers.length} others.
-                    </span>
+                    <span>and {assignedUsers.length} others.</span>
                   )}
                 </p>
 
@@ -104,7 +123,6 @@ const ViewNotification = ({ open, setOpen, el }) => {
                     <img
                       key={index}
                       src={user?.profileImage}
-                      alt="user"
                       className="w-8 h-8 rounded-full border-2 border-white object-cover"
                     />
                   ))}

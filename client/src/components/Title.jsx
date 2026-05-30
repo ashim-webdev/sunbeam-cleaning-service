@@ -8,7 +8,7 @@ const Title = ({ title, className }) => {
   return (
     <h2
       className={clsx(
-        "text-2xl font-semibold capitalize transition-colors duration-300 ease-in-out",
+        "text-2xl ml-4 font-semibold capitalize transition-colors duration-300 ease-in-out",
         LightMode
         ? "text-gray-700 "
         : "text-gray-300",

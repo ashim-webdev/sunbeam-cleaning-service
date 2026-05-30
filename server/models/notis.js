@@ -1,25 +1,65 @@
 import mongoose, { Schema } from "mongoose";
 
-const noticeSchema = new Schema({
-  team: [{ type: Schema.Types.ObjectId, ref: "User" }],
-  text: String,
+const noticeSchema = new Schema(
+  {
+    team: [{ type: Schema.Types.ObjectId, ref: "User" }],
 
-  sender: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
+    text: String,
+
+    sender: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    task: {
+      type: Schema.Types.ObjectId,
+      ref: "Task",
+      default: null,
+    },
+
+    event: {
+      type: Schema.Types.ObjectId,
+      ref: "Event",
+      default: null,
+    },
+
+    refId: {
+      type: Schema.Types.ObjectId,
+    },
+
+    refModel: {
+      type: String,
+      enum: ["Task", "Leave", "Event"],
+    },
+
+    notificationType: {
+      type: String,
+      enum: [
+        "task",
+        "completed",
+        "in-progress",
+        "todo",
+        "leave",
+        "event",
+      ],
+      default: "task",
+    },
+
+    type: {
+      type: String,
+      enum: ["alert", "message", "event"],
+      default: "alert",
+    },
+
+    isRead: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
-
-  refId: { type: Schema.Types.ObjectId },
-  refModel: { type: String, enum: ["Task", "Leave"] },
-
-  notiType: {
-    type: String,
-    default: "alert",
-    enum: ["alert", "message"],
-  },
-
-  isRead: [{ type: Schema.Types.ObjectId, ref: "User" }],
-}, { timestamps: true });
+  { timestamps: true }
+);
 
 const Notice = mongoose.model("Notice", noticeSchema);
 

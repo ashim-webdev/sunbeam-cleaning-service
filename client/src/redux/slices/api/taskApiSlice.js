@@ -4,10 +4,15 @@ import { apiSlice } from "../apiSlice";
 export const postApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getDashboardStats: builder.query({
-      query: () => ({
+      query: ({ page = 1, limit = 10 }) => ({
         url: `${TASKS_URL}/dashboard`,
         method: "GET",
+        params: {
+          page,
+          limit,
+        },
       }),
+
       providesTags: ["Dashboard", "User", "TeamList"],
     }),
 
@@ -19,7 +24,7 @@ export const postApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
 
-      invalidatesTags: ["Task", "Dashboard"]
+      invalidatesTags: [{ type: "Task", id: "LIST" }, "Dashboard"]
     }),
 
     duplicateTask: builder.mutation({
@@ -30,7 +35,7 @@ export const postApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
 
-      invalidatesTags: ["Task", "Dashboard"]
+      invalidatesTags: [{ type: "Task", id: "LIST" }, "Dashboard"]
     }),
 
     updateTask: builder.mutation({
@@ -41,7 +46,7 @@ export const postApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
 
-      invalidatesTags: ["Task", "Dashboard"]
+      invalidatesTags: [{ type: "Task", id: "LIST" }, "Dashboard"]
     }),
 
     getAllTask: builder.query({
@@ -64,7 +69,16 @@ export const postApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
 
-      providesTags: ["Task"]
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.tasks.map(({ _id }) => ({
+                type: "Task",
+                id: _id,
+              })),
+              { type: "Task", id: "LIST" },
+            ]
+          : [{ type: "Task", id: "LIST" }],
     }),
 
     getSingleTask: builder.query({
@@ -85,7 +99,7 @@ export const postApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
 
-      invalidatesTags: ["Task", "Dashboard"],
+      invalidatesTags: [{ type: "Task", id: "LIST" }, "Dashboard"]
     }),
 
     postTaskActivity: builder.mutation({
@@ -106,7 +120,7 @@ export const postApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
 
-      invalidatesTags: ["Task", "Dashboard"]
+      invalidatesTags: [{ type: "Task", id: "LIST" }, "Dashboard"]
     }),
 
     deleteRestoreTask: builder.mutation({
@@ -119,7 +133,7 @@ export const postApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
 
-      invalidatesTags: ["Task", "Dashboard"],
+      invalidatesTags: [{ type: "Task", id: "LIST" }, "Dashboard"],
     }),
 
     changeTaskStage: builder.mutation({
@@ -130,7 +144,7 @@ export const postApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
 
-      invalidatesTags: ["Task", "Dashboard"]
+      invalidatesTags: [{ type: "Task", id: "LIST" }, "Dashboard"],
     }),
 
     changeSubTaskStatus: builder.mutation({
@@ -141,7 +155,7 @@ export const postApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
 
-      invalidatesTags:  ["Task", "Dashboard"]
+      invalidatesTags: [{ type: "Task", id: "LIST" }, "Dashboard"]
     }),
 
     deleteTaskActivity: builder.mutation({
@@ -150,7 +164,7 @@ export const postApiSlice = apiSlice.injectEndpoints({
         method: "DELETE",
       }),
 
-      invalidatesTags:  ["Task"]
+      invalidatesTags:  [{ type: "Task", id: "LIST" }, "Dashboard"]
     }),
   }),
 });

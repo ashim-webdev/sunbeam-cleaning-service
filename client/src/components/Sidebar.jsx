@@ -14,7 +14,11 @@ import {
 } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { setOpenSidebar, setMiniMenu, setOpenProfile, clearTaskNotifications, clearLeaveNotifications } from "../redux/slices/authSlice";
+import { setOpenSidebar, setMiniMenu, setOpenProfile } from "../redux/slices/authSlice";
+import {
+  useGetNotificationsQuery,
+  useMarkNotiAsReadMutation,
+} from "../redux/slices/api/userApiSlice";
 import { IoCheckmarkDoneOutline } from "react-icons/io5";
 import "./components.css";
 import ProfileDropdown from "./ProfileDropdown";
@@ -30,11 +34,14 @@ const Sidebar = () => {
   const {
     user, 
     onlineUsers,
-    taskNotifications,
-    leaveNotifications,
   } = useSelector((state) => state.auth);
   // DarkMode Change
+
   const { LightMode, MiniMenu, isProfileOpen }  = useSelector((state) => state.auth);
+
+  const { data: notifications = [] } = useGetNotificationsQuery();
+
+  const [markAsRead] = useMarkNotiAsReadMutation();
 
   const dispatch = useDispatch();
   const location = useLocation();
@@ -44,26 +51,103 @@ const Sidebar = () => {
   // Sidebar Smooth Slide
   const navigate = useNavigate()
 
+  // console.log(notifications);
+
+  // Calculate unread notifications count
+  const taskNotifications = notifications.filter(
+    (item) =>
+      item.refModel === "Task" &&
+      !item.isRead?.includes(user._id)
+  ).length;
+
+  const completedNotifications = notifications.filter(
+    (item) =>
+      item.notificationType === "completed" &&
+      !item.isRead?.includes(user._id)
+  ).length;
+
+  const inProgressNotifications = notifications.filter(
+    (item) =>
+      item.notificationType === "in-progress" &&
+      !item.isRead?.includes(user._id)
+  ).length;
+
+  const leaveNotifications = notifications.filter(
+    (item) =>
+      item.refModel === "Leave" &&
+      !item.isRead?.includes(user._id)
+  ).length;
+
+  const eventNotifications = notifications.filter(
+    (item) =>
+      item.refModel === "Event" &&
+      !item.isRead?.includes(user._id)
+  ).length;
+
+  // console.log(taskNotifications, leaveNotifications, eventNotifications);
+
+
+  // Handle navigation with sidebar animation
   const SIDEBAR_ANIMATION_MS = 200;
-  const REFRESH_PAGE = 400;
 
-  const handleNavClick = (path) => {
+  const handleNavClick = async (path) => {
+    try {
 
-    // CLEAR TASK NOTIFICATIONS
-    if (path.includes("tasks")) {
-      dispatch(clearTaskNotifications());
+      // TASK ROUTES
+      const isTaskRoute =
+        path.includes("tasks") ||
+        path.includes("completed") ||
+        path.includes("in-progress") ||
+        path.includes("todos");
+
+      // TASK NOTIFICATIONS
+      if (path.includes("completed")) {
+        await markAsRead({
+          isReadType: "completed",
+        }).unwrap();
+      }
+
+      else if (path.includes("in-progress")) {
+        await markAsRead({
+          isReadType: "in-progress",
+        }).unwrap();
+      }
+
+      else if (path.includes("todos")) {
+        await markAsRead({
+          isReadType: "todo",
+        }).unwrap();
+      }
+
+      else if (path.includes("tasks")) {
+        await markAsRead({
+          isReadType: "task",
+        }).unwrap();
+      }
+
+      // MARK LEAVE NOTIFICATIONS AS READ
+      if (path.includes("leaves")) {
+        await markAsRead({
+          isReadType: "leave",
+        }).unwrap();
+      }
+
+      // MARK EVENT NOTIFICATIONS AS READ
+      if (path.includes("scheduler")) {
+        await markAsRead({
+          isReadType: "event",
+        }).unwrap();
+      }
+
+      dispatch(setOpenSidebar(false));
+
+      setTimeout(() => {
+        navigate(`/${path}`);
+      }, SIDEBAR_ANIMATION_MS);
+
+    } catch (error) {
+      console.log(error);
     }
-
-    // CLEAR LEAVE NOTIFICATIONS
-    if (path.includes("leaves")) {
-      dispatch(clearLeaveNotifications());
-    }
-
-    dispatch(setOpenSidebar(false));
-
-    setTimeout(() => {
-      navigate(`/${path}`);
-    }, SIDEBAR_ANIMATION_MS);
   };
   // End
 
@@ -179,23 +263,40 @@ const Sidebar = () => {
           <span className='whitespace-nowrap'>{el.label}</span>
         </div>
 
-        {el.label === "Tasks" && taskNotifications > 0 && (
+        {(
+          (el.label === "Tasks" && taskNotifications > 0) ||
+          (el.label === "Completed" && completedNotifications > 0) ||
+          (el.label === "In Progress" && inProgressNotifications > 0)
+        ) && (
           <div className="flex items-center justify-center">
 
             <span className={`
                 ${LightMode 
-                  ? "text-black shadow-darkSM"
+                  ? "text-white shadow-darkSM"
                   : "text-white shadow-lightSM"
                 }
                 flex justify-center items-center text-center text-[9px] text-white font-semibold w-5 h-5 rounded-full bg-red-600 pt-0.5 transition-all duration-300 ease-in-out
               `}
             >
               <span>
-                {el.label === "Tasks"
-                  ? taskNotifications > 99
-                    ? "99+"
-                    : taskNotifications
-                  : 0}
+                {
+                  el.label === "Tasks"
+                    ? taskNotifications > 99
+                      ? "99+"
+                      : taskNotifications
+
+                    : el.label === "Completed"
+                    ? completedNotifications > 99
+                      ? "99+"
+                      : completedNotifications
+
+                    : el.label === "In Progress"
+                    ? inProgressNotifications > 99
+                      ? "99+"
+                      : inProgressNotifications
+
+                    : 0
+                }
               </span>
             </span>
           </div>
@@ -221,40 +322,27 @@ const Sidebar = () => {
         {el.icon}
         <span className='whitespace-nowrap'>{el.label}</span>
 
-        {/* <div className={`
-            absolute -top-2.5 right-4 flex items-center justify-center
-          `}>
-          <span className={`
-              ${LightMode 
-                ? "text-black shadow-darkSM"
-                : "text-white shadow-lightSM"
-              }
-              flex justify-center items-center text-center text-[9px] text-white font-semibold w-5 h-5 rounded-full bg-red-600 pt-0.5 transition-all duration-300 ease-in-out
-            `}
-          >
-            <span>35</span>
-          </span>
-        </div> */}
-
-        {el.label === "Leave Requests" && leaveNotifications > 0 && (
-          <div className={`
-            absolute -top-2.5 right-4 flex items-center justify-center
-          `}>
-
-            <span className={`
+        {((el.link === "leaves" && leaveNotifications > 0) ||
+          (el.link === "scheduler" && eventNotifications > 0)) && (
+          <div className="absolute -top-2.5 right-1 flex items-center justify-center">
+            <span
+              className={`
                 ${LightMode 
-                  ? "text-black shadow-darkSM"
+                  ? "text-white shadow-darkSM"
                   : "text-white shadow-lightSM"
                 }
-                flex justify-center items-center text-center text-[9px] text-white font-semibold w-5 h-5 rounded-full bg-red-600 pt-0.5 transition-all duration-300 ease-in-out
+                flex justify-center items-center text-center text-[9px]
+                font-semibold w-5 h-5 rounded-full bg-red-600 pt-0.5
               `}
             >
               <span>
-                {el.label === "Leave Requests"
+                {el.link === "leaves"
                   ? leaveNotifications > 99
                     ? "99+"
                     : leaveNotifications
-                  : 0}
+                  : eventNotifications > 99
+                    ? "99+"
+                    : eventNotifications}
               </span>
             </span>
           </div>
@@ -364,7 +452,7 @@ const Sidebar = () => {
                         className={`
                           ${LightMode 
                             ? "bg-white shadow-darkSM"
-                            : "bg-black/95 shadow-lightSM"
+                            : "bg-black/95 shadow-lightSM border border-white"
                           }
                           absolute top-8 right-0 xl:-right-1 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded p-4 cursor-pointer
                         `}

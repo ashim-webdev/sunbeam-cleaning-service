@@ -32,6 +32,7 @@ import UserInfoDash from "../components/UserInfoDash"
 import SocialMedia from "../components/SocialMedia";
 import Loading from "../components/Loading";
 import OnlineStatus from "../components/OnlineStatus";
+import Pagination from "../components/Pagination"; 
 
 
 
@@ -44,6 +45,8 @@ const Dashboard = () => {
     onlineUsers,
   } = useSelector((state) => state.auth);
 
+  const [page, setPage] = useState(1);
+
   const admin = user.isAdmin
   
 
@@ -51,8 +54,17 @@ const Dashboard = () => {
     data: summary,
     isLoading,
     refetch,
-  } = useGetDashboardStatsQuery();
+  } = useGetDashboardStatsQuery(
+    {
+      page,
+      limit: 12,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
 
+  console.log(summary)
 
   // Update everything in real time
   useEffect(() => {
@@ -60,23 +72,8 @@ const Dashboard = () => {
     refetch();
   });
 
-  socket.on("taskCreated", () => {
-    refetch();
-  });
-
-  socket.on("taskUpdated", () => {
-    refetch();
-  });
-
-  socket.on("taskDeleted", () => {
-    refetch();
-  });
-
   return () => {
     socket.off("dashboardUpdated");
-    socket.off("taskCreated");
-    socket.off("taskUpdated");
-    socket.off("taskDeleted");
   };
 }, [refetch]);
 
@@ -403,6 +400,39 @@ const Dashboard = () => {
     const employees = users?.filter((user) => !user?.isAdmin);
     const Administrators = users?.filter((user) => user?.isAdmin);
 
+    const [employeePage, setEmployeePage] = useState(1);
+    const [adminPage, setAdminPage] = useState(1);
+
+    const USERS_PER_PAGE = 6;
+
+
+    // Employee pagination
+    const employeeStart = (employeePage - 1) * USERS_PER_PAGE;
+    const employeeEnd = employeeStart + USERS_PER_PAGE;
+
+    const paginatedEmployees = employees?.slice(
+      employeeStart,
+      employeeEnd
+    );
+
+    const employeeTotalPages = Math.ceil(
+      employees.length / USERS_PER_PAGE
+    );
+
+    // Admin pagination
+    const adminStart = (adminPage - 1) * USERS_PER_PAGE;
+    const adminEnd = adminStart + USERS_PER_PAGE;
+
+    const paginatedAdmins = Administrators?.slice(
+      adminStart,
+      adminEnd
+    );
+
+    const adminTotalPages = Math.ceil(
+      Administrators.length / USERS_PER_PAGE
+    );
+
+
     const TableHeader = () => (
       <thead className={`
         ${LightMode 
@@ -424,8 +454,18 @@ const Dashboard = () => {
       </thead>
     );
 
-    const TableRow = ({ user }) => (
-      <tr className={`
+    const TableRow = ({ user, index }) => (
+      <motion.tr 
+        layout
+        key={index}
+        initial={{ opacity: 0, x: 40 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -40 }}
+        transition={{
+          duration: 0.4,
+          delay: index * 0.1, // stagger effect
+        }}
+        className={`
           ${LightMode 
             ? "border-gray-300 text-gray-600 hover:bg-gray-300/50 hover:shadow-dark"
             : "border-gray-600 text-white hover:bg-white/30 hover:shadow-light"
@@ -480,13 +520,23 @@ const Dashboard = () => {
             <SocialMedia tiktok={user?.tiktok} x={user?.x} whatsApp={user?.whatsApp} telegram={user?.telegram} />
           </div>
         </td>
-      </tr>
+      </motion.tr>
     );
 
 
 
-  const UserCard = ({ user, admin }) => (    
-    <div className={`
+  const UserCard = ({ user, admin, index }) => (    
+    <motion.div 
+      layout
+      key={index}
+      initial={{ opacity: 0, x: 40 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -40 }}
+      transition={{
+        duration: 0.4,
+        delay: index * 0.2, // stagger effect
+      }}
+      className={`
       ${LightMode
         ? "bg-white shadow-darkSM"
         : "bg-black/90 shadow-lightSM"
@@ -570,7 +620,7 @@ const Dashboard = () => {
 
         <DisabledComponent user={user.isActive}/>
 
-    </div>
+    </motion.div>
   )
 
     return (
@@ -581,23 +631,39 @@ const Dashboard = () => {
               ? "bg-white shadow-md shadow-black/30"
               : "bg-black/90 shadow-md shadow-white/30"
             }
-            relative hidden sm:block w-full h-fit px-2 md:px-6 py-4 shadow-md rounded transition-all ease-in-out duration-300
+            ${employeeTotalPages > 1 ? "h-154" : "h-fit"}
+            relative hidden sm:block w-full px-2 md:px-6 py-4 shadow-md rounded transition-all ease-in-out duration-300
           `}>
           <table className='w-full mb-5'>
             <TableHeader />
-            <tbody>
-              {employees?.map((user, index) => (
-                <TableRow key={index + user?._id} user={user} />
-              ))}
-            </tbody>
+
+            <AnimatePresence mode="wait">
+              <tbody>
+                {paginatedEmployees?.map((user, index) => (
+                  <TableRow key={user?._id}  user={user} index={index} />
+                ))}
+              </tbody>
+            </AnimatePresence>
           </table>
+
+          {employeeTotalPages > 1 && (
+            <div className="absolute -bottom-24 left-0 right-0 w-full justify-center items-center mt-4">
+              <span>
+                <Pagination
+                  page={employeePage}
+                  setPage={setEmployeePage}
+                  totalPages={employeeTotalPages}
+                />
+              </span>
+            </div>
+          )}
 
           <div className={`
               ${LightMode 
-                ? "bg-white shadow-darkSM"
-                : "bg-black/90 border border-white"
+                ? "bg-white shadow-darkSM text-black"
+                : "bg-black/90 border border-white text-white"
               }
-              absolute -top-4 -right-3 text-md inline-block px-2 py-1 rounded-full text-gray-700 font-bold transition-colors ease-in-out duration-300
+              absolute -top-4 -right-3 text-md inline-block px-2 py-1 rounded-full font-bold transition-colors ease-in-out duration-300
             `}>
             Employee's Table
           </div>
@@ -605,7 +671,7 @@ const Dashboard = () => {
 
         {user?.isAdmin && (
           <>
-            <div className="my-15 px-15 hidden sm:block">
+            <div className={`${employeeTotalPages > 1 ? "mt-26" : "mt-15"} mb-15 px-15 hidden sm:block`}>
               <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10" />
             </div>
 
@@ -615,27 +681,40 @@ const Dashboard = () => {
                   ? "bg-white shadow-md shadow-black/30"
                   : "bg-black/90 shadow-md shadow-white/30"
                 }
-                relative hidden sm:block w-full h-fit px-2 md:px-6 py-4 shadow-md rounded transition-all ease-in-out duration-300
+                ${adminTotalPages > 1 ? "h-154" : "h-fit"}
+                relative hidden sm:block w-full px-2 md:px-6 py-4 shadow-md rounded transition-all ease-in-out duration-300
               `}>
               <table className='w-full mb-5'>
                 <TableHeader />
                 <tbody>
-                  {Administrators?.map((user, index) => (
-                    <TableRow key={index + user?._id} user={user} />
+                  {paginatedAdmins?.map((user, index) => (
+                    <TableRow key={user?._id} user={user} index={index} />
                   ))}
                 </tbody>
               </table>
 
               <div className={`
                   ${LightMode 
-                    ? "bg-white shadow-darkSM"
-                    : "bg-black/90 border border-white"
+                    ? "bg-white shadow-darkSM text-black"
+                    : "bg-black/90 border border-white text-white"
                   }
-                  absolute -top-4 -right-3 text-md inline-block px-2 py-1 rounded-full text-gray-700 font-bold transition-colors ease-in-out duration-300
+                  absolute -top-4 -right-3 text-md inline-block px-2 py-1 rounded-full font-bold transition-colors ease-in-out duration-300
                 `}>
                 Admin's Table
               </div>
             </div>
+
+            {adminTotalPages > 1 && (
+              <div className="sm:flex w-full hidden justify-center items-center mt-4">
+                <span>
+                  <Pagination
+                    page={adminPage}
+                    setPage={setAdminPage}
+                    totalPages={adminTotalPages}
+                  />
+                </span>
+              </div>
+            )}
           </>
         )}
 
@@ -649,9 +728,23 @@ const Dashboard = () => {
           }
           relative flex flex-col justify-center gap-15 px-4 pt-20 pb-15 mx-1 sm:hidden rounded-2xl transition-all duration-300 ease-in-out
         `}>
-          {employees?.map((user, index) => (
-            <UserCard key={index} user={user} admin={admin} />
-          ))}
+          <AnimatePresence mode="wait">
+            {paginatedEmployees?.map((user, index) => (
+              <UserCard key={user?._id} user={user} admin={admin} index={index} />
+            ))}
+          </AnimatePresence>
+
+          {employeeTotalPages > 1 && (
+            <div className="absolute sm:hidden -bottom-30 left-0 right-0 w-full flex justify-center items-center mt-4">
+              <span>
+                <Pagination
+                  page={employeePage}
+                  setPage={setEmployeePage}
+                  totalPages={employeeTotalPages}
+                />
+              </span>
+            </div>
+          )}
 
           <span className="absolute z-0 text-center -top-5 left-0 right-0">
             <span className={`
@@ -668,7 +761,7 @@ const Dashboard = () => {
 
         {user.isAdmin && (
           <>
-            <div className="my-15 px-5 sm:hidden">
+            <div className={`${employeeTotalPages > 1 ? "mt-38" : "mt-15"} mb-20 px-5 sm:hidden`}>
               <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10" />
             </div>
 
@@ -680,9 +773,11 @@ const Dashboard = () => {
               }
               relative flex flex-col justify-center gap-15 px-4 pt-20 pb-15 mx-1 sm:hidden rounded-2xl transition-all duration-300 ease-in-out
             `}>
-              {Administrators?.map((user, index) => (
-                <UserCard key={index} user={user} admin={admin} />
+              {paginatedAdmins?.map((user, index) => (
+                <UserCard key={user?._id} user={user} admin={admin} index={index} />
               ))}
+
+
 
               <span className="absolute z-0 text-center -top-5 left-0 right-0">
                 <span className={`
@@ -696,6 +791,18 @@ const Dashboard = () => {
                 </span>
               </span>
             </div>
+
+            {adminTotalPages > 1 && (
+              <div className="sm:hidden  flex w-full justify-center items-center mt-4">
+                <span>
+                  <Pagination
+                    page={adminPage}
+                    setPage={setAdminPage}
+                    totalPages={adminTotalPages}
+                  />
+                </span>
+              </div>
+            )}
           </>
         )}
       </div>
@@ -708,7 +815,7 @@ const Dashboard = () => {
 
 
 
-  const TaskTable = ({ tasks }) => {
+  const TaskTable = ({ tasks, pagination, page, setPage }) => {
 
     const ICONS = {
       high: <MdKeyboardDoubleArrowUp />,
@@ -741,7 +848,7 @@ const Dashboard = () => {
       </thead>
     );
 
-    const TableRow = ({ task }) => {
+    const TableRow = ({ task, index }) => {
       // console.log(taskInfo)
       const textPriority = task?.priority || "";
       const TextPriShort = textPriority.slice(0, 4) + "...";
@@ -752,7 +859,16 @@ const Dashboard = () => {
       const addressShort = task.address.split(" ").length > 2 ? task.address.split(" ").slice(0, 2).join(" ") + "..." : task.address || "";
 
       return (
-        <tr className={`
+        <motion.tr 
+          key={task._id}
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -40 }}
+          transition={{
+            duration: 0.4,
+            delay: index * 0.1, // stagger effect
+          }}
+          className={`
           ${LightMode 
             ? "border-gray-300 text-gray-600 hover:bg-gray-300/50 hover:shadow-dark"
             : "border-gray-600 text-white hover:bg-white/30 hover:shadow-light"
@@ -845,7 +961,7 @@ const Dashboard = () => {
                 })}
               </span>
             </td>
-        </tr>
+        </motion.tr>
       )
     };
 
@@ -854,6 +970,7 @@ const Dashboard = () => {
         <div
           className={clsx(
             "w-full px-2 md:px-4 pt-4 pb-4 rounded transition-all ease-in-out duration-300",
+            pagination?.totalPages > 1 ? "h-178" : "h-auto",
             LightMode 
               ? "bg-white shadow-md shadow-black/30"
               : "bg-black/90 shadow-md shadow-white/30",
@@ -865,7 +982,7 @@ const Dashboard = () => {
               ""
           )}
         >
-          <div className='overflow-x-auto overflow-y-visible'>
+          <div className='overflow-x-auto overflow-y-hidden'>
             {tasks.length === 0 ?
               (
                 <span className={`${LightMode ? "text-black/60" : "text-white/60"} h-100 flex flex-col justify-center item-center`}>
@@ -885,19 +1002,34 @@ const Dashboard = () => {
               )
                 :
               (
-                <table className='w-full '>
+                <table className='w-full relative'>
                   <TableHeader />
-                  <tbody className=''>
-                    {tasks?.map((task, id) => (
-                      <TableRow key={task?._id + id} task={task} />
-                    ))}
-                  </tbody>
+
+                  <AnimatePresence mode="wait">
+                    <tbody className=''>
+                      {tasks?.map((task, index) => (
+                        <TableRow key={task?._id} task={task} index={index} />
+                      ))}
+                    </tbody>
+                  </AnimatePresence>
                 </table>
               )
             }
             
           </div>
         </div>
+
+        {pagination?.totalPages > 1 && (
+          <div className="w-full flex flex-col justify-center items-center -mt-2">
+            <span>
+              <Pagination
+                page={page}
+                setPage={setPage}
+                totalPages={pagination?.totalPages || 1}
+              />
+            </span>
+          </div>
+        )}
       </>
     );
   };
@@ -944,7 +1076,10 @@ const Dashboard = () => {
             :
           (
             <TaskTable 
-              tasks={summary?.last10Task || []}
+              tasks={summary?.recentTasks || []}
+              pagination={summary?.pagination}
+              page={page}
+              setPage={setPage}
             />
           )}
 

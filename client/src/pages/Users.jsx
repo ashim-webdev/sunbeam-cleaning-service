@@ -16,6 +16,7 @@ import EditBtn from "../components/EditBtn";
 import SocialMedia from "../components/SocialMedia";
 import LinearSocial from "../components/linearSocial";
 import ViewUserProfile from "../components/ProfileComponents/ViewUserProfile";
+import Pagination from "../components/Pagination";
 import {
   useDeleteUserMutation,
   useGetTeamListsQuery,
@@ -24,20 +25,40 @@ import {
 import { useSelector } from "react-redux";
 import { getInitials } from "../utils/index";
 import { Link } from 'react-router-dom'
+import { useSearchParams } from "react-router-dom";
 
-// import { useSearchParams } from "react-router-dom";
+
+
+
+
+
 
 const Users = () => {
   const { LightMode } = useSelector((state) => state.auth);
 
-  // const [searchParams] = useSearchParams();
-  // const [searchTerm] = useState(searchParams.get("search") || "");
+  const [searchParams] = useSearchParams();
+  const search = searchParams.get("search") || "";
 
-  const { data, isLoading, refetch } = useGetTeamListsQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-    refetchOnReconnect: true,
-    refetchOnFocus: true,
-  });
+  console.log("SEARCH", search)
+
+  const [page, setPage] = useState(1);
+
+  const { data, isLoading, refetch } = useGetTeamListsQuery(
+    {
+      page,
+      limit: 10,
+      search,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true,
+      refetchOnFocus: true,
+    }
+  );
+
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
 
   // console.log(data)
   const [deleteUser, { isLoading: deleteLoading }] = useDeleteUserMutation();
@@ -145,8 +166,17 @@ const Users = () => {
     </thead>
   );
 
-  const TableRow = ({ user }) => (
-    <tr 
+  const TableRow = ({ user, index }) => (
+    <motion.tr
+      layout
+      key={index}
+      initial={{ opacity: 0, x: 40 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -40 }}
+      transition={{
+        duration: 0.4,
+        delay: index * 0.1, // stagger effect
+      }}
         onClick={(e) => {
           e.stopPropagation()
           viewProfileInfo(user)
@@ -192,7 +222,7 @@ const Users = () => {
             </span>
           )}
             
-          <span className={`${user.isActive ? "" : "blur-[2px]"} ml-3`}>{user.name}</span>
+          <span className={` ml-3`}>{user.name}</span>
 
           {showSocial === user._id && (
             <div onClick={(e) => e.stopPropagation()} className="absolute -top-1.5 left-15">
@@ -215,9 +245,15 @@ const Users = () => {
           )}
         </div>
       </td>
-      <td className={`p-2 px-6 whitespace-nowrap text-start ${user.isActive ? "" : "blur-[2px]"}`}>{user.title}</td>
-      <td className={`p-2 px-4 text-start ${user.isActive ? "" : "blur-[2px]"}`}>{user.email}</td>
-      <td className={`p-2 pr-4 pl-8  text-center whitespace-nowrap ${user.isActive ? "" : "blur-[2px]"}`}>{user.role}</td>
+      <td className={`p-2 px-6 whitespace-nowrap text-start `}>
+        {user.title}
+      </td>
+      <td className={`p-2 px-4 text-start `}>
+        {user.email}
+      </td>
+      <td className={`p-2 pr-4 pl-8  text-center whitespace-nowrap `}>
+        {user.role}
+      </td>
       <td className="px-8">
         <div className="flex justify-center items-center">
           <div className="cursor-pointer active:scale-103 w-22 flex justify-center item-center">
@@ -235,7 +271,6 @@ const Users = () => {
             </span>    
           </div>       
         </div>
-        
       </td>
       <td className='p-2 flex gap-3 justify-center'>
         <EditBtn 
@@ -252,11 +287,20 @@ const Users = () => {
           }}
         />
       </td>
-    </tr>
+    </motion.tr>
   );
 
-  const UserCard = ({ user }) => (
-    <div 
+  const UserCard = ({ user, index }) => (
+    <motion.div 
+      layout
+      key={index}
+      initial={{ opacity: 0, x: 40 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -40 }}
+      transition={{
+        duration: 0.4,
+        delay: index * 0.2, // stagger effect
+      }}
       onClick={(e) => {
         e.stopPropagation()
         viewProfileInfo(user)
@@ -341,7 +385,7 @@ const Users = () => {
             : "text-white"
           }
             w-full mt-4 transition-all duration-300 ease-in-out
-            ${user.isActive ? "" : "blur-[2px]"}
+            
           `}>
           <div className="ml-27 w-40 flex flex-col justify-center items-start gap-0">
             <div className="text-xl font-semibold font-serif whitespace-nowrap [@media(min-width:400px)_and_(min-width:500px)]:hidden">{user.name.slice(0, 12) + "..."}</div>
@@ -358,7 +402,7 @@ const Users = () => {
               : "text-white"
             }
             w-full mt-4 ml-5 flex justify-start items-center gap-2 transition-all duration-300 ease-in-out
-            ${user.isActive ? "" : "blur-[2px]"}
+            
           `}>
           <div className="text-sm font-semibold whitespace-nowrap">{user.title}</div>
 
@@ -400,7 +444,7 @@ const Users = () => {
             </AnimatePresence>
           </div>
         </div>
-    </div>
+    </motion.div>
   )
 
   return isLoading ? (
@@ -430,37 +474,67 @@ const Users = () => {
             sm:block hidden mt-3 px-2 md:px-4 py-4 shadow rounded transition-colors duration-300 ease-in-out
           `}>
           
-          {data?.length === 0 ? (
+          {data?.users?.length === 0 ? (
               <div className={`${LightMode ? "text-black" : "text-white"} text-center text-xl transition-colors duration-300 ease-in-out`}>
                 No users found.
               </div>
             ) : 
-              <div className='overflow-x-auto'>
+              <div className={`${data?.pagination?.totalPages > 1 ? "h-158" : "h-auto"} overflow-x-auto sm:overflow-y-hidden`}>
                 <table className='w-full mb-5'>
                   <TableHeader />
-                  <tbody>
-                    {data?.map((user, index) => (
-                      <TableRow key={index} user={user} />
-                    ))}
-                  </tbody>
+
+                  <AnimatePresence mode="wait">
+                    <tbody>
+                      {data?.users?.map((user, index) => (
+                        <TableRow key={user._id} index={index} user={user} />
+                      ))}
+                    </tbody>
+                  </AnimatePresence>
                 </table>
               </div>
             }
         </div>
 
+        {data?.pagination?.totalPages > 1 && (
+          <div className="hidden w-full sm:flex justify-center items-center mt-4">
+            <Pagination
+              page={page}
+              setPage={setPage}
+              totalPages={data?.pagination?.totalPages || 1}
+            />
+          </div>
+        )}
+
         <div className={`
             flex flex-col justify-center gap-17 px-4 sm:hidden mt-10 mb-6 py-4 rounded transition-colors duration-300 ease-in-out
           `}>
-          {data?.length === 0 ? (
+          {data?.users?.length === 0 ? (
             <div className={`${LightMode ? "text-black" : "text-white"} text-center text-xl transition-colors duration-300 ease-in-out`}>
               No users found.
             </div>
-          ) : 
-            data?.map((user, index) => (
-              <UserCard key={index} user={user} />
-            ))
+          ) : (
+            <>
+              <AnimatePresence mode="wait">
+                {data?.users?.map((user, index) => (
+                  <UserCard key={user._id} index={index} user={user} />
+                ))}
+              </AnimatePresence>
+            </>
+          )
           }
         </div>
+
+        {data?.pagination?.totalPages > 1 && (
+          <div className="sm:hidden w-full flex justify-center items-center mt-4">
+            <span>
+              <Pagination
+                page={page}
+                setPage={setPage}
+                totalPages={data?.pagination?.totalPages || 1}
+              />
+            </span>
+          </div>
+        )}
       </div>
 
       <AddUser

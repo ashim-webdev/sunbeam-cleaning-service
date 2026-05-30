@@ -10,7 +10,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
         body: formData,
         credentials: "include",
       }),
-      invalidatesTags: ["User", "TeamList"],
+      invalidatesTags: ["User", "TeamList", "Notification"],
     }),
 
     getUserProfile: builder.query({
@@ -23,11 +23,18 @@ export const userApiSlice = apiSlice.injectEndpoints({
     }),
 
     getTeamLists: builder.query({
-      query: () => ({
+      query: ({ page = 1, limit = 10, search = "", type="" }) => ({
         url: `${USERS_URL}/get-team`,
         method: "GET",
         credentials: "include",
+        params: {
+          page,
+          limit,
+          search,
+          type,
+        },
       }),
+
       providesTags: ["User", "TeamList"],
     }),
 
@@ -46,7 +53,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
 
-      providesTags: ["User"],
+      providesTags: ["User", "Notification"],
     }),
 
     deleteUser: builder.mutation({
@@ -70,12 +77,15 @@ export const userApiSlice = apiSlice.injectEndpoints({
 
     markNotiAsRead: builder.mutation({
       query: (data) => ({
-        url: `${USERS_URL}/read-noti?isReadType=${data.type}&id=${data?.id}`,
+        url: `${USERS_URL}/read-noti`,
         method: "PUT",
-        body: data,
+        body: {
+          isReadType: data.isReadType,
+          id: data?.id,
+        },
         credentials: "include",
       }),
-      invalidatesTags: ["User"],
+      invalidatesTags: ["User", "Notification"],
     }),
 
     changePassword: builder.mutation({

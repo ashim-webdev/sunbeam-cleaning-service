@@ -22,15 +22,24 @@ const ViewUserProfile = ({
   const { LightMode }  = useSelector((state) => state.auth);
 
    // FETCH FRESH USERS
-  const { data: users = [] } = useGetTeamListsQuery(undefined, {
-    refetchOnMountOrArgChange: true,
-    refetchOnFocus: true,
-    refetchOnReconnect: true,
-  });
+  const { data } = useGetTeamListsQuery(
+    {
+      page: 1,
+      limit: 100,
+      type: "",
+    },
+    {
+      refetchOnMountOrArgChange: true,
+      refetchOnFocus: true,
+      refetchOnReconnect: true,
+    }
+  );
 
-  const freshUser = users.find(
-    (user) => user._id === profileSelected?._id
-  ) || profileSelected;
+  const users = data?.users || [];
+
+  const freshUser =
+    users.find((user) => user._id === profileSelected?._id) ||
+    profileSelected;
 
 
   const [openEdit, setOpenEdit] = useState(false);

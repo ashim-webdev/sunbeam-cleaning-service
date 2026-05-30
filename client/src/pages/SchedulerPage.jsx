@@ -5,10 +5,8 @@ import { useSelector } from 'react-redux';
 import { useGetUserProfileQuery } from '../redux/slices/api/userApiSlice';
 
 export default function SchedulerPage() {
-  const { LightMode, User } = useSelector((state) => state.auth);
+  const { LightMode, user: storedUser } = useSelector((state) => state.auth);
   const { data: freshUser, isLoading } = useGetUserProfileQuery();
-
-  const { user: storedUser } = useSelector((state) => state.auth);
 
   const user = freshUser ?? storedUser;
   

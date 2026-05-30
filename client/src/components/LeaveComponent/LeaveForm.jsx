@@ -171,9 +171,9 @@ export function LeaveForm() {
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="flex justify-center items-center gap-4">
 
-          <div>
+          <div className="w-full">
             <label className={`block text-sm font-medium ${LightMode ? "text-black/80" : "text-white/80"} mb-1 transition-colors duration-300 ease-in-out`}>
               Start Date
             </label>
@@ -193,6 +193,7 @@ export function LeaveForm() {
                     ? "light-calendar"
                     : "dark-calendar"
                 )}
+                wrapperClassName="w-full"
                 className={`w-full ${text} ${placeholder} px-3 py-2 border rounded-md outline-0 transition-all duration-50 ease-in-out ${
                   !startDate && shake
                     ? "border-2 border-red-500 animate-shake"
@@ -206,12 +207,12 @@ export function LeaveForm() {
             </div>
           </div>
 
-          <div>
+          <div className="w-full">
             <label className={`block text-sm font-medium ${LightMode ? "text-black/80" : "text-white/80"} mb-1 transition-colors duration-300 ease-in-out`}>
               End Date
             </label>
 
-            <div className="relative">
+            <div className="relative w-full">
               <DatePicker
                 selected={endDate}
                 onChange={(date) => {
@@ -232,6 +233,7 @@ export function LeaveForm() {
                     ? "light-calendar"
                     : "dark-calendar"
                 )}
+                wrapperClassName="w-full"
                 className={`w-full ${text} ${placeholder} px-3 py-2 border rounded-md outline-0 transition-all duration-50 ease-in-out ${
                   !endDate && shake
                     ? "border-2 border-red-500 animate-shake"

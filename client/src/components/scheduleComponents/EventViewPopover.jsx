@@ -68,7 +68,7 @@ export default function EventViewPopover({
                     <span className='flex justify-center items-center gap-4 text-green-600'>
                       <span className='flex justify-center items-center gap-3 whitespace-nowrap'>
                         <i className="fa-solid fa-calendar text-lg text-gray-400"></i>
-                        {start.datePart}
+                        {new Date(start.datePart).toDateString()}
                       </span>
                       <span className='flex justify-center items-center gap-3 whitespace-nowrap'>
                         <i className="fa-regular fa-clock text-lg text-gray-400"></i>
@@ -84,7 +84,7 @@ export default function EventViewPopover({
                     <span className='flex justify-center items-center gap-4 text-red-600'>
                       <span className='flex justify-center items-center gap-3 whitespace-nowrap'>
                         <i className="fa-solid fa-calendar text-lg text-gray-400"></i>
-                        {end.datePart}
+                        {new Date(end.datePart).toDateString()}
                       </span>
                       <span className='flex justify-center items-center gap-3 whitespace-nowrap'>
                         <i className="fa-regular fa-clock text-lg text-gray-400"></i>

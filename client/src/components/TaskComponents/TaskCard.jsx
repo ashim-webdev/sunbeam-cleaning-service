@@ -219,7 +219,7 @@ const TaskCard = ({ task }) => {
         </div>
       </div>
       
-      <div className={`FileDesign absolute top-0 left-0 w-full h-auto p-2 }`}>
+      <div className={`FileDesign absolute -top-15 left-0 w-full h-auto p-2 }`}>
           <div className={`
               ${LightMode 
                 ? "border-gray-400"
