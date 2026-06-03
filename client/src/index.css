@@ -1202,3 +1202,25 @@ html {
 .Duplicate:hover .DuplicateDot {
   background-color: white;
 }
+
+
+
+
+/* Booking blue color hover effect */
+.BookingCard:hover {
+  border-right: 1.9px solid green;
+  border-top: 1.9px solid green;
+}
+
+.BookingCard:hover .serviceStyle {
+  border-left: 1.9px solid green;
+  border-bottom: 1.9px solid green;
+}
+
+.BookingCard:hover .BookingButton {
+  background-color: green;
+}
+
+.BookingButton:active {
+  background-color: rgb(0, 100, 0);
+}

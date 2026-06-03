@@ -5,11 +5,12 @@ import {
   useGetAllLeavesQuery,
   useGetMyLeavesQuery,
 } from "../redux/slices/api/leaveApiSlice";
+import { Briefcase } from 'lucide-react';
 import { LeaveForm } from '../components/LeaveComponent/LeaveForm';
 import { LeaveList } from '../components/LeaveComponent/LeaveList';
 import { LeaveDetailModal } from '../components/LeaveComponent/LeaveDetailModal';
 import Loading from "../components/Loading"
-import { Briefcase } from 'lucide-react';
+import Pagination from '../components/Pagination';
 
 
 const LeaveRequest = () => {
@@ -17,13 +18,14 @@ const LeaveRequest = () => {
   const { user } = useSelector((state) => state.auth);
 
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [page, setPage] = useState(1);
 
 
   const {
     data: adminLeaves = [],
     isLoading: adminLoading,
     refetch: refetchAdminLeaves,
-  } = useGetAllLeavesQuery(undefined, {
+  } = useGetAllLeavesQuery(page, {
     skip: !user?.isAdmin,
   });
 
@@ -31,13 +33,20 @@ const LeaveRequest = () => {
     data: employeeLeaves = [],
     isLoading: employeeLoading,
     refetch: refetchEmployeeLeaves,
-  } = useGetMyLeavesQuery(undefined, {
+  } = useGetMyLeavesQuery(page, {
     skip: user?.isAdmin,
   });
 
   // console.log(employeeLeaves)
 
-  const requests = user?.isAdmin ? adminLeaves : employeeLeaves;
+
+  const leaveData = user?.isAdmin
+    ? adminLeaves
+    : employeeLeaves;
+
+  const requests = leaveData?.leaves || [];
+
+  const totalPages = leaveData?.pages || 1;
 
 
 
@@ -112,7 +121,7 @@ const LeaveRequest = () => {
 
   return (
     <div className={`${LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 "} h-full bg-linear-to-br transition-colors duration-300 ease-in-out rounded-2xl`}>
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <div className="container mx-auto px-4 pt-8 pb-1 max-w-6xl">
         <div className="mb-8 text-center">
           <div className="flex justify-center items-center mb-1">
             <h1 className={`flex justify-center items-center gap-3 text-[25px] md:text-3xl line-clamp-1 font-bold ${LightMode ? "text-black" : "text-white"} w-fit transition-colors whitespace-nowrap duration-300 ease-in-out`}>
@@ -144,6 +153,9 @@ const LeaveRequest = () => {
               requests={requests}
               isAdmin={user?.isAdmin}
               onRequestClick={handleRequestClick}
+              page={page}
+              setPage={setPage}
+              totalPages={totalPages}
             />
           </div>
         </div>

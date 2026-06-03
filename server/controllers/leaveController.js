@@ -78,11 +78,24 @@ export const createLeave = async (req, res) => {
 // GET /api/leaves
 export const getAllLeaves = async (req, res) => {
   try {
+    const page = Number(req.query.page) || 1;
+    const limit = 5; // number of leave requests per page
+
+    const count = await Leave.countDocuments();
+
     const leaves = await Leave.find()
       .populate("user", "name email title isActive profileImage")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
 
-    res.json(leaves);
+    res.json({
+      leaves,
+      page,
+      pages: Math.ceil(count / limit),
+      total: count,
+    });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -93,10 +106,27 @@ export const getAllLeaves = async (req, res) => {
 // GET /api/leaves/my
 export const getMyLeaves = async (req, res) => {
   try {
-    const leaves = await Leave.find({ user: req.user._id })
-      .sort({ createdAt: -1 });
+    const page = Number(req.query.page) || 1;
+    const limit = 5;
 
-    res.json(leaves);
+    const count = await Leave.countDocuments({
+      user: req.user._id,
+    });
+
+    const leaves = await Leave.find({
+      user: req.user._id,
+    })
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    res.json({
+      leaves,
+      page,
+      pages: Math.ceil(count / limit),
+      total: count,
+    });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -172,13 +202,29 @@ export const getLeavesByUser = async (req, res) => {
       });
     }
 
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 5;
+
+    const count = await Leave.countDocuments({
+      user: req.params.id,
+    });
+
     const leaves = await Leave.find({
       user: req.params.id,
     })
       .populate("user", "name email title profileImage isActive")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
 
-    res.json(leaves);
+    res.json({
+      leaves,
+      pagination: {
+        page,
+        totalPages: Math.ceil(count / limit),
+        totalItems: count,
+      },
+    });
 
   } catch (error) {
     res.status(500).json({

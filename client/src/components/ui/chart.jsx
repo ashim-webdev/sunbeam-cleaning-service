@@ -43,9 +43,9 @@ function ChartContainer({ id, className, children, config, ...props }) {
 }
 
 // Dynamic CSS variables
-const ChartStyle = ({ id, config }) => {
-  const colorConfig = Object.entries(config).filter(
-    ([, item]) => item.theme || item.color
+const ChartStyle = ({ id, config = {} }) => {
+  const colorConfig = Object.entries(config || {}).filter(
+    ([, item]) => item?.theme || item?.color
   );
 
   if (!colorConfig.length) return null;

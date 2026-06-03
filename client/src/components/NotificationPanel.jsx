@@ -20,10 +20,16 @@ const ICONS = {
   alert: (
     <HiBellAlert className='h-5 w-5 text-gray-600 group-hover:text-indigo-600' />
   ),
+
   message: (
     <BiSolidMessageRounded className='h-5 w-5 text-gray-600 group-hover:text-indigo-600' />
   ),
+
+  booking: (
+    <HiBellAlert className='h-5 w-5 text-blue-600' />
+  ),
 };
+
 
 export default function NotificationPanel() {
   const { LightMode } = useSelector((state) => state.auth);
@@ -37,6 +43,20 @@ export default function NotificationPanel() {
   const dispatch = useDispatch();
 
   // console.log(data);
+
+  // Listen for real-time updates to notifications
+  useEffect(() => {
+    socket.on("bookingCreated", refetch);
+    socket.on("bookingUpdated", refetch);
+    socket.on("bookingDeleted", refetch);
+
+    return () => {
+      socket.off("bookingCreated", refetch);
+      socket.off("bookingUpdated", refetch);
+      socket.off("bookingDeleted", refetch);
+    };
+  }, [refetch]);
+
 
   // Listen for real-time updates to notifications
   useEffect(() => {
@@ -184,7 +204,7 @@ export default function NotificationPanel() {
                             }
                             mt-1 h-8 w-8 flex items-center justify-center rounded-lg
                           `}>
-                          {ICONS[item.notiType]}
+                          {ICONS[item.notificationType] || ICONS.alert}
                         </div>
 
                         <div
@@ -198,7 +218,7 @@ export default function NotificationPanel() {
                               }
                               flex items-center gap-3 font-semibold transition-colors ease-in-out duration-300 capitalize
                             `}>
-                            <p> {item.notiType}</p>
+                            {/* <p> {ICONS[item.notificationType] || ICONS.alert}</p> */}
                             <span className='text-xs font-normal lowercase text-green-600'>
                               {moment(item.createdAt).fromNow()}
                             </span>

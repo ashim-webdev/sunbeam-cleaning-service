@@ -10,6 +10,8 @@ import ModalWrapper from "./ModalWrapper";
 import { Dialog } from "@headlessui/react";
 import Button from "./ui/button";
 import {PRIORITY_STYLES} from "../utils/index";
+import { getInitials } from "../utils";
+
 
 
 
@@ -23,9 +25,19 @@ const ICONS = {
 const ViewNotification = ({ open, setOpen, el }) => {
   const { LightMode, user }  = useSelector((state) => state.auth);
 
+  console.log(el)
+
   const lines = el?.text?.split("\n");
   const isLeave = el?.refModel === "Leave";
   const isEvent = el?.refModel === "Event";
+  const isBooking = el?.refModel === "Booking";
+
+  const bookingTitle =
+  el?.text?.toLowerCase().includes("deleted")
+    ? "Booking Deleted"
+    : el?.text?.toLowerCase().includes("updated")
+    ? "Booking Updated"
+    : "New Booking Request";
 
   
 
@@ -40,14 +52,23 @@ const ViewNotification = ({ open, setOpen, el }) => {
         <div className='py-4 w-full flex flex-col gap-4 items-center justify-center'>
           <Dialog.Title
             as="h3"
-            className={`font-semibold text-lg ${LightMode ? "text-black" : "text-white"}`}
+            className={`flex flex-col justify-center items-center font-semibold text-lg ${LightMode ? "text-black" : "text-white"}`}
           >
-            {isEvent
-              ? "Event Notification"
-              : isLeave
-              ? "Leave Notification"
-              : el?.task?.title || el?.title || "Notification"
-            }
+            <span>
+              {
+                isBooking
+                  ? "Booking Request"
+                  : isEvent
+                  ? "Event Notification"
+                  : isLeave
+                  ? "Leave Notification"
+                  : el?.task?.title || el?.title || "Notification"
+              }
+            </span>
+
+            <div className="mt-2 w-60 -mb-1 flex justify-center items-center">
+              <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10" />
+            </div>
           </Dialog.Title>
 
 
@@ -81,24 +102,41 @@ const ViewNotification = ({ open, setOpen, el }) => {
             </div>
             
 
-            {isLeave ? (
+            {isBooking ? (
+              ""
+            ) : isLeave ? (
               <div className="flex flex-col items-center gap-2 mt-2">
-                <img
-                  src={el?.sender?.profileImage}
-                  alt={el?.sender?.name}
-                  className="w-14 h-14 rounded-full object-cover border-2 border-white"
-                />
+                <span className='w-14 h-14 flex justify-center items-center rounded-full border-2 border-white text-white font-semibold bg-blue-600'>
+                  {el?.profileImage ? 
+                    <img
+                      src={el?.sender?.profileImage}
+                      alt={el?.sender?.name}
+                      className="w-14 h-14 rounded-full object-cover border-2 border-white"
+                    />
+                  :
+                    <span>
+                      {getInitials(el?.sender?.name)}
+                    </span>
+                  }
+                </span>
 
                 <p className="font-semibold">{el?.sender?.name}</p>
               </div>
             ) : isEvent ? (
               <div className="flex flex-col items-center gap-2 mt-2">
-
-                <img
-                  src={el?.createdBy?.profileImage}
-                  alt={el?.createdBy?.name}
-                  className="w-14 h-14 rounded-full object-cover border-2 border-white"
-                />
+                <span className='w-14 h-14 flex justify-center items-center rounded-full border-2 border-white text-white font-semibold bg-blue-600'>
+                  {el?.profileImage ? 
+                    <img
+                      src={el?.createdBy?.profileImage}
+                      alt={el?.createdBy?.name}
+                      className="w-14 h-14 rounded-full object-cover border-2 border-white"
+                    />
+                  :
+                    <span>
+                      {getInitials(el?.createdBy?.name)}
+                    </span>
+                  }
+                </span>
 
                 <p className="font-semibold">
                   {el?.createdBy?.name}
@@ -120,11 +158,19 @@ const ViewNotification = ({ open, setOpen, el }) => {
 
                 <div className="flex items-center -space-x-2 mt-2">
                   {visibleUsers.slice(0, 3).map((user, index) => (
-                    <img
-                      key={index}
-                      src={user?.profileImage}
-                      className="w-8 h-8 rounded-full border-2 border-white object-cover"
-                    />
+                    <span className='w-8 h-8 flex justify-center items-center rounded-full border-2 border-white text-white font-semibold bg-blue-600'>
+                      {user?.profileImage ? 
+                        <img
+                          key={index}
+                          src={user?.profileImage}
+                          className="w-8 h-8 rounded-full border-2 border-white object-cover"
+                        />
+                      :
+                        <span>
+                          {getInitials(user?.name)}
+                        </span>
+                      }
+                    </span>
                   ))}
 
                   {assignedUsers.length > 3 && (

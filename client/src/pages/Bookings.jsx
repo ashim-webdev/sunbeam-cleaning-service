@@ -1,751 +1,393 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { 
-  APIProvider, 
-  Map, 
-  AdvancedMarker, 
-  useApiIsLoaded,
-  useMapsLibrary
-} from '@vis.gl/react-google-maps';
-import { 
-  MapPin, 
-  Phone, 
-  User, 
-  Sparkles, 
-  Calendar, 
-  ExternalLink, 
-  LayoutDashboard, 
-  UserCircle,
-  ChevronDown,
-  ChevronsUp
-} from 'lucide-react';
-import { Listbox, Transition } from '@headlessui/react';
-import { BiImages } from "react-icons/bi";
-import { Fragment } from 'react';
-import { toast } from 'sonner';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useDispatch, useSelector } from "react-redux";
+// Admin.jsx
+import { useState, useEffect } from "react";
+import { socket } from "../socket";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+import {
+  Calendar,
+  Phone,
+  MapPin,
+  Store,
+  ExternalLink,
+  ChevronsUp,
+  ChevronDown
+} from "lucide-react";
+import { useSelector } from "react-redux";
+import { useParams, useSearchParams } from "react-router-dom";
+import {
+  useGetBookingsQuery,
+  useUpdateBookingMutation,
+  useDeleteBookingMutation,
+} from "../redux/slices/api/bookingApiSlice";
+import Loading from "../components/Loading"
+import EditBtn from "../components/EditBtn";
+import DeleteBtn from "../components/DeleteBtn";
+import ConfirmationDialog from "../components/ConfirmationDialog";
+import EditBookingForm from "../components/EditBookingForm";
+import Pagination from "../components/Pagination";
 
 
 
-const SERVICES = [
-  'Basic Cleaning',
-  'Deep Cleaning',
-  'Move-In / Move-Out Cleaning',
-  'Environmental Cleaning',
-  'Window Cleaning',
-  'Carpet Cleaning',
-  'Sofa / Upholstery Cleaning',
-  'Janitorial Cleaning',
-  'Others...'
-];
-
-const PROPERTY = [
-  'Apartment / Flat',
-  'House / Home',
-  'Office / Industry',
-  'Hotel / Guest House',
-  'Restaurant / Cafe',
-  'Warehouse',
-  'Hospital / Clinic',
-  'Event Hall',
-  'Others...',
-];
-
-const DEFAULT_CENTER = { lat: 40.7128, lng: -74.0060 }; // New York City
-
-// --- Components ---
 
 export default function Bookings() {
   const { LightMode } = useSelector((state) => state.auth);
-  
-  const [view, setView] = useState('client');
-  const [bookings, setBookings] = useState([]);
 
-  const [errors, setErrors] = useState({});
-  const [shake, setShake] = useState(false);
-  const [toggle1, setToggle1] = useState(false);
-  const [toggle2, setToggle2] = useState(false);
-
-  // image field
-  const [assets, setAssets] = useState([]);
-  const [images, setImages] = useState([]);
+  const [openBookingId, setOpenBookingId] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openEditForm, setOpenEditForm] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState(null);
   
+  const [page, setPage] = useState(1);
+
+  const [searchParams] = useSearchParams();
+
+  const search = searchParams.get("search") || "";
+
+  const { data, isLoading, refetch } =
+    useGetBookingsQuery({
+      page,
+      limit: 10,
+      search,
+    });
+
+  // Update Booking
+  const [updateBooking, { isLoading: updating }] =
+  useUpdateBookingMutation();
+
+  // Delete Booking
+  const [deleteBooking, { isLoading: deleting }] =
+  useDeleteBookingMutation();
+
+
+  const bookings = data?.bookings || [];
+  const totalPages = data?.totalPages || 1;
+
+
+  const deleteClicks = (booking) => {
+    setSelectedBooking(booking);
+    setOpenDialog(true);
+  };
+
+  const editClickHandler = (booking) => {
+    setSelectedBooking(booking);
+    setOpenEditForm(true);
+  };
+
+
+  const deleteHandler = async () => {
+    try {
+      await deleteBooking(
+        selectedBooking._id
+      ).unwrap();
+      toast.success("Booking deleted successfully");
+
+      setOpenDialog(false);
+
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.data?.message || "Failed to delete booking");
+    }
+  };
+
+
+  // Reset to page 1 when search or status changes
   useEffect(() => {
+    setPage(1);
+  }, [search]);
+
+  // Listen for real-time updates to bookings
+  useEffect(() => {
+    socket.on("bookingCreated", () => {
+      refetch();
+    });
+
+    socket.on("bookingUpdated", () => {
+      refetch();
+    });
+
+    socket.on("bookingDeleted", () => {
+      refetch();
+    });
+
     return () => {
-      images.forEach((file) => URL.revokeObjectURL(file.preview));
+      socket.off("bookingCreated");
+      socket.off("bookingUpdated");
+      socket.off("bookingDeleted");
     };
-  }, [images]);
+  }, [refetch]);
 
-  const handleSelect = (e) => {
-    const files = Array.from(e.target.files);
 
-    const imageFiles = files
-      .filter((file) => file.type.startsWith("image/"))
-      .map((file) => {
-        return Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        });
-      });
-
-    setImages(imageFiles);
-
-    // reset input so same file can be selected again if needed
-    e.target.value = null;
-  };
-  
-  // Form State
-  const [formData, setFormData] = useState({
-    clientName: '',
-    phoneNumber: '',
-    property: PROPERTY[0],
-    service: SERVICES[0],
-    address: '',
-    lat: DEFAULT_CENTER.lat,
-    lng: DEFAULT_CENTER.lng
-  });
-
-  const addBooking = (booking) => {
-    console.log(booking)
-    const newBooking = {
-      ...booking,
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString()
-    };
-    setBookings(prev => [newBooking, ...prev]);
-    // Reset form but keep location
-    setFormData(prev => ({
-      ...prev,
-      clientName: '',
-      phoneNumber: '',
-    }));
-    alert('Booking successful!');
-
-    setImages([])
+  const toggleSwitchArrow = (bookingId) => {
+    setOpenBookingId((prev) =>
+      prev === bookingId ? null : bookingId
+    );
   };
 
 
-  const validateBooking = () => {
-    const newErrors = {};
+  const bgCon = LightMode
+    ? "bg-white shadow-darkSM"
+    : "bg-black/90 shadow-lightSM";
 
-    const triggerShake = () => {
-      setShake(true);
+  const subText = LightMode
+    ? "text-black/80"
+    : "text-white/80";
 
-      if (navigator.vibrate) {
-        navigator.vibrate(300);
-      }
+  const shadow = LightMode
+    ? "shadow-darkSM"
+    : "shadow-lightSM";
 
-      setTimeout(() => setShake(false), 1000);
-    };
+  const hoverShadow = LightMode
+    ? "hover:shadow-dark"
+    : "hover:shadow-light";
 
-    const { clientName, phoneNumber, address } = formData;
+  const hoverSmallShadow = LightMode
+    ? "hover:shadow-md hover:shadow-black/50"
+    : "hover:shadow-md hover:shadow-white/50";
 
-    const allEmpty =
-      !clientName.trim() &&
-      !phoneNumber.trim() &&
-      !address.trim();
+  const text = LightMode
+    ? "text-black"
+    : "text-white";
 
-    if (allEmpty) {
-      toast.error("All fields are required");
-      newErrors.clientName = "Full name is required";
-      newErrors.phoneNumber = "Phone number is required";
-      newErrors.address = "Address is required";
-      setErrors(newErrors);
-      triggerShake();
-      return false;
-    }
-
-    if (!clientName.trim()) {
-      newErrors.clientName = "Full name is required";
-      toast.error("Full name is required");
-      triggerShake();
-    } else if (!phoneNumber.trim()) {
-      newErrors.phoneNumber = "Phone number is required";
-      toast.error("Phone number is required");
-      triggerShake();
-    } else if (!address.trim()) {
-      newErrors.address = "Please select a location on the map";
-      toast.error("Address is required");
-      triggerShake();
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-
-  const bg = LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM";
-  const bgCon = LightMode ? "bg-white shadow-darkSM" : "bg-black/90 shadow-lightSM";
-  const bgMenu = LightMode ? "bg-white shadow-dark border-black border-stone-200" : "bg-black/90 shadow-light border-white border-stone-900";
-  const subText = LightMode ? "text-black/80" : "text-white/80"
-  const shadow = LightMode ? "shadow-darkSM" : "shadow-lightSM";
-  const text = LightMode ? "text-black" : "text-white";
-  const UmCL = LightMode ? "bg-stone-100 text-black/90 hover:bg-stone-200" : "bg-stone-500 text-white/90 hover:bg-stone-600";
-  const imgBorder = LightMode ? "shadow-darkSM border-amber-400" : "shadow-lightSM border-white"
-
-  return (
-    <div className={`${bg} min-h-screen text-stone-900 font-sans transition-all duration-300 ease-in-out`}>
-      {/* Header */}
-      <header className="bg-white border-b border-stone-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex flex-col sm:flex-row items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="bg-emerald-600 p-2 rounded-lg text-white">
-              <Sparkles size={20} />
-            </div>
-            <h1 className="text-xl font-semibold tracking-tight">SparkleClean</h1>
-          </div>
-
-          <div className="flex bg-stone-100 p-1 rounded-xl">
-            <button
-              onClick={() => setView('client')}
-              className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                view === 'client' 
-                ? 'bg-white text-emerald-700 shadow-sm' 
-                : 'text-stone-500 hover:text-stone-700'
-              }`}
-            >
-              <UserCircle size={16} />
-              Client
-            </button>
-            <button
-              onClick={() => setView('admin')}
-              className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                view === 'admin' 
-                ? 'bg-white text-emerald-700 shadow-sm' 
-                : 'text-stone-500 hover:text-stone-700'
-              }`}
-            >
-              <LayoutDashboard size={16} />
-              Admin
-            </button>
-          </div>
+  return isLoading ? (
+    <Loading />
+  ) : (
+    <>
+      <div
+        key="Bookings"
+        onClick={() => setOpenBookingId(null)}
+        className="space-y-6 relative"
+      >
+        <div className={`flex items-center justify-between mt-4 mb-6 mx-4`}>
+          <h2 className={`${text} text-2xl font-semibold transition-all duration-300 ease-in-out`}>Booking Dashboard</h2>
+          <span className={`${shadow} bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 ease-in-out`}>
+            {bookings.length} Total Bookings
+          </span>
         </div>
-      </header>
 
-      <main className="max-w-7xl mx-auto p-4 md:p-8">
-        <AnimatePresence mode="wait">
-          {view === 'client' ? (
-            <motion.div
-              key="client"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="grid grid-cols-1 lg:grid-cols-12 gap-8"
-            >
-              {/* Booking Form */}
-              <div className="lg:col-span-5 space-y-6">
-                <div className={`${bgCon} p-6 rounded-2xl border border-stone-200 transition-all duration-300 ease-in-out`}>
-                  <h2 className={`${text} text-2xl font-semibold mb-6 transition-all duration-300 ease-in-out`}>Book a Cleaning</h2>
-                  
-                  <form 
-                    onSubmit={(e) => {
-                      e.preventDefault();
+        {bookings.length === 0 ? (
+          <>
+            {search ? (
+              <span className={`${LightMode ? "text-black/60" : "text-white/60"} w-full block text-center mt-20 p-2 text-lg animate-bounce transition-all duration-300 ease-in-out`}>
+                {`No tasks found for "${search}" :(`}
+              </span>
+            ) : (
+              <div className={`${bgCon} border border-dashed border-stone-300 rounded-2xl p-12 text-center transition-all duration-300 ease-in-out`}>
+                <div className={`${shadow} bg-stone-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-black transition-all duration-300 ease-in-out`}>
+                  <Calendar size={32} />
+                </div>
+                <h3 className={`${text} text-lg font-medium transition-all duration-300 ease-in-out`}>No bookings yet</h3>
+                <p className={`${subText} transition-all duration-300 ease-in-out`}>New bookings will appear here as clients submit the form.</p>
+              </div>
+            )}
 
-                      if (!validateBooking()) return;
+          
 
-                      addBooking({ ...formData, images });
-                      toast.success("Booking successful!");
-                    }}
-                    className="space-y-4"
-                  >
-                    <div>
-                      <label className={`block text-sm font-medium ${subText} mb-1 transition-all duration-300 ease-in-out`}>Full Name</label>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          value={formData.clientName}
-                          onChange={e => {
-                            setFormData(prev => ({ ...prev, clientName: e.target.value }));
-                            setErrors(prev => ({ ...prev, clientName: null }));
-                          }}
-                          className={`${LightMode ? "placeholder-black/70 text-black" : "placeholder-white/70 text-white"} w-full pl-10 pr-4 py-2 border rounded-xl outline-none transition-all ${
-                            errors.clientName
-                              ? `border-2 border-red-500 ${shake ? "animate-shake" : ""}`
-                              : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          }`}
-                          placeholder="John Doe"
-                        />
-
-                        {errors.clientName && (
-                          <p className="text-red-500 text-xs mt-1 italic">{errors.clientName}</p>
-                        )}
-
-                        <User className="absolute left-3 top-5.5 -translate-y-1/2 text-stone-500" size={18} />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className={`${subText} block text-sm font-medium mb-1 transition-all duration-300 ease-in-out`}>Phone Number</label>
-                      <div className="relative">
-                        <input
-                          type="tel"
-                          value={formData.phoneNumber}
-                          onChange={e => {
-                            setFormData(prev => ({ ...prev, phoneNumber: e.target.value }));
-                            setErrors(prev => ({ ...prev, phoneNumber: null }));
-                          }}
-                          className={`${LightMode ? "placeholder-black/70 text-black" : "placeholder-white/70 text-white"} w-full pl-10 pr-4 py-2 border rounded-xl outline-none transition-all duration-300 ease-in-out ${
-                            errors.phoneNumber
-                              ? `border-2 border-red-500 ${shake ? "animate-shake" : ""}`
-                              : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          }`}
-                          placeholder="+1 (555) 000-0000"
-                        />
-
-                        {errors.phoneNumber && (
-                          <p className="text-red-500 text-xs mt-1 italic">{errors.phoneNumber}</p>
-                        )}
-
-                        <Phone className="absolute left-3.5 top-5.5 -translate-y-1/2 text-stone-500" size={18} />
-                      </div>
-                    </div>
-
-                    <div className='flex flex-col md:flex-row justify-between items-center gap-4'>
-                      <div className='w-full'>
-                        <label className={`${subText} block text-sm font-medium mb-1 transition-all duration-300 ease-in-out`}>Property Type</label>
-                          <Listbox
-                            value={formData.property}
-                            onChange={(value) =>
-                              setFormData(prev => ({ ...prev, property: value }))
-                            }
-                          >
-                            {({ open }) => (
-
-                            <div className="relative">
-                              
-                              {/* Button */}
-                              <Listbox.Button
-                                onClick={() => setToggle1(prev => !prev)}
-                                className={`${subText} w-full px-2 py-2 border rounded-xl text-left border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none flex justify-between items-center cursor-pointer`}
-                              >
-                                <span className='line-clamp-1'>{formData.property}</span>
-                                <span className="text-black text-sm bg-gray-200 rounded-full p-0.5">
-                                  {open ? <ChevronsUp size={22} className="font-bold animate-UpDown" /> : <ChevronDown size={22} className="font-bold" />}
-                                </span>
-                              </Listbox.Button>
-
-                              {/* Options */}
-                                <Transition
-                                  as={Fragment}
-                                  leave="transition ease-in duration-100"
-                                  leaveFrom="opacity-100"
-                                  leaveTo="opacity-0"
-                                >
-                                  <Listbox.Options onClick={(e) => e.stopPropagation()} className={`${bgMenu} absolute mt-2 w-full border overflow-hidden rounded-xl z-50  outline-none transition-all duration-300 ease-in-out`}>
-                                    {PROPERTY.map((property, index) => (
-                                      <Listbox.Option
-                                        key={index}
-                                        value={property}
-                                        onClick={() => setToggle1(false)}
-                                        className={({ active }) =>
-                                          `cursor-pointer px-4 py-2 text-sm transition-all duration-300 ease-in-out hover:scale-105 ${
-                                            active ? `${LightMode ? "bg-blue-100 text-blue-900 hover:shadow-dark" : "bg-blue-900 text-blue-100 hover:shadow-light"}` : `${LightMode ? "text-gray-900" : "text-gray-200"}`
-                                          }`
-                                        }
-                                      >
-                                        {property}
-                                      </Listbox.Option>
-                                    ))}
-                                  </Listbox.Options>
-                                </Transition>
-                            </div>
-                            )}
-                          </Listbox>
-                      </div>
-
-                      <div className='w-full'>
-                        <label className={`${subText} block text-sm font-medium mb-1 transition-all duration-300 ease-in-out`}>Service Type</label>
-                          <Listbox
-                            value={formData.property}
-                            onChange={(value) =>
-                              setFormData(prev => ({ ...prev, service: value }))
-                            }
-                          >
-                            {({ open }) => (
-
-                            <div className="relative">
-                              
-                              {/* Button */}
-                              <Listbox.Button
-                                onClick={() => setToggle1(prev => !prev)}
-                                className={`${subText} w-full px-2 py-2 border rounded-xl text-left border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none flex justify-between items-center cursor-pointer`}
-                              >
-                                <span className='line-clamp-1'>{formData.service}</span>
-                                <span className="text-black text-sm bg-gray-200 rounded-full p-0.5">
-                                  {open ? <ChevronsUp size={22} className="font-bold animate-UpDown" /> : <ChevronDown size={20} className="font-bold" />}
-                                </span>
-                              </Listbox.Button>
-
-                              {/* Options */}
-                                <Transition
-                                  as={Fragment}
-                                  leave="transition ease-in duration-100"
-                                  leaveFrom="opacity-100"
-                                  leaveTo="opacity-0"
-                                >
-                                  <Listbox.Options onClick={(e) => e.stopPropagation()} className={`${bgMenu} absolute mt-2 w-full border rounded-xl shadow-lg z-50 overflow-hidden outline-none transition-all duration-300 ease-in-out`}>
-                                    {SERVICES.map((service, index) => (
-                                      <Listbox.Option
-                                        key={index}
-                                        value={service}
-                                        onClick={() => setToggle1(false)}
-                                        className={({ active }) =>
-                                          `cursor-pointer px-4 py-2 text-sm transition-all duration-300 ease-in-out hover:scale-105 ${
-                                            active ? `${LightMode ? "bg-blue-100 text-blue-900 hover:shadow-dark" : "bg-blue-900 text-blue-100 hover:shadow-light"}` : `${LightMode ? "text-gray-900" : "text-gray-200"}`
-                                          }`
-                                        }
-                                      >
-                                        {service}
-                                      </Listbox.Option>
-                                    ))}
-                                  </Listbox.Options>
-                                </Transition>
-                            </div>
-                            )}
-                          </Listbox>
-                      </div>
-                    </div>
-
-                    <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10 mt-6" />
-
-
-                    <div className="w-full mt-4">
-                      <label className={`text-center sm:text-start block text-sm font-medium mb-2 ${subText}`}>
-                        Upload Photos of the Area to be Cleaned
-                      </label>
-
-                      <label
-                        htmlFor="imgUpload"
-                        className={`
-                          flex flex-col items-center justify-center
-                          border-2 border-dashed rounded-xl p-6
-                          cursor-pointer transition-all duration-300
-                          ${LightMode 
-                            ? "border-gray-300 hover:border-blue-400 bg-gray-50" 
-                            : "border-gray-600 hover:border-blue-400 bg-gray-900"}
-                        `}
-                      >
-                        <input
-                          type="file"
-                          id="imgUpload"
-                          className="hidden"
-                          onChange={handleSelect}
-                          accept="image/*"
-                          multiple
-                        />
-
-                        <BiImages size={28} className={`mb-2 opacity-70 ${subText}`} />
-
-                        <p className={`font-medium text-center ${subText}`}>
-                          Tap to upload photos
+          </>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-4">
+            <AnimatePresence mode="wait">
+              {bookings.map((booking, index) => (
+                <motion.div 
+                  // key={`${page}-${search}-${status}`} // Refetch data when page, search, or status changes
+                  key={index}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -50 }}
+                  transition={{ duration: 0.8 }}
+                  className="relative mt-4"
+                >
+                  <div className={`${bgCon} ${hoverSmallShadow} BookingCard border-t border-r border-blue-600 p-6 rounded-2xl transition-all duration-300 ease-in-out overflow-hidden`}>
+                    <div className="relative flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className={`${text} mt-2 font-semibold text-lg line-clamp-1 transition-all duration-300 ease-in-out`}>{booking.clientName}</h3>
+                        <p className={`${subText} text-sm flex items-center gap-1 transition-all duration-300 ease-in-out`}>
+                          <Phone size={14} /> {booking.phoneNumber}
                         </p>
+                      </div>
+                      <span className={`${shadow} ${LightMode ? "bg-white text-black" : "bg-black text-white"} serviceStyle absolute -top-6 -right-6 border-l border-b border-blue-600  whitespace-nowrap px-2 py-1 line-clamp-1 rounded-bl-md text-xs font-medium transition-all duration-300 ease-in-out`}>
+                        {booking.service}
+                      </span>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <div className={`${subText} flex gap-2 text-sm transition-all duration-300 ease-in-out`}>
+                        <MapPin size={16} className="shrink-0 mt-0.5 text-emerald-600" />
+                        <p>{booking.address}</p>
+                      </div>
 
-                        <p className={`text-xs mt-1 text-center ${subText}`}>
-                          Take clear pictures of the area (kitchen, floor, sofa, etc.)
-                        </p>
-                      </label>
+                      <div className={`${subText} relative flex gap-2 text-sm transition-all duration-300 ease-in-out `}>
+                        <Store size={16} className="shrink-0 mt-0.5 text-emerald-600" />
+                        <p>{booking.property}</p>
 
-                      {/* Preview */}
-                      {images.length > 0 && (
-                        <div className="flex flex-wrap justify-center items-center mt-3 gap-2">
-                          {images.map((img, index) => (
-                            <div key={index} className="relative hover:scale-110 transition-all duration-300 ease-in-out">
-                              <img
-                                key={index}
-                                src={img.preview}
-                                alt="preview"
-                                className={`w-16 h-16 object-cover rounded-lg border ${imgBorder}`}
-                              />
-
-                              <span
-                                onClick={() => {
-                                  setImages(prev => prev.filter((_, i) => i !== index));
+                        {booking?.images?.length > 0 && (
+                          <div className="absolute -top-1.5 right-0  flex justify-center items-center gap-2">
+                            <div className="flex justify-center items-center">
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  toggleSwitchArrow(booking._id)
                                 }}
-                                className="absolute top-1 right-1 font-bold bg-white shadow-inner text-red-600 rounded-full py-px cursor-pointer px-1 text-xs"
+                                className={`${text} cursor-pointer transition-all duration-300 ease-in-out`}
                               >
-                                ✕
-                              </span>
+                                {openBookingId === booking._id ? 
+                                  <ChevronsUp size={22} className="font-bold animate-UpDown" />
+                                  : 
+                                  <ChevronDown size={22} className="font-bold" />
+                                }
+                              </button>
                             </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
 
-                    <div>
-                      <label className={`${subText} block text-sm font-medium text-stone-700 mb-1`}>Service Address</label>
-                      <div className="relative">
-                        <textarea
-                          readOnly
-                          value={formData.address}
-                          className={`w-full pl-10 pr-4 py-2 border outline-none rounded-xl text-stone-600 cursor-not-allowed resize-none ${LightMode ? "placeholder-black/70 text-black" : "placeholder-white/70 text-white"} transition-all duration-300 ease-in-out ${
-                            errors.address
-                              ? `border-2 border-red-500 ${shake ? "animate-shake" : ""}`
-                              : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          }`}
-                          rows={2}
-                          placeholder="Select location on map..."
-                        />
+                            <div 
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                toggleSwitchArrow(booking._id)
+                              }}
+                              className="flex items-center -space-x-3.5"
+                            >
+                              {booking?.images?.slice(0, 3).map((img, index) => (
+                                <span className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} w-8 h-8 flex justify-center items-center rounded-full text-white font-semibold  bg-blue-600 transition-all duration-300 ease-in-out`}>
+                                  {img?.url && 
+                                    <img
+                                      key={index}
+                                      src={img?.url}
+                                      className={`${LightMode ? "border-blue-500" : "border-white"} w-8 h-8 rounded-full object-cover border-2 transition-all duration-300 ease-in-out`}
+                                    />
+                                  }
+                                </span>
+                              ))}
 
-                        {errors.address && (
-                          <p className="text-red-500 text-xs -mt-0.5 italic">{errors.address}</p>
+                              {booking?.images?.length > 3 && (
+                                <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-300 text-black text-xs font-semibold">
+                                  +{booking?.images?.length - 3}
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         )}
-                        <MapPin className="absolute left-3 top-5.5 -translate-y-1/2 text-stone-500" size={18} />
                       </div>
-                      <p className={`${subText} text-xs mt-1 italic`}>Address is automatically updated when you move the map marker.</p>
-                    </div>
-
-                    <div className="pt-4 space-y-3">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (navigator.geolocation) {
-                            navigator.geolocation.getCurrentPosition((pos) => {
-                              const newLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-                              setFormData(prev => ({ ...prev, ...newLoc }));
-                            });
-                          }
-                        }}
-                        className={`ClickAnimationNoti ${UmCL} w-full py-2.5 px-4 rounded-xl font-medium flex items-center justify-center gap-2 transition-all duration-300 ease-in-out`}
-                      >
-                        <MapPin size={18} />
-                        Use My Current Location
-                      </button>
                       
-                      <button
-                        type="submit"
-                        className="ClickAnimationNoti shadow-inner hover:shadow-innerWH w-full py-3 px-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-800 active:scale-[0.98] transition-all duration-300 ease-in-out cursor-pointer"
-                      >
-                        Book Appointment
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-
-              {/* Map Section */}
-              <div className={`${bgCon} lg:col-span-7 h-125 lg:h-auto min-h-100 rounded-2xl overflow-hidden border border-stone-200 relative transition-all duration-300 ease-in-out`}>
-                <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ''}>
-                  <MapContainer 
-                    lat={formData.lat} 
-                    lng={formData.lng} 
-                    onLocationChange={(lat, lng, address) => {
-                      setFormData(prev => ({ ...prev, lat, lng, address }));
-                    }} 
-                  />
-                </APIProvider>
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="admin"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="space-y-6"
-            >
-              <div className={`flex items-center justify-between mb-4`}>
-                <h2 className={`${text} text-2xl font-semibold transition-all duration-300 ease-in-out`}>Booking Dashboard</h2>
-                <span className={`${shadow} bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 ease-in-out`}>
-                  {bookings.length} Total Bookings
-                </span>
-              </div>
-
-              {bookings.length === 0 ? (
-                <div className={`${bgCon} border border-dashed border-stone-300 rounded-2xl p-12 text-center transition-all duration-300 ease-in-out`}>
-                  <div className={`${shadow} bg-stone-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-black transition-all duration-300 ease-in-out`}>
-                    <Calendar size={32} />
-                  </div>
-                  <h3 className={`${text} text-lg font-medium`}>No bookings yet</h3>
-                  <p className={`${subText}`}>New bookings will appear here as clients submit the form.</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {bookings.map(booking => (
-                    <div key={booking.id} className={`${bgCon} p-6 rounded-2xl border border-stone-200 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out`}>
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h3 className="font-semibold text-lg">{booking.clientName}</h3>
-                          <p className={`${subText} text-sm flex items-center gap-1 transition-all duration-300 ease-in-out`}>
-                            <Phone size={14} /> {booking.phoneNumber}
-                          </p>
-                        </div>
-                        <span className="bg-stone-100 text-stone-600 px-2 py-1 rounded text-xs font-medium">
-                          {booking.service}
+                      <div className={`${LightMode ? "text-stone-500 border-stone-300" : "text-stone-400  border-stone-100"} flex items-center gap-2 border-t text-xs pt-2 mt-4  transition-all duration-300 ease-in-out`}>
+                        <Calendar size={14} />
+                        <span>
+                          Booked on{" "}
+                          {new Date(booking.createdAt).toLocaleString("en-GB", {
+                            year: "numeric",
+                            month: "short",
+                            day: "2-digit",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                          })}
                         </span>
                       </div>
-                      
-                      <div className="space-y-3">
-                        <div className="flex gap-2 text-sm text-stone-600">
-                          <MapPin size={16} className="shrink-0 mt-0.5 text-emerald-600" />
-                          <p>{booking.address}</p>
-                        </div>
-                        
-                        <div className="flex items-center gap-2 text-xs text-stone-400 pt-2 border-t border-stone-100">
-                          <Calendar size={14} />
-                          <span>Booked on {new Date(booking.createdAt).toLocaleString()}</span>
-                        </div>
 
-                        <a
-                          href={`https://www.google.com/maps?q=${booking.lat},${booking.lng}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-full mt-4 flex items-center justify-center gap-2 py-2 px-4 bg-stone-900 text-white rounded-xl text-sm font-medium hover:bg-stone-800 transition-colors"
-                        >
-                          <ExternalLink size={14} />
-                          Open in Google Maps
-                        </a>
+                      <a
+                        href={`https://www.google.com/maps?q=${booking.lat},${booking.lng}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`${hoverShadow} BookingButton hover:scale-102 active:scale-95 w-full mt-4 flex items-center justify-center gap-2 py-2 px-4 bg-blue-600 text-white rounded-xl text-sm font-medium transition-all duration-300 ease-in-out`}
+                      >
+                        <ExternalLink size={14} />
+                        Open in Google Maps
+                      </a>
+
+
+                      <div className='absolute -top-4.5 left-2.5 flex justify-center items-center gap-2 md:gap-3'>
+                        <span className={`${bgCon} flex justify-center items-center rounded-full`}>
+                          <EditBtn 
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              editClickHandler(booking)
+                            }}
+                          />
+                        </span>
+                        
+                        <span className={`${bgCon} flex justify-center items-center rounded-full`}>
+                          <DeleteBtn
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              deleteClicks(booking)
+                            }}
+                          />
+                        </span>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
-    </div>
-  );
-}
+                  </div>
+                  
+                  {booking?.images?.length > 0 && (
+                    <AnimatePresence>
+                      {/* View Image Ui */}
+                      {openBookingId === booking._id && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          transition={{ duration: 0.2 }}
+                          className={`${bgCon} ${hoverSmallShadow} shadow-lg absolute top-42 left-0 right-0 h-100 border border-blue-600 py-4 px-2 -mx-2 z-20 rounded-tl-2xl rounded-bl-2xl transition-all duration-300 ease-in-out overflow-y-auto overflow-x-hidden`}
+                          >
+                          <AnimatePresence>
+                            {booking?.images?.map((img, index) => (
+                              <motion.div 
+                                key={index} 
+                                initial={{ opacity: 0, x: 40 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -40 }}
+                                transition={{
+                                  duration: 0.6,
+                                  delay: index * 0.2, // stagger effect
+                                }}
+                                className={`outline-0 border-2 relative flex justify-center overflow-hidden items-center gap-2 mb-3 w-full h-50 rounded-xl bg-blue-gray-500 bg-clip-border text-white bg-blue-600 shadow-inner`}
+                              >
+                              <span  className="text-white font-semibold">
+                                {img?.url && 
+                                  <img
+                                    src={img?.url}
+                                    className="h-full w-full object-cover"
+                                  />
+                                }
+                                </span>
 
-// --- Map Sub-component ---
-
-function MapContainer({ lat, lng, onLocationChange }) {
-  const { LightMode } = useSelector((state) => state.auth);
-  const [markerPos, setMarkerPos] = useState({ lat, lng });
-  const mapsLibrary = useMapsLibrary('geocoding');
-  const placesLibrary = useMapsLibrary('places');
-  const isLoaded = useApiIsLoaded();
-  const mapRef = useRef(null);
-  const searchInputRef = useRef(null);
-
-  // Update marker when props change (e.g. from "Use My Location")
-  useEffect(() => {
-    setMarkerPos({ lat, lng });
-  }, [lat, lng]);
-
-  // Reverse Geocoding
-  const updateAddress = useCallback(async (newLat, newLng) => {
-    if (!mapsLibrary) return;
-    
-    const geocoder = new mapsLibrary.Geocoder();
-    try {
-      const response = await geocoder.geocode({ location: { lat: newLat, lng: newLng } });
-      if (response.results[0]) {
-        onLocationChange(newLat, newLng, response.results[0].formatted_address);
-      }
-    } catch (error) {
-      console.error('Geocoding failed:', error);
-    }
-  }, [mapsLibrary, onLocationChange]);
-
-  // Handle Marker Drag
-  const onMarkerDragEnd = (e) => {
-    if (e.latLng) {
-      const newLat = e.latLng.lat();
-      const newLng = e.latLng.lng();
-      setMarkerPos({ lat: newLat, lng: newLng });
-      updateAddress(newLat, newLng);
-    }
-  };
-
-  // Handle Map Click
-  const onMapClick = (e) => {
-    if (e.latLng) {
-      const newLat = e.latLng.lat();
-      const newLng = e.latLng.lng();
-      setMarkerPos({ lat: newLat, lng: newLng });
-      updateAddress(newLat, newLng);
-    }
-  };
-
-  // Initialize Search Box
-  useEffect(() => {
-    if (!placesLibrary || !searchInputRef.current || !mapRef.current) return;
-
-    const autocomplete = new placesLibrary.Autocomplete(searchInputRef.current);
-    autocomplete.bindTo('bounds', mapRef.current);
-
-    autocomplete.addListener('place_changed', () => {
-      const place = autocomplete.getPlace();
-      if (!place.geometry || !place.geometry.location) return;
-
-      const newLat = place.geometry.location.lat();
-      const newLng = place.geometry.location.lng();
-      
-      setMarkerPos({ lat: newLat, lng: newLng });
-      onLocationChange(newLat, newLng, place.formatted_address || '');
-      
-      if (mapRef.current) {
-        mapRef.current.panTo({ lat: newLat, lng: newLng });
-        mapRef.current.setZoom(17);
-      }
-    });
-  }, [placesLibrary, onLocationChange]);
-
-
-
-  const bg = LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM";
-  const bgCon = LightMode ? "bg-white shadow-darkSM" : "bg-black/90 shadow-lightSM";
-  const subText = LightMode ? "text-black/80" : "text-white/80"
-  const shadow = LightMode ? "shadow-darkSM" : "shadow-lightSM";
-  const text = LightMode ? "text-black" : "text-white";
-  const UmCL = LightMode ? "bg-stone-100 text-stone-700 hover:bg-stone-200" : "bg-stone-400 text-stone-100 hover:bg-stone-500";
-
-
-
-  if (!isLoaded) {
-    return (
-      <div className="w-full h-full bg-stone-100 flex items-center justify-center animate-pulse">
-        <p className="text-stone-400 font-medium">Loading Map...</p>
+                              </motion.div>
+                            ))}
+                          </AnimatePresence>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  )}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
       </div>
-    );
-  }
 
-  return (
-    <>
-      {/* Search Bar Overlay */}
-      <div className="absolute top-4 left-4 right-4 z-10">
-        <div className="relative max-w-md mx-auto">
-          <input
-            ref={searchInputRef}
-            type="text"
-            placeholder="Search for an address..."
-            className={`${bgCon} ${LightMode ? "placeholder-black/70 text-black" : "placeholder-white/70 text-white"} border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full px-4 py-3 border rounded-xl outline-none pr-10 transition-all duration-300 ease-in-out`}
-          />
-          <MapPin className={`${LightMode ? "text-stone-500" : "text-stone-200"} absolute right-3 top-1/2 -translate-y-1/2 transition-all duration-300 ease-in-out`} size={18} />
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center">
+          <span>
+            <Pagination
+              page={page}
+              setPage={setPage}
+              totalPages={totalPages}
+            />
+          </span>
         </div>
-      </div>
+      )}
 
-      <Map
-        defaultCenter={DEFAULT_CENTER}
-        center={markerPos}
-        defaultZoom={13}
-        mapId="DEMO_MAP_ID" // Required for AdvancedMarker
-        onClick={onMapClick}
-        onCameraChanged={(ev) => {
-          // Keep track of map instance
-          if (!mapRef.current) {
-             // @ts-ignore - accessing internal map instance if needed, but usually we use ref
-          }
-        }}
-        onIdle={(ev) => {
-          // @ts-ignore
-          mapRef.current = ev.map;
-        }}
-        className="w-full h-full"
-        disableDefaultUI={true}
-        zoomControl={true}
-      >
-        <AdvancedMarker
-          position={markerPos}
-          draggable={true}
-          onDragEnd={onMarkerDragEnd}
-        />
-      </Map>
+      <ConfirmationDialog
+        open={openDialog}
+        setOpen={setOpenDialog}
+        onClick={deleteHandler}
+        isLoading={deleting}
+      />
+
+      <EditBookingForm
+        booking={selectedBooking}
+        updateBooking={updateBooking}
+        loading={updating}
+        open={openEditForm}
+        setOpen={setOpenEditForm}
+      />
     </>
+
   );
 }

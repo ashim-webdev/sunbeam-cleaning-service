@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   MdDelete,
   MdKeyboardArrowDown,
@@ -9,7 +9,7 @@ import {
   MdOutlineRestore,
 } from "react-icons/md";
 import { toast } from "sonner";
-
+import { motion, AnimatePresence } from "framer-motion";
 import Button from "../components/Button";
 import Loading from "../components/Loading";
 import Title from "../components/Title";
@@ -19,6 +19,7 @@ import Del_Res from "../components/Del_Res";
 import RestoreBtn from "../components/RestoreBtn";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import AddUser from "../components/AddUser";
+import Pagination from "../components/Pagination";
 import {
   useDeleteRestoreTaskMutation,
   useGetAllTaskQuery,
@@ -39,6 +40,8 @@ const ICONS = {
 
 const Trash = () => {
   const { LightMode } = useSelector((state) => state.auth);
+
+  const [page, setPage] = useState(1);
   
   const [openDialog, setOpenDialog] = useState(false);
   const [open, setOpen] = useState(false);
@@ -46,17 +49,24 @@ const Trash = () => {
   const [type, setType] = useState("delete");
   const [selected, setSelected] = useState("");
   const [searchParams] = useSearchParams();
-  const [searchTerm] = useState(searchParams.get("search") || "");
+  const searchTerm = searchParams.get("search") || "";
 
   const { data, isLoading, refetch } = useGetAllTaskQuery({
     strQuery: "",
     isTrashed: "true",
     search: searchTerm,
+    page,
+    limit: 10,
   });
 
   const [deleteRestoreTask, { isLoading: deleteLoading }] = useDeleteRestoreTaskMutation();
 
   const tasks = data?.tasks || [];
+
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm]);
 
 
 
@@ -164,7 +174,7 @@ const deleteRestoreHandler = async () => {
     </thead>
   );
 
-  const TableRow = ({ item }) => {
+  const TableRow = ({ item, index }) => {
   const title = item?.title;
   const textPriority = item?.priority;
   const titleShort = title.split(" ").length > 4 ? title.split(" ").slice(0, 5).join(" ") + "..." : title;
@@ -173,13 +183,22 @@ const deleteRestoreHandler = async () => {
   const addressShort = item.address.split(" ").length > 2 ? item.address.split(" ").slice(0, 2).join(" ") + "..." : item.address;
 
     return (
-    <tr className={`
-          ${LightMode 
-            ? "border-gray-300 text-gray-600 hover:bg-gray-300/50 hover:shadow-dark"
-            : "border-gray-600 text-white hover:bg-white/30 hover:shadow-light"
-          }
-          tableRow border hover:bg-gray-300/50 cursor-pointer transition-colors ease-in-out duration-300
-        `}>
+    <motion.tr
+      key={item._id}
+      initial={{ opacity: 0, x: 40 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -40 }}
+      transition={{
+        duration: 0.4,
+        delay: index * 0.1, // stagger effect
+      }}
+      className={`
+        ${LightMode 
+          ? "border-gray-300 text-gray-600 hover:bg-gray-300/50 hover:shadow-dark"
+          : "border-gray-600 text-white hover:bg-white/30 hover:shadow-light"
+        }
+        tableRow border hover:bg-gray-300/50 cursor-pointer transition-colors ease-in-out duration-300
+      `}>
       <td className='py-2 pl-4'>
         <div className='flex flex-nowrap items-center gap-2'>
           <TaskColor className={TASK_TYPE[item.stage]} />
@@ -258,19 +277,11 @@ const deleteRestoreHandler = async () => {
         `}>{new Date(item?.date).toDateString()}</td>
 
       <td className='py-2  px-6 flex flex-nowrap gap-3 justify-center'>
-        {/* <Button
-          icon={<MdOutlineRestore className='text-xl text-gray-500' />}
-          onClick={() => restoreClick(item._id)}
-        /> */}
         <RestoreBtn onClick={() => restoreClick(item._id)}/>
 
-        {/* <Button
-          icon={<MdDelete className='text-xl text-red-600' />}
-          onClick={() => deleteClick(item._id)}
-        /> */}
         <DeleteBtn onClick={() => deleteClick(item._id)}/>
       </td>
-    </tr>
+    </motion.tr>
   );
 }
 
@@ -278,18 +289,12 @@ const deleteRestoreHandler = async () => {
     <Loading />
   ) : (
     <>
-      <div className='w-full md:px-1 px-0 mb-6'>
-        <div className='flex items-center  justify-between mb-8'>
+      <div className='w-full md:px-1 px-0 mb-2 mt-2'>
+        <div className='flex items-center  justify-between mb-12'>
           <Title title='Trashed Tasks' />
 
           {tasks?.length > 0 && (
             <div className='relative flex flex-col md:flex-row mr-2 md:mr-0 gap-2 md:gap-4 items-center pl-4'>
-              {/* <Button
-                label='Restore All'
-                icon={<MdOutlineRestore className='text-lg hidden md:flex' />}
-                className='flex flex-row-reverse gap-1 items-center  text-black text-sm md:text-base rounded-md 2xl:py-2.5'
-                // onClick={() => restoreAllClick()}
-              /> */}
               <Del_Res
                 onClick={() => restoreAllClick()}
                 className={"bg-[#001fe5] hover:bg-[#000ecc] border border-[#000acc] active:border-[#0c00b2]"}
@@ -313,12 +318,6 @@ const deleteRestoreHandler = async () => {
               }/>
 
 
-              {/* <Button
-                label='Delete All'
-                icon={<MdDelete className='text-lg hidden md:flex' />}
-                className='flex flex-row-reverse gap-1 items-center  text-red-600 text-sm md:text-base rounded-md 2xl:py-2.5'
-                // onClick={() => deleteAllClick()}
-              /> */}
               <Del_Res 
                 onClick={() => deleteAllClick()}
                 className={"bg-[#e50000] hover:bg-[#cc0000] border border-[#cc0000] active:border-[#b20000]"}
@@ -412,16 +411,20 @@ const deleteRestoreHandler = async () => {
                 ? "bg-white shadow-md shadow-black/30"
                 : "bg-black/90 shadow-md shadow-white/30"
               }
+              ${data?.totalPages > 1 ? "h-168" : "h-auto"}
               px-6 py-4 shadow-md rounded transition-colors ease-in-out duration-300
             `}>
             <div className='overflow-x-auto'>
               <table className='w-full mb-5'>
                 <TableHeader />
-                <tbody>
-                  {tasks?.map((tk, id) => (
-                    <TableRow key={id} item={tk} />
-                  ))}
-                </tbody>
+
+                <AnimatePresence mode="wait">
+                  <tbody>
+                    {tasks?.map((task, index) => (
+                      <TableRow key={task._id} item={task} index={index} />
+                    ))}
+                  </tbody>
+                </AnimatePresence>
               </table>
             </div>
           </div>
@@ -436,6 +439,16 @@ const deleteRestoreHandler = async () => {
               `}>No Trashed Task</p>
           </div>
         )}
+      </div>
+
+      <div className="w-full flex justify-center items-center">
+        <span>
+          <Pagination
+            page={page}
+            setPage={setPage}
+            totalPages={data?.totalPages || 1}
+          />
+        </span>
       </div>
 
       <AddUser open={open} setOpen={setOpen} />

@@ -21,6 +21,7 @@ import Bookings from "./pages/Bookings";
 import Overview from "./pages/Overview";
 import Profile from "./pages/Profile";
 import Status from "./pages/Status";
+import LandingPage from "./pages/LandingPage";
 
 
 function Layout() {
@@ -219,6 +220,7 @@ function App() {
 
             </Route>
 
+            <Route path="/landing-page" element={<LandingPage />} />
             <Route path="/log-in" element={<Login />} />
           </Routes>
 

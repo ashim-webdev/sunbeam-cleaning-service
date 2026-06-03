@@ -17,8 +17,8 @@ import {
 import { TrendingUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion"
 import { useDispatch, useSelector } from "react-redux";
+import { useGetDashboardStatsQuery } from "../../redux/slices/api/taskApiSlice";
 import { getInitials } from "../../utils/index";
-import img2 from "../../img/m2.jpg"
 import CircularBar from "../ui/circularBar";
 
 
@@ -48,11 +48,25 @@ const Loading = () => {
 
 const AppAreaChart = () => {
   const [swap, setSwap] = useState(false);
-  const { LightMode, SelectUserDashInfo}  = useSelector((state) => state.auth);
+  const { LightMode, selectedUserInfo}  = useSelector((state) => state.auth);
+  
+  const {
+    data: summary,
+  } = useGetDashboardStatsQuery(
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
 
-  const selectedUser = SelectUserDashInfo || null;
+  // console.log("selectedUserInfo", selectedUserInfo)
 
-  console.log(selectedUser)
+  const selectedUser = selectedUserInfo || null;
+
+  const selectedUserStats =
+    summary?.users?.find(
+      (user) => user._id === selectedUser?._id
+    ) || null;
+
 
   useEffect(() => {
     setSwap(true)
@@ -78,14 +92,16 @@ const AppAreaChart = () => {
   };
 
 
-  const chartData = selectedUser?.chartData || [];
-  // console.log(chartData)
+  const chartData = selectedUserStats?.chartData || [];
 
-  const lastItem = chartData[chartData.length - 1];
+  const todoValue =
+    selectedUserStats?.summary?.todo || 0;
 
-  const todoValue = lastItem?.todo || 0;
-  const inProgressValue = lastItem?.InProgress || 0;
-  const inCompletedValue = lastItem?.completed || 0;
+  const inProgressValue =
+    selectedUserStats?.summary?.inProgress || 0;
+
+  const inCompletedValue =
+    selectedUserStats?.summary?.completed || 0;
 
 
   const todo = {
@@ -391,6 +407,7 @@ const AppAreaChart = () => {
 
 
       </div>
+      
       <div className="px-6 mb-2 w-full flex justify-center items-center">
         <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10 mt-6" />
       </div>

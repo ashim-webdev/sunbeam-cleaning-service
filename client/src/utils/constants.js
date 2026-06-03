@@ -8,4 +8,6 @@ const ADMIN_URL = "/admin";
 
 const EVENTS_URL = "/events";
 
-export { USERS_URL, TASKS_URL, ADMIN_URL, LEAVES_URL, EVENTS_URL };
+const BOOKINGS_URL = "/bookings";
+
+export { USERS_URL, TASKS_URL, ADMIN_URL, LEAVES_URL, EVENTS_URL, BOOKINGS_URL };

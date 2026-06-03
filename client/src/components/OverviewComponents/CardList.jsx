@@ -1,10 +1,12 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardFooter, CardTitle } from "../ui/card";
+import { socket } from "../../socket";
 import { Badge } from "../ui/badge";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
-import { Clock, Calendar, CheckCircle } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { Calendar, Clock, CheckCircle, XCircle, Hourglass, ChevronsUp, ChevronDown } from 'lucide-react';
 import { FaCrown } from "react-icons/fa";
 import { setSelectUserDashInfo, setUserViewInfo } from "../../redux/slices/authSlice";
 import { useGetTeamListsQuery } from "../../redux/slices/api/userApiSlice";
@@ -97,11 +99,42 @@ const EmployeeList = ({ user, title, popUpUserInfo, useInfo, index }) => {
 const LeaveRequests = ({ user, title, popUpUserInfo, useInfo }) => {
   const { LightMode, selectedUserId } = useSelector((state) => state.auth);
 
-  const { data: leaveData = [] } = useGetLeavesByUserQuery(selectedUserId, {
-    skip: !selectedUserId || typeof selectedUserId !== "string",
-  });
+  const [openRequestId, setOpenRequestId] = useState(null);
+  const [page, setPage] = useState(1);
+  
 
-  // console.log(leaveData)
+  const { data: leaveData, refetch } = useGetLeavesByUserQuery(
+    {
+      id: selectedUserId,
+      page,
+      limit: 5,
+    },
+    {
+      skip: !selectedUserId || typeof selectedUserId !== "string",
+    }
+  );
+
+
+  useEffect(() => {
+    setPage(1);
+  }, [selectedUserId]);
+
+
+  //socket.io real time update
+  useEffect(() => {
+    const handleRefresh = () => {
+      refetch();
+    };
+
+    socket.on("leaveCreated", handleRefresh);
+    socket.on("leaveUpdated", handleRefresh);
+
+    return () => {
+      socket.off("leaveCreated", handleRefresh);
+      socket.off("leaveUpdated", handleRefresh);
+    };
+  }, [refetch]);
+
 
   // helper functions (keep yours if already defined)
   const getStatusColor = (status) => {
@@ -149,8 +182,13 @@ const LeaveRequests = ({ user, title, popUpUserInfo, useInfo }) => {
   const shadow = LightMode ? "shadow-darkSM" : "shadow-lightSM";
   const changeAnimation = "transition-all duration-300 ease-in-out"
 
+
+
+  const leaves = leaveData?.leaves || [];
+  const pagination = leaveData?.pagination;
+
   // sort newest first
-  const sortedLeaves = [...leaveData].sort(
+  const sortedLeaves = [...leaves].sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
 
@@ -171,12 +209,12 @@ const LeaveRequests = ({ user, title, popUpUserInfo, useInfo }) => {
     },
   };
 
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: 20 },
-  };
 
+  const toggleSwitchArrow = (requestId) => {
+    setOpenRequestId((prev) =>
+      prev === requestId ? null : requestId
+    );
+  };
 
   return (
     <>
@@ -195,78 +233,163 @@ const LeaveRequests = ({ user, title, popUpUserInfo, useInfo }) => {
             animate="show"
             transition={{ duration: 0.9, ease: "easeInOut" }}
             exit="exit"
-            className={`w-full h-full flex flex-col gap-3`}
+            className={`w-full h-full flex flex-col gap-4`}
           >
-            {sortedLeaves.map((sortedLeaves) => (
-              <motion.div
-                key={sortedLeaves._id}
-                variants={item}
-                layout
-                className={`${bg} ${text} ${changeAnimation} border rounded-lg p-4 hover:shadow-md transition-all duration-300 cursor-pointer`}
-              >
-                <div className="relative flex flex-col gap-3">
+            <AnimatePresence mode="wait">
+              {sortedLeaves.map((sortedLeaves, index) => (
+                <motion.div
+                  key={sortedLeaves._id}
+                  initial={{ opacity: 0, x: 40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -40 }}
+                  transition={{
+                    duration: 0.5,
+                    delay: index * 0.3, // stagger effect
+                  }}
+                  className={`${bg} ${text} ${changeAnimation} border rounded-lg p-4 mt-4 hover:shadow-md transition-all duration-300 cursor-pointer`}
+                >
+                  <div className="relative flex flex-col gap-3">
 
-                  {/* TOP ROW */}
-                  <div className="flex justify-end items-end gap-3 ">
-                    {/* STATUS */}
-                    <div
-                      className={`px-2 py-1 rounded-full border text-xs flex items-center gap-1 ${shadow} ${changeAnimation} ${getStatusColor(
-                        sortedLeaves.status
-                      )}`
-                    }
-                    >
-                      {getStatusIcon(sortedLeaves.status)}
-                      {getStatusText(sortedLeaves.status)}
-                    </div>
-                  </div>
-
-                  {/* REASON */}
-                  <h4 className="font-semibold text-base -mt-6">
-                    {sortedLeaves.reason}
-                  </h4>
-
-                  {/* META */}
-                  <div className="flex gap-4 text-sm opacity-80">
-                    <div className="flex items-center gap-1">
-                      <Clock size={14} />
-                      <span>
-                        {sortedLeaves.duration}{" "}
-                        {sortedLeaves.duration === 1 ? "day" : "days"}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                      <Calendar size={14} />
-                      <span>
-                        {new Date(sortedLeaves.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* DESCRIPTION */}
-                  <p className="text-sm opacity-90 line-clamp-2">
-                    {sortedLeaves.description}
-                  </p>
-
-                  {/* MESSAGE */}
-                  {sortedLeaves.message && (
-                    <div className="mt-2 pt-2 border-t">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle size={16} className="text-blue-600" />
-                        <span className="text-xs uppercase font-semibold opacity-70">
-                          Management Comment
-                        </span>
+                    {/* TOP ROW */}
+                    <div className="flex justify-end items-end gap-3 -mt-7">
+                      {/* STATUS */}
+                      <div
+                        className={`px-2 py-1 rounded-full border text-xs flex items-center gap-1 ${shadow} ${changeAnimation} ${getStatusColor(
+                          sortedLeaves.status
+                        )}`
+                      }
+                      >
+                        {getStatusIcon(sortedLeaves.status)}
+                        {getStatusText(sortedLeaves.status)}
                       </div>
-                      <p className="text-sm mt-2 pl-4">{sortedLeaves.message}</p>
                     </div>
-                  )}
 
-                </div>
-              </motion.div>
-            ))}
+                    {/* REASON */}
+                    <h4 className="font-semibold text-base mt-0">
+                      {sortedLeaves.reason}
+                    </h4>
+
+                    {/* META */}
+                    <div className="flex gap-4 text-sm opacity-80">
+                      <div className={`flex flex-wrap items-center gap-4 text-sm ${LightMode ? "text-gray-800" : "text-gray-300"} mb-3 transition-colors duration-300 ease-in-out`}>
+                        <div className="relative flex items-center gap-1 whitespace-nowrap">
+
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleSwitchArrow(sortedLeaves._id);
+                            }}
+                            className={`${LightMode ? "bg-gray-600/80 hover:bg-gray-700" : "bg-gray-600/80 hover:bg-gray-800"} flex items-center gap-3 py-0.5 px-2 cursor-pointer rounded text-white text-xs font-medium active:scale-95 transition-all duration-300 ease-in-out`}
+                          >
+                            <span className="flex items-center gap-1">
+                            <Hourglass size={16} />
+                            <span>
+                              {sortedLeaves.duration}{" "}
+                              {sortedLeaves.duration === 1 ? "day" : "days"}
+                              </span>
+                            </span>
+                            
+                            <span className="w-full flex justify-end items-center transition-colors duration-300 ease-in-out">
+                              {openRequestId === sortedLeaves._id ? <ChevronsUp size={22} className="font-bold animate-UpDown" /> : <ChevronDown size={22} className="font-bold" />}
+                            </span>
+                          </button>
+
+                          <AnimatePresence>
+                            {openRequestId === sortedLeaves._id && (
+                              <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 10 }}
+                                transition={{ duration: 0.2 }}
+                                onMouseOver={(e) => e.stopPropagation()} 
+                                className={`
+                                  ${LightMode 
+                                    ? "bg-white shadow-darkSM text-black"
+                                    : "bg-black/90 shadow-lightSM border border-white text-white"
+                                  }
+                                  absolute top-6 -right-35 sm:-top-11 sm:-right-55 w-fit z-50 mt-3 flex flex-col justify-center items-start gap-2 rounded p-4 cursor-pointer
+                                `}
+                                >
+                                <span className="flex justify-center items-center gap-2 whitespace-nowrap">
+                                  <span className="w-8">start:</span>
+                                  <span className="flex justify-center items-center gap-1 whitespace-nowrap">
+                                    <span className="pb-0.5"><Calendar size={16} /></span>
+                                    <span>{new Date(sortedLeaves.startDate).toDateString()}
+                                    </span>
+                                  </span>
+                                </span>
+                                <div className="px-2 w-full">
+                                  <div className={`${LightMode ? "bg-linear-to-l from-gray-700/10 via-gray-800 to-gray-700/10 h-px" : "bg-linear-to-l from-gray-400/10 via-gray-500 to-gray-400/10 h-1"} w-full transition-all duration-300 ease-in-out`} />
+                                </div>
+                                <span className="flex justify-center items-center gap-2 whitespace-nowrap">
+                                  <span className="w-8">End:</span>
+                                  <span className="flex justify-center items-center gap-1 whitespace-nowrap">
+                                    <span className="pb-0.5"><Calendar size={16} /></span>
+                                    <span>{new Date(sortedLeaves.endDate).toDateString()}</span>
+                                  </span>
+                                </span>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+
+                        </div>
+                        <div className="flex items-center gap-1 whitespace-nowrap">
+                          <span className="pb-0.5"><Calendar size={16} /></span>
+                          <span>{new Date(sortedLeaves.createdAt).toDateString()}</span>
+                        </div>
+                        <div className="flex justify-center items-center gap-1 whitespace-nowrap">
+                          <Clock size={16} />
+                          <span>
+                            {formatDistanceToNow(new Date(sortedLeaves.createdAt), {
+                              addSuffix: true,
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* LINE */}
+                    <div className={`${!sortedLeaves.message ? "block" : "hidden"} px-0 w-full`}>
+                      <div className={`${LightMode ? "bg-linear-to-l from-gray-700/10 via-gray-800 to-gray-700 h-px" : "bg-linear-to-l from-gray-400/10 via-gray-500 to-gray-400 h-1"} w-full transition-all duration-300 ease-in-out`} />
+                    </div>
+
+                    {/* DESCRIPTION */}
+                    <p className="text-sm line-clamp-2 pl-2">
+                      {sortedLeaves.description}
+                    </p>
+
+                    {/* MESSAGE */}
+                    {sortedLeaves.message && (
+                      <div className="mt-2 pt-2 border-t border-blue-500">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle size={16} className="text-blue-600" />
+                          <span className="text-xs uppercase font-semibold text-black/70">
+                            Management Comment
+                          </span>
+                        </div>
+                        <p className="text-sm mt-2 pl-4">{sortedLeaves.message}</p>
+                      </div>
+                    )}
+
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </motion.div>
         </AnimatePresence>
       </div>
+
+      {pagination?.totalPages > 1 && (
+        <div className="flex justify-center item-center">
+          <span>
+            <Pagination
+              page={page}
+              setPage={setPage}
+              totalPages={pagination.totalPages}
+            />
+          </span>
+        </div>
+      )}
     </>
   )
 }
@@ -281,73 +404,75 @@ const ActiveEmployees = ({ user, title, popUpUserInfo, useInfo, index }) => {
 
   return (
     <>
-      {user.isActive && (
-        <motion.div
-        key={user._id}
-        initial={{ opacity: 0, x: 40 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -40 }}
-        transition={{
-          duration: 0.4,
-          delay: index * 0.1, // stagger effect
-        }}>
-          <Card 
-              onClick={(e) => {
-                e.stopPropagation()
-                popUpUserInfo(user)
-              }}
-              className={`${hover} ${changeAnimation} ${bg} ${text} flex-row users-center justify-between gap-4 p-4  active:scale-95 cursor-pointer`}
-            >
-              <div className="relative">
-                <div 
-                  className={clsx(
-                    "w-11 h-11 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
-                    user.isActive ? "border-green-500" : "border-red-600"
-                )}>
-                  {user?.profileImage ? 
-                    <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
-                  :
-                    <span className='text-xs md:text-sm text-center'>
-                      {getInitials(user?.name || "Unknown User")}
+      <AnimatePresence mode="wait">
+        {user.isActive && (
+          <motion.div
+            key={user._id}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{
+              duration: 0.4,
+              delay: index * 0.2, // stagger effect
+            }}>
+            <Card 
+                onClick={(e) => {
+                  e.stopPropagation()
+                  popUpUserInfo(user)
+                }}
+                className={`${hover} ${changeAnimation} ${bg} ${text} flex-row users-center justify-between gap-4 p-4  active:scale-95 cursor-pointer`}
+              >
+                <div className="relative">
+                  <div 
+                    className={clsx(
+                      "w-11 h-11 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
+                      user.isActive ? "border-green-500" : "border-red-600"
+                  )}>
+                    {user?.profileImage ? 
+                      <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                    :
+                      <span className='text-xs md:text-sm text-center'>
+                        {getInitials(user?.name || "Unknown User")}
+                      </span>
+                    }
+                  </div>
+                  {user?.isAdmin && (
+                    <span className="absolute -top-3 rotate-25 right-0">
+                      <FaCrown className="text-yellow-500 text-lg"/>
                     </span>
-                  }
+                  )}
                 </div>
-                {user?.isAdmin && (
-                  <span className="absolute -top-3 rotate-25 right-0">
-                    <FaCrown className="text-yellow-500 text-lg"/>
-                  </span>
-                )}
-              </div>
-              <CardContent className="flex-1 p-0">
-                <CardTitle className="text-sm font-medium line-clamp-1">
-                  {user.name}
-                </CardTitle>
-                <Badge variant="secondary" className="hidden sm:block">{user.title}</Badge>
-                <Badge variant="secondary" className="sm:hidden">{user.title.slice(0,10) + "..."}</Badge>
-              </CardContent>
-              <CardFooter className="pr-4 -mr-9 sm:mr-0 text-xl text-blue-600">
-                {title === "Employee's List" ?
-                  <i className="fa-solid fa-chart-simple drop-shadow-[-2px_0.5px_1px_w]"></i>
-                  :
-                  <AnimatePresence>
-                    <motion.span
-                      initial={{ opacity: 0, x: -30 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -30 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <Badge 
-                        className={`${user.isActive ? "bg-green-600" : "bg-red-600"} text-white text-[16px] shadow-darkSM`}
+                <CardContent className="flex-1 p-0">
+                  <CardTitle className="text-sm font-medium line-clamp-1">
+                    {user.name}
+                  </CardTitle>
+                  <Badge variant="secondary" className="hidden sm:block">{user.title}</Badge>
+                  <Badge variant="secondary" className="sm:hidden">{user.title.slice(0,10) + "..."}</Badge>
+                </CardContent>
+                <CardFooter className="pr-4 -mr-9 sm:mr-0 text-xl text-blue-600">
+                  {title === "Employee's List" ?
+                    <i className="fa-solid fa-chart-simple drop-shadow-[-2px_0.5px_1px_w]"></i>
+                    :
+                    <AnimatePresence>
+                      <motion.span
+                        initial={{ opacity: 0, x: -30 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -30 }}
+                        transition={{ duration: 0.5 }}
                       >
-                        {user.isActive ? "Active" : "Disabled"}
-                      </Badge>            
-                    </motion.span>
-                  </AnimatePresence>
-                }
-              </CardFooter>
-          </Card>
-        </motion.div>
-      )}
+                        <Badge 
+                          className={`${user.isActive ? "bg-green-600" : "bg-red-600"} text-white text-[16px] shadow-darkSM`}
+                        >
+                          {user.isActive ? "Active" : "Disabled"}
+                        </Badge>            
+                      </motion.span>
+                    </AnimatePresence>
+                  }
+                </CardFooter>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }
@@ -362,74 +487,76 @@ const DisabledEmployees = ({ user, title, popUpUserInfo, useInfo, index }) => {
 
   return (
     <>
-      {!user.isActive && (
-        <motion.div
-        key={user._id}
-        initial={{ opacity: 0, x: 40 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -40 }}
-        transition={{
-          duration: 0.4,
-          delay: index * 0.1, // stagger effect
-        }}>
-          <Card 
-              onClick={(e) => {
-                e.stopPropagation()
-                popUpUserInfo(user)
-              }}
-              className={`${hover} ${changeAnimation} ${bg} ${text} flex-row users-center justify-between gap-4 p-4  active:scale-95 cursor-pointer`}
-            >
-              <div className="relative">
-                <div 
-                  className={clsx(
-                    "w-11 h-11 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
-                    user.isActive ? "border-green-500" : "border-red-600"
-                )}>
-                  {user?.profileImage ? 
-                    <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
-                  :
-                    <span className='text-xs md:text-sm text-center'>
-                      {getInitials(user?.name || "Unknown User")}
+      <AnimatePresence mode="wait">
+        {!user.isActive && (
+          <motion.div
+            key={user._id}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{
+              duration: 0.4,
+              delay: index * 0.1, // stagger effect
+            }}>
+            <Card 
+                onClick={(e) => {
+                  e.stopPropagation()
+                  popUpUserInfo(user)
+                }}
+                className={`${hover} ${changeAnimation} ${bg} ${text} flex-row users-center justify-between gap-4 p-4  active:scale-95 cursor-pointer`}
+              >
+                <div className="relative">
+                  <div 
+                    className={clsx(
+                      "w-11 h-11 rounded-full border-2 flex items-center justify-center text-white text-sm shadow-inner overflow-hidden bg-blue-600",
+                      user.isActive ? "border-green-500" : "border-red-600"
+                  )}>
+                    {user?.profileImage ? 
+                      <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                    :
+                      <span className='text-xs md:text-sm text-center'>
+                        {getInitials(user?.name || "Unknown User")}
+                      </span>
+                    }
+                  </div>
+                  {user?.isAdmin && (
+                    <span className="absolute -top-3 rotate-25 right-0">
+                      <FaCrown className="text-yellow-500 text-lg"/>
                     </span>
-                  }
+                  )}
                 </div>
-                {user?.isAdmin && (
-                  <span className="absolute -top-3 rotate-25 right-0">
-                    <FaCrown className="text-yellow-500 text-lg"/>
-                  </span>
-                )}
-              </div>
-              <CardContent className="flex-1 p-0">
-                <CardTitle className="text-sm font-medium line-clamp-1">
-                  {user.name}
-                </CardTitle>
-                <Badge variant="secondary" className="hidden sm:block">{user.title}</Badge>
-                <Badge variant="secondary" className="sm:hidden">{user.title.slice(0,10) + "..."}</Badge>
-              </CardContent>
-              <CardFooter className="pr-4 -mr-9 sm:mr-0 text-xl text-blue-600">
-                {title === "Employee's List" ?
-                  <i className="fa-solid fa-chart-simple drop-shadow-[-2px_0.5px_1px_w]"></i>
-                  :
-                  <AnimatePresence>
-                    <motion.span
-                      initial={{ opacity: 0, x: -30 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -30 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <Badge 
-                        
-                        className={`${user.isActive ? "bg-green-600" : "bg-red-600"} text-white text-[16px] shadow-darkSM`}
+                <CardContent className="flex-1 p-0">
+                  <CardTitle className="text-sm font-medium line-clamp-1">
+                    {user.name}
+                  </CardTitle>
+                  <Badge variant="secondary" className="hidden sm:block">{user.title}</Badge>
+                  <Badge variant="secondary" className="sm:hidden">{user.title.slice(0,10) + "..."}</Badge>
+                </CardContent>
+                <CardFooter className="pr-4 -mr-9 sm:mr-0 text-xl text-blue-600">
+                  {title === "Employee's List" ?
+                    <i className="fa-solid fa-chart-simple drop-shadow-[-2px_0.5px_1px_w]"></i>
+                    :
+                    <AnimatePresence>
+                      <motion.span
+                        initial={{ opacity: 0, x: -30 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -30 }}
+                        transition={{ duration: 0.5 }}
                       >
-                        {user.isActive ? "Active" : "Disabled"}
-                      </Badge>            
-                    </motion.span>
-                  </AnimatePresence>
-                }
-              </CardFooter>
-          </Card>
-        </motion.div>
-      )}
+                        <Badge 
+                          
+                          className={`${user.isActive ? "bg-green-600" : "bg-red-600"} text-white text-[16px] shadow-darkSM`}
+                        >
+                          {user.isActive ? "Active" : "Disabled"}
+                        </Badge>            
+                      </motion.span>
+                    </AnimatePresence>
+                  }
+                </CardFooter>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }
@@ -519,7 +646,7 @@ const CardList = ({
     }
   );
 
-  // console.log(data)
+  // console.log("data", data)
   
 
   const users = data?.users || []

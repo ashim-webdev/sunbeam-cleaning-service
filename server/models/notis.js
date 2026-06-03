@@ -34,7 +34,7 @@ const noticeSchema = new Schema(
 
     refModel: {
       type: String,
-      enum: ["Task", "Leave", "Event"],
+      enum: ["Task", "Leave", "Event", "Booking"],
     },
 
     notificationType: {
@@ -46,6 +46,7 @@ const noticeSchema = new Schema(
         "todo",
         "leave",
         "event",
+        "booking",
       ],
       default: "task",
     },

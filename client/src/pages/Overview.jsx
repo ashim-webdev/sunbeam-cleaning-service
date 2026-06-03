@@ -12,6 +12,7 @@ import ViewUserProfile from "../components/ProfileComponents/viewUserProfile";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import ProfileCard from "../components/ProfileComponents/ProfileCard";
 import AddUser from "../components/AddUser";
+import BookingAnalytics from "../components/OverviewComponents/BookingAnalytics"; 
 
 const Overview = () => {
   const { LightMode, selectedUserInfo, selectedUserId, userViewInfo } = useSelector((state) => state.auth);
@@ -66,13 +67,25 @@ const Overview = () => {
   
   return (
     <div className="flex flex-col gap-4 mb-4 h-auto w-full overflow-x-hidden">
+      <div className={`${bg} ${changeAnimation} w-full h-full flex justify-center items-center py-4 rounded-lg col-span-1 overflow-hidden`}>
+        <BookingAnalytics />
+      </div>
+
+      <div className="px-12 -mb-1.5 w-full flex justify-center items-center">
+        <div className={`${LightMode ? "bg-linear-to-l from-green-400/10 via-green-600 to-green-400/10" : "bg-linear-to-l from-white/30 via-white to-white/10"} w-full h-0.5`} />
+      </div>
+
       <div className="p-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-2 gap-4">
-        <div className={`${bg} ${changeAnimation} w-full h-full px-4 pt-6 pb-4 rounded-lg col-span-1`}>
+        <div className={`${bg} ${changeAnimation} w-full h-full px-4 pt-6 pb-4 rounded-lg col-span-1 overflow-hidden`}>
           <AppBarChart />
         </div>
-        <div className={`${bg} ${changeAnimation} w-full h-full px-4 pt-6 pb-4 rounded-lg col-span-1`}>
+        <div className={`${bg} ${changeAnimation} w-full h-full px-4 pt-6 pb-4 rounded-lg col-span-1 overflow-hidden`}>
           <AppPieChart />
         </div>
+      </div>
+
+      <div className="px-12 -mt-1 mb-1.5 w-full flex justify-center items-center">
+        <div className={`${LightMode ? "bg-linear-to-l from-green-400/10 via-green-600 to-green-400/10" : "bg-linear-to-l from-white/30 via-white to-white/10"} w-full h-0.5`} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-2 gap-4 w-full">
@@ -97,12 +110,23 @@ const Overview = () => {
             </div>
           </div>
         </div>
-        <div className={`${areaChartBg} backdrop-blur-[2px] border border-blue-200/30 shadow-lg shadow-blue-500/20 h-full py-4 px-4 pt-6 pb-4  rounded-lg col-span-1`}>
+
+        <div className={`${areaChartBg} backdrop-blur-[2px] border border-blue-200/30 shadow-lg shadow-blue-500/20 h-full py-4 px-4 pt-6 pb-4 rounded-lg col-span-1`}>
           <AppAreaChart />
         </div>
-        <div className={`${bg} ${changeAnimation} h-full px-4 pt-6 pb-4 rounded-lg col-span-1`}>
+
+        <div className={`${bg} ${changeAnimation} relative h-full px-8 pt-6 pb-4 rounded-lg col-span-1`}>
           <CardList title="Employee Leave Requests" subtitle="Click to view employee stats" />
+
+          <div className="absolute -top-2.5 right-0 left-0 px-12 w-full flex justify-center items-center">
+            <div className={`w-full h-0.5 ${LightMode ? "bg-linear-to-l from-green-400/10 via-green-600 to-green-400/10" : "bg-linear-to-l from-white/30 via-white to-white/10"} `} />
         </div>
+        </div>
+      </div>
+
+
+      <div className="px-12 mt-1.5 mb-1.5 w-full flex justify-center items-center">
+        <div className={`w-full h-0.5 ${LightMode ? "bg-linear-to-l from-green-400/10 via-green-600 to-green-400/10" : "bg-linear-to-l from-white/30 via-white to-white/10"} `} />
       </div>
 
 

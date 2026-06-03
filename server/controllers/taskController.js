@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import Notice from "../models/notis.js";
 import Task from "../models/taskModel.js";
 import User from "../models/userModel.js";
+import Booking from "../models/bookingModel.js";
 import cloudinary from "../utils/cloudinary.js";
 import {
   canAccessTask,
@@ -1853,8 +1854,163 @@ const dashboardStatistics = asyncHandler(async (req, res) => {
 
     const users = await User.find({})
       .select("name title role isActive email profileImage createdAt isAdmin tiktok x whatsApp telegram")
+      .lean()
       .limit(100)
       .sort({ _id: -1 });
+
+
+    // Single User Monthly Analytics
+    const usersWithStats = users.map((user) => {
+      const userTasks = allTasks.filter((task) => {
+        const members =
+          task.team?.members?.map((m) => m._id?.toString()) || [];
+
+        const leader = task.team?.leader?._id?.toString();
+
+        return (
+          members.includes(user._id.toString()) ||
+          leader === user._id.toString()
+        );
+      });
+
+      const summary = {
+        todo: 0,
+        inProgress: 0,
+        completed: 0,
+      };
+
+      const chartData = [];
+
+      const now = new Date();
+
+      for (let i = 4; i >= 0; i--) {
+        const date = new Date(
+          now.getFullYear(),
+          now.getMonth() - i,
+          1
+        );
+
+        const monthName = date.toLocaleString("default", {
+          month: "short",
+        });
+
+        const monthTasks = userTasks.filter((task) => {
+          const taskDate = new Date(task.createdAt);
+
+          return (
+            taskDate.getMonth() === date.getMonth() &&
+            taskDate.getFullYear() === date.getFullYear()
+          );
+        });
+
+        const monthStats = {
+          month: monthName,
+          todo: 0,
+          InProgress: 0,
+          completed: 0,
+        };
+
+        monthTasks.forEach((task) => {
+          if (task.stage === "todo") {
+            monthStats.todo++;
+            summary.todo++;
+          }
+
+          else if (task.stage === "in progress") {
+            monthStats.InProgress++;
+            summary.inProgress++;
+          }
+
+          else if (task.stage === "completed") {
+            monthStats.completed++;
+            summary.completed++;
+          }
+        });
+
+        chartData.push(monthStats);
+      }
+
+      return {
+        ...user,
+        chartData,
+        summary,
+      };
+    });
+
+
+    // General Monthly Analytics
+    const generalChartData = [];
+
+    const now = new Date();
+
+    for (let i = 4; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+
+      const monthName = date.toLocaleString("default", { month: "short" });
+
+      const monthTasks = allTasks.filter((task) => {
+        const taskDate = new Date(task.createdAt);
+
+        return (
+          taskDate.getMonth() === date.getMonth() &&
+          taskDate.getFullYear() === date.getFullYear()
+        );
+      });
+
+      const monthStats = {
+        month: monthName,
+        todo: 0,
+        inProgress: 0,
+        completed: 0,
+      };
+
+      monthTasks.forEach((task) => {
+        if (task.stage === "todo") monthStats.todo++;
+        else if (task.stage === "in progress") monthStats.inProgress++;
+        else if (task.stage === "completed") monthStats.completed++;
+      });
+
+      generalChartData.push(monthStats);
+    }
+
+
+
+
+      // Booking Analytics
+      const currentMonthStart = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        1
+      );
+
+      const nextMonthStart = new Date(
+        now.getFullYear(),
+        now.getMonth() + 1,
+        1
+      );
+
+      const lastMonthStart = new Date(
+        now.getFullYear(),
+        now.getMonth() - 1,
+        1
+      );
+
+      const thisMonthBookings = await Booking.countDocuments({
+        createdAt: {
+          $gte: currentMonthStart,
+          $lt: nextMonthStart,
+        },
+      });
+
+      const lastMonthBookings = await Booking.countDocuments({
+        createdAt: {
+          $gte: lastMonthStart,
+          $lt: currentMonthStart,
+        },
+      });
+      // End Booking Analytics
+
+
 
     // Group tasks by stage and calculate counts
     const groupedTasks = allTasks?.reduce((result, task) => {
@@ -1890,9 +2046,15 @@ const dashboardStatistics = asyncHandler(async (req, res) => {
     const summary = {
       totalTasks,
       recentTasks,
-      users: users,
+      users: usersWithStats,
       tasks: groupedTasks,
       graphData,
+      generalChartData, // 👈 add this
+
+      bookingAnalytics: {
+        thisMonth: thisMonthBookings,
+        lastMonth: lastMonthBookings,
+      },
 
       pagination: {
         page,
@@ -1903,6 +2065,8 @@ const dashboardStatistics = asyncHandler(async (req, res) => {
         hasPrevPage: page > 1,
       },
     };
+
+    // console.log(usersWithStats)
 
     res
       .status(200)

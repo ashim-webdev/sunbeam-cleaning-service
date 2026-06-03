@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { useId } from "react";
+import { RefreshCw } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
+import { PRIORITY_STYLES } from "../../utils/index";
 
 
 
@@ -15,6 +17,7 @@ export default function CircularProgressBar({
   subLabel,
   textSize,
   className = "",
+  icon,
   animationDuration = 1.5,
 }) {
   const { LightMode }  = useSelector((state) => state.auth);
@@ -24,6 +27,7 @@ export default function CircularProgressBar({
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (progress / 100) * circumference;
+  const cycles = Math.floor(progress / 100);
 
 
   const text = LightMode ? "text-black" : "text-white"
@@ -110,9 +114,72 @@ export default function CircularProgressBar({
           <span className="text-[8px] font-mono tracking-[0.2em] uppercase mt-0.5">
             {label || "Processing"}
           </span>
-          <span className="absolute -top-5 text-[10px] font-mono tracking-[0.3em]  uppercase opacity-80 mb-2 whitespace-nowrap">
-            {subLabel}
-          </span>
+          <div className={`absolute -top-5 flex items-center gap-1 text-[10px] font-mono tracking-[0.2em] uppercase opacity-80 whitespace-nowrap`}>
+            <span className={`${PRIORITY_STYLES[subLabel]} text-[16px]`}>
+              {icon}
+            </span>
+            <span className={`${text} ${changeAnimation} font-semibold `}>{subLabel}</span>
+          </div>
+
+          {cycles > 0 && (
+            <span className={`${text} ${changeAnimation} absolute bottom-0 -right-5 text-xs flex justify-start items-center gap-0.5`}>
+              <span>{cycles}</span>
+              <span><RefreshCw size={12} /></span>
+            </span>
+          )}
+
+
+          {/* ThisMonth / LastMonth bottom text */}
+          {trackColor === "#bbf7d0" || trackColor === "#9ca3af" ? (
+            <span className={`${text} ${changeAnimation} absolute -bottom-5.5 right-0 left-0  text-xs flex justify-center items-center gap-0.5`}>
+              <span>
+                {trackColor === "#bbf7d0" 
+                  ?
+                  "This Month"
+                  :
+                  trackColor === "#9ca3af"
+                  ?
+                  "Last Month"
+                  : 
+                  ""
+                }
+              </span>
+            </span>
+          ) : 
+            trackColor === "#9ea1a7" || trackColor === "#292cf563" ? (
+              <>
+                <span className={`${text} ${changeAnimation} absolute md:hidden -bottom-5.5 right-0 left-0 text-xs flex justify-center items-center gap-0.5 whitespace-nowrap`}>
+                  <span>
+                    {trackColor === "#9ea1a7" 
+                      ?
+                      "Previous Month Bookings"
+                      :
+                      trackColor === "#292cf563"
+                      ?
+                      "Current Month Bookings"
+                      : 
+                      ""
+                    }
+                  </span>
+                </span>
+
+                <span className={`absolute md:block hidden ${text} ${changeAnimation} ${trackColor === "#9ea1a7" ? "top-9 -left-55" : "top-9 -right-52"} text-lg flex justify-center items-center gap-0.5 whitespace-nowrap`}>
+                  <span>
+                    {trackColor === "#9ea1a7" 
+                      ?
+                      "Previous Month Bookings"
+                      :
+                      trackColor === "#292cf563"
+                      ?
+                      "Current Month Bookings"
+                      : 
+                      ""
+                    }
+                  </span>
+                </span>
+              </>
+            ) : null
+          }
         </div>
       </div>
     </div>

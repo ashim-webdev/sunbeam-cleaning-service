@@ -137,9 +137,6 @@ const Users = () => {
     }
   };
 
-  // useEffect(() => {
-  //   refetch();
-  // }, [open]);
 
   const toggleSocial = (id) => {
     setShowSocial(prev => (prev === id ? null : id))
@@ -177,17 +174,17 @@ const Users = () => {
         duration: 0.4,
         delay: index * 0.1, // stagger effect
       }}
-        onClick={(e) => {
-          e.stopPropagation()
-          viewProfileInfo(user)
-        }} 
-        className={`
-          ${LightMode 
-            ? "border-gray-300 text-gray-600 hover:bg-gray-300/50 hover:shadow-dark"
-            : "border-gray-600 text-white/70 hover:bg-white/30 hover:shadow-light"
-          }
-          tableRow border hover:bg-gray-300/50  transition-colors ease-in-out duration-300 cursor-pointer
-        `}>
+      onClick={(e) => {
+        e.stopPropagation()
+        viewProfileInfo(user)
+      }} 
+      className={`
+        ${LightMode 
+          ? "border-gray-300 text-gray-600 hover:bg-gray-300/50 hover:shadow-dark"
+          : "border-gray-600 text-white/70 hover:bg-white/30 hover:shadow-light"
+        }
+        tableRow border hover:bg-gray-300/50  transition-colors ease-in-out duration-300 cursor-pointer
+      `}>
       <td   
         className='p-2'
       >

@@ -82,3 +82,67 @@ export const emitEventDeleted = (eventId) => {
 
   io.emit("eventDeleted", eventId);
 };
+
+
+
+
+
+export const emitBookingCreated = ({
+  booking,
+  recipients,
+}) => {
+  const io = getIO();
+
+  recipients.forEach((userId) => {
+    const socketId = onlineUsers.get(
+      userId.toString()
+    );
+
+    if (socketId) {
+      io.to(socketId).emit(
+        "bookingCreated",
+        booking
+      );
+    }
+  });
+};
+
+export const emitBookingUpdated = ({
+  booking,
+  recipients,
+}) => {
+  const io = getIO();
+
+  recipients.forEach((userId) => {
+    const socketId = onlineUsers.get(
+      userId.toString()
+    );
+
+    if (socketId) {
+      io.to(socketId).emit(
+        "bookingUpdated",
+        booking
+      );
+    }
+  });
+};
+
+export const emitBookingDeleted = ({
+  bookingId,
+  recipients,
+}) => {
+  const io = getIO();
+
+  recipients.forEach((userId) => {
+    const socketId = onlineUsers.get(
+      userId.toString()
+    );
+
+    if (socketId) {
+      io.to(socketId).emit(
+        "bookingDeleted",
+        bookingId
+      );
+    }
+  });
+};

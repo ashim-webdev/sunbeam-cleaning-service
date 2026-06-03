@@ -16,13 +16,17 @@ export const leaveApiSlice = apiSlice.injectEndpoints({
 
     // admin get all
     getAllLeaves: builder.query({
-      query: () => `${LEAVES_URL}`,
+      query: (page = 1) => ({
+        url: `${LEAVES_URL}?page=${page}`,
+      }),
       providesTags: ["Leave"],
     }),
 
     // user get own
     getMyLeaves: builder.query({
-      query: () => `${LEAVES_URL}/my`,
+      query: (page = 1) => ({
+        url: `${LEAVES_URL}/my?page=${page}`,
+      }),
       providesTags: ["Leave"],
     }),
 
@@ -38,9 +42,10 @@ export const leaveApiSlice = apiSlice.injectEndpoints({
 
     // get user leave request by user id
     getLeavesByUser: builder.query({
-      query: (id) => ({
-        url: `${LEAVES_URL}/user/${id}`,
+      query: ({ id, page = 1, limit = 5 }) => ({
+        url: `${LEAVES_URL}/user/${id}?page=${page}&limit=${limit}`,
       }),
+      providesTags: ["Leave"],
     }),
 
   }),

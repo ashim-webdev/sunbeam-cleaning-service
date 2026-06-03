@@ -83,11 +83,11 @@ const Pagination = ({ page, setPage, totalPages }) => {
           onClick={() => setPage((p) => Math.max(p - 1, 1))}
           disabled={page === 1}
           className={`
-            ${LightMode ? "shadow-darkSM" : "shadow-lightSM bg-black/80"}
+            ${LightMode ? "shadow-darkSM" : "shadow-lightSM bg-black/80 border border-white"}
             hidden sm:block cursor-pointer px-3 py-1 rounded-md text-sm hover:scale-103 active:scale-95
             disabled:opacity-40 disabled:cursor-not-allowed
             hover:bg-blue-700 hover:text-white
-            transition-all duration-300 
+            transition-all duration-300 ease-in-out 
           `}
         >
           <span>Prev</span>
@@ -102,6 +102,7 @@ const Pagination = ({ page, setPage, totalPages }) => {
                 ${LightMode ? "text-black" : "text-white"}
                 px-2
                 select-none
+                transition-all duration-300 ease-in-out
               `}
             >
               ...
@@ -113,11 +114,11 @@ const Pagination = ({ page, setPage, totalPages }) => {
               className={`
                 w-8 h-8
                 px-3 py-1 cursor-pointer text-sm flex justify-center items-center rounded-md
-                transition-all duration-300
+                transition-all duration-300 ease-in-out
                 ${
                   page === p
                     ? `${LightMode ? "shadow-darkSM" : "shadow-lightSM"}  bg-blue-700 text-white border border-white scale-105`
-                    : "hover:bg-blue-700 hover:text-white hover:scale-105 active:scale-95"
+                    : "hover:bg-blue-700 hover:text-white hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out"
                 }
               `}
             >
@@ -133,11 +134,11 @@ const Pagination = ({ page, setPage, totalPages }) => {
           }
           disabled={page === totalPages}
           className={`
-            ${LightMode ? "shadow-darkSM" : "shadow-lightSM bg-black/80"}
+            ${LightMode ? "shadow-darkSM" : "shadow-lightSM bg-black/80 border border-white"}
             hidden sm:block cursor-pointer px-3 py-1 rounded-md text-sm hover:scale-103 active:scale-95
             disabled:opacity-40 disabled:cursor-not-allowed
             hover:bg-blue-700 hover:text-white
-            transition-all duration-300
+            transition-all duration-300 ease-in-out
           `}
         >
           <span>Next</span>
@@ -155,7 +156,7 @@ const Pagination = ({ page, setPage, totalPages }) => {
             sm:hidden cursor-pointer px-3 py-1 rounded-md text-sm hover:scale-103 active:scale-95
             disabled:opacity-40 disabled:cursor-not-allowed
             hover:bg-blue-70
-            transition-all duration-300 
+            transition-all duration-300 ease-in-out
           `}
         >
           <span className="sm:hidden"><ChevronLeft size={22} className="font-bold" /></span>
@@ -173,7 +174,7 @@ const Pagination = ({ page, setPage, totalPages }) => {
             sm:hidden cursor-pointer px-3 py-1 rounded-md text-sm hover:scale-103 active:scale-95
             disabled:opacity-40 disabled:cursor-not-allowed
             hover:bg-blue-700
-            transition-all duration-300
+            transition-all duration-300 ease-in-out
           `}
         >
           <span className="sm:hidden"><ChevronRight size={22} className="font-bold" /></span>

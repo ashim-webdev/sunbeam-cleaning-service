@@ -100,7 +100,7 @@ const ProfileCard = ({
   }, [freshUser]);
 
 
-  const cardBg = LightMode ? "bg-white text-gray-700 shadow-darkSM" :  "bg-black/90 text-gray-200 shadow-lightSM"
+  const cardBg = LightMode ? "bg-white text-gray-700 shadow-darkSM" :  "bg-black/90 text-gray-200 shadow-lightSM border border-white"
   const cancel = LightMode ? "bg-white hover:bg-stone-100 border-stone-600" : "bg-gray-600 hover:bg-gray-700"
   const changeAnimation = "transition-all duration-300 ease-in-out"
   const badge = LightMode ? "text-black bg-white/50 border border-black/30 shadow-darkSM" : "text-white border border-white/50 bg-blue-800/40 shadow-lightSM"

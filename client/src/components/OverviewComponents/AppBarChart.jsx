@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion"
 import {
   ChartContainer,
   ChartLegend,
@@ -13,6 +14,12 @@ import {
   TrendingDown,
 } from "lucide-react";
 import {
+  MdKeyboardDoubleArrowDown,
+  MdKeyboardArrowDown,
+  MdKeyboardArrowUp,
+  MdKeyboardDoubleArrowUp,
+} from "react-icons/md";
+import {
   Bar,
   BarChart,
   CartesianGrid,
@@ -21,130 +28,159 @@ import {
   Cell, // ✅ added
 } from "recharts";
 import { useDispatch, useSelector } from "react-redux";
-
+import { useGetDashboardStatsQuery } from "../../redux/slices/api/taskApiSlice";
 import CircularBar from "../ui/circularBar";
 
 
-const chartData = [
-  { month: "November", thisYear: 90, lastYear: 80 },
-  { month: "December", thisYear: 32, lastYear: 200 },
-  { month: "January", thisYear: 92, lastYear: 100 },
-  { month: "February", thisYear: 73, lastYear: 87 },
-  { month: "March", thisYear: 97, lastYear: 99 },
-  { month: "April", thisYear: 22, lastYear: 45 },
-];
 
-// ✅ this stays (you already did it correctly)
-const coloredData = chartData.map((item) => {
-  const thisVal = item.thisYear;
-  const lastVal = item.lastYear;
 
-  const thisYearColor =
-    thisVal > lastVal ? "#22c55e" : thisVal < lastVal ? "#ef4444" : "gray";
+const Loading = () => {
+  const { LightMode }  = useSelector((state) => state.auth);
 
-  const lastYearColor =
-    thisVal > lastVal ? "#ef4444" : thisVal < lastVal ? "#22c55e" : "gray";
+  const smallLoader = LightMode ? "dot-spinner" : "dot-spinnerDark"
 
-  return {
-    ...item,
-    thisYearColor,
-    lastYearColor,
-  };
-});
+  return (
+    <>
+      <div className={`${smallLoader} transition-colors duration-300 ease-in-out animate-UpDown`}>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+        <div className="dot-spinner__dot"></div>
+      </div>
+    </>
+  )
+}
 
-// ❌ removed color from here (important)
-const chartConfig = {
-  thisYear: {
-    label: "This Year",
-    color: "#60A5FA",
-  },
-  lastYear: {
-    label: "Last Year",
-    color: "#3B82F6",
-  },
+// Label icons
+const ICONS = {
+  high: <MdKeyboardDoubleArrowUp />,
+  medium: <MdKeyboardArrowUp />,
+  low: <MdKeyboardDoubleArrowDown />,
+  normal: <MdKeyboardArrowDown />
 };
 
-const lastYearValue = chartData.length
-  ? chartData[chartData.length - 1].lastYear
-  : null;
 
-const thisYearValue = chartData.length
-  ? chartData[chartData.length - 1].thisYear
-  : null;
+  const chartConfig = {
+    todo: { label: "Todo", color: "#0004ff" },
+    inProgress: { label: "In Progress", color: "#FFA500" },
+    completed: { label: "Completed", color: "#4CAF50" },
+  }
 
-const lastYear = {
-  progress: lastYearValue,
-  size: 100,
-  strokeWidth: 15,
-  textSize: "text-xl",
-  colorOne: "#00f2ff",
-  colorTwo: "#8a2be2",
-  trackColor: "#00f2ff",
-  subLabel: "Last Year",
-};
-
-const thisYear = {
-  progress: thisYearValue,
-  size: 100,
-  strokeWidth: 15,
-  textSize: "text-xl",
-  colorOne: "#00f2ff",
-  colorTwo: "#8a2be2",
-  trackColor: "#00f2ff",
-  subLabel: "This Year",
-};
 
 
 const CustomTooltip = ({ active, payload, label }) => {
-  const { LightMode }  = useSelector((state) => state.auth);
-  
-  if (!active || !payload || !payload.length) return null;
+  const { LightMode } = useSelector((state) => state.auth);
 
-  const thisYear = payload.find((p) => p.dataKey === "thisYear")?.value;
-  const lastYear = payload.find((p) => p.dataKey === "lastYear")?.value;
+  if (!active || !payload?.length) return null;
 
-  const isThisHigher = thisYear > lastYear;
-
-  const bg = LightMode ? "bg-white shadow-darkSM" : "bg-black/80 shadow-lightSM"
-  const text = LightMode ? "text-black" : "text-white"
-  const changeAnimation = "transition-all duration-300 ease-in-out"
-
+  const bg = LightMode ? "bg-white shadow-darkSM" : "bg-black/80 shadow-lightSM";
+  const text = LightMode ? "text-black" : "text-white";
 
   return (
-    <div className={`${bg} ${text} ${changeAnimation} border rounded-md p-3 text-sm`}>
-      <p className="font-medium mb-2">{label}</p>
-
-      <div className="flex justify-between gap-4">
-        <span className="flex justify-between gap-2 items-center">
-          <span
-            className={clsx(
-              "w-4 h-4 rounded-full flex items-center justify-center shadow-inner",
-              isThisHigher ? "bg-green-500" : "bg-red-500"
-            )}
-          /> 
-          <span><span className="mr-4">This Year:</span> {thisYear}</span>
-          <span>{isThisHigher ? <TrendingUp className={isThisHigher ? "text-green-500" : "text-red-500"} /> : <TrendingDown className={isThisHigher ? "text-green-500" : "text-red-500"} />}</span>
-        </span>
+    <div className={`${bg} ${text} relative p-3 rounded-md text-sm px-4 transition-all duration-300 ease-in-out`}>
+      <p className="text-center mb-2 font-extrabold">{label}</p>
+      
+      <div className="absolute top-0 right-0 left-0 px-1 w-full flex justify-center items-center">
+        <div className="w-full h-0.5 bg-linear-to-l from-blue-400/30 via-blue-600 to-blue-300/30" />
       </div>
 
-      <div className="flex justify-between gap-4 mt-1">
-        <span className="flex justify-between items-center gap-2">
-          <span
-            className={clsx(
-              "w-4 h-4 rounded-full flex items-center justify-center shadow-inner",
-              !isThisHigher ? "bg-green-500" : "bg-red-500"
-            )}
-          /> 
-          <span><span className="mr-4">Last Year:</span> {lastYear}</span>
-          <span>{!isThisHigher ? <TrendingUp className={!isThisHigher ? "text-green-500" : "text-red-500"} /> : <TrendingDown className={!isThisHigher ? "text-green-500" : "text-red-500"} />}</span>
+      <p className="flex justify-start items-center gap-2">
+        <span className="flex justify-center items-center">
+          <span className='DuplicateDot bg-[#0004ff] w-3 h-3 px-1 rounded-full whitespace-nowrap shadow-inner' />
         </span>
-      </div>
+        <span>
+          Todo: {payload[0]?.payload?.todo}
+        </span>
+      </p>
+
+      <p className="flex justify-start items-center gap-2">
+        <span className="flex justify-center items-center">
+          <span className='DuplicateDot bg-[#FFA500] w-3 h-3 px-1 rounded-full whitespace-nowrap shadow-inner' />
+        </span>
+        <span>
+          In Progress: {payload[0]?.payload?.inProgress}
+        </span>
+      </p>
+
+      <p className="flex justify-start items-center gap-2">
+        <span className="flex justify-center items-center">
+          <span className='DuplicateDot bg-[#4CAF50] w-3 h-3 px-1 rounded-full whitespace-nowrap shadow-inner' />
+        </span>
+        <span>
+          Completed: {payload[0]?.payload?.completed}
+        </span>
+      </p>
+
     </div>
   );
 };
 
+
+
+
+
+
 const AppBarChart = () => {
   const { LightMode }  = useSelector((state) => state.auth);
+
+  const {
+    data: summary,
+    isLoading,
+    refetch,
+  } = useGetDashboardStatsQuery(
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
+
+
+  // console.log(summary)
+  
+  const monthlyData = summary?.generalChartData || [];
+
+  const lastMonth = monthlyData[monthlyData.length - 2];
+  const thisMonth = monthlyData[monthlyData.length - 1];
+
+  const completionData = [
+    {
+      name: lastMonth?.month || "Last Month",
+      total: lastMonth?.completed || 0,
+    },
+    {
+      name: thisMonth?.month || "This Month",
+      total: thisMonth?.completed || 0,
+    },
+  ];
+
+
+
+  // Refetch Data immediately after mid night every ending of a month
+  useEffect(() => {
+    const now = new Date();
+
+    const nextMonth = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      1,
+      0,
+      0,
+      1
+    );
+
+    const timeout = nextMonth.getTime() - now.getTime();
+
+    const timer = setTimeout(() => {
+      refetch();
+    }, timeout);
+
+    return () => clearTimeout(timer);
+  }, [refetch]);
+
+
 
   const [mounted, setMounted] = useState(false);
 
@@ -158,80 +194,159 @@ const AppBarChart = () => {
   const text = LightMode ? "text-black" : "text-white"
   const changeAnimation = "transition-all duration-300 ease-in-out"
 
+
+  if (!isLoading && monthlyData === 0) {
+    return (
+      <div
+        className={`h-full flex flex-col justify-center items-center ${text} ${changeAnimation}`}
+      >
+        <h2 className="text-lg font-semibold">
+          No data yet!
+        </h2>
+
+        <p className="text-sm opacity-70 mt-1">
+          Create some tasks to see analytics.
+        </p>
+      </div>
+    );
+  }
+  
+
   return (
     <>
       <div className={`${text} ${changeAnimation}`}>
-        <h1 className="text-lg font-medium mb-6">Task Comparison</h1>
+        <h1 className="text-lg font-medium mb-2">Task Comparison</h1>
 
-        <div className="h-full w-full">
-          <ChartContainer config={chartConfig}>
-            {/* ✅ use coloredData here */}
-            <BarChart data={coloredData}>
-              <CartesianGrid vertical={false} />
+        {isLoading ? (
+          <div className="h-90 flex justify-center items-center">
+            <Loading />
+          </div>
+        ) : (
+          <AnimatePresence>
+            <motion.div 
+              initial={{ opacity: 0, x: -80 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{
+                delay: 0.5,
+                type: "spring",
+                stiffness: 60,
+                damping: 14,
+                mass: 1.2,
+              }}
+              className="h-full w-full my-11">
+              <ChartContainer config={chartConfig}>
+                {/* ✅ use coloredData here */}
+                <BarChart data={monthlyData}>
+                  <CartesianGrid vertical={false} />
 
-              <XAxis
-                dataKey="month"
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-                tickFormatter={(value) => value.slice(0, 3)}
-                tick={{
-                  fill: `${chartXYAxis}`
-                }}
-              />
-
-              <YAxis 
-                tickLine={false}
-                tickMargin={10} 
-                axisLine={false}
-                tick={{
-                  fill: `${chartXYAxis}`
-                }}
-              />
-
-              {/* <ChartTooltip 
-                cursor={{ fill: LightMode ? "#00000010" : "#eac80a" }}
-                content={<CustomTooltip />}
-              /> */}
-              <Tooltip
-                cursor={{
-                  fill: LightMode ? "rgba(0,0,0,0.1)" : "#3B82F620"
-                }}
-                content={<CustomTooltip />}
-              />
-              <ChartLegend content={<ChartLegendContent />} />
-
-              {/* ✅ THIS MONTH BAR */}
-              <Bar dataKey="thisYear" radius={4} fill="#4CAF50">
-                {coloredData.map((entry, index) => (
-                  <Cell
-                    key={`this-${index}`}
-                    fill={entry.thisYearColor}
+                  <XAxis
+                    dataKey="month"
+                    tickLine={false}
+                    tickMargin={10}
+                    axisLine={false}
+                    tickFormatter={(value) => value.slice(0, 3)}
+                    tick={{
+                      fill: `${chartXYAxis}`
+                    }}
                   />
-                ))}
-              </Bar>
 
-              {/* ✅ LAST MONTH BAR */}
-              <Bar dataKey="lastYear" radius={4} fill="#D30055">
-                {coloredData.map((entry, index) => (
-                  <Cell
-                    key={`last-${index}`}
-                    fill={entry.lastYearColor}
+                  <YAxis 
+                    tickLine={false}
+                    tickMargin={10} 
+                    axisLine={false}
+                    tick={{
+                      fill: `${chartXYAxis}`
+                    }}
                   />
-                ))}
-              </Bar>
-            </BarChart>
-          </ChartContainer>
-        </div>
+
+                  <Tooltip
+                    cursor={{
+                      fill: LightMode ? "rgba(0,0,0,0.1)" : "#3B82F620"
+                    }}
+                    content={<CustomTooltip />}
+                  />
+                  <ChartLegend content={<ChartLegendContent />} />
+
+                  <Bar dataKey="todo" fill="#0004ff" radius={4} />
+                  <Bar dataKey="inProgress" fill="#FFA500" radius={4} />
+                  <Bar dataKey="completed" fill="#4CAF50" radius={4} />
+
+                </BarChart>
+              </ChartContainer>
+            </motion.div>
+          </AnimatePresence>
+        )}
+
       </div>
 
-      <div className="px-6 mb-2 w-full flex justify-center items-center">
-        <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10 mt-6" />
+      <div className="px-12 mt-4 mb-10 w-full flex justify-center items-center">
+        <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10" />
       </div>
 
-      <div className="w-full h-40 p-2 flex justify-center items-center gap-12">
-        <CircularBar {...lastYear} label="Total" />
-        <CircularBar {...thisYear} label="Total" />
+      <div className="w-full p-2 flex flex-wrap justify-center items-center gap-8 mb-2">
+        {isLoading ? (
+          <>
+            <Loading />
+            <Loading />
+          </>
+        ) : (
+          <AnimatePresence>
+            {completionData.map((item, index) => {
+              const directions = [
+                { x: -80, y: 0 }, // left
+                { x: 80, y: 0 },  // right
+              ];
+
+              return (
+                <motion.div
+                  key={item.name}
+                  initial={{
+                    opacity: 0,
+                    ...directions[index],
+                    scale: 0.8,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    x: 0,
+                    y: 0,
+                    scale: 1,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0.8,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 90,
+                    damping: 14,
+                    mass: 1.2,
+                    delay: index * 0.12,
+                  }}
+                >
+                <CircularBar
+                  progress={item.total || 0}
+                  size={100}
+                  strokeWidth={10}
+                  textSize="text-xl"
+                  gradientColors={
+                    index === 0
+                      ? ["#6b7280", "#111827"]
+                      : ["#10b981", "#4CAF50"]
+                  }
+                  trackColor={
+                    index === 0
+                      ? "#9ca3af"
+                      : "#bbf7d0"
+                  }
+                  label="Completed"
+                  subLabel={item.name}
+                  
+                />
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        )}
       </div>
     </>
   );

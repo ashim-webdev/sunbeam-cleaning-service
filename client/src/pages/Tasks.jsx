@@ -42,12 +42,6 @@ const Tasks = () => {
 
   const search = searchParams.get("search") || "";
 
-  
-  // Reset to page 1 when search or status changes
-  useEffect(() => {
-    setPage(1);
-  }, [search, status]);
-
   const {
     data,
     isLoading,
@@ -59,6 +53,11 @@ const Tasks = () => {
     page,
     limit: 12,
   });
+
+  // Reset to page 1 when search or status changes
+  useEffect(() => {
+    setPage(1);
+  }, [search, status]);
 
   // Socket.io real time task update
   useEffect(() => {

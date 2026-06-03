@@ -158,7 +158,7 @@ export default function UserList({ team, setTeam }) {
     }
 
     // CREATE MODE
-    const firstActiveUser = data.users.users.find(
+    const firstActiveUser = data?.users?.find(
       (user) => user.isActive
     );
 

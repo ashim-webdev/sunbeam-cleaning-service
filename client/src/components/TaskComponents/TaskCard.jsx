@@ -168,7 +168,7 @@ const TaskCard = ({ task }) => {
               <span className={`
                   ${LightMode 
                     ? "bg-blue-600/10 shadow-inner text-blue-700"
-                    : "bg-white/20 shadow-innerWH text-blue-200"
+                    : "bg-gray-200/20 shadow-innerWH text-stone-100"
                   }
                   px-3 py-1 rounded-full font-medium transition-colors duration-300 ease-in-out
                 `}>
