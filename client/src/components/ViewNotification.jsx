@@ -32,13 +32,6 @@ const ViewNotification = ({ open, setOpen, el }) => {
   const isEvent = el?.refModel === "Event";
   const isBooking = el?.refModel === "Booking";
 
-  const bookingTitle =
-  el?.text?.toLowerCase().includes("deleted")
-    ? "Booking Deleted"
-    : el?.text?.toLowerCase().includes("updated")
-    ? "Booking Updated"
-    : "New Booking Request";
-
   
 
   const assignedUsers = (el?.team || []).filter(

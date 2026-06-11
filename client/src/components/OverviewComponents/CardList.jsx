@@ -363,7 +363,7 @@ const LeaveRequests = ({ user, title, popUpUserInfo, useInfo }) => {
                       <div className="mt-2 pt-2 border-t border-blue-500">
                         <div className="flex items-center gap-2">
                           <CheckCircle size={16} className="text-blue-600" />
-                          <span className="text-xs uppercase font-semibold text-black/70">
+                          <span className={`${LightMode ? "text-black/70" : "text-white/80"} text-xs uppercase font-semibold transition-all duration-300 ease-in-out `}>
                             Management Comment
                           </span>
                         </div>

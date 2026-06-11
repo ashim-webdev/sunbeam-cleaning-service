@@ -23,6 +23,7 @@ const LinearSocial = ({tiktok, x, whatsApp, telegram, noBG}) => {
             data-social="tiktok"
             aria-label="tiktok"
             href={tiktok}
+            className='cursor-pointer'
           >
             <div className="filled"></div>
             <svg
@@ -47,6 +48,7 @@ const LinearSocial = ({tiktok, x, whatsApp, telegram, noBG}) => {
             data-social="tiktok"
             aria-label="tiktok"
             onClick={message}
+            className='cursor-pointer'
           >
             <div className="filled"></div>
             <svg
@@ -75,6 +77,7 @@ const LinearSocial = ({tiktok, x, whatsApp, telegram, noBG}) => {
             data-social="telegram"
             aria-label="telegram"
             href={telegram}
+            className='cursor-pointer'
           >
             <div className="filled"></div>
             <svg
@@ -98,6 +101,7 @@ const LinearSocial = ({tiktok, x, whatsApp, telegram, noBG}) => {
             data-social="telegram"
             aria-label="telegram"
             onClick={message}
+            className='cursor-pointer'
           >
             <div className="filled"></div>
             <svg
@@ -125,6 +129,7 @@ const LinearSocial = ({tiktok, x, whatsApp, telegram, noBG}) => {
             data-social="whatsApp"
             aria-label="whatsApp"
             href={whatsApp}
+            className='cursor-pointer'
           >
             <div className="filled"></div>
             <svg
@@ -148,6 +153,7 @@ const LinearSocial = ({tiktok, x, whatsApp, telegram, noBG}) => {
             data-social="whatsApp"
             aria-label="whatsApp"
             onClick={message}
+            className='cursor-pointer'
           >
             <div className="filled"></div>
             <svg
@@ -173,6 +179,7 @@ const LinearSocial = ({tiktok, x, whatsApp, telegram, noBG}) => {
             data-social="x"
             aria-label="x"
             href={x}
+            className='cursor-pointer'
           >
             <svg 
               xmlns="http://www.w3.org/2000/svg"
@@ -191,6 +198,7 @@ const LinearSocial = ({tiktok, x, whatsApp, telegram, noBG}) => {
             data-social="x"
             aria-label="x"
             onClick={message}
+            className='cursor-pointer'
           >
             <div className="filled"></div>
             <svg 

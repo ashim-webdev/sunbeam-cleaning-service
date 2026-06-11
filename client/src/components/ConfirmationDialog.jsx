@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import clsx from "clsx";
+import Lottie from 'lottie-react'
 import { FaQuestion, FaCopy } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from "./Button";
 import ModalWrapper from "./ModalWrapper";
+import Disconnect from "../LottieFiles/disconnect.json"
 
 
 
@@ -59,36 +61,44 @@ export default function ConfirmationDialog({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
             transition={{ duration: 0.8 }}
-            className='py-4  w-full flex flex-col gap-4 items-center justify-center'
+            className='relative py-4  w-full flex flex-col gap-4 items-center justify-center'
           >
             <Dialog.Title as='h3' className=''>
-              <p
-                className={clsx(
-                  "rounded-full",
-                  type === "Change Stage" ? "p-4" : "p-4",
-                  type === "restore" || type === "restoreAll"
-                    ? "text-yellow-600 bg-yellow-100"
-                    :
-                  type === "duplicate"
-                    ? "text-blue-600 bg-blue-100"
-                    :
-                  type === "Change Stage"
-                    ? "text-green-600 bg-green-100"
-                    : "text-red-600 bg-red-100"
-                )}
-              >
-                {
-                  type === "duplicate" ?
-                    <FaCopy size={60} />
-                    :
-                  type === "Change Stage" ?
-                    <i className="fa-solid fa-check-double text-green-600 text-6xl rounded-full px-3 py-2"></i>
-                    :
-                    <FaQuestion size={60} />
-                }
-              </p>
+              {type === "logout" ? (
+                <div className="w-80 h-30 p-2 flex justify-center items-center overflow-hidden">
+                  <Lottie className="w-70" animationData={Disconnect} />
+                </div>
+              ) : (
+                <p
+                  className={clsx(
+                    "rounded-full",
+                    type === "Change Stage" ? "p-4" : "p-4",
+                    type === "restore" || type === "restoreAll"
+                      ? "text-yellow-600 bg-yellow-100"
+                      :
+                    type === "duplicate"
+                      ? "text-blue-600 bg-blue-100"
+                      :
+                    type === "Change Stage"
+                      ? "text-green-600 bg-green-100"
+                      : "text-red-600 bg-red-100"
+                  )}
+                >
+                  {
+                    type === "duplicate" ?
+                      <FaCopy size={60} />
+                      :
+                    type === "Change Stage" ?
+                      <i className="fa-solid fa-check-double text-green-600 text-6xl rounded-full px-3 py-2"></i>
+                      :
+                      <FaQuestion size={60} />
+                  }
+                </p>
+              )}
+              
             </Dialog.Title>
 
+            <div className={`flex flex-col justify-center items-center`}>
             <p className={`text-center ${LightMode ? "text-gray-700" : "text-gray-200"} transition-all duration-300 ease-in-out`}>
               {msg ?? "Are you sure you want to delete the selected record?"}
             </p>
@@ -117,6 +127,9 @@ export default function ConfirmationDialog({
                   )}
                   onClick={onClick}
                   label={
+                    type === "logout"
+                    ? "Yes" 
+                    :
                     type === "restore"
                     ? "Restore" 
                     :
@@ -134,7 +147,7 @@ export default function ConfirmationDialog({
                 />
               )}
 
-              {type === "Change Stage" ? null : (
+              {type === "Change Stage" || type === "logout" ? null : (
                 <Button
                   type='button'
                   disabled={isLoading}
@@ -145,6 +158,20 @@ export default function ConfirmationDialog({
               )}
 
             </div>
+            </div>
+
+            {type === "logout" && (
+              <div className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} rounded-full px-0 py-1.5 absolute z-10 -top-8 -right-8`}>
+                <span
+                  onClick={() => setOpen(false)}
+                  className={`
+                      font-bold bg-white shadow-inner text-red-600 rounded-full px-3 py-2 cursor-pointer text-md hover:scale-110 hover:shadow-innerGRN active:scale-95 transition-all duration-300 ease-in-out
+                    `}
+                >
+                  ✕
+                </span>
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
       </ModalWrapper>

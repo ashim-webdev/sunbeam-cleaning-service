@@ -1,6 +1,7 @@
 import Booking from "../models/bookingModel.js";
 import Notice from "../models/notis.js";
 import User from "../models/userModel.js";
+import cloudinary from "../utils/cloudinary.js";
 import {
   emitBookingCreated,
   emitBookingUpdated,
@@ -9,6 +10,10 @@ import {
 
 export const createBooking = async (req, res) => {
   try {
+    console.log("BODY:", req.body);
+    console.log("FILES:", req.files);
+    console.log("HEADERS:", req.headers);
+
     const {
       clientName,
       phoneNumber,

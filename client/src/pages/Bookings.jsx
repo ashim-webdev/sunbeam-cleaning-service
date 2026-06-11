@@ -10,7 +10,8 @@ import {
   Store,
   ExternalLink,
   ChevronsUp,
-  ChevronDown
+  ChevronDown,
+  Download
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useParams, useSearchParams } from "react-router-dom";
@@ -61,6 +62,7 @@ export default function Bookings() {
 
   const bookings = data?.bookings || [];
   const totalPages = data?.totalPages || 1;
+  const totalBookings = data?.totalBookings || 0;
 
 
   const deleteClicks = (booking) => {
@@ -86,6 +88,39 @@ export default function Bookings() {
     } catch (error) {
       console.log(error);
       toast.error(error?.data?.message || "Failed to delete booking");
+    }
+  };
+
+
+  // Download images function
+  const downloadImage = async (imageUrl, index) => {
+    try {
+      const response = await fetch(imageUrl);
+
+      const blob = await response.blob();
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+
+      link.href = url;
+
+      link.download = `booking-image-${index + 1}.jpg`;
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      document.body.removeChild(link);
+
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Image downloaded successfully");
+
+    } catch (error) {
+      console.error(error);
+
+      toast.error("Failed to download image");
     }
   };
 
@@ -128,6 +163,10 @@ export default function Bookings() {
     ? "bg-white shadow-darkSM"
     : "bg-black/90 shadow-lightSM";
 
+  const bgDlSh = LightMode
+    ? "shadow-darkSM"
+    : "shadow-lightSM";
+
   const subText = LightMode
     ? "text-black/80"
     : "text-white/80";
@@ -148,6 +187,10 @@ export default function Bookings() {
     ? "text-black"
     : "text-white";
 
+  const border = LightMode
+    ? "border border-gray-200"
+    : "border-2 border-gray-300";
+
   return isLoading ? (
     <Loading />
   ) : (
@@ -158,9 +201,9 @@ export default function Bookings() {
         className="space-y-6 relative"
       >
         <div className={`flex items-center justify-between mt-4 mb-6 mx-4`}>
-          <h2 className={`${text} text-2xl font-semibold transition-all duration-300 ease-in-out`}>Booking Dashboard</h2>
+          <h2 className={`${text} text-2xl font-semibold flex justify-center item-center gap-2 transition-all duration-300 ease-in-out`}>Bookings <span className="hidden sm:block">Dashboard</span></h2>
           <span className={`${shadow} bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 ease-in-out`}>
-            {bookings.length} Total Bookings
+            {totalBookings} Total Bookings
           </span>
         </div>
 
@@ -179,9 +222,6 @@ export default function Bookings() {
                 <p className={`${subText} transition-all duration-300 ease-in-out`}>New bookings will appear here as clients submit the form.</p>
               </div>
             )}
-
-          
-
           </>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-4">
@@ -196,7 +236,7 @@ export default function Bookings() {
                   transition={{ duration: 0.8 }}
                   className="relative mt-4"
                 >
-                  <div className={`${bgCon} ${hoverSmallShadow} BookingCard border-t border-r border-blue-600 p-6 rounded-2xl transition-all duration-300 ease-in-out overflow-hidden`}>
+                  <div className={`${bgCon} ${hoverSmallShadow} BookingCard border-t border-r border-blue-600 p-6 mx-1 rounded-2xl transition-all duration-300 ease-in-out overflow-hidden`}>
                     <div className="relative flex justify-between items-start mb-4">
                       <div>
                         <h3 className={`${text} mt-2 font-semibold text-lg line-clamp-1 transition-all duration-300 ease-in-out`}>{booking.clientName}</h3>
@@ -336,7 +376,7 @@ export default function Bookings() {
                                   duration: 0.6,
                                   delay: index * 0.2, // stagger effect
                                 }}
-                                className={`outline-0 border-2 relative flex justify-center overflow-hidden items-center gap-2 mb-3 w-full h-50 rounded-xl bg-blue-gray-500 bg-clip-border text-white bg-blue-600 shadow-inner`}
+                                className={`outline-0 border-2 relative flex justify-center overflow-hidden items-center gap-2 mb-3 w-full h-50 rounded-xl bg-blue-gray-500 bg-clip-border text-white`}
                               >
                               <span  className="text-white font-semibold">
                                 {img?.url && 
@@ -346,6 +386,39 @@ export default function Bookings() {
                                   />
                                 }
                                 </span>
+
+                                {/* Download individual image button */}
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    downloadImage(img.url, index);
+                                  }}
+                                  className={`
+                                    ${border}
+                                    ${bgDlSh}
+                                    text-white
+                                    absolute
+                                    top-2
+                                    right-2
+                                    z-10
+                                    w-9
+                                    h-9
+                                    rounded-full
+                                    bg-black/60
+                                    backdrop-blur-sm
+                                    flex
+                                    items-center
+                                    justify-center
+                                    hover:scale-110
+                                    active:scale-95
+                                    transition-all
+                                    duration-300
+                                    ease-in-out
+                                    cursor-pointer
+                                  `}
+                                >
+                                  <Download size={18} />
+                                </button>
 
                               </motion.div>
                             ))}

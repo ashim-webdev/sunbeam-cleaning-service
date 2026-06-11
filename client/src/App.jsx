@@ -22,6 +22,7 @@ import Overview from "./pages/Overview";
 import Profile from "./pages/Profile";
 import Status from "./pages/Status";
 import LandingPage from "./pages/LandingPage";
+import TermsAndPolicies from "./components/Teams&Policies";
 
 
 function Layout() {
@@ -198,11 +199,13 @@ function App() {
           w-full min-h-screen transition-colors duration-300 ease-in-out
         `}>
           <Routes>
-            <Route element={<Layout />}>
-              <Route index path="/" element={<Navigate to='/dashboard' />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/log-in" element={<Login />} />
 
+            <Route element={<Layout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/bookings" element={<Bookings />} />
+              <Route path="/terms&policies" element={<TermsAndPolicies />} />
 
               <Route path="/tasks" element={<Tasks />} />
               <Route path="/completed/:status" element={<Tasks />} />
@@ -217,11 +220,7 @@ function App() {
               <Route path="/overview" element={<Overview />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/status" element={<Status />} />
-
             </Route>
-
-            <Route path="/landing-page" element={<LandingPage />} />
-            <Route path="/log-in" element={<Login />} />
           </Routes>
 
           <Toaster richColors position='top-right'/>

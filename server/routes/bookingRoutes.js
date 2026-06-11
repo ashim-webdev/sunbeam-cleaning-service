@@ -14,7 +14,7 @@ import upload from "../middlewares/uploadMiddleware.js"
 
 const router = express.Router();
 
-router.post("/", createBooking, upload.array("images", 10));
+router.post("/", upload.array("images", 10), createBooking);
 
 router.get("/", getBookings);
 

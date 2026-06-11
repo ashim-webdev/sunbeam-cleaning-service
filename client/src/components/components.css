@@ -939,7 +939,7 @@
   justify-content: center;
 }
 .tooltip-container:hover .tooltip1:hover {
-  background: #1a1a1a;
+  background-color: #1a1a1a;
   fill: #fff;
 }
 
@@ -977,7 +977,7 @@
 }
 
 .tooltip-container:hover .tooltip2:hover {
-  background: #1a1a1a;
+  background-color: #1a1a1a;
   fill: #fff;
 }
 /* Fim do tooltip tiktok*/
@@ -1015,7 +1015,7 @@
   justify-content: center;
 }
 .tooltip-container:hover .tooltip3:hover {
-  background: #1db954;
+  background-color: #1db954;
   fill: #fff;
 }
 /* Fim do tooltip whatsApp */
@@ -1053,7 +1053,7 @@
   justify-content: center;
 }
 .tooltip-container:hover .tooltip4:hover {
-  background: #03a9f4;
+  background-color: #03a9f4;
   fill: #fff;
 }
 
@@ -1153,8 +1153,6 @@ ul {
 .example-2 .icon-content a[data-social="x"] ~ .socialTooltip {
   background-color: #0a0a0a;
 }
-
-
 
 
 

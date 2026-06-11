@@ -12,6 +12,8 @@ import {
   MdTaskAlt,
   MdHourglassEmpty
 } from "react-icons/md";
+import { FaBroom } from "react-icons/fa";
+import { ClipboardCheck } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { setOpenSidebar, setMiniMenu, setOpenProfile } from "../redux/slices/authSlice";
@@ -366,12 +368,26 @@ const Sidebar = () => {
           w-full h-full flex flex-col gap-6 p-5 transition-colors ease-in-out duration-300
       `}>
       <div className="flex justify-between item-center gap-2">
-        <div className='flex gap-1 items-center'>
-          <p className='p-2 bg-blue-600 shadow-inner rounded-full'>
-            <MdOutlineAddTask className='text-white text-2xl font-black' />
-          </p>
-          <span className={`text-2xl font-bold transition-colors ease-in-out duration-300 ${LightMode ? " text-black" : "text-white"} `}>
-            TaskMe
+        <div className='flex gap-2 items-center'>
+          <div className={`${LightMode ? "shadow-darkSM border-blue-900 bg-blue-900/30" : "shadow-lightSM border-white bg-blue-600"} p-2 rounded-full border`}>
+            <ClipboardCheck className={`w-6 h-6 transition-colors ease-in-out duration-300 ${LightMode ? " text-blue-900" : "text-white"}`} />
+          </div>
+          <span className={`relative flex justify-center items-center gap-1 text-2xl font-bold transition-colors ease-in-out duration-300 ${LightMode ? " text-blue-900" : "text-white"} `}>
+            <span>TaskMe</span>
+            <span><FaBroom className='w-6 h-6' /></span>
+            <svg
+              className="absolute top-7.5 left-0 w-30 -rotate-6"
+              viewBox="0 0 300 12"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M2 10C60 4 160 1 298 6"
+                stroke={`${LightMode ? "#009c05" : "#2B62F5"}`}
+                strokeWidth="4"
+                strokeLinecap="round"
+              />
+            </svg>
           </span>
         </div>
         

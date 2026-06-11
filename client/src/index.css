@@ -1,5 +1,28 @@
 @import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,200;6..12,300;6..12,400;6..12,500;6..12,600;6..12,700;6..12,800;6..12,900;6..12,1000&display=swap");
 
+
+/* Logo Animation */
+.draw-logo {
+  stroke: #053283;
+  stroke-width: 2;
+  fill: transparent;
+
+  stroke-dasharray: 10000;
+  stroke-dashoffset: 10000;
+
+  animation: drawLogo 5s ease forwards;
+}
+
+@keyframes drawLogo {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+
+
+
+
 /* Smooth color transition for entire scheduler */
 .scheduler-wrapper .e-schedule,
 .scheduler-wrapper .e-schedule {
@@ -72,10 +95,33 @@
 
   --color-desktop: #3b82f6;
   --color-mobile: #a855f7;
-  
 }
 
   @theme {
+    --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+    --color-brand-50: #F5FAFF;
+    --color-brand-100: #EAF5FF;
+    --color-brand-300: #9EC7FF;
+    --color-brand-500: #6FA9FF;
+    --color-brand-600: #4F86FF;
+    --color-brand-700: #4F86FF;
+    --color-brand-900: #1A2B48;
+    
+    --color-slate-950: #0E1829;
+    --color-slate-900: #1A2B48;
+    --color-slate-800: #2C3E5A;
+    --color-slate-700: #475B79;
+    --color-slate-600: #5E7291;
+    --color-slate-505: #5E7291;
+    --color-slate-500: #5E7291;
+    --color-slate-400: #7E93B3;
+    --color-slate-300: #CBD7E6;
+    --color-slate-200: #E2EBF5;
+    --color-slate-100: #EAF5FF;
+    --color-slate-50: #F5FAFF;
+    --color-indigo-600: #4F86FF;
+    
     --color-chocolate-100: #EFEBE9;
     --color-chocolate-300: #A1887F;
     --color-chocolate-500: #795548;
@@ -258,7 +304,7 @@ html {
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
-  height: 5px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -266,7 +312,7 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #005FFB;
+  background: #6FA9FF;
   border-radius: 4px;
 }
 

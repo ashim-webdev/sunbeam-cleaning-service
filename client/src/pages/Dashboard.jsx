@@ -20,7 +20,9 @@ import {
   MdKeyboardDoubleArrowUp,
 } from "react-icons/md";
 import { 
-  ChevronsRight
+  ChevronsRight,
+  History,
+  CalendarCheck 
 } from 'lucide-react';
 import { PRIORITY_STYLES, TASK_TYPE, getInitials } from "../utils";
 import { formatDistanceToNow } from "date-fns";
@@ -64,7 +66,7 @@ const Dashboard = () => {
     }
   );
 
-  console.log(summary)
+  // console.log(summary)
 
   // Update everything in real time
   useEffect(() => {
@@ -77,19 +79,37 @@ const Dashboard = () => {
   };
 }, [refetch]);
 
-  // console.log(summary)
+  console.log(summary)
 
   const totals = summary?.tasks || {};
-  const lastMonth = summary?.lastMonth || {
-    totalTasks: 0,
-    tasks: {
-      completed: 0,
-      "in progress": 0,
-      todo: 0,
-    },
-  };
 
-  // console.log(summary)
+  const chartData = summary?.generalChartData || [];
+
+  const currentMonthData =
+    chartData[chartData.length - 1] || {
+      todo: 0,
+      inProgress: 0,
+      completed: 0,
+    };
+
+  const lastMonthData =
+    chartData[chartData.length - 2] || {
+      todo: 0,
+      inProgress: 0,
+      completed: 0,
+    };
+
+  const currentMonthTotal =
+    currentMonthData.todo +
+    currentMonthData.inProgress +
+    currentMonthData.completed;
+
+  const lastMonthTotal =
+    lastMonthData.todo +
+    lastMonthData.inProgress +
+    lastMonthData.completed;
+
+  // console.log(lastMonth)
 
 
   const stats = [
@@ -97,7 +117,8 @@ const Dashboard = () => {
       _id: "1",
       label: "TOTAL",
       total: summary?.totalTasks || 0,
-      lastMonth: lastMonth.totalTasks,
+      thisMonth: currentMonthTotal,
+      lastMonth: lastMonthTotal,
       icon: <FaNewspaper />,
       bg: "bg-[#be185d]",
       tx: "text-[#be185d]",
@@ -106,7 +127,8 @@ const Dashboard = () => {
       _id: "2",
       label: "COMPLETED",
       total: totals["completed"] || 0,
-      lastMonth: lastMonth.tasks.completed,
+      thisMonth: currentMonthData.completed,
+      lastMonth: lastMonthData.completed,
       icon: <LuClipboardCheck />,
       bg: "bg-[#0f766e]",
       tx: "text-[#0f766e]",
@@ -115,7 +137,8 @@ const Dashboard = () => {
       _id: "3",
       label: "IN PROGRESS ",
       total: totals["in progress"] || 0,
-      lastMonth: lastMonth.tasks['in progress'],
+      thisMonth: currentMonthData.inProgress,
+      lastMonth: lastMonthData.inProgress,
       icon: <MdOutlineTimer />,
       bg: "bg-[#f59e0b]",
       tx: "text-[#f59e0b]",
@@ -124,7 +147,8 @@ const Dashboard = () => {
       _id: "4",
       label: "TODO",
       total: totals["todo"] || 0,
-      lastMonth: lastMonth.tasks.todo,
+      thisMonth: currentMonthData.todo,
+      lastMonth: lastMonthData.todo,
       icon: <FaArrowsToDot />,
       bg: "bg-[#1d4ed8]",
       tx: "text-[#1d4ed8]",
@@ -139,7 +163,7 @@ const Dashboard = () => {
   const cautionBG = LightMode ? "bg-blue-600" : "bg-blue-600/40";
 
 
-  const Card = ({ label, lastMonth, count, bg, tx, icon }) => {
+  const Card = ({ label, lastMonth, thisMonth, count, bg, tx, icon }) => {
     return (
       <div className={`
         ${LightMode 
@@ -157,9 +181,20 @@ const Dashboard = () => {
               text-base md:text-sm lg:text-base font-semibold transition-all ease-in-out duration-300 whitespace-nowrap
             `}>{label}</p>
           <span className={clsx("text-2xl font-semibold" , tx)}>{count}</span>
-          <span className='text-sm text-[#0061FA] -mb-1'>
-            <i className="fa-solid fa-chart-simple"></i> {lastMonth} <span className={`${LightMode ? "text-gray-500" : "text-gray-400"} transition-colors duration-300 ease-in-out`}>last month</span>
-          </span>
+
+          <div className="flex justify-start item-center gap-1.5 mt-2">
+            <span className={`${LightMode ? "text-gray-600" : "text-gray-400"} text-sm -mb-1 flex justify-center item-center gap-1 transition-all duration-300 ease-in-out`}>
+              <History size={20} /> {lastMonth}
+            </span>
+
+            <div className="flex pt-1.5 justify-center item-center">
+              <i className={`fa-solid fa-diamond text-[8px] ${LightMode ? "text-blue-900/60" : "text-white/60"} transition-all duration-300 ease-in-out`}></i>
+            </div>
+
+            <span className='text-sm text-[#0061FA] -mb-1 flex justify-center item-center gap-1'>
+              <CalendarCheck size={20} /> {thisMonth}
+            </span>
+          </div>
         </div>
         <div
           className={clsx(
@@ -1043,8 +1078,8 @@ const Dashboard = () => {
     <div className='h-full py-4'>
       <>
         <div className='grid grid-cols-1 md:grid-cols-4 gap-5'>
-          {stats?.map(({ icon, lastMonth, bg, tx, label, total }, index) => (
-            <Card key={index} icon={icon} lastMonth={lastMonth} bg={bg} tx={tx} label={label} count={total} />
+          {stats?.map(({ icon, lastMonth, thisMonth, bg, tx, label, total }, index) => (
+            <Card key={index} icon={icon} lastMonth={lastMonth} thisMonth={thisMonth} bg={bg} tx={tx} label={label} count={total} />
           ))}
         </div>
 

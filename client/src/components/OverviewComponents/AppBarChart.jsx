@@ -195,7 +195,7 @@ const AppBarChart = () => {
   const changeAnimation = "transition-all duration-300 ease-in-out"
 
 
-  if (!isLoading && monthlyData === 0) {
+  if (!isLoading && monthlyData.length === 0) {
     return (
       <div
         className={`h-full flex flex-col justify-center items-center ${text} ${changeAnimation}`}

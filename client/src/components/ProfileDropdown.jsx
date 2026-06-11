@@ -30,6 +30,7 @@ import { cn } from "@/lib/utils";
 import { getInitials } from "../utils";
 import Dark_Light_Btn from "./Dark_Light_Btn";
 import ChangePassword from "./ChangePassword";
+import ConfirmationDialog from "./ConfirmationDialog";
 
 
 
@@ -60,6 +61,10 @@ export default function ProfileDropdown({ className }) {
   const [chevronIcon, setChevronIcon] = useState(false);
   const [openPassword, setOpenPassword] = useState(false)
 
+  const [msg, setMsg] = useState(null);
+  const [type, setType] = useState("logout");
+  const [openDialog, setOpenDialog] = useState(false);
+
   // console.log(CPEditPopUp)
   const { user: storedUser } = useSelector((state) => state.auth);
   const { data: freshUser, isLoading } = useGetUserProfileQuery();
@@ -67,7 +72,15 @@ export default function ProfileDropdown({ className }) {
 
 
   // LogOut
-  const [logoutUser] = useLogoutMutation();
+  const [logoutUser, {isLoading: logoutIsLoading}] = useLogoutMutation();
+
+
+  const deleteAllClick = () => {
+    setType("logout");
+    setMsg("Are you sure you want to logout ???");
+    setOpenDialog(true);
+  };
+
 
   const logoutHandler = async () => {
     try {
@@ -129,15 +142,14 @@ export default function ProfileDropdown({ className }) {
     {
       _id: 3,
       label: "Settings",
-      link: "#",
       onClick: settingsIconToggle,
       icon: <Settings className="h-4 w-4" />,
-      value: chevronIcon ? <ChevronDown className="h-5 w-5 " /> : <ChevronUp className="h-5 w-5 " />,
+      value: chevronIcon ? <ChevronUp className="h-5 w-5 " /> : <ChevronDown className="h-5 w-5 " />,
     },
     {
       _id: 4,
       label: "Terms & Policies",
-      link: "#",
+      link: "terms&policies",
       icon: <FileText className="h-4 w-4" />,
     },
   ];
@@ -271,7 +283,7 @@ export default function ProfileDropdown({ className }) {
                     exit={{ opacity: 0, y: 30 }}
                     transition={{ duration: 0.3 }}
                     onMouseOver={(e) => e.stopPropagation()}
-                    className={`${LightMode ? "bg-white" : "bg-black/90"} w-64 z-200 rounded-2xl border p-2 shadow-xl overflow-visible`}
+                    className={`${LightMode ? "bg-white" : "bg-black/90"} w-64 z-100 rounded-2xl border p-2 shadow-xl overflow-visible`}
                   >
                     <div className="space-y-1">
                       {menuItems.map((item) => (
@@ -287,11 +299,11 @@ export default function ProfileDropdown({ className }) {
                             }
                           }}
                           className={`
-                            ${LightMode ? "text-black focus:bg-[#0004fc4e] hover:bg-[#0004fc4e]" : "text-white focus:text-black focus:bg-white hover:text-black hover:bg-white"} rounded-xl transition-all duration-300 ease-in-out`
+                            ${LightMode ? "text-black focus:bg-[#0004fc4e] hover:bg-[#0004fc4e]" : "text-white focus:text-black focus:bg-white hover:text-black hover:bg-white"} rounded-xl active:scale-95 transition-all duration-300 ease-in-out`
                           }>
                           <div
                             onClick={item?.onClick}
-                            className={`${LightMode ? "hover:shadow-darkSM" : "hover:shadow-blueSM"} flex items-center justify-between py-2 px-4 rounded-xl cursor-pointer transition-all duration-300 ease-in-out `}
+                            className={`${LightMode ? "hover:shadow-darkSM" : "hover:shadow-blueSM"} relative flex items-center justify-between py-2 px-4 rounded-xl cursor-pointer transition-all duration-300 ease-in-out `}
                           >
                             <div className="flex items-center gap-2 cursor-pointer">
                               {item.icon}
@@ -312,7 +324,7 @@ export default function ProfileDropdown({ className }) {
                                 <motion.div
                                   initial={{ opacity: 0, x: 20 }}
                                   animate={{ opacity: 1, x: 0 }}
-                                  exit={{ opacity: 0, x: 10 }}
+                                  exit={{ opacity: 0, x: 20 }}
                                   transition={{ duration: 0.3 }}
                                   onMouseOver={(e) => e.stopPropagation()} 
                                   className={`
@@ -320,7 +332,7 @@ export default function ProfileDropdown({ className }) {
                                       ? "bg-white/90 text-black shadow-darkSM"
                                       : "bg-black/95 text-white shadow-lightSM"
                                     }
-                                    absolute bottom-3.5 -right-20 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded p-2 cursor-pointer
+                                    absolute -top-28.5 -right-20 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded p-2 cursor-pointer
                                   `}
                                   >
                                   {settingsMenu.map((el) => (
@@ -368,7 +380,7 @@ export default function ProfileDropdown({ className }) {
                     <div asChild className="relative text-red-600">
                       <>
                         <button 
-                        onClick={logoutHandler}
+                        onClick={deleteAllClick}
                         className={`
                           ${LightMode ? "hover:shadow-darkSM" : "hover:shadow-light"} flex items-center gap-2 w-full py-2 pl-6 pr-4 rounded-xl active:scale-95 transition-all duration-300 ease-in-out bg-red-100 text-red-600 hover:bg-red-300 hover:text-red-600 focus:bg-red-300 focus:text-red-600 cursor-pointer`
                         }>
@@ -385,7 +397,20 @@ export default function ProfileDropdown({ className }) {
         </div>
       </div>
 
-      <ChangePassword open={openPassword} setOpen={setOpenPassword} />
+      <ConfirmationDialog
+        isLoading={logoutIsLoading}
+        open={openDialog}
+        setOpen={setOpenDialog}
+        msg={msg}
+        setMsg={setMsg}
+        type={type}
+        setType={setType}
+        onClick={logoutHandler}
+      />
+      <ChangePassword
+        open={openPassword}
+        setOpen={setOpenPassword}
+      />
     </>
   );
 }

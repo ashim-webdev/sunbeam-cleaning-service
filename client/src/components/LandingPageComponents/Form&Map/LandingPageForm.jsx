@@ -78,8 +78,7 @@ export default function LandingPageForm({
     >
       {/* Booking Form */}
       <div className="lg:col-span-5 space-y-6">
-        <div className={`${bgCon} p-6 rounded-2xl border border-stone-200 transition-all duration-300 ease-in-out`}>
-          <h2 className={`${text} text-2xl font-semibold mb-6 transition-all duration-300 ease-in-out`}>Book a Cleaning</h2>
+        <div className={`${bgCon} p-6 pt-8 rounded-2xl border border-stone-200 transition-all duration-300 ease-in-out`}>
           
           <form 
             onSubmit={(e) => {
@@ -93,7 +92,7 @@ export default function LandingPageForm({
             className="space-y-4"
           >
             <div>
-              <label className={`block text-sm font-medium ${subText} mb-1 transition-all duration-300 ease-in-out`}>Full Name</label>
+              <label className={`block text-sm font-medium ${subText} mb-1 transition-all duration-300 ease-in-out`}>Name</label>
               <div className="relative">
                 <input
                   type="text"
@@ -102,7 +101,7 @@ export default function LandingPageForm({
                     setFormData(prev => ({ ...prev, clientName: e.target.value }));
                     setErrors(prev => ({ ...prev, clientName: null }));
                   }}
-                  className={`${LightMode ? "placeholder-black/70 text-black" : "placeholder-white/70 text-white"} w-full pl-10 pr-4 py-2 border rounded-xl outline-none transition-all ${
+                  className={`placeholder-black/30 text-black w-full pl-10 pr-4 py-2 border rounded-xl outline-none transition-all ${
                     errors.clientName
                       ? `border-2 border-red-500 ${shake ? "animate-shake" : ""}`
                       : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -110,7 +109,7 @@ export default function LandingPageForm({
                   placeholder="John Doe"
                 />
 
-                {errors.clientName && (
+                {typeof errors.clientName === "string" && (
                   <p className="text-red-500 text-xs mt-1 italic">{errors.clientName}</p>
                 )}
 
@@ -128,15 +127,15 @@ export default function LandingPageForm({
                     setFormData(prev => ({ ...prev, phoneNumber: e.target.value }));
                     setErrors(prev => ({ ...prev, phoneNumber: null }));
                   }}
-                  className={`${LightMode ? "placeholder-black/70 text-black" : "placeholder-white/70 text-white"} w-full pl-10 pr-4 py-2 border rounded-xl outline-none transition-all duration-300 ease-in-out ${
+                  className={`placeholder-black/30 text-black w-full pl-10 pr-4 py-2 border rounded-xl outline-none transition-all duration-300 ease-in-out ${
                     errors.phoneNumber
                       ? `border-2 border-red-500 ${shake ? "animate-shake" : ""}`
                       : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   }`}
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="+234 800 000 0000"
                 />
 
-                {errors.phoneNumber && (
+                {typeof errors.phoneNumber === "string" && (
                   <p className="text-red-500 text-xs mt-1 italic">{errors.phoneNumber}</p>
                 )}
 
@@ -144,7 +143,7 @@ export default function LandingPageForm({
               </div>
             </div>
 
-            <div className='flex flex-col md:flex-row justify-between items-center gap-4'>
+            <div className='flex flex-col justify-between items-center gap-4'>
               <div className='w-full'>
                 <label className={`${subText} block text-sm font-medium mb-1 transition-all duration-300 ease-in-out`}>Property Type</label>
                   <Listbox
@@ -181,7 +180,7 @@ export default function LandingPageForm({
                                 value={property}
                                 className={({ active }) =>
                                   `cursor-pointer px-4 py-2 text-sm transition-all duration-300 ease-in-out hover:scale-105 ${
-                                    active ? `${LightMode ? "bg-blue-100 text-blue-900 hover:shadow-dark" : "bg-blue-900 text-blue-100 hover:shadow-light"}` : `${LightMode ? "text-gray-900" : "text-gray-200"}`
+                                    active ? `bg-blue-100 text-blue-900 hover:shadow-dark` : "text-gray-900"
                                   }`
                                 }
                               >
@@ -231,7 +230,7 @@ export default function LandingPageForm({
                                 value={service}
                                 className={({ active }) =>
                                   `cursor-pointer px-4 py-2 text-sm transition-all duration-300 ease-in-out hover:scale-105 ${
-                                    active ? `${LightMode ? "bg-blue-100 text-blue-900 hover:shadow-dark" : "bg-blue-900 text-blue-100 hover:shadow-light"}` : `${LightMode ? "text-gray-900" : "text-gray-200"}`
+                                    active ? `bg-blue-100 text-blue-900 hover:shadow-dark` : `"text-gray-900"`
                                   }`
                                 }
                               >
@@ -258,11 +257,8 @@ export default function LandingPageForm({
                 htmlFor="imgUpload"
                 className={`
                   flex flex-col items-center justify-center
-                  border-2 border-dashed rounded-xl p-6
+                  border-2 border-dashed rounded-xl p-6 border-gray-300 hover:border-blue-400 bg-gray-50
                   cursor-pointer transition-all duration-300
-                  ${LightMode 
-                    ? "border-gray-300 hover:border-blue-400 bg-gray-50" 
-                    : "border-gray-600 hover:border-blue-400 bg-gray-900"}
                 `}
               >
                 <input
@@ -317,7 +313,7 @@ export default function LandingPageForm({
                 <textarea
                   readOnly
                   value={formData.address}
-                  className={`w-full pl-10 pr-4 py-2 border outline-none rounded-xl text-stone-600 cursor-not-allowed resize-none ${LightMode ? "placeholder-black/70 text-black" : "placeholder-white/70 text-white"} transition-all duration-300 ease-in-out ${
+                  className={`w-full pl-10 pr-4 py-2 border outline-none rounded-xl cursor-not-allowed resize-none placeholder-black/40 text-black  transition-all duration-300 ease-in-out ${
                     errors.address
                       ? `border-2 border-red-500 ${shake ? "animate-shake" : ""}`
                       : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -326,7 +322,7 @@ export default function LandingPageForm({
                   placeholder="Select location on map..."
                 />
 
-                {errors.address && (
+                {typeof errors.address === "string" && (
                   <p className="text-red-500 text-xs -mt-0.5 italic">{errors.address}</p>
                 )}
                 <MapPin className="absolute left-3 top-5.5 -translate-y-1/2 text-stone-500" size={18} />

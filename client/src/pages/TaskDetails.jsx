@@ -1274,7 +1274,7 @@ const TaskDetail = () => {
                             className={`${LightMode ? "border-gray-400" : "border-gray-200"} relative flex gap-4 py-2 items-center border-t transition-colors duration-300 ease-in-out`}
                           >
                             <div className={clsx(
-                              "w-10 h-10 rounded-full flex items-center justify-center text-white text-sm -ml-4 shadow-inner overflow-hidden",
+                              "w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm -ml-4 shadow-inner overflow-hidden",
                               
                             )}>
                               {m?.profileImage ? 

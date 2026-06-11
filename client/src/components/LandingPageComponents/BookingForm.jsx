@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { FaBroom } from "react-icons/fa";
 import { AnimatePresence } from 'framer-motion';
 import { useSelector } from "react-redux";
 import { useCreateBookingMutation } from '../../redux/slices/api/bookingApiSlice';
@@ -49,7 +50,6 @@ export default function BookingForm() {
 
   const [createBooking, { isLoading }] = useCreateBookingMutation();
   
-  const [view, setView] = useState('client');
   const [errors, setErrors] = useState({});
   const [shake, setShake] = useState(false);
   // image field
@@ -173,9 +173,11 @@ export default function BookingForm() {
 
     if (allEmpty) {
       toast.error("All fields are required");
-      newErrors.clientName = "Full name is required";
-      newErrors.phoneNumber = "Phone number is required";
-      newErrors.address = "Address is required";
+
+      newErrors.clientName = true;
+      newErrors.phoneNumber = true;
+      newErrors.address = true;
+
       setErrors(newErrors);
       triggerShake();
       return false;
@@ -200,12 +202,30 @@ export default function BookingForm() {
   };
 
 
-  const bg = LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM";
-
   return (
-    <div className={`${bg} min-h-screen text-stone-900 font-sans transition-all duration-300 ease-in-out`}>
+    <section id="booking form" className={`section-padding bg-brand-50 font-serif pt-10 pb-10`}>
+      {/* Header */}
+      <div className="text-center mb-5">
+        <div className="inline-flex items-center gap-2 glass-blue rounded-full px-4 py-2 mb-5">
+          <span className="text-sm font-600 text-brand-600 flex items-center gap-2">
+            <FaBroom size={20} />
+            <span className="font-mono text-[10px] font-bold text-brand-700 uppercase tracking-widest">
+              Book our service
+            </span>
+          </span>
+        </div>
 
-      <main className="max-w-7xl mx-auto p-4 md:p-8">
+        <h2 className="text-5xl font-800 tracking-tight text-slate-900 mb-5">
+          Schedule Your
+          <span className="gradient-text italic"> Cleaning Service</span>
+        </h2>
+
+        <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
+          Tell us about your property, upload photos, and choose your location. We'll prepare a customized cleaning plan for you.
+        </p>
+      </div>
+
+      <div className="max-w-7xl mx-auto p-4 md:p-8">
         <AnimatePresence mode="wait">
           <LandingPageForm
             formData={formData}
@@ -222,8 +242,8 @@ export default function BookingForm() {
             DEFAULT_CENTER={DEFAULT_CENTER}
           />
         </AnimatePresence>
-      </main>
-    </div>
+      </div>
+    </section>
   );
 }
 
