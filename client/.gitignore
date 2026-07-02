@@ -26,7 +26,8 @@ dist-ssr
 
 
 # Environment variables
-.env
+.env.development
+.env.production
 
 # Logs
 logs/
