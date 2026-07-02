@@ -5,14 +5,15 @@ let io;
 // Store online users
 export const onlineUsers = new Map();
 
+
+const allowedOrigins = [
+  "http://localhost:5173", // Vite
+  "https://sunbeam-cleaning-service.netlify.app",
+];
 export const initializeSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: [
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "https://mern-task-manager-app.netlify.app",
-      ],
+      origin: allowedOrigins,
       methods: ["GET", "POST", "PUT", "DELETE"],
       credentials: true,
     },

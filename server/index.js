@@ -20,13 +20,14 @@ const port = process.env.PORT || 5000;
 
 const app = express();
 
+
+const allowedOrigins = [
+  "http://localhost:5173", // Vite
+  "https://sunbeam-cleaning-service.netlify.app",
+];
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "http://localhost:3001",
-      "https://mern-task-manager-app.netlify.app"
-    ],
+    origin: allowedOrigins,
     methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true,
   })
