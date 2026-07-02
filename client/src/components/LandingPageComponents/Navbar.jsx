@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion"
-
+import EmployeeLoginModal from './EmployeeLoginModel';
 
 
 
@@ -10,6 +10,7 @@ const navLinks = ['Home', 'About', 'Services', 'Booking form', 'Testimonials' ];
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showEmployeeModal, setShowEmployeeModal] = useState(false);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 20);
@@ -49,19 +50,31 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* CTA */}
-          <div className="hidden md:flex items-center gap-3">
-            <a
-              href="#contact"
-              className="btn-shine gradient-bg text-white text-sm font-600 px-5 py-2.5 rounded-xl shadow-blue hover:opacity-90 transition-all duration-300"
-            >
-              Contact Us
-            </a>
+          <div className='hidden md:flex justify-center items-center gap-4'>
+            {/* Sign In */}
+            <div className="hidden md:flex items-center gap-3">
+              <button
+                onClick={() => setShowEmployeeModal(true)}
+                className="cursor-pointer border border-black text-black text-sm font-600 px-5 py-1.5 rounded-xl shadow-inner hover:opacity-90 transition-all duration-300 hover:scale-103 active:scale-95"
+              >
+                Sign In
+              </button>
+            </div>
+
+            {/* CTA */}
+            <div className="flex items-center gap-3">
+              <a
+                href="#contact"
+                className="btn-shine gradient-bg text-white text-sm font-600 px-5 py-2.5 rounded-xl shadow-blue hover:opacity-90 transition-all duration-300"
+              >
+                Contact Us
+              </a>
+            </div>
           </div>
 
           {/* Mobile toggle */}
           <button
-            className="md:hidden p-2 rounded-xl text-slate-600 hover:bg-brand-100 transition-colors"
+            className="md:hidden p-2 rounded-xl text-slate-600 hover:bg-brand-100 transition-colors cursor-pointer"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             {menuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
@@ -83,24 +96,47 @@ export default function Navbar() {
                   <a
                     key={link}
                     href={`#${link.toLowerCase()}`}
-                    className="px-4 py-2.5 rounded-xl text-sm font-500 text-slate-700 hover:bg-brand-100 hover:text-brand-500 transition-all"
+                    className="px-4 py-2.5 rounded-xl text-sm font-500 text-slate-700 hover:bg-brand-100 hover:text-blue-600 transition-all"
                     onClick={() => setMenuOpen(false)}
                   >
                     {link}
                   </a>
                 ))}
-                <a
-                  href="#contact"
-                  className="mt-2 gradient-bg text-white text-sm font-600 px-4 py-3 rounded-xl text-center shadow-blue"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Contact Us
-                </a>
+                <div className='w-full flex flex-col justify-center items-center gap-2'>
+                  {/* Sign In */}
+                  <div className="w-full flex items-center gap-3">
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setShowEmployeeModal(true);
+                      }}
+                      className="cursor-pointer w-full text-center border border-black text-black text-sm font-600 px-5 py-2.5 rounded-xl shadow-inner hover:opacity-90 transition-all duration-300"
+                    >
+                      Sign In
+                    </button>
+                  </div>
+
+                  {/* CTA */}
+                  <div className="w-full flex items-center gap-3">
+                    <a
+                      href="#contact"
+                      className="w-full btn-shine text-center gradient-bg text-white text-sm font-600 px-5 py-2.5 rounded-xl shadow-blue hover:opacity-90 transition-all duration-300 hover:scale-103 active:scale-95"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Contact Us
+                    </a>
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+
+      <EmployeeLoginModal
+        isOpen={showEmployeeModal}
+        onClose={() => setShowEmployeeModal(false)}
+      />
     </nav>
   );
 }

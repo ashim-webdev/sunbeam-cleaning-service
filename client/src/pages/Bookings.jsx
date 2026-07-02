@@ -13,6 +13,7 @@ import {
   ChevronDown,
   Download
 } from "lucide-react";
+import { HiDuplicate } from "react-icons/hi";
 import { useSelector } from "react-redux";
 import { useParams, useSearchParams } from "react-router-dom";
 import {
@@ -37,6 +38,7 @@ export default function Bookings() {
   const [openDialog, setOpenDialog] = useState(false);
   const [openEditForm, setOpenEditForm] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [copiedBookingId, setCopiedBookingId] = useState(null);
   
   const [page, setPage] = useState(1);
 
@@ -159,6 +161,28 @@ export default function Bookings() {
   };
 
 
+  // Copy Address Feature Function
+  const copyAddress = async (bookingId, address, e) => {
+    e.stopPropagation();
+
+    try {
+      await navigator.clipboard.writeText(address);
+
+      setCopiedBookingId(bookingId);
+
+      toast.success("Copied successfully");
+
+      setTimeout(() => {
+        setCopiedBookingId(null);
+      }, 2000);
+
+    } catch (err) {
+      console.error("Copy failed:", err);
+      toast.error("Copy failed");
+    }
+  };
+
+
   const bgCon = LightMode
     ? "bg-white shadow-darkSM"
     : "bg-black/90 shadow-lightSM";
@@ -224,7 +248,7 @@ export default function Bookings() {
             )}
           </>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-4">
             <AnimatePresence mode="wait">
               {bookings.map((booking, index) => (
                 <motion.div 
@@ -349,6 +373,18 @@ export default function Bookings() {
                               deleteClicks(booking)
                             }}
                           />
+                        </span>
+
+                        <span className={`${bgCon} ${LightMode ? "text-gray-500" : "text-gray-300"} p-2 flex justify-center items-center rounded-full transition-all duration-300 ease-in-out`}>
+                          {copiedBookingId === booking?._id ? (
+                            <i className="fa-solid fa-check-double bg-white p-0.5 rounded-full text-green-600 text-xl cursor-pointer hover:scale-110 transition-transform"></i>
+                          ) : (
+                            <HiDuplicate
+                              title="Copy address"
+                              onClick={(e) => copyAddress(booking?._id, booking?.address, e)}
+                              className="rounded-full text-xl cursor-pointer hover:scale-110 transition-transform"
+                            />
+                          )}
                         </span>
                       </div>
                     </div>

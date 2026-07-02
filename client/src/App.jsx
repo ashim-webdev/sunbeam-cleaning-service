@@ -136,8 +136,8 @@ const MobileSidebar = () => {
           <motion.div
             onClick={() => dispatch(setOpenProfile(false))}
             className={`
-              fixed top-0 left-0 h-full w-3/4 sm:w-1/2 z-50 xl:hidden
-              ${LightMode ? "bg-white shadow-lg" : "bg-[#2a2a2a] shadow-xl"}
+              fixed top-0 left-0 h-full w-3/4 sm:w-1/2 z-50 xl:hidden transition-all duration-300 ease-in-out border-r [@media(min-width:400px)_and_(min-width:500px)]:border-0
+              ${LightMode ? "bg-white shadow-lg [@media(min-width:400px)_and_(min-width:500px)]:border-black" : "bg-[#2a2a2a] shadow-xl border-white"}
             `}
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
@@ -149,12 +149,27 @@ const MobileSidebar = () => {
             {/* Close button */}
             <button
               onClick={closeSidebar}
-              className="absolute top-4 right-4"
+              className="absolute top-4 right-4 [@media(min-width:400px)_and_(min-width:500px)]:block hidden"
             >
               <i
                 className={`
                   ${LightMode ? "text-gray-600" : "text-white"}
                   fa-solid fa-x text-2xl hover:scale-105 cursor-pointer
+                `}
+              />
+            </button>
+
+            <button
+              onClick={closeSidebar}
+              className={`
+                ${LightMode ? "bg-gray-200 border-black shadow-darkSM" : "bg-gray-700 border-white shadow-lightSM"}
+                absolute top-2 -right-5 border hover:scale-105 transition-all duration-300 ease-in-out p-2 rounded-full [@media(min-width:400px)_and_(min-width:500px)]:hidden
+              `}
+            >
+              <i
+                className={`
+                  ${LightMode ? "text-black" : "text-white"}
+                  fa-solid fa-x text-md cursor-pointer transition-all duration-300 ease-in-out
                 `}
               />
             </button>

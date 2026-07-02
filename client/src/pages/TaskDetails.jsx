@@ -1071,7 +1071,7 @@ const TaskDetail = () => {
 
 
 
-  // console.log(isLocked)
+  // console.log(task.equipments)
   // console.log(task)
 
   // Only admin and leader can make changes
@@ -1192,15 +1192,15 @@ const TaskDetail = () => {
     : ["#10b981", "#059669"]; // green
 
 
-  const title = task?.title || "";
+  // const title = task?.title || "";
 
-  const titleShort =
-    title.split(" ").length > 3
-      ? title.split(" ").slice(0, 3).join(" ") + "..."
-      : title;
+  // const titleShort =
+  //   title.split(" ").length > 3
+  //     ? title.split(" ").slice(0, 3).join(" ") + "..."
+  //     : title;
 
 
-  console.log(task.activity)
+  // console.log(task.activity)
 
   return (
     <>
@@ -1210,7 +1210,7 @@ const TaskDetail = () => {
             ${LightMode ? "text-gray-700" : "text-gray-300"} 
             text-2xl font-bold transition-colors duration-300 ease-in-out
           `}>
-          {titleShort}
+          {task?.title}
         </h1>
         <Tabs tabs={TABS} setSelected={setSelected}>
           {selected === 0 ? (
@@ -1236,19 +1236,19 @@ const TaskDetail = () => {
                       </div>
                     </div>
                     
-                    <p className={`${LightMode ? "text-black bg-blue-50 shadow-darkSM" : "text-white shadow-lightSM"} mt-6 border-l-10 border-blue-600 pl-2 rounded-l-lg  flex gap-2 justify-start items-center transition-colors duration-300 ease-in-out `}>
+                    <p className={`${LightMode ? "text-black bg-gray-200" : "text-white bg-white/40"} mt-6 border-l-10 border-blue-600 pl-2 rounded-l-lg  flex gap-2 justify-start items-center transition-colors duration-300 ease-in-out `}>
                       <span className="flex justify-center items-center gap-1 font-semibold"><i className="fa-solid fa-user text-xl text-blue-700 "></i></span>
                       <span className="font-bold text-lg italic pr-1">{task?.clientName}</span>
                     </p>
 
-                    <p className={`${LightMode ? "text-black bg-blue-50 shadow-darkSM" : "text-white shadow-lightSM"} border-l-10 border-blue-600  pl-2 rounded-l-lg flex gap-2 justify-start items-center transition-colors duration-300 ease-in-out -mt-4`}>
+                    <p className={`${LightMode ? "text-black bg-gray-200" : "text-white bg-white/40"} border-l-10 border-blue-600  pl-2 rounded-l-lg flex gap-2 justify-start items-center transition-colors duration-300 ease-in-out -mt-4`}>
                       <span className="flex justify-center items-center gap-1 font-semibold"><i className="fa-solid fa-location-dot text-xl text-amber-400"></i></span>
                       <span className="font-bold text-lg italic pr-1">{task?.address}</span>
                     </p>
 
-                    <p className={`${LightMode ? "text-black bg-blue-50 shadow-darkSM" : "text-white shadow-lightSM"} border-l-10 border-blue-600 pl-2 rounded-l-lg flex gap-2 justify-start items-center -mt-4 transition-colors duration-300 ease-in-out`}>
+                    <p className={`${LightMode ? "text-black bg-gray-200" : "text-white bg-white/40"} border-l-10 border-blue-600 pl-2 rounded-l-lg flex gap-2 justify-start items-center -mt-4 transition-colors duration-300 ease-in-out`}>
                       <span className="flex justify-center items-center gap-1 font-semibold"><i className="fa-solid fa-calendar text-xl text-teal-700"></i></span>
-                      <span className={`${LightMode ? "text-gray-800" : "text-gray-300"} font-semibold transition-colors duration-300 ease-in-out italic`}>{new Date(task?.date).toDateString()}</span>
+                      <span className={`${LightMode ? "text-gray-800" : "text-white/80"} font-semibold transition-colors duration-300 ease-in-out italic`}>{new Date(task?.date).toDateString()}</span>
                     </p>
 
                     <div className={`${LightMode ? "text-gray-500 border-gray-400" : "text-gray-400 border-gray-200"} transition-colors duration-300 ease-in-out flex justify-center items-center gap-8 p-4 border-y`}>
@@ -1416,7 +1416,22 @@ const TaskDetail = () => {
                     )}
 
                     <div className="px-4">
-                      <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10 my-6" />
+                      <div className="w-full h-0.5 bg-linear-to-l from-gray-400/10 via-gray-500 to-gray-400/10 my-2" />
+                    </div>
+
+                    {task?.equipments?.length > 0 && (
+                      <div className={`${LightMode ? "text-black" : "text-white"} transition-colors duration-300 ease-in-out`}>
+                        <p className='text-lg font-semibold mb-4'>EQUIPMENT</p>
+                        <div className={`${LightMode ? "text-gray-800" : "text-gray-300"} flex flex-col item-center transition-colors duration-300 ease-in-out`}>
+                          {task?.equipments?.map((equipment, index) => (
+                            <span key={index}>• {equipment}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="px-4">
+                      <div className="w-full h-0.5 bg-linear-to-l from-blue-400/10 via-blue-500 to-blue-400/10 mt-12 mb-6" />
                     </div>
 
                     {task?.assets?.length > 0 ? (
@@ -1439,24 +1454,6 @@ const TaskDetail = () => {
                         <p className={`${LightMode ? "text-black/60" : "text-white/60"} transition-colors duration-300 ease-in-out text-lg font-semibold`}>No available assets :(</p>
                       </div>)
                     }
-
-                    {/* {task?.links?.length > 0 && (
-                      <div className=''>
-                        <p className='text-lg font-semibold'>SUPPORT LINKS</p>
-                        <div className='w-full flex flex-col gap-4'>
-                          {task?.links?.map((el, index) => (
-                            <a
-                              key={index}
-                              href={el}
-                              target='_blank'
-                              className='text-blue-600 hover:underline'
-                            >
-                              {el}
-                            </a>
-                          ))}
-                        </div>
-                      </div>
-                    )} */}
                   </div>
                 </div>
 

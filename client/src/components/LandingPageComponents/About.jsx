@@ -73,7 +73,7 @@ export default function About() {
                 
                 <span className="font-mono text-xs font-black text-brand-300 leading-none">EST. 2019</span>
                 <span className="font-sans font-black text-3xl text-white tracking-tight block my-0.5 leading-none">6+</span>
-                <span className="font-sans text-[8px] font-bold text-slate-300 uppercase tracking-widest leading-none">Years of Excellence</span>
+                <span className="font-sans text-[8px] font-bold text-slate-100 uppercase tracking-widest leading-none">Years of Excellence</span>
               </div>
 
               {/* Floating Statistic Card 1 - Satisfaction */}
@@ -92,7 +92,7 @@ export default function About() {
                 <span className="font-sans font-black text-xl font-800 gradient-text block leading-tight">
                   99.8% Rate
                 </span>
-                <span className="font-sans text-[10px] font-medium text-slate-500 block leading-tight mt-0.5">
+                <span className="font-sans text-[10px] font-medium text-slate-900 block leading-tight mt-0.5">
                   Monthly recurring client retention satisfaction.
                 </span>
               </div>
@@ -113,7 +113,7 @@ export default function About() {
                 <span className="font-sans font-black  text-xl font-800 gradient-text block leading-tight">
                   4k+ Spaces
                 </span>
-                <span className="font-sans text-[10px] font-medium text-slate-500 block leading-tight mt-0.5">
+                <span className="font-sans text-[10px] font-medium text-slate-900 block leading-tight mt-0.5">
                   Meticulously polished in past years.
                 </span>
               </div>

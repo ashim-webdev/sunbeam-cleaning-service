@@ -614,10 +614,14 @@ const Dashboard = () => {
             ${user.isActive ? "" : "blur-[2px]"}
           `}>
           <div className="ml-30 w-40 flex flex-col justify-center items-start gap-0">
-            <div className="text-xl font-semibold font-serif whitespace-nowrap [@media(min-width:400px)_and_(min-width:500px)]:hidden">{user.name.slice(0, 12) + "..."}</div>
+          <div className="text-md font-semibold font-serif whitespace-nowrap [@media(min-width:400px)_and_(min-width:500px)]:hidden">
+            {user.name.length > 15
+              ? `${user.name.slice(0, 15)}...`
+              : user.name}
+          </div>
             <div className="text-xl font-semibold font-serif whitespace-nowrap [@media(min-width:400px)_and_(min-width:500px)]:block hidden">{user.name}</div>
             
-            <div className="text-lg line-clamp-1">
+            <div className="text-sm [@media(min-width:400px)_and_(min-width:500px)]:text-lg line-clamp-1">
               {admin ?
                 user?.email
                   ? user?.email
@@ -630,7 +634,7 @@ const Dashboard = () => {
                   "No Email"
               }
             </div>
-            <div className="pt-1 ml-1">
+            <div className="pt-3 ml-1">
               <OnlineStatus
                 isOnline={onlineUsers.includes(user._id.toString())}
               />

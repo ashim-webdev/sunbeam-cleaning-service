@@ -7,7 +7,7 @@ import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 
 export function CtaBanner() {
   return (
-    <section id="contact" className="section-padding font-serif">
+    <section id="contact" className="font-serif pt-6 pb-20">
       <div className="max-w-7xl mx-auto px-6">
         <div className="relative gradient-bg rounded-[2.5rem] overflow-hidden p-14 text-center shadow-blue">
           {/* Decorative blobs */}
@@ -30,7 +30,7 @@ export function CtaBanner() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
                 href="tel:+2347037189416"
-                className="flex items-center gap-3 bg-white text-brand-600 font-700 px-8 py-4 rounded-2xl hover:bg-blue-50 transition-all duration-300 shadow-float"
+                className="flex items-center gap-3 bg-white text-brand-600 font-700 px-8 py-4 rounded-2xl hover:bg-blue-50 transition-all duration-300 shadow-float whitespace-nowrap"
               >
                 <div className='animate-UpDown'>
                   <Phone className="w-5 h-5" />
@@ -39,7 +39,7 @@ export function CtaBanner() {
               </a>
               <a
                 href="#booking form"
-                className="btn-shine flex items-center gap-2.5 bg-white/15 backdrop-blur border-2 border-white/40 text-white font-700 px-8 py-4 rounded-2xl hover:bg-white/25 transition-all duration-300"
+                className="btn-shine flex items-center gap-2.5 bg-white/15 backdrop-blur border-2 border-white/40 text-white font-700 px-8 py-4 rounded-2xl hover:bg-white/25 transition-all duration-300 whitespace-nowrap"
               >
                 Booking form
                 <ArrowRight className="w-5 h-5" />
@@ -63,11 +63,11 @@ export default function Footer() {
   return (
     <footer id="blog" className="relative bg-slate-950 text-slate-100 overflow-hidden">
       
-      <div className="h-[1px] bg-white/10 max-w-7xl mx-auto" />
+      <div className="h-[1px] bg-white/10 max-w-7xl mx-auto mb-3" />
 
       {/* 2. CORE FOOTER INFO BLOCK */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16" id="footer-links-container">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 lg:gap-8" id="footer-links-grid">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8" id="footer-links-grid">
           
           {/* COL 1: LOGO & ABOUT */}
           <div className="flex flex-col gap-6" id="footer-brand-column">
@@ -94,7 +94,7 @@ export default function Footer() {
           </div>
 
           {/* COL 2: CORE SERVICES */}
-          <div className="flex flex-col gap-4" id="footer-services-column">
+          <div className="flex flex-col gap-4 lg:pl-12" id="footer-services-column">
             <h4 className=" font-extrabold text-sm text-white tracking-wide uppercase">
               Quick Links
             </h4>

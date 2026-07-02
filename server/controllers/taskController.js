@@ -19,6 +19,7 @@ import {
   emitTaskDeleted,
   emitDashboardUpdate,
 } from "../utils/socketEvents.js";
+import { sendTaskCreatedEmail } from "../emails/sendTaskCreatedEmail.js";
 
 
 
@@ -236,6 +237,20 @@ const createTask = asyncHandler(async (req, res) => {
         })
       )
     );
+
+
+    try {
+      const result = await sendTaskCreatedEmail({
+        email: "ashimdev5035@gmail.com",
+        name: req.user.name,
+        taskTitle: task.title,
+      });
+
+      console.log("Email result:", result);
+      console.log("User Email:", req.user.email);
+    } catch (error) {
+      console.error("Email failed:", error);
+    }
 
 
 

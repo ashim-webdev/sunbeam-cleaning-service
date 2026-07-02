@@ -8,9 +8,11 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
+    "emailTemplate": "email dev --dir emails",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@react-email/components": "^1.0.12",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.10.0",
     "cookie-parser": "^1.4.7",
@@ -22,9 +24,14 @@
     "mongoose": "^9.4.1",
     "morgan": "^1.10.1",
     "multer": "^2.1.1",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "react-email": "6.6.0",
+    "resend": "^6.12.4",
     "socket.io": "^4.8.3"
   },
   "devDependencies": {
+    "@react-email/ui": "6.6.0",
     "nodemon": "^3.1.14"
   }
 }
