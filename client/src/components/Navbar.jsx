@@ -116,10 +116,13 @@ const Navbar = ({ isScrolled, isSearchPanelOpen, setIsSearchPanelOpen }) => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsSearchPanelOpen(false);
+      if (window.innerWidth >= 640) {
+        setIsSearchPanelOpen(false);
+      }
     };
 
     window.addEventListener("resize", handleResize);
+
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -506,6 +509,7 @@ const Navbar = ({ isScrolled, isSearchPanelOpen, setIsSearchPanelOpen }) => {
                         onClick={(e) => {
                           if (!searchInput.trim()) return;
 
+                          setIsSearchPanelOpen(false)
                           handleSubmit(e);
                         }}
                         className={`

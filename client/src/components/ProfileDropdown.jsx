@@ -230,7 +230,9 @@ export default function ProfileDropdown({ className }) {
                     {data.name}
                   </div>
                   <div className="text-xs whitespace-nowrap">
-                    {data.email}
+                    {data.email.length > 15
+                      ? `${data.email.slice(0, 15)}...`
+                      : data.email}
                   </div>
                 </div>
                 

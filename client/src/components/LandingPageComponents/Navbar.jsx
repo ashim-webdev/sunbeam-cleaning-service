@@ -56,10 +56,10 @@ export default function Navbar() {
 
           <div className='hidden md:flex justify-center items-center gap-4'>
             {/* Sign In */}
-            <div className="hidden md:flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-3 shadow-darkSM rounded-sm">
               <button
                 onClick={() => setShowEmployeeModal(true)}
-                className="cursor-pointer border border-black text-black text-sm font-600 px-5 py-1.5 rounded-xl shadow-inner hover:opacity-90 transition-all duration-300 hover:scale-103 active:scale-95"
+                className="cursor-pointer text-black text-sm font-600 px-5 py-1.5 rounded-sm hover:opacity-90 transition-all duration-300 hover:scale-103 active:scale-95"
               >
                 Sign In
               </button>
@@ -108,13 +108,13 @@ export default function Navbar() {
                 ))}
                 <div className='w-full flex flex-col justify-center items-center gap-2'>
                   {/* Sign In */}
-                  <div className="w-full flex items-center gap-3">
+                  <div className="w-full flex items-center gap-3 shadow-darkSM rounded-xl">
                     <button
                       onClick={() => {
                         setMenuOpen(false);
                         setShowEmployeeModal(true);
                       }}
-                      className="cursor-pointer w-full text-center border border-black text-black text-sm font-600 px-5 py-2.5 rounded-xl shadow-inner hover:opacity-90 transition-all duration-300"
+                      className="cursor-pointer w-full text-center text-black text-sm font-600 px-5 py-2.5 rounded-xl hover:opacity-90 transition-all duration-300"
                     >
                       Sign In
                     </button>
