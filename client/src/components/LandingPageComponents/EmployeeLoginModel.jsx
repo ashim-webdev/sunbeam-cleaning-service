@@ -26,7 +26,7 @@ export default function EmployeeLoginModal({ isOpen, onClose }) {
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[999] flex items-center justify-center px-5"
+        className="fixed h-screen inset-0 bg-black/60 backdrop-blur-sm z-[999] flex items-center justify-center px-5"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}

@@ -48,14 +48,21 @@ function Layout() {
 
 
   useEffect(() => {
+    if (!user) return;
+
     const container = containerRef.current;
+    if (!container) return;
+
     const handleScroll = () => {
       setIsScrolled(container.scrollTop > 50);
     };
+
     container.addEventListener("scroll", handleScroll);
 
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, []);
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
+  }, [user]);
 
   useEffect(() => {
     const handleResize = () => {
