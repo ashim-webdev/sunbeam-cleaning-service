@@ -84,7 +84,13 @@ const UserAvatar = () => {
               className={`outline-0 border-2 ${user?.isActive ? "border-green-600" : "border-red-600"} w-10 h-10 2xl:w-12 2xl:h-12 flex items-center justify-center rounded-full bg-[#005FFB] hover:bg-blue-800 hover:shadow-innerWH cursor-pointer transition-all hover:scale-105 ease-in-out duration-200 shadow-inner overflow-hidden`}>
               <span className='text-white font-semibold '>
                 {user?.profileImage ? 
-                  <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                  <img
+                    src={user?.profileImage}
+                    loading="lazy"
+                    decoding="async"
+                    alt="Avatar"
+                    className="w-full h-full object-cover "
+                  />
                 :
                   <span>
                     {getInitials(user?.name)}

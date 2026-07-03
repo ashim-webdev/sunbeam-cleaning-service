@@ -84,6 +84,7 @@ export default function Testimonials() {
                   <img
                     src={t.avatar}
                     alt={t.name}
+                    loading='lazy'
                     className="w-12 h-12 rounded-full object-cover"
                   />
                   <div>

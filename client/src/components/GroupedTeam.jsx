@@ -33,7 +33,13 @@ export default function GroupedTeam({ team = [] }) {
                       BGS[index % BGS.length]
                     )}>
                       {member?.profileImage ? 
-                        <img src={member?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                        <img
+                          src={member?.profileImage}
+                          loading="lazy"
+                          decoding="async"
+                          alt="Avatar"
+                          className="w-full h-full object-cover "
+                        />
                       :
                         <span>
                           {getInitials(member?.name || "Unknown User")}

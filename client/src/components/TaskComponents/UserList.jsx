@@ -282,7 +282,13 @@ export default function UserList({ team, setTeam }) {
                               }
                             >
                               {user?.profileImage ? 
-                                <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                                <img
+                                  src={user?.profileImage}
+                                  loading="lazy"
+                                  decoding="async"
+                                  alt="Avatar"
+                                  className="w-full h-full object-cover "
+                                />
                               :
                                 <span className='text-center text-[10px]'>
                                   {getInitials(user?.name || "Unknown User")}

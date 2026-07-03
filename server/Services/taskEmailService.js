@@ -1,5 +1,5 @@
 import { resend } from "./emailService.js";
-import TaskCreatedEmail from "../emails/TaskCreatedEmail.js";
+import TaskCreatedEmail from "../emails/sendTaskCreatedEmail.js";
 
 export const sendTaskCreatedEmail = async ({
   email,

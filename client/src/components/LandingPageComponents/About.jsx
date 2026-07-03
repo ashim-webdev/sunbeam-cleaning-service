@@ -31,6 +31,7 @@ export default function About() {
               <div className="absolute left-0 top-0 w-[58%] h-[68%] rounded-[2rem] overflow-hidden shadow-float border border-white">
                 <img
                   src={working1}
+                  loading='lazy'
                   alt="Cleaning team"
                   className="w-full h-full object-cover"
                 />
@@ -40,6 +41,7 @@ export default function About() {
               <div className="absolute right-3 top-0 w-[38%] h-[44%] rounded-[1.5rem] overflow-hidden shadow-card border border-white">
                 <img
                   src={working2}
+                  loading='lazy'
                   alt="Cleaning supplies"
                   className="w-full h-full object-cover"
                 />
@@ -49,6 +51,7 @@ export default function About() {
               <div className="absolute right-4 bottom-4 w-[44%] h-[44%] rounded-full overflow-hidden shadow-float border-4 border-white">
                 <img
                   src={working3}
+                  loading='lazy'
                   alt="Happy customer"
                   className="w-full h-full object-cover"
                 />
@@ -58,6 +61,7 @@ export default function About() {
               <div className="absolute left-0 -bottom-5 w-[55%] h-[35%] rounded-full overflow-hidden border-4 border-white shadow-card">
                 <img
                   src={working4}
+                  loading='lazy'
                   alt="Mopping floor"
                   className="w-full h-full object-cover"
                 />
@@ -122,6 +126,7 @@ export default function About() {
               <div className="absolute -top-8 -left-8 w-35 h-35 rounded-full overflow-hidden border-4 border-white shadow-card">
                 <img
                   src={working5}
+                  loading='lazy'
                   alt="Mopping floor"
                   className="w-full h-full object-cover"
                 />
@@ -131,6 +136,7 @@ export default function About() {
               <div className="absolute -bottom-4 -right-8 w-30 h-30 rounded-full overflow-hidden border-4 border-white shadow-card">
                 <img
                   src={working6}
+                  loading='lazy'
                   alt="Mopping floor"
                   className="w-full h-full object-cover"
                 />

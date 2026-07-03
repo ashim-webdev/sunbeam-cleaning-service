@@ -73,7 +73,11 @@ export default function Footer() {
           <div className="flex flex-col gap-6" id="footer-brand-column">
             <div className="flex items-center gap-2.5 group cursor-pointer">
               <span className='w-45 bg-white mb-2 pt-2.5 pb-4 px-6 rounded-full shadow-lightSM'>
-                <img src='/sunbeamLogo.svg' alt='Logo'  />
+                <img 
+                  src='/sunbeamLogo.svg'
+                  loading='lazy'
+                  alt='Logo'
+                />
               </span>
             </div>
             

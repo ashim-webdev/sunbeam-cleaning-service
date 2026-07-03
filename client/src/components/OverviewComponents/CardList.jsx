@@ -52,7 +52,13 @@ const EmployeeList = ({ user, title, popUpUserInfo, useInfo, index }) => {
                 user.isActive ? "border-green-500" : "border-red-600"
             )}>
               {user?.profileImage ? 
-                <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                <img
+                  src={user?.profileImage}
+                  loading="lazy"
+                  decoding="async"
+                  alt="Avatar"
+                  className="w-full h-full object-cover "
+                />
               :
                 <span className='text-xs md:text-sm text-center'>
                   {getInitials(user?.name || "Unknown User")}
@@ -429,7 +435,13 @@ const ActiveEmployees = ({ user, title, popUpUserInfo, useInfo, index }) => {
                       user.isActive ? "border-green-500" : "border-red-600"
                   )}>
                     {user?.profileImage ? 
-                      <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                      <img
+                        src={user?.profileImage}
+                        loading="lazy"
+                        decoding="async"
+                        alt="Avatar"
+                        className="w-full h-full object-cover "
+                      />
                     :
                       <span className='text-xs md:text-sm text-center'>
                         {getInitials(user?.name || "Unknown User")}
@@ -512,7 +524,13 @@ const DisabledEmployees = ({ user, title, popUpUserInfo, useInfo, index }) => {
                       user.isActive ? "border-green-500" : "border-red-600"
                   )}>
                     {user?.profileImage ? 
-                      <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                      <img
+                        src={user?.profileImage}
+                        loading="lazy"
+                        decoding="async"
+                        alt="Avatar"
+                        className="w-full h-full object-cover "
+                      />
                     :
                       <span className='text-xs md:text-sm text-center'>
                         {getInitials(user?.name || "Unknown User")}

@@ -99,6 +99,7 @@ export default function Hero() {
                   <img
                     key={i}
                     src={src}
+                    loading='lazy'
                     alt="Customer"
                     className="w-10 h-10 rounded-full border-2 border-white object-cover"
                   />
@@ -126,6 +127,7 @@ export default function Hero() {
                 <img
                   src="https://images.pexels.com/photos/6195121/pexels-photo-6195121.jpeg?auto=compress&cs=tinysrgb&w=900"
                   alt="Professional cleaning service"
+                  loading='lazy'
                   className="w-full h-[460px] object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-600/20 to-transparent" />

@@ -70,7 +70,13 @@ export default function UserInfoDash({ task }) {
             BGS[index % BGS.length]
           )}>
             {member?.profileImage ? 
-              <img src={member?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+              <img
+                src={member?.profileImage}
+                alt="Avatar"
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover "
+              />
             :
               <span>
                 {getInitials(member?.name || "Unknown User")}

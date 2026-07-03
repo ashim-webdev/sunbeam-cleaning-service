@@ -129,6 +129,7 @@ function ComparisonSlider({
         <div className="absolute inset-0 w-full h-full">
           <img
             src={after}
+            loading='lazy'
             alt="After cleaning"
             className="w-full h-full object-cover"
           />
@@ -146,6 +147,7 @@ function ComparisonSlider({
           <div className="absolute inset-x-0 top-0 bottom-0 min-w-full h-full aspect-video">
             <img
               src={before}
+              loading='lazy'
               alt="Before cleaning"
               className="w-full h-full object-cover"
             />

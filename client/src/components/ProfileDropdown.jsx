@@ -244,6 +244,8 @@ export default function ProfileDropdown({ className }) {
                           <img
                             src={data.avatar}
                             alt={data.name}
+                            loading="lazy"
+                            decoding="async"
                             className="h-full w-full rounded-full object-cover"
                           />
                         :

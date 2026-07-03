@@ -55,6 +55,7 @@ export default function WhyChooseUs() {
                 <img
                   src="https://images.pexels.com/photos/4107278/pexels-photo-4107278.jpeg?auto=compress&cs=tinysrgb&w=600"
                   alt="Cleaning professional"
+                  loading='lazy'
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -63,6 +64,7 @@ export default function WhyChooseUs() {
                 <img
                   src="https://images.pexels.com/photos/4107112/pexels-photo-4107112.jpeg?auto=compress&cs=tinysrgb&w=500"
                   alt="Clean kitchen"
+                  loading='lazy'
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -71,6 +73,7 @@ export default function WhyChooseUs() {
                 <img
                   src="https://images.pexels.com/photos/6195083/pexels-photo-6195083.jpeg?auto=compress&cs=tinysrgb&w=500"
                   alt="Cleaning bathroom"
+                  loading='lazy'
                   className="w-full h-full object-cover"
                 />
               </div>

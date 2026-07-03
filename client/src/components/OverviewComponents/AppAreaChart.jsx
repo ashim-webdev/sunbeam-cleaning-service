@@ -194,6 +194,8 @@ const AppAreaChart = () => {
                     {selectedUser?.profileImage ? 
                       <img
                         src={selectedUser?.profileImage}
+                        loading="lazy"
+                        decoding="async"
                         className="h-full w-full rounded-full object-cover"
                       />
                       :

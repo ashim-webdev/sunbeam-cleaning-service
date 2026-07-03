@@ -70,7 +70,6 @@ function Layout() {
     <div 
     onClick={() => {
       dispatch(setOpenProfile(false))
-      setIsSearchPanelOpen(false)
     }}
     className={`
       ${LightMode 
@@ -163,13 +162,13 @@ const MobileSidebar = () => {
               onClick={closeSidebar}
               className={`
                 ${LightMode ? "bg-gray-200 border-black shadow-darkSM" : "bg-gray-700 border-white shadow-lightSM"}
-                absolute top-2 -right-5 border hover:scale-105 transition-all duration-300 ease-in-out p-2 rounded-full [@media(min-width:400px)_and_(min-width:500px)]:hidden
+                absolute top-2 -right-4 border hover:scale-105 transition-all duration-300 ease-in-out px-1.5 py-1 rounded-full [@media(min-width:400px)_and_(min-width:500px)]:hidden
               `}
             >
               <i
                 className={`
                   ${LightMode ? "text-black" : "text-white"}
-                  fa-solid fa-x text-md cursor-pointer transition-all duration-300 ease-in-out
+                  fa-solid fa-x text-sm cursor-pointer transition-all duration-300 ease-in-out
                 `}
               />
             </button>

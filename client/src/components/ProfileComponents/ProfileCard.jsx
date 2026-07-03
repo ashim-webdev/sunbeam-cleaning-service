@@ -136,6 +136,8 @@ const ProfileCard = ({
                       {freshUser?.profileImage ? 
                         <img
                           src={freshUser?.profileImage}
+                          loading="lazy"
+                          decoding="async"
                           className="h-full w-full object-cover"
                         />
                         :

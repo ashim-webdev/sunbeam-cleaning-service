@@ -471,6 +471,8 @@ const AddTask = ({ open, setOpen, task }) => {
                             >
                               <img
                                 src={file.preview}
+                                loading="lazy"
+                                decoding="async"
                                 alt="preview"
                                 className={`${LightMode ? "shadow-darkSM border-amber-400" : "shadow-lightSM border-white"} w-10 h-10 border rounded-full object-cover shadow transition-all duration-300 ease-in-out `}
                               />

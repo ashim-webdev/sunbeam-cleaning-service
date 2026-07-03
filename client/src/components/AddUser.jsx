@@ -296,6 +296,8 @@ const AddUser = ({ open, setOpen, userData }) => {
                     {preview ? (
                       <img
                         src={preview}
+                        loading="lazy"
+                        decoding="async"
                         alt="Profile Preview"
                         className="w-full h-full object-cover"
                       />

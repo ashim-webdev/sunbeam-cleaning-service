@@ -314,6 +314,8 @@ export default function Bookings() {
                                     <img
                                       key={index}
                                       src={img?.url}
+                                      loading="lazy"
+                                      decoding="async"
                                       className={`${LightMode ? "border-blue-500" : "border-white"} w-8 h-8 rounded-full object-cover border-2 transition-all duration-300 ease-in-out`}
                                     />
                                   }
@@ -418,6 +420,8 @@ export default function Bookings() {
                                 {img?.url && 
                                   <img
                                     src={img?.url}
+                                    loading="lazy"
+                                    decoding="async"
                                     className="h-full w-full object-cover"
                                   />
                                 }

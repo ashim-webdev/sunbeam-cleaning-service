@@ -514,7 +514,13 @@ const Dashboard = () => {
               user?.isActive ? "border-green-500" : "border-red-600"
             )}>
               {user?.profileImage ? 
-                <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                <img 
+                  src={user?.profileImage}
+                  loading="lazy"
+                  decoding="async"
+                  alt="Avatar" 
+                  className="w-full h-full object-cover "
+                />
               :
                 <span className='text-xs md:text-sm text-center'>
                   {getInitials(user?.name || "Unknown User")}
@@ -586,7 +592,13 @@ const Dashboard = () => {
             "w-30 h-30 rounded-full border-8 flex items-center justify-center text-white text-sm overflow-hidden bg-blue-600 transition-all duration-300 ease-in-out",
           )}>
             {user?.profileImage ? 
-              <img src={user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+              <img 
+                src={user?.profileImage} 
+                alt="Avatar" 
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover"
+              />
             :
               <span className='text-2xl md:text-sm text-center'>
                 {getInitials(user?.name || "Unknown User")}

@@ -368,28 +368,31 @@ const Sidebar = () => {
           w-full h-full flex flex-col gap-6 p-5 transition-colors ease-in-out duration-300
       `}>
       <div className="flex justify-between item-center gap-2">
-        <div className='flex gap-2 items-center'>
-          <div className={`${LightMode ? "shadow-darkSM border-blue-900 bg-blue-900/30" : "shadow-lightSM border-white bg-blue-600"} p-2 rounded-full border`}>
-            <ClipboardCheck className={`w-6 h-6 transition-colors ease-in-out duration-300 ${LightMode ? " text-blue-900" : "text-white"}`} />
+        
+        <Link to={"/"}>
+          <div className='flex gap-2 items-center'>
+            <div className={`${LightMode ? "shadow-darkSM border-blue-900 bg-blue-900/30" : "shadow-lightSM border-white bg-blue-600"} p-2 rounded-full border`}>
+              <ClipboardCheck className={`w-6 h-6 transition-colors ease-in-out duration-300 ${LightMode ? " text-blue-900" : "text-white"}`} />
+            </div>
+            <span className={`relative flex justify-center items-center gap-1 text-2xl font-bold transition-colors ease-in-out duration-300 ${LightMode ? " text-blue-900" : "text-white"} `}>
+              <span>TaskMe</span>
+              <span><FaBroom className='w-6 h-6' /></span>
+              <svg
+                className="absolute top-7.5 left-0 w-30 -rotate-6"
+                viewBox="0 0 300 12"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2 10C60 4 160 1 298 6"
+                  stroke={`${LightMode ? "#009c05" : "#2B62F5"}`}
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
           </div>
-          <span className={`relative flex justify-center items-center gap-1 text-2xl font-bold transition-colors ease-in-out duration-300 ${LightMode ? " text-blue-900" : "text-white"} `}>
-            <span>TaskMe</span>
-            <span><FaBroom className='w-6 h-6' /></span>
-            <svg
-              className="absolute top-7.5 left-0 w-30 -rotate-6"
-              viewBox="0 0 300 12"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M2 10C60 4 160 1 298 6"
-                stroke={`${LightMode ? "#009c05" : "#2B62F5"}`}
-                strokeWidth="4"
-                strokeLinecap="round"
-              />
-            </svg>
-          </span>
-        </div>
+        </Link>
         
         <div className="xl:hidden flex sm:flex-col sm:mr-6 md:mr-10 lg:mr-20 justify-center item-center">
           <ConnectionStatus isOnline={onlineUsers.includes(user._id.toString())}/>

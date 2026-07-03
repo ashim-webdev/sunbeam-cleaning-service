@@ -135,7 +135,13 @@ export function LeaveList({
                                     request.user?.isActive ? "border-green-500" : "border-red-600"
                                 )}>
                                   {request.user?.profileImage ? 
-                                    <img src={request.user?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                                    <img
+                                      src={request.user?.profileImage}
+                                      loading="lazy"
+                                      decoding="async"
+                                      alt="Avatar"
+                                      className="w-full h-full object-cover"
+                                    />
                                   :
                                     <span className='text-xs md:text-sm text-center'>
                                       {getInitials(request.user?.name || "Unknown request")}

@@ -289,6 +289,8 @@ export default function LandingPageForm({
                       <img
                         key={index}
                         src={img.preview}
+                        loading="lazy"
+                        decoding="async"
                         alt="preview"
                         className={`w-16 h-16 object-cover rounded-lg border ${imgBorder}`}
                       />

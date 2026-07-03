@@ -383,6 +383,7 @@ const Navbar = ({ isScrolled, isSearchPanelOpen, setIsSearchPanelOpen }) => {
                         const params = new URLSearchParams(searchParams);
                         params.delete("search");
 
+                        setIsSearchPanelOpen(false)
                         setSearchParams(params);
 
                         setFocus(false);
@@ -583,7 +584,6 @@ const Navbar = ({ isScrolled, isSearchPanelOpen, setIsSearchPanelOpen }) => {
                             );
 
                             setRecentSearches(filtered);
-                            setFocus(false)
 
                             localStorage.setItem(
                               storageKey,

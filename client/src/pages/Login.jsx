@@ -183,8 +183,8 @@ const Login = () => {
   }
   
   return (
-    <div className='relative overflow-hidden w-full h-full mb-5'>
-      <div className='Login w-full h-full flex items-center justify-center flex-col lg:flex-row shadow-inner'>
+    <div className='LogIn-BG relative overflow-x-hidden overflow-y-auto w-full h-dvh'>
+      <div className='Login w-full h-auto flex items-center justify-center flex-col lg:flex-row'>
         <div className=' sm:overflow-x-visible z-10 w-auto md:w-auto flex gap-15 md:gap-10 lg:gap-30 flex-col lg:flex-row xl:gap-70 items-center justify-center'>
           <div className='h-full w-full lg:w-2/3 flex flex-col items-center justify-center'>
             <div className='w-full md:max-w-lg 2xl:max-w-3xl flex flex-col items-center justify-center gap-5 md:gap-y-10 mt-10 2xl:-mt-20'>
@@ -300,11 +300,7 @@ const Login = () => {
               </div>
             </form>
           </div>
-
-          
         </div>
-
-        <div className='LogIn-BG'></div>
       </div>
 
       <div className='absolute bg-transparent w-fill flex justify-center item-center top-5 left-0 right-0 '>

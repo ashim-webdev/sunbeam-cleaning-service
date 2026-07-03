@@ -33,7 +33,11 @@ export default function Navbar() {
           {/* Logo */}
           <div className="flex items-center gap-2.5">
             <span className='w-25'>
-              <img src='/sunbeamLogo.svg' alt='Logo'  />
+              <img
+                src='/sunbeamLogo.svg'
+                loading='lazy'
+                alt='Logo'
+              />
             </span>
           </div>
 

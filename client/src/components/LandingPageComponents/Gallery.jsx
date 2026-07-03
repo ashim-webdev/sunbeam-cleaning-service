@@ -142,6 +142,7 @@ export default function Gallery() {
                 <img
                   src={item.imageUrl}
                   alt={item.title}
+                  loading='lazy'
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 pointer-events-none"
                 />

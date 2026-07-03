@@ -104,6 +104,8 @@ const ViewNotification = ({ open, setOpen, el }) => {
                     <img
                       src={el?.sender?.profileImage}
                       alt={el?.sender?.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-14 h-14 rounded-full object-cover border-2 border-white"
                     />
                   :
@@ -122,6 +124,8 @@ const ViewNotification = ({ open, setOpen, el }) => {
                     <img
                       src={el?.createdBy?.profileImage}
                       alt={el?.createdBy?.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-14 h-14 rounded-full object-cover border-2 border-white"
                     />
                   :
@@ -156,6 +160,8 @@ const ViewNotification = ({ open, setOpen, el }) => {
                         <img
                           key={index}
                           src={user?.profileImage}
+                          loading="lazy"
+                          decoding="async"
                           className="w-8 h-8 rounded-full border-2 border-white object-cover"
                         />
                       :

@@ -383,17 +383,11 @@ html {
 }
 
 .LogIn-BG {
-  position: fixed;
   background: linear-gradient( -45deg, #000000 50%, #ffffff51 50%);
-  background-attachment: fixed;
-  background-position: center;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  /* background-position: center; */
+  /* z-index: 0; */
+  /* width: 100%;
+  height: 100%; */
 }
 
 .LoginHeader {

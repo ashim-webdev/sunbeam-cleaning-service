@@ -502,7 +502,13 @@ const Activities = ({ activity, id, refetch, task, isLocked }) => {
               `}>
               <span className='text-white font-semibold flex justify-center item-center '>
                 {item?.by?.profileImage ? 
-                  <img src={item?.by?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                  <img 
+                    src={item?.by?.profileImage}
+                    loading="lazy"
+                    decoding="async"
+                    alt="Avatar"
+                    className="w-full h-full object-cover"
+                  />
                   :
                   <span className="text-[8px]">
                     {getInitials(item?.by?.name)}
@@ -650,6 +656,8 @@ const Activities = ({ activity, id, refetch, task, isLocked }) => {
                               {person?.profileImage ? (
                                 <img
                                   src={person.profileImage}
+                                  loading="lazy"
+                                  decoding="async"
                                   alt={person.name}
                                   className="w-full h-full object-cover"
                                 />
@@ -845,6 +853,8 @@ const Activities = ({ activity, id, refetch, task, isLocked }) => {
                   <div key={index} className="relative hover:scale-110 transition-all duration-300 ease-in-out hover:z-50 mb-6">
                     <img
                       src={file.preview}
+                      loading="lazy"
+                      decoding="async"
                       alt="preview"
                       className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} w-full h-24 object-cover rounded shadow cursor-pointer transition-all duration-300 ease-in-out`}
                     />
@@ -941,7 +951,13 @@ const Activities = ({ activity, id, refetch, task, isLocked }) => {
                             }
                           >
                             {task?.completedBy?.profileImage ? 
-                              <img src={task?.completedBy?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                              <img
+                                src={task?.completedBy?.profileImage}
+                                loading="lazy"
+                                decoding="async"
+                                alt="Avatar"
+                                className="w-full h-full object-cover"
+                              />
                             :
                               <span className='text-center text-[10px]'>
                                 {getInitials(task?.completedBy?.name || "Unknown User")}
@@ -988,6 +1004,8 @@ const Activities = ({ activity, id, refetch, task, isLocked }) => {
                         >
                           <img
                             src={img?.url}
+                            loading="lazy"
+                            decoding="async"
                             alt={`cleanup-${index}`}
                             className={`
                               w-full h-32 object-cover rounded-xl cursor-pointer
@@ -1278,7 +1296,13 @@ const TaskDetail = () => {
                               
                             )}>
                               {m?.profileImage ? 
-                                <img src={m?.profileImage} alt="Avatar" className="w-full h-full object-cover "/>
+                                <img
+                                  src={m?.profileImage}
+                                  loading="lazy"
+                                  decoding="async"
+                                  alt="Avatar"
+                                  className="w-full h-full object-cover "
+                                />
                               :
                                 <span>
                                   {getInitials(m?.name)}
@@ -1443,6 +1467,8 @@ const TaskDetail = () => {
                               key={index}
                               src={el?.url}
                               alt={index}
+                              loading="lazy"
+                              decoding="async"
                               className={`${LightMode ? "shadow-darkSM" : "shadow-lightSM"} w-full rounded h-auto md:h-44 2xl:h-52 cursor-pointer transition-all duration-300 ease-in-out md:hover:scale-125 hover:z-50`}
                             />
                           ))}
