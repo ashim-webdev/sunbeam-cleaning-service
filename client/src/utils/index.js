@@ -39,7 +39,7 @@ export const PRIORITY_STYLES = {
   high: "text-red-600",
   medium: "text-yellow-600",
   low: "text-[#4CAF50]",
-  normal: "text-[#0004ff]"
+  normal: "text-[#0058E7]"
 };
 
 export const TASK_TYPE = {

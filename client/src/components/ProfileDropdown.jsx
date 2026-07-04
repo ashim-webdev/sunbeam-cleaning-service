@@ -20,7 +20,8 @@ import { motion, AnimatePresence } from "framer-motion"
 import { setLightMode } from "../redux/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {useGetUserProfileQuery} from "../redux/slices/api/userApiSlice"
-import { setOpenSidebar, setOpenProfile, setCPEditPopUp } from "../redux/slices/authSlice";
+import { setOpenSidebar, setOpenProfile, setCPEditPopUp, setCPChangePasswordPopUp } from "../redux/slices/authSlice";
+import { apiSlice } from "@/redux/slices/apiSlice";
 import { useLogoutMutation } from "../redux/slices/api/authApiSlice";
 import { logout } from "../redux/slices/authSlice";
 
@@ -57,9 +58,9 @@ const LoadingCircle = () => {
 
 
 export default function ProfileDropdown({ className }) {
-  const { LightMode, isProfileOpen, CPEditPopUp }  = useSelector((state) => state.auth);
+  const { LightMode, isProfileOpen }  = useSelector((state) => state.auth);
   const [chevronIcon, setChevronIcon] = useState(false);
-  const [openPassword, setOpenPassword] = useState(false)
+  const [activeSetting, setActiveSetting] = useState(null);
 
   const [msg, setMsg] = useState(null);
   const [type, setType] = useState("logout");
@@ -67,7 +68,9 @@ export default function ProfileDropdown({ className }) {
 
   // console.log(CPEditPopUp)
   const { user: storedUser } = useSelector((state) => state.auth);
-  const { data: freshUser, isLoading } = useGetUserProfileQuery();
+  const { data: freshUser, isLoading } = useGetUserProfileQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
   const user = freshUser ?? storedUser;
 
 
@@ -86,6 +89,9 @@ export default function ProfileDropdown({ className }) {
     try {
       await logoutUser().unwrap();
       dispatch(logout());
+
+      // Reset the API state to clear any cached data
+      dispatch(apiSlice.util.resetApiState());
 
       navigate("/log-in");
     } catch (error) {
@@ -120,10 +126,6 @@ export default function ProfileDropdown({ className }) {
     setChevronIcon(prev => !prev)
   }
 
-  const toggleChangePassword = () => {
-    setOpenPassword(prev => !prev)
-  }
-
 
   const menuItems = [
     { 
@@ -156,12 +158,14 @@ export default function ProfileDropdown({ className }) {
 
 
   const settingsMenu = [
-      {
+    {
+      id: "change-password",
       label: "Change Password",
+      link: "Profile",
       icon: <Lock className="h-4 w-4" />,
-      onClick: toggleChangePassword
     },
     {
+      id: "edit-profile",
       label: "Edit Profile",
       link: "Profile",
       icon: <UserPen className="h-4 w-4" />,
@@ -171,14 +175,10 @@ export default function ProfileDropdown({ className }) {
 
     // Settings Menu 
     const navigate = useNavigate()
-  
-    const SIDEBAR_ANIMATION_MS = 200;
-  
+    
     const handleNavClick = (path) => {
       dispatch(setOpenSidebar(false)); // start slide-out
-      setTimeout(() => {
-        navigate(`/${path}`);
-      }, SIDEBAR_ANIMATION_MS);
+      navigate(`/${path}`);
     };
     // End
 
@@ -345,22 +345,27 @@ export default function ProfileDropdown({ className }) {
                                       onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation()
+
+                                        setActiveSetting(el.id);
                                         
                                         dispatch(setOpenProfile(false));
                                         
-                                        if (el.label === "Edit Profile") {
+                                        if (el?.label === "Edit Profile") {
                                           handleNavClick(el?.link);
                                           setTimeout(() => {
                                             dispatch(setCPEditPopUp(true));
-                                          }, 2000);
-                                        } else {
-                                          toggleChangePassword()
+                                          }, 100);
+                                        } else if (el?.label === "Change Password") {
+                                          handleNavClick(el?.link);
+                                          setTimeout(() => {
+                                            dispatch(setCPChangePasswordPopUp(true));
+                                          }, 100);
                                         }
                                       }}
                                       className={clsx(
                                         "ClickAnimationNoti w-full flex gap-2 px-5 py-1.25 rounded-xl items-center text-base cursor-pointer transition-colors ease-in-out duration-300 ",
                                         
-                                        path === el?.link ? `ClickAnimationNoti transition-colors ease-in-out bg-[#005FFB] text-white duration-75 
+                                        activeSetting === el.id ? `ClickAnimationNoti transition-colors ease-in-out bg-[#005FFB] text-white duration-75 
                                         ${LightMode ? "shadow-darkSM" : "shadow-blueSM"}`
                                         :
                                         `transition-colors ease-in-out duration-75 
@@ -410,10 +415,6 @@ export default function ProfileDropdown({ className }) {
         type={type}
         setType={setType}
         onClick={logoutHandler}
-      />
-      <ChangePassword
-        open={openPassword}
-        setOpen={setOpenPassword}
       />
     </>
   );

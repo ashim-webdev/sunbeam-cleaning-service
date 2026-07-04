@@ -106,7 +106,7 @@ const ProfileCard = ({
   const badge = LightMode ? "text-black bg-white/50 border border-black/30 shadow-darkSM" : "text-white border border-white/50 bg-blue-800/40 shadow-lightSM"
   
   return (
-    <div className="relative">
+    <div className="relative my-2">
       <h1 className="absolute -top-10 left-0 right-0 text-lg font-medium text-center">
         {header}
       </h1>
@@ -148,8 +148,6 @@ const ProfileCard = ({
                       </span>
 
                     </div>
-
-                    
                     <AnimatePresence>
                       <motion.div
                         initial={{ opacity: 0, x: -80 }}
@@ -162,7 +160,7 @@ const ProfileCard = ({
                           damping: 14,
                           mass: 1.2,
                         }}
-                        className="absolute -top-2 -left-4 flex flex-col justify-center items-center mr-10"
+                        className="absolute -top-2 -left-4 flex justify-center items-center"
                       >
                         <OnlineStatus
                           isOnline={onlineUsers.includes(freshUser._id.toString())}
@@ -170,7 +168,6 @@ const ProfileCard = ({
                         />
                       </motion.div>
                     </AnimatePresence>
-
 
                     {freshUser ? (
                         swap ? (
@@ -268,7 +265,6 @@ const ProfileCard = ({
               </span>
             }
           </h5>
-          
         </div>
 
 
@@ -290,15 +286,32 @@ const ProfileCard = ({
                     variant="secondary"
                     className={`${badge} ${changeAnimation} flex justify-center items-center text-md pt-1.5 pb-2 pl-8 pr-4 -ml-2 mb-6 rounded-br-3xl rounded-tl-sm rounded-tr-none`}
                   >
-                    <div className={`
-                        w-full flex justify-start items-center gap-2 transition-all duration-300 ease-in-out
-                      `}>
-                      <div className="text-sm font-semibold">{freshUser?.title}</div>
 
-                      <div className={`w-0.5 h-8 ${freshUser?.isActive ? "bg-linear-to-b from-green-400/10 via-green-500 to-green-400/10" : "bg-linear-to-b from-red-400/10 via-red-500 to-red-400/10" } `} />
 
-                      <div className="text-sm font-semibold">{freshUser?.role}</div>
-                    </div>
+
+                    {freshUser?.title.length <= 15 && freshUser?.role.length <= 15 ? (
+                      <div className={`
+                          w-full flex justify-start items-center gap-2 transition-all duration-300 ease-in-out
+                        `}>
+                        <div className="text-sm font-semibold flex flex-wrap">{freshUser?.title}</div>
+  
+                        <div className={`w-0.5 h-8 ${freshUser?.isActive ? "bg-linear-to-b from-green-400/10 via-green-500 to-green-400/10" : "bg-linear-to-b from-red-400/10 via-red-500 to-red-400/10" } `} />
+  
+                        <div className="text-sm font-semibold">{freshUser?.role}</div>
+                      </div>
+                    ) : (
+                      <div 
+                      className={`
+                        w-full flex flex-col justify-start items-center gap-1 transition-all duration-300 ease-in-out`
+                      }>
+                        <div className="text-sm font-semibold flex flex-wrap">{freshUser?.title}</div>
+
+                        <div className={`w-full h-0.5 ${freshUser?.isActive ? "bg-linear-to-l from-green-400/10 via-green-500 to-green-400/10" : "bg-linear-to-b from-red-400/10 via-red-500 to-red-400/10" } `} />
+
+                        <div className="text-sm font-semibold">{freshUser?.role}</div>
+                      </div>
+                    )}
+
                   </Badge>            
                 </motion.span>
               </AnimatePresence>

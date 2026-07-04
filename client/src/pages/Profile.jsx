@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { getInitials } from "../utils/index";
 import { Badge } from "../components/ui/badge";
 import { useDispatch, useSelector } from "react-redux";
+import { setCPChangePasswordPopUp } from "../redux/slices/authSlice";
 import {useGetUserProfileQuery} from "../redux/slices/api/userApiSlice"
 import { 
   UserPen,
@@ -16,19 +17,21 @@ import Button from '../components/Button';
 import ProfileCard from '../components/ProfileComponents/ProfileCard';
 import ConfirmationDialog from '../components/ConfirmationDialog';
 import AddUser from '../components/AddUser';
+import ChangePassword from '../components/ChangePassword';
 
 const Profile = () => {
-  const { LightMode, CPEditPopUp }  = useSelector((state) => state.auth);
+  const { LightMode, CPEditPopUp, CPChangePasswordPopUp }  = useSelector((state) => state.auth);
+
+  const [openChangePassword, setOpenChangePassword] = useState(false);
 
   const { data: freshUser } = useGetUserProfileQuery();
   
 
   const [openEdit, setOpenEdit] = useState(false);
-  const [openDialog, setOpenDialog] = useState(false);
   const [selected, setSelected] = useState(null);
 
   
-
+  const dispatch = useDispatch();
   const userProfileData = freshUser;
 
   const editClick = (el) => {
@@ -43,6 +46,13 @@ const Profile = () => {
     }
   }, [CPEditPopUp])
 
+
+  useEffect(() => {
+      if (CPChangePasswordPopUp) {
+        setOpenChangePassword(true);
+      }
+  }, [CPChangePasswordPopUp]);
+
   return (
     <div className='w-full flex md:flex-row flex-col justify-center items-center gap-10 '>
       <ProfileCard onClick={(e) => e.stopPropagation()} profileSelected={userProfileData} editClick={editClick} componentType="Profile" />
@@ -56,6 +66,14 @@ const Profile = () => {
         setOpen={setOpenEdit}
         userData={selected}
       />
+
+    <ChangePassword
+        open={openChangePassword}
+        setOpen={(value) => {
+            setOpenChangePassword(value);
+            dispatch(setCPChangePasswordPopUp(value));
+        }}
+    />
     </div>
   )
 }

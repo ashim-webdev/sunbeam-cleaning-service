@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useLogoutMutation } from "../redux/slices/api/authApiSlice";
 import {useGetUserProfileQuery} from "../redux/slices/api/userApiSlice"
+import { apiSlice } from "@/redux/slices/apiSlice";
 import { logout } from "../redux/slices/authSlice";
 import ConfirmationDialog from "./ConfirmationDialog";
 import { getInitials } from "../utils";
@@ -39,7 +40,9 @@ const UserAvatar = () => {
   const { LightMode } = useSelector((state) => state.auth);
 
   const { user: storedUser } = useSelector((state) => state.auth);
-  const { data: freshUser, isLoading } = useGetUserProfileQuery();
+  const { data: freshUser, isLoading } = useGetUserProfileQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const [msg, setMsg] = useState(null);
   const [type, setType] = useState("logout");
@@ -66,6 +69,9 @@ const UserAvatar = () => {
     try {
       await logoutUser().unwrap();
       dispatch(logout());
+
+      // Reset the API state to clear any cached data
+      dispatch(apiSlice.util.resetApiState());
 
       navigate("/log-in");
     } catch (error) {

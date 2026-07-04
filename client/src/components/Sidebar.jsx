@@ -90,66 +90,31 @@ const Sidebar = () => {
 
 
   // Handle navigation with sidebar animation
-  const SIDEBAR_ANIMATION_MS = 200;
+  const handleNavClick = (path) => {
+    dispatch(setOpenSidebar(false));
+    navigate(`/${path}`);
 
-  const handleNavClick = async (path) => {
-    try {
+    let mutation;
 
-      // TASK ROUTES
-      const isTaskRoute =
-        path.includes("tasks") ||
-        path.includes("completed") ||
-        path.includes("in-progress") ||
-        path.includes("todos");
-
-      // TASK NOTIFICATIONS
-      if (path.includes("completed")) {
-        await markAsRead({
-          isReadType: "completed",
-        }).unwrap();
-      }
-
-      else if (path.includes("in-progress")) {
-        await markAsRead({
-          isReadType: "in-progress",
-        }).unwrap();
-      }
-
-      else if (path.includes("todos")) {
-        await markAsRead({
-          isReadType: "todo",
-        }).unwrap();
-      }
-
-      else if (path.includes("tasks")) {
-        await markAsRead({
-          isReadType: "task",
-        }).unwrap();
-      }
-
-      // MARK LEAVE NOTIFICATIONS AS READ
-      if (path.includes("leaves")) {
-        await markAsRead({
-          isReadType: "leave",
-        }).unwrap();
-      }
-
-      // MARK EVENT NOTIFICATIONS AS READ
-      if (path.includes("scheduler")) {
-        await markAsRead({
-          isReadType: "event",
-        }).unwrap();
-      }
-
-      dispatch(setOpenSidebar(false));
-
-      setTimeout(() => {
-        navigate(`/${path}`);
-      }, SIDEBAR_ANIMATION_MS);
-
-    } catch (error) {
-      console.log(error);
+    if (path.includes("completed")) {
+      mutation = markAsRead({ isReadType: "completed" });
+    } else if (path.includes("in-progress")) {
+      mutation = markAsRead({ isReadType: "in-progress" });
+    } else if (path.includes("todos")) {
+      mutation = markAsRead({ isReadType: "todo" });
+    } else if (path.includes("tasks")) {
+      mutation = markAsRead({ isReadType: "task" });
     }
+
+    if (path.includes("leaves")) {
+      mutation = markAsRead({ isReadType: "leave" });
+    }
+
+    if (path.includes("scheduler")) {
+      mutation = markAsRead({ isReadType: "event" });
+    }
+
+    mutation?.unwrap().catch(console.error);
   };
   // End
 

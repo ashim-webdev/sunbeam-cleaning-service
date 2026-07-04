@@ -18,8 +18,18 @@ const ChangePassword = ({ open, setOpen }) => {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm();
+
+  // Watch the new password and confirm password fields
+  const newPassword = watch("newPassword");
+  const confirmPassword = watch("cPass");
+
+  const passwordsMismatch =
+    confirmPassword &&
+    newPassword !== confirmPassword;
+
 
   const [changeUserPassword, { isLoading }] = useChangePasswordMutation();
   
@@ -153,10 +163,10 @@ const ChangePassword = ({ open, setOpen }) => {
                 className={`
                   w-full rounded
                   ${
-                    errors.newPassword
-                      ? `border-2 border-red-500 focus:border-red-500 ${
-                          shake ? "animate-shake" : ""
-                        }`
+                    passwordsMismatch
+                      ? `border-2 border-red-500 ${shake ? "animate-shake" : ""}`
+                      : errors.newPassword
+                      ? `border-2 border-red-500 ${shake ? "animate-shake" : ""}`
                       : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   }
                 `}
@@ -194,10 +204,10 @@ const ChangePassword = ({ open, setOpen }) => {
                 className={`
                   w-full rounded
                   ${
-                    errors.cPass
-                      ? `border-2 border-red-500 focus:border-red-500 ${
-                          shake ? "animate-shake" : ""
-                        }`
+                    passwordsMismatch
+                      ? `border-2 border-red-500 ${shake ? "animate-shake" : ""}`
+                      : errors.cPass
+                      ? `border-2 border-red-500 ${shake ? "animate-shake" : ""}`
                       : "border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   }
                 `}
