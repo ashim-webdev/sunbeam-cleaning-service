@@ -23,6 +23,7 @@ import Profile from "./pages/Profile";
 import Status from "./pages/Status";
 import LandingPage from "./pages/LandingPage";
 import TermsAndPolicies from "./components/Teams&Policies";
+import AdminRoute from "./components/AdminRoute"; 
 
 
 function Layout() {
@@ -32,6 +33,8 @@ function Layout() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchPanelOpen, setIsSearchPanelOpen] = useState(false);
   
+
+  console.log(user)
   // Socket.io user connection
   useEffect(() => {
     if (user?._id) {
@@ -223,24 +226,28 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/log-in" element={<Login />} />
 
+            {/* Admin protected routes */}
             <Route element={<Layout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/bookings" element={<Bookings />} />
-              <Route path="/terms&policies" element={<TermsAndPolicies />} />
+              <Route element={<AdminRoute />}>
+                <Route path="/bookings" element={<Bookings />} />
+                <Route path="/team" element={<Users />} />
+                <Route path="/trashed" element={<Trash />} />
+                <Route path="/overview" element={<Overview />} />
+                <Route path="/status" element={<Status />} />
+              </Route>
 
+              {/* Protected routes for authenticated users */}
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/terms&policies" element={<TermsAndPolicies />} />
               <Route path="/tasks" element={<Tasks />} />
               <Route path="/completed/:status" element={<Tasks />} />
               <Route path="/in-progress/:status" element={<Tasks />} />
               <Route path="/todos/:status" element={<Tasks />} />
-
-              <Route path="/team" element={<Users />} />
-              <Route path="/trashed" element={<Trash />} />
               <Route path="/leaves" element={<LeaveRequest />} />
               <Route path="/task/:id" element={<TaskDetails />} />
               <Route path="/scheduler" element={<SchedulerPage />} />
-              <Route path="/overview" element={<Overview />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/status" element={<Status />} />
+
             </Route>
           </Routes>
 
