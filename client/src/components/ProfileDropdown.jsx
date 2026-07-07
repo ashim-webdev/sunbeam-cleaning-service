@@ -219,8 +219,8 @@ export default function ProfileDropdown({ className }) {
                 }}
                 className={`
                     ${LightMode 
-                      ? "bg-white text-black hover:bg-zinc-50 border-zinc-200"
-                      : "bg-black/90 text-white hover:bg-black/95 border-zinc-500"
+                      ? "bg-white text-black hover:bg-zinc-50 border-gray-400"
+                      : "bg-black/90 text-white hover:bg-black/95 border-white"
                     }
                     ScaleChange flex justify-between items-center gap-6 rounded-2xl border outline-0 w-full p-3 transition-all duration-300 ease-in-out cursor-pointer 
                   `}
@@ -287,7 +287,7 @@ export default function ProfileDropdown({ className }) {
                     exit={{ opacity: 0, y: 30 }}
                     transition={{ duration: 0.3 }}
                     onMouseOver={(e) => e.stopPropagation()}
-                    className={`${LightMode ? "bg-white" : "bg-black/90"} w-64 z-100 rounded-2xl border p-2 shadow-xl overflow-visible`}
+                    className={`${LightMode ? "bg-white border border-gray-400" : "bg-black/90 border border-white"} w-64 z-100 rounded-2xl border p-2 shadow-xl overflow-visible`}
                   >
                     <div className="space-y-1">
                       {menuItems.map((item) => (
@@ -333,10 +333,10 @@ export default function ProfileDropdown({ className }) {
                                   onMouseOver={(e) => e.stopPropagation()} 
                                   className={`
                                     ${LightMode 
-                                      ? "bg-white/90 text-black shadow-darkSM"
-                                      : "bg-black/95 text-white shadow-lightSM"
+                                      ? "bg-white/90 text-black shadow-md border border-gray-400"
+                                      : "bg-black/95 text-white shadow-lightSM border border-white"
                                     }
-                                    absolute -top-28.5 -right-20 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded p-2 cursor-pointer
+                                    absolute -top-31 -right-20 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded-xl p-3 cursor-pointer
                                   `}
                                   >
                                   {settingsMenu.map((el) => (

@@ -151,7 +151,7 @@ const MobileSidebar = () => {
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
-            transition={{ type: "tween", duration: 0.3 }}
+            transition={{ type: "tween", stiffness: 300, damping: 30, duration: 0.3 }}
           >
             <Sidebar />
 

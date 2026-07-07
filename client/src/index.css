@@ -177,6 +177,19 @@
 
     --animate-pulseOnline: pulseOnline 3s ease-in-out infinite;
 
+    --animate-dot: dot 0.9s infinite;
+
+    @keyframes dot {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      30% {
+        transform: translateY(-6px);
+      }
+    }
+
     @keyframes UpDown {
       0%,
       100% {
@@ -312,12 +325,12 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #6FA9FF;
+  background: rgb(0, 67, 250);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;
+  background: #1b5eee;
   cursor: pointer;
 }
 

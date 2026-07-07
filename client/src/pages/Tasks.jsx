@@ -87,7 +87,7 @@ const Tasks = () => {
     <Loading />
   ) : (
     <div className='w-full overflow-hidden'>
-      <div className='flex items-center justify-between mb-4'>
+      <div className='flex items-center justify-between mb-8'>
         <Title title={status ? `${status}` : "Tasks"} />
 
         {!status && (

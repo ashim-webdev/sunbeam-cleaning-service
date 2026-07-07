@@ -35,6 +35,7 @@ import SocialMedia from "../components/SocialMedia";
 import Loading from "../components/Loading";
 import OnlineStatus from "../components/OnlineStatus";
 import Pagination from "../components/Pagination"; 
+import DashboardLoader from "../components/DashboardLoader";
 
 
 
@@ -46,6 +47,9 @@ const Dashboard = () => {
     user,
     onlineUsers,
   } = useSelector((state) => state.auth);
+
+  // Dashboard Loader state
+  const [showLoader, setShowLoader] = useState(true);
 
   const [page, setPage] = useState(1);
 
@@ -1089,6 +1093,22 @@ const Dashboard = () => {
 
   const employees = summary?.users?.filter((user) => !user?.isAdmin);
 
+
+
+  useEffect(() => {
+    if (!isLoading) {
+      const timer = setTimeout(() => {
+        setShowLoader(false);
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
+
+
+  if (showLoader || isLoading) {
+    return <DashboardLoader />;
+  }
 
   return (
     <div className='h-full py-4'>

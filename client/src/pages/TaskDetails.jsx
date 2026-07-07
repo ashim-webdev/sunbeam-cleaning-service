@@ -574,7 +574,7 @@ const Activities = ({ activity, id, refetch, task, isLocked }) => {
   };
 
   return (
-    <div className="relative mt-4">
+    <div className="relative mt-4 py-2">
       <div className={`${LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM"} w-full flex  flex-col md:flex-row gap-40 md:gap-10 2xl:gap-20 min-h-screen px-10 py-8 shadow rounded-md justify-between overflow-y-auto transition-colors duration-300 ease-in-out`}>
         <div className='w-full md:w-1/2'>
           <h4 className={`${LightMode ? "text-gray-600" : "text-white"} font-semibold text-lg mb-5 transition-colors duration-300 ease-in-out`}>Activities</h4>
@@ -1233,7 +1233,7 @@ const TaskDetail = () => {
         <Tabs tabs={TABS} setSelected={setSelected}>
           {selected === 0 ? (
             <>
-              <div className="relative mt-4">
+              <div className="relative mt-4 py-2">
                 <div className={`${LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM"} w-full flex flex-col md:flex-row gap-5 2xl:gap-8 shadow rounded-md px-8 py-8 overflow-y-auto`}>
                   <div className='relative w-full md:w-1/2 space-y-8'>
                     <div className='flex flex-col xl:flex-row items-start xl:items-center gap-5 mb-12'>

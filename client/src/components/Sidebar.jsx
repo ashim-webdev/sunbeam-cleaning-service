@@ -412,10 +412,10 @@ const Sidebar = () => {
                         onMouseOver={(e) => e.stopPropagation()} 
                         className={`
                           ${LightMode 
-                            ? "bg-white shadow-darkSM"
-                            : "bg-black/95 shadow-lightSM"
+                            ? "bg-white shadow-md border border-gray-400"
+                            : "bg-black/95 shadow-lightSM border border-white"
                           }
-                          absolute -top-54 right-0 xl:-right-1 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded p-4 cursor-pointer
+                          absolute -top-54 -right-3 xl:-right-1 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded-xl p-4 cursor-pointer
                         `}
                         >
                         {activityLinks.map((link) => (
@@ -435,10 +435,10 @@ const Sidebar = () => {
                         onMouseOver={(e) => e.stopPropagation()} 
                         className={`
                           ${LightMode 
-                            ? "bg-white shadow-darkSM"
+                            ? "bg-white shadow-md border border-gray-400"
                             : "bg-black/95 shadow-lightSM border border-white"
                           }
-                          absolute top-8 right-0 xl:-right-1 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded p-4 cursor-pointer
+                          absolute top-8 right-0 xl:-right-1 w-fit z-90 mt-3 flex flex-col justify-center items-center gap-2 rounded-xl p-4 cursor-pointer
                         `}
                         >
                         {activityLinks.map((link) => (
