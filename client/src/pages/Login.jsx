@@ -192,7 +192,7 @@ const Login = () => {
   }
   
   return (
-    <div className='LogIn-BG relative overflow-x-hidden overflow-y-auto w-full h-full xl:h-screen flex justify-center items-center py-8 lg:py-0 px-4 sm:px-0'>
+    <div className='LogIn-BG relative overflow-x-hidden overflow-y-auto w-full h-full xl:h-screen flex justify-center items-center py-8 lg:py-0'>
       <div className='Login w-full h-auto flex items-center justify-center flex-col lg:flex-row'>
         <div className=' sm:overflow-x-visible z-10 w-auto md:w-auto flex gap-25 lg:gap-30 flex-col lg:flex-row xl:gap-70 items-center justify-center'>
           <div className='h-full w-full lg:w-2/3 flex flex-col items-center justify-center'>
@@ -319,7 +319,12 @@ const Login = () => {
                   
                   <span 
                     onClick={toggle}
-                    className="gradient-bg absolute top-20 -left-15.5 px-4 py-1 font-semibold border border-white text-white -rotate-90 rounded-tl-lg rounded-tr-lg hover:scale-102 active:scale-95 cursor-pointer transition-all
+                    className="gradient-bg hidden sm:block absolute top-20 -left-15.5 px-4 py-1 font-semibold border border-white text-white -rotate-90 rounded-tl-lg rounded-tr-lg hover:scale-102 active:scale-95 cursor-pointer transition-all
+                  ">Sign Up</span>
+
+                  <span 
+                    onClick={toggle}
+                    className="gradient-bg sm:hidden absolute -top-7 left-0 px-3 text-sm py-1.5 font-semibold border border-white text-white rounded-tl-lg rounded-tr-lg hover:scale-102 active:scale-95 cursor-pointer transition-all
                   ">Sign Up</span>
                 </form>
               </motion.div>
@@ -473,7 +478,12 @@ const Login = () => {
 
                   <span 
                     onClick={toggle}
-                    className="gradient-bg absolute top-20 -left-14.5 px-4 py-1 font-semibold border border-white text-white -rotate-90 rounded-tl-lg rounded-tr-lg hover:scale-102 active:scale-95 cursor-pointer transition-all
+                    className="gradient-bg hidden sm:block absolute top-20 -left-14.5 px-4 py-1 font-semibold border border-white text-white -rotate-90 rounded-tl-lg rounded-tr-lg hover:scale-102 active:scale-95 cursor-pointer transition-all
+                  ">Sign In</span>
+
+                  <span 
+                    onClick={toggle}
+                    className="gradient-bg sm:hidden absolute -top-7 left-0 px-3.5 text-sm py-1.5 font-semibold border border-white text-white rounded-tl-lg rounded-tr-lg hover:scale-102 active:scale-95 cursor-pointer transition-all
                   ">Sign In</span>
                 </form>
               </motion.div>

@@ -109,7 +109,7 @@ export default function Navbar() {
                 <div className='w-full flex flex-col justify-center items-center gap-2'>
                   {/* Sign In */}
                   <div className="w-full flex items-center gap-3 shadow-darkSM rounded-xl">
-                    <Link to="/log-in">
+                    <Link to="/log-in" className='w-full'>
                       <button
                         className="cursor-pointer w-full text-center border border-blue-800 text-blue-700 text-sm font-600 px-5 py-2.5 rounded-xl hover:opacity-90 transition-all duration-300 hover:scale-103 active:scale-95"
                       >
