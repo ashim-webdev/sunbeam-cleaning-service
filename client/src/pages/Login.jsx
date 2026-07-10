@@ -377,10 +377,10 @@ const Login = () => {
                           value={phone}
                           onChange={setPhone}
                           placeholder="Enter your phone number"
-                          inputClassName={`${LightMode ? "!text-black" : "!text-white"} !w-full !h-9 !bg-transparent`}
+                          inputClassName={`${LightMode ? "!text-black" : "!text-white"} !w-full !h-9 !bg-transparent !rounded-tr-4xl !rounded-br-4xl`}
                           countrySelectorStyleProps={{
                             buttonClassName:
-                              `${LightMode ? "!bg-gray-300 hover:!bg-gray-200" : "!bg-gray-900 hover:!bg-gray-700"} !h-9 !border-r !rounded-tl-3xl !rounded-bl-3xl !border-gray-200 !px-3 transition-colors`,
+                              `${LightMode ? "!bg-gray-300 hover:!bg-gray-200" : "!bg-gray-900 hover:!bg-gray-700"} !h-9 !border-r !rounded-tl-3xl !rounded-bl-3xl !border-gray-200 !px-3 transition-colors !overflow-hidden`,
                             dropdownStyleProps: {
                               className:
                                 "!rounded-md !w-full !border !border-gray-200 !shadow-2xl !mt-2 !opacity-0",

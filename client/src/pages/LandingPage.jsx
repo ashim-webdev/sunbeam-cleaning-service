@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useLocation } from "react-router-dom";
 import Navbar from '../components/LandingPageComponents/Navbar';
 import Hero from '../components/LandingPageComponents/Hero';
 import Features from '../components/LandingPageComponents/Features';
@@ -18,18 +19,16 @@ import BookingForm from '../components/LandingPageComponents/BookingForm';
 
 
 export default function LandingPage() {
+  const location = useLocation();
 
   useEffect(() => {
-    return () => {
-      const widget = document.querySelector(
-        ".elfsight-app-6ba9c022-56e0-401d-8994-095d315da791"
-      );
+    const widget = document.querySelector(".elfsight-app-6ba9c022-56e0-401d-8994-095d315da791");
 
-      if (widget) {
-        widget.innerHTML = "";
-      }
-    };
-  }, []);
+    if (widget) {
+      widget.style.display = location.pathname === "/" ? "block" : "none";
+    }
+  }, [location.pathname]);
+
   return (
     <div className="landingPage min-h-screen overflow-hidden relative">
       <Navbar />
