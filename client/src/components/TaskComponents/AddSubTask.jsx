@@ -170,7 +170,7 @@ const AddSubTask = ({ open, setOpen, id }) => {
               <div className='py-3 mt-4 flex sm:flex-row-reverse gap-4'>
                 <Button
                   type='submit'
-                  className='ClickAnimationNoti shadow-inner hover:shadow-innerWH transition-colors duration-200 ease-in-out bg-blue-600 text-sm font-semibold text-white hover:bg-blue-700 sm:ml-3 sm:w-auto'
+                  className='ClickAnimationNoti shadow-inner hover:shadow-innerWH transition-colors duration-200 ease-in-out gradient-bg text-sm font-semibold text-white hover:bg-blue-700 sm:ml-3 sm:w-auto'
                   label='Add Task'
                 />
 

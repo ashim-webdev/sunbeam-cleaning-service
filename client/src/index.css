@@ -303,11 +303,17 @@ body {
   padding: 50px 30px 50px 30px;
 }
 
-@media (min-width: 1024px) {
+.form-container-signup {
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding: 45px 30px 40px 30px;
+}
+
+/* @media (min-width: 1024px) {
   .form-container {
     margin-left: -30px;
   }
-}
+} */
 
 /* Smooth scrolling for the entire page */
 html {
@@ -1276,4 +1282,78 @@ html {
 
 .BookingButton:active {
   background-color: rgb(0, 100, 0);
+}
+
+
+
+/* Phone number input field style */
+/* Main container */
+.react-international-phone-input-container {
+  width: 100%;
+  height: 38px;
+  border: 1px solid #d1d5db;
+  border-radius: 16px;
+  /* overflow: hidden; */
+  transition: 0.25s;
+  /* background: white; */
+  border-radius: 18px;
+}
+
+.react-international-phone-input-container:focus-within {
+  /* border-color: #2563eb; */
+  box-shadow: 0 0 0 4px rgb(37 99 235 / 10%);
+}
+
+/* Input */
+.react-international-phone-input {
+  height: 38px;
+  border: none !important;
+  outline: none !important;
+  font-size: 15px;
+}
+
+/* Country button */
+.react-international-phone-country-selector-button {
+  height: 38px;
+  padding-inline: 14px;
+  border: none !important;
+  background: transparent;
+  transition: background 0.2s;
+}
+
+.react-international-phone-country-selector-button:hover {
+  background: #f3f4f6;
+}
+
+/* Dropdown */
+.react-international-phone-country-selector-dropdown {
+  margin-top: 8px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  box-shadow:
+    0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
+  overflow: hidden;
+}
+
+/* Search */
+.react-international-phone-country-selector-search-input {
+  padding: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* List */
+.react-international-phone-country-selector-dropdown__list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Item */
+.react-international-phone-country-selector-dropdown__list-item {
+  padding: 12px 16px;
+  transition: background 0.2s;
+}
+
+.react-international-phone-country-selector-dropdown__list-item:hover {
+  background: #f8fafc;
 }

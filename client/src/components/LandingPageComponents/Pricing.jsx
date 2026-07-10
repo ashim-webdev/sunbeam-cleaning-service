@@ -1,4 +1,13 @@
-import { Check, ArrowRight, Zap } from 'lucide-react';
+import React, { useState } from 'react';
+import { 
+  Check,
+  ArrowRight,
+  Zap, 
+  Building2,
+  Hotel,
+  Landmark,
+} from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const plans = [
   {
@@ -52,14 +61,82 @@ const plans = [
   },
 ];
 
+
+
+
+
+const enterprisePlans = [
+  {
+    name: "Corporate Offices",
+    icon: Building2,
+    description:
+      "Professional cleaning solutions for offices, coworking spaces, banks, and corporate headquarters of every size.",
+    features: [
+      "Daily, weekly or custom cleaning schedules",
+      "Office desks & workstations",
+      "Meeting & conference rooms",
+      "Reception & waiting areas",
+      "Restrooms & staff kitchens",
+      "Floor polishing & vacuuming",
+      "Waste collection & recycling",
+      "Dedicated account manager",
+    ],
+    cta: "Request Quote",
+    highlight: false,
+  },
+  {
+    name: "Hotels & Hospitality",
+    icon: Hotel,
+    description:
+      "Reliable housekeeping and deep cleaning services for hotels, resorts, serviced apartments, and guest houses.",
+    features: [
+      "Guest room cleaning",
+      "Lobby & reception cleaning",
+      "Restaurant & kitchen sanitation",
+      "Laundry support",
+      "Hallways & elevators",
+      "Pool & recreation areas",
+      "24/7 cleaning availability",
+      "Dedicated cleaning team",
+    ],
+    cta: "Get Custom Pricing",
+    highlight: true,
+    badge: "Most Requested",
+  },
+  {
+    name: "Government & Institutions",
+    icon: Landmark,
+    description:
+      "Large-scale cleaning services for ministries, schools, hospitals, public buildings, and government facilities.",
+    features: [
+      "Large facility cleaning",
+      "Office complexes",
+      "Conference halls",
+      "Public waiting areas",
+      "High-traffic sanitation",
+      "Emergency cleaning support",
+      "Safety & compliance standards",
+      "Free site inspection",
+    ],
+    cta: "Book Site Inspection",
+    highlight: false,
+  },
+];
+
 export default function Pricing() {
+  const [switchPrice, setSwitchPrice] = useState("home")
+
+  const toggle = (item) => {
+    setSwitchPrice(item)
+  }
+
   return (
-    <section id="pricing" className="section-padding" style={{ background: 'linear-gradient(135deg, #EAF5FF 0%, #F5FAFF 50%, #EAF5FF 100%)' }}>
+    <section id="subscribe" className="section-padding" style={{ background: 'linear-gradient(135deg, #EAF5FF 0%, #F5FAFF 50%, #EAF5FF 100%)' }}>
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 glass-blue rounded-full px-4 py-2 mb-5">
-            <span className="text-sm font-600 text-brand-600">Simple Pricing</span>
+            <span className="text-sm font-600 text-blue-700">Simple Pricing</span>
           </div>
           <h2 className="text-5xl font-800 tracking-tight text-slate-900 mb-5">
             Transparent Plans,{' '}
@@ -70,65 +147,189 @@ export default function Pricing() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 items-center">
-          {plans.map((plan, i) => (
-            <div
-              key={i}
-              className={`pricing-card relative bg-white rounded-[2rem] p-8 ${
-                plan.highlight
-                  ? 'shadow-blue border-2 border-brand-400 scale-105 z-10'
-                  : 'shadow-soft border border-slate-100'
-              }`}
+        <div className={`${switchPrice === "home" ? "mb-6" : "mb-14"}  p-2 flex justify-center items-center gap-4 `}>
+          <div className="flex items-center gap-3 shadow-darkSM rounded-xl">
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                toggle("home")
+              }}
+              className={`${switchPrice === "home" ? "gradient-bg text-white" : ""} cursor-pointer w-32 text-center border border-blue-800 text-blue-700 text-sm font-600 px-5 py-2.5 rounded-xl hover:opacity-90 transition-all duration-300 hover:scale-103 active:scale-95`}
             >
-              {plan.badge && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 gradient-bg text-white text-xs font-700 px-5 py-1.5 rounded-full shadow-blue flex items-center gap-1.5">
-                  <Zap className="w-3.5 h-3.5" fill="currentColor" />
-                  {plan.badge}
-                </div>
-              )}
+              Home Plan
+            </button>
+          </div>
 
-              <div className="mb-6">
-                <h3 className={`text-lg font-700 mb-1.5 ${plan.highlight ? 'gradient-text' : 'text-slate-900'}`}>
-                  {plan.name}
-                </h3>
-                <div className="flex items-end gap-1 mb-3">
-                  <span className="text-5xl font-800 text-slate-900">{plan.price}</span>
-                  <span className="text-slate-400 font-500 mb-2">{plan.period}</span>
-                </div>
-                <p className="text-sm text-slate-500 leading-relaxed">{plan.description}</p>
-              </div>
-
-              <div className="h-px bg-slate-100 mb-6" />
-
-              <ul className="space-y-3.5 mb-8">
-                {plan.features.map((feat) => (
-                  <li key={feat} className="flex items-center gap-3">
-                    <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${plan.highlight ? 'gradient-bg' : 'bg-brand-100'}`}>
-                      <Check className={`w-3 h-3 ${plan.highlight ? 'text-white' : 'text-brand-500'}`} strokeWidth={3} />
-                    </div>
-                    <span className="text-sm text-slate-600 font-500">{feat}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <a
-                href="#contact"
-                className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-700 text-sm transition-all duration-300 ${
-                  plan.highlight
-                    ? 'btn-shine gradient-bg text-white shadow-blue hover:opacity-90'
-                    : 'bg-brand-50 text-brand-600 hover:bg-brand-100 border border-brand-200'
-                }`}
-              >
-                {plan.cta}
-                <ArrowRight className="w-4 h-4" />
-              </a>
-            </div>
-          ))}
+          <div className="flex items-center gap-3 shadow-darkSM rounded-xl">
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                toggle("enterprise")
+              }}
+              className={`${switchPrice === "enterprise" ? "gradient-bg text-white" : ""} cursor-pointer w-full text-center border border-blue-800 text-blue-700 text-sm font-600 px-5 py-2.5 rounded-xl hover:opacity-90 transition-all duration-300 hover:scale-103 active:scale-95`}
+            >
+              Enterprise Plan
+            </button>
+          </div>
         </div>
 
-        <p className="text-center text-sm text-slate-400 mt-10 font-500">
-          All prices include supplies & equipment. Recurring discounts available — save up to 20% on weekly plans.
-        </p>
+        <AnimatePresence mode='wait'>
+          {switchPrice === "home" ? (
+            <motion.div
+              key="home"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 50 }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+            >
+              <div className="grid md:grid-cols-3 gap-6 items-center">
+                {plans.map((plan, i) => (
+                  <div
+                    key={i}
+                    className={`pricing-card relative bg-white rounded-[2rem] p-8 ${
+                      plan.highlight
+                        ? 'shadow-blue border-2 border-brand-400 scale-105 z-10'
+                        : 'shadow-soft border border-slate-100'
+                    }`}
+                  >
+                    {plan.badge && (
+                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 gradient-bg text-white text-xs font-700 px-5 py-1.5 rounded-full shadow-blue flex items-center gap-1.5">
+                        <Zap className="w-3.5 h-3.5" fill="currentColor" />
+                        {plan.badge}
+                      </div>
+                    )}
+
+                    <div className="mb-6">
+                      <h3 className={`text-lg font-700 mb-1.5 ${plan.highlight ? 'gradient-text' : 'text-slate-900'}`}>
+                        {plan.name}
+                      </h3>
+                      <div className="flex items-end gap-1 mb-3">
+                        <span className="text-5xl font-800 text-slate-900">{plan.price}</span>
+                        <span className="text-slate-400 font-500 mb-2">{plan.period}</span>
+                      </div>
+                      <p className="text-sm text-slate-500 leading-relaxed">{plan.description}</p>
+                    </div>
+
+                    <div className="h-px bg-slate-100 mb-6" />
+
+                    <ul className="space-y-3.5 mb-8">
+                      {plan.features.map((feat) => (
+                        <li key={feat} className="flex items-center gap-3">
+                          <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${plan.highlight ? 'gradient-bg' : 'bg-brand-100'}`}>
+                            <Check className={`w-3 h-3 ${plan.highlight ? 'text-white' : 'text-brand-500'}`} strokeWidth={3} />
+                          </div>
+                          <span className="text-sm text-slate-600 font-500">{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <a
+                      href="#contact"
+                      className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-700 text-sm transition-all duration-300 ${
+                        plan.highlight
+                          ? 'btn-shine gradient-bg text-white shadow-blue hover:opacity-90'
+                          : 'bg-brand-50 text-brand-600 hover:bg-brand-100 border border-brand-200'
+                      }`}
+                    >
+                      {plan.cta}
+                      <ArrowRight className="w-4 h-4" />
+                    </a>
+                  </div>
+                ))}
+              </div>
+              <p className="text-center text-sm text-slate-600 mt-5 font-500">
+                All prices include supplies & equipment. Recurring discounts available — save up to 20% on weekly plans.
+              </p>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="enterprise"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+            >
+              <div className="grid md:grid-cols-3 gap-6 items-center">
+                {enterprisePlans.map((plan, i) => (
+                  <div
+                    key={i}
+                    className={`pricing-card relative bg-white rounded-[2rem] p-8 ${
+                      plan.highlight
+                        ? 'shadow-blue border-2 border-brand-400 scale-105 z-10'
+                        : 'shadow-soft border border-slate-100'
+                    }`}
+                  >
+
+                    {/* Icon */}
+                    <div className="mb-2">
+                      <div
+                        className={`w-10 h-10 rounded-2xl flex items-center justify-center ${
+                          plan.highlight
+                            ? "bg-blue-600 text-white"
+                            : "bg-blue-100 text-blue-600"
+                        }`}
+                      >
+                        <plan.icon className="w-5 h-5" />
+                      </div>
+                    </div>
+
+                    {plan.badge && (
+                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 gradient-bg text-white text-xs font-700 px-5 py-1.5 rounded-full shadow-blue flex items-center gap-1.5">
+                        <Zap className="w-3.5 h-3.5" fill="currentColor" />
+                        {plan.badge}
+                      </div>
+                    )}
+
+                    <div className="mb-4">
+                      <h3 className={`text-lg font-700 mb-1.5 ${plan.highlight ? 'gradient-text' : 'text-slate-900'}`}>
+                        {plan.name}
+                      </h3>
+                      <div className="flex items-end gap-1 mb-0">
+                        <span className="text-5xl font-800 text-slate-900">{plan.price}</span>
+                        <span className="text-slate-400 font-500 mb-2">{plan.period}</span>
+                      </div>
+                      <p className="text-sm text-slate-500 leading-relaxed">{plan.description}</p>
+                    </div>
+
+                    <div className="h-px bg-slate-100 mb-6" />
+
+                    <ul className="space-y-3.5 mb-8">
+                      {plan.features.map((feat) => (
+                        <li key={feat} className="flex items-center gap-3">
+                          <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${plan.highlight ? 'gradient-bg' : 'bg-brand-100'}`}>
+                            <Check className={`w-3 h-3 ${plan.highlight ? 'text-white' : 'text-brand-500'}`} strokeWidth={3} />
+                          </div>
+                          <span className="text-sm text-slate-600 font-500">{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <a
+                      href="#contact"
+                      className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-700 text-sm transition-all duration-300 ${
+                        plan.highlight
+                          ? 'btn-shine gradient-bg text-white shadow-blue hover:opacity-90'
+                          : 'bg-brand-50 text-brand-600 hover:bg-brand-100 border border-brand-200'
+                      }`}
+                    >
+                      {plan.cta}
+                      <ArrowRight className="w-4 h-4" />
+                    </a>
+                  </div>
+                ))}
+
+              </div>
+              <div className="text-center text-sm text-slate-600 mt-10 font-500">
+                Pricing depends on your building size, number of rooms, cleaning frequency, and service requirements.
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+
+
+
+
       </div>
     </section>
   );

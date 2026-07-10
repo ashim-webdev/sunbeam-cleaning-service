@@ -21,7 +21,8 @@ import {
   TASK_TYPE,
   formatDate,
   TASK_ICON,
-  TASK_HEADER
+  TASK_HEADER,
+  TASK_HEADER_DARK
 } from "../../utils/index.js";
 import UserInfoTask from "../UserInfoTask.jsx";
 import AddSubTask from "./AddSubTask.jsx";
@@ -220,66 +221,66 @@ const TaskCard = ({ task }) => {
       </div>
       
       <div className={`FileDesign absolute -top-15 left-0 w-full h-auto p-2 }`}>
-          <div className={`
-              ${LightMode 
-                ? "border-gray-400"
-                : "border-gray-500"
-              }
-              shadow-2xl border-b-2 px-2 transition-colors duration-300 ease-in-out
-            `}>
-            <div className={`relative ${TASK_HEADER[task.stage]} shadow-inner rounded-tr-[50px] pt-1 pb-2 px-2`}>
-              <div className={`
-                  ${LightMode 
-                    ? "text-gray-50"
-                    : "text-white"
-                  }
-                  border-white/50 pl-4 pb-0.5 font-mono text-md font-semibold border-b capitalize transition-colors duration-300 ease-in-out
-                `}>
-                {task?.clientName}
-              </div>
-              <div
-                className={`
-                  ${LightMode ? "text-gray-50" : "text-white"}
-                  pr-2 pt-0.5 text-sm text-end font-cursive italic flex items-center justify-end gap-2 transition-colors duration-300 ease-in-out
-                `}
-              >
-                {task?.address}
-
-                {copiedAddress === task?.address ? (
-                  <i className="fa-solid fa-check-double bg-white p-0.5 rounded-full text-green-600 text-lg cursor-pointer hover:scale-110 transition-transform"></i>
-                ) : (
-                  <HiDuplicate
-                    title="Copy address"
-                    onClick={(e) => copyAddress(task?.address, e)}
-                    className="rounded-full text-xl cursor-pointer hover:scale-110 transition-transform"
-                  />
-                )}
-              </div>
-
-              <div className={`
-                  ${LightMode 
-                    ? "bg-[#E8E8E8]"
-                    : "bg-[#3C3C3C]"
-                  }
-                  absolute -top-2 -left-2 w-4 h-4.5 rotate-45 transition-colors duration-300 ease-in-out
-                `} />
-              <div className={`
-                  ${LightMode 
-                    ? "bg-[#E8E8E8]"
-                    : "bg-[#3C3C3C]"
-                  }
-                  absolute border-white/80 -top-[0.5px] -left-[0.5px] w-3.5 h-3.5 border ${TASK_HEADER[task.stage]}
-                `} />
-              <div className={`
-                  ${LightMode 
-                    ? "bg-[#E8E8E8]"
-                    : "bg-[#3C3C3C]"
-                  }
-                  absolute -top-2 -left-2 w-4 h-4.5 rotate-45 transition-colors duration-300 ease-in-out
-                `} />
+        <div className={`
+            ${LightMode 
+              ? "border-gray-400"
+              : "border-gray-500"
+            }
+            shadow-2xl border-b-2 px-2 transition-colors duration-300 ease-in-out
+          `}>
+          <div className={`relative ${LightMode ? TASK_HEADER[task.stage] : TASK_HEADER_DARK[task.stage]} shadow-inner rounded-tr-[50px] pt-1 pb-2 px-2 transition-all duration-300 ease-in-out`}>
+            <div className={`
+                ${LightMode 
+                  ? "text-gray-50"
+                  : "text-white"
+                }
+                border-white/50 pl-4 pb-0.5 font-mono text-md font-semibold border-b capitalize transition-colors duration-300 ease-in-out
+              `}>
+              {task?.clientName}
             </div>
+            <div
+              className={`
+                ${LightMode ? "text-gray-50" : "text-white"}
+                pr-2 pt-0.5 text-sm text-end font-cursive italic flex items-center justify-end gap-2 transition-colors duration-300 ease-in-out
+              `}
+            >
+              {task?.address}
+
+              {copiedAddress === task?.address ? (
+                <i className="fa-solid fa-check-double bg-white p-0.5 rounded-full text-green-600 text-lg cursor-pointer hover:scale-110 transition-transform"></i>
+              ) : (
+                <HiDuplicate
+                  title="Copy address"
+                  onClick={(e) => copyAddress(task?.address, e)}
+                  className="rounded-full text-xl cursor-pointer hover:scale-110 transition-transform"
+                />
+              )}
+            </div>
+
+            <div className={`
+                ${LightMode 
+                  ? "bg-[#E8E8E8]"
+                  : "bg-[#3C3C3C]"
+                }
+                absolute -top-2 -left-2 w-4 h-4.5 rotate-45 transition-colors duration-300 ease-in-out
+              `} />
+            <div className={`
+                ${LightMode 
+                  ? "bg-[#E8E8E8]"
+                  : "bg-[#3C3C3C]"
+                }
+                absolute border-white/80 -top-[0.5px] -left-[0.5px] w-3.5 h-3.5 border ${TASK_HEADER[task.stage]}
+              `} />
+            <div className={`
+                ${LightMode 
+                  ? "bg-[#E8E8E8]"
+                  : "bg-[#3C3C3C]"
+                }
+                absolute -top-2 -left-2 w-4 h-4.5 rotate-45 transition-colors duration-300 ease-in-out
+              `} />
           </div>
         </div>
+      </div>
 
       <AddSubTask open={open} setOpen={setOpen} id={task._id} />
     </div>

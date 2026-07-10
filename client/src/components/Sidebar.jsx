@@ -222,7 +222,7 @@ const Sidebar = () => {
             ? "text-black"
             : "text-white "
           ,
-          path === el.link.split("/")[0] ? ` ClickAnimationNoti transition-colors ease-in-out bg-[#005FFB] text-white duration-75  ${LightMode ? "shadow-darkSM" : "shadow-blueSM"}` : `transition-colors ease-in-out duration-75 ${LightMode ? "hover:shadow-darkSM hover:bg-[#0004fc4e]" : "hover:shadow-blueSM hover:bg-white hover:text-black"}`
+          path === el.link.split("/")[0] ? ` ClickAnimationNoti transition-colors ease-in-out gradient-bg text-white duration-75  ${LightMode ? "shadow-darkSM" : "shadow-blueSM"}` : `transition-colors ease-in-out duration-75 ${LightMode ? "hover:shadow-darkSM hover:bg-[#0004fc4e]" : "hover:shadow-blueSM hover:bg-white hover:text-black"}`
         )}
       >
         <div className="flex gap-2 items-center">
@@ -283,7 +283,7 @@ const Sidebar = () => {
             ? "text-black"
             : "text-white "
           ,
-          path === el.link.split("/")[0] ? `ClickAnimationNoti transition-colors ease-in-out bg-[#005FFB] text-white duration-75 ${LightMode ? "shadow-darkSM" : "shadow-blueSM"}` : `transition-colors ease-in-out duration-75 ${LightMode ? "hover:shadow-darkSM hover:bg-[#0004fc4e]" : "hover:shadow-blueSM hover:bg-white hover:text-black"}`
+          path === el.link.split("/")[0] ? `ClickAnimationNoti transition-colors ease-in-out gradient-bg text-white duration-75 ${LightMode ? "shadow-darkSM" : "shadow-blueSM"}` : `transition-colors ease-in-out duration-75 ${LightMode ? "hover:shadow-darkSM hover:bg-[#0004fc4e]" : "hover:shadow-blueSM hover:bg-white hover:text-black"}`
         )}
       >
         {el.icon}
@@ -336,7 +336,7 @@ const Sidebar = () => {
         
         <Link to={"/"}>
           <div className='flex gap-2 items-center'>
-            <div className={`${LightMode ? "shadow-darkSM border-blue-900 bg-blue-900/30" : "shadow-lightSM border-white bg-blue-600"} p-2 rounded-full border`}>
+            <div className={`${LightMode ? "shadow-darkSM border-blue-900 bg-blue-900/30" : "shadow-lightSM border-white gradient-bg"} p-2 rounded-full border`}>
               <ClipboardCheck className={`w-6 h-6 transition-colors ease-in-out duration-300 ${LightMode ? " text-blue-900" : "text-white"}`} />
             </div>
             <span className={`relative flex justify-center items-center gap-1 text-2xl font-bold transition-colors ease-in-out duration-300 ${LightMode ? " text-blue-900" : "text-white"} `}>

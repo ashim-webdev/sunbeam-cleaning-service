@@ -27,14 +27,14 @@ export default function SchedulerPage() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-8">
         <div className="mb-8 mx-2 ">
-          <div className='flex justify-center items-center gap-2 mb-10'>
-            <div className={`${shadow} rounded-xl transition-all duration-300 ease-in-out`}>
-              <div className={`shadow-inner sm:w-12 sm:h-12 w-10 h-10 bg-[#005FFB] rounded-xl flex items-center justify-center text-white`}>
-                <CalendarIcon size={26} />
-              </div>
-            </div>
-            <h2 className={`sm:text-3xl text-xl font-bold ${text} transition-all duration-300 ease-in-out`}>Workspace Events</h2>
+          <div className="flex justify-center items-center mb-2">
+            <h1 className={`flex justify-center items-center gap-3 text-[25px] md:text-3xl line-clamp-1 font-bold ${LightMode ? "text-black" : "text-white"} w-fit transition-colors whitespace-nowrap duration-300 ease-in-out`}>
+              <CalendarIcon className="text-blue-600 md:hidden mb-1" size={35} /> 
+              <CalendarIcon className="text-blue-600 hidden md:block mb-1" size={40} /> 
+              <span>Workspace Events</span>
+            </h1>
           </div>
+          
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <p className={`${subText} mt-1 transition-all duration-300 ease-in-out`}>

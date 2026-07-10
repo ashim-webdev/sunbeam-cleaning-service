@@ -44,11 +44,14 @@ export default function Features() {
         {/* Section header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 glass-blue rounded-full px-4 py-2 mb-5">
-            <span className="text-sm font-600 text-brand-600">Why We're Different</span>
+            <span className="text-sm font-600 text-blue-700">Why We're Different</span>
           </div>
-          <h2 className="text-5xl font-800 tracking-tight text-slate-900 mb-5">
+          <h2 className="text-5xl font-800 text-slate-900 mb-5">
             Built on Three{' '}
-            <span className="gradient-text italic">Core Pillars</span>
+
+            <span className="pr-2">
+              <span className="gradient-text italic "> Core Pillars</span>
+            </span>
           </h2>
           <p className="text-lg text-slate-500 max-w-xl mx-auto leading-relaxed">
             Everything we do is driven by a commitment to excellence, trust, and your satisfaction.

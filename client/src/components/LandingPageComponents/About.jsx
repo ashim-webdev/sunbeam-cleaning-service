@@ -147,11 +147,14 @@ export default function About() {
           {/* Content */}
           <div className='mt-10'>
             <div className="inline-flex items-center gap-2 glass-blue rounded-full px-4 py-2 mb-6">
-              <span className="text-sm font-600 text-brand-600">Our Story</span>
+              <span className="text-sm font-600 text-blue-700">Our Story</span>
             </div>
-              <h2 className="text-5xl font-800 tracking-tight text-slate-900 mb-6 leading-tight">
+              <h2 className="text-5xl font-800 text-slate-900 mb-6 leading-tight">
                 Let The Sunshine Into Your{' '}
-                <span className="gradient-text italic">Cleanest Spaces</span>
+
+                <span className="pr-2">
+                  <span className="gradient-text italic ">Cleanest Spaces</span>
+                </span>
               </h2>
 
               <p className="text-slate-500 leading-relaxed mb-5">

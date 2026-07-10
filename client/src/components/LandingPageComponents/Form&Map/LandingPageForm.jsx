@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { APIProvider } from "@vis.gl/react-google-maps";
-import { useSelector } from "react-redux";
 import { 
   MapPin, 
   Phone, 
@@ -55,19 +54,12 @@ export default function LandingPageForm({
   handleSelect,
   DEFAULT_CENTER
 }) {
-  const { LightMode } = useSelector((state) => state.auth);
-
-
-  const bg = LightMode ? "bg-white/60 shadow-darkSM" : "bg-black/60 shadow-lightSM";
-  const bgCon = LightMode ? "bg-white shadow-darkSM" : "bg-black/90 shadow-lightSM";
-  const bgMenu = LightMode ? "bg-white shadow-dark border-black border-stone-200" : "bg-black/90 shadow-light border-white border-stone-900";
-  const subText = LightMode ? "text-black/80" : "text-white/80"
-  const shadow = LightMode ? "shadow-darkSM" : "shadow-lightSM";
-  const hoverShadow = LightMode ? "hover:shadow-dark" : "hover:shadow-light";
-  const hoverSmallShadow = LightMode ? "hover:shadow-darkSM" : "hover:shadow-lightSM";
-  const text = LightMode ? "text-black" : "text-white";
-  const UmCL = LightMode ? "bg-stone-100 text-black/90 hover:bg-stone-200" : "bg-stone-500 text-white/90 hover:bg-stone-600";
-  const imgBorder = LightMode ? "shadow-darkSM border-amber-400" : "shadow-lightSM border-white"
+  const bg = "bg-white/60 shadow-darkSM";
+  const bgCon = "bg-white shadow-darkSM";
+  const bgMenu = "bg-white shadow-dark border-black border-stone-200";
+  const subText = "text-black/80";
+  const UmCL ="bg-stone-100 text-black/90 hover:bg-stone-200";
+  const imgBorder = "shadow-darkSM border-amber-400"
   return (
     <motion.div
       key="client"
@@ -343,15 +335,15 @@ export default function LandingPageForm({
                     });
                   }
                 }}
-                className={`ClickAnimationNoti ${UmCL} w-full py-2.5 px-4 rounded-xl font-medium flex items-center justify-center gap-2 transition-all duration-300 ease-in-out`}
+                className={`${UmCL} gradient-text cursor-pointer border border-blue-700 w-full py-2.5 px-4 rounded-xl font-medium flex items-center justify-center gap-2 transition-all duration-300 ease-in-out hover:scale-102 active:scale-95`}
               >
-                <MapPin size={18} />
+                <MapPin size={18} className="text-blue-700"/>
                 Use My Current Location
               </button>
               
               <button
                 type="submit"
-                className="ClickAnimationNoti shadow-inner hover:shadow-innerWH w-full py-3 px-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-800 active:scale-[0.98] transition-all duration-300 ease-in-out cursor-pointer"
+                className="gradient-bg shadow-inner hover:shadow-innerWH w-full py-3 px-4 text-white rounded-xl font-semibold transition-all duration-300 ease-in-out cursor-pointer hover:scale-102 active:scale-95"
               >
                 Book Appointment
               </button>

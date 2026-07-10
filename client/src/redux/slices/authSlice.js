@@ -14,6 +14,7 @@ const initialState = {
   userViewInfo: null,
   CPEditPopUp: false,
   CPChangePasswordPopUp: false,
+  dashboardLoaderShown: true,
   onlineUsers: [],
 };
 
@@ -62,6 +63,10 @@ const authSlice = createSlice ({
       state.selectedUserInfo = action.payload;
     },
 
+    setDashboardLoaderShown: (state, action) => {
+      state.dashboardLoaderShown = action.payload;
+    },
+
     setUserViewInfo: (state, action) => {
       state.userViewInfo = action.payload;
     },
@@ -85,6 +90,7 @@ export const {
   setCPChangePasswordPopUp,
   setUserViewInfo,
   setOnlineUsers,
+  setDashboardLoaderShown,
 } = authSlice.actions
 
 export default authSlice.reducer

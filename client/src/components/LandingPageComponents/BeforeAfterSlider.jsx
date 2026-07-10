@@ -165,18 +165,18 @@ function ComparisonSlider({
           className="absolute top-0 bottom-0 w-[4px] bg-white z-20 flex items-center justify-center shadow-lg shadow-black/20 -translate-x-1/2"
           style={{ left: `${sliderPosition}%` }}
         >
-          <div className="w-10 h-10 rounded-full bg-white border-2 border-brand-500 shadow-xl flex flex-col items-center justify-center gap-0.5 active:scale-110 transition-transform">
+          <div className="w-10 h-10 rounded-full bg-white border-2 border-blue-700 shadow-xl flex flex-col items-center justify-center gap-0.5 active:scale-110 transition-transform">
             <div className="flex gap-[2px]">
-              <span className="block w-[2px] h-3 bg-brand-500 rounded" />
-              <span className="block w-[2px] h-3 bg-brand-500 rounded" />
-              <span className="block w-[2px] h-3 bg-brand-500 rounded" />
+              <span className="block w-[2px] h-3 bg-blue-700 rounded" />
+              <span className="block w-[2px] h-3 bg-blue-700 rounded" />
+              <span className="block w-[2px] h-3 bg-blue-700 rounded" />
             </div>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 mt-4 text-[11px] font-semibold text-slate-400">
-        <HelpCircle className="w-3.5 h-3.5 text-slate-300" />
+      <div className="flex items-center gap-1.5 mt-4 text-[11px] font-semibold text-slate-600">
+        <HelpCircle className="w-3.5 h-3.5 text-slate-700" />
         {bottomLabel}
       </div>
     </div>
@@ -192,17 +192,19 @@ export default function BeforeAfterSlider() {
       {/* Header */}
       <div className="text-center mb-10">
         <div className="inline-flex items-center gap-2 glass-blue rounded-full px-4 py-2 mb-5">
-          <span className="text-sm font-600 text-brand-600 flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-brand-600" />
-            <span className="font-mono text-[10px] font-bold text-brand-700 uppercase tracking-widest">
+          <span className="text-sm font-600 text-blue-700 flex items-center gap-2">
+            <Sparkles className="w-3.5 h-3.5 text-blue-700" />
+            <span className="font-mono text-[10px] font-bold text-blue-700 uppercase tracking-widest">
               Real Cleaning Results
             </span>
           </span>
         </div>
 
-        <h2 className="text-5xl font-800 tracking-tight text-slate-900 mb-5">
+        <h2 className="text-5xl font-800 text-slate-900 mb-5">
           See The Difference,
-          <span className="gradient-text italic"> Before & After</span>
+          <span className="pr-2">
+            <span className="gradient-text italic "> Before & After</span>
+          </span>
         </h2>
 
         <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">

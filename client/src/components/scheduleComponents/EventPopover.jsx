@@ -407,7 +407,7 @@ export default function EventPopover({
 
                         <button
                           type="submit"
-                          className={`ClickAnimationNoti shadow-inner hover:shadow-innerWH px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-800 rounded-lg cursor-pointer transition-all duration-200 ease-in-out`}
+                          className={`ClickAnimationNoti shadow-inner hover:shadow-innerWH px-4 py-2 text-sm font-medium text-white gradient-bg hover:bg-blue-800 rounded-lg cursor-pointer transition-all duration-200 ease-in-out`}
                         >
                           Save
                         </button>

@@ -29,6 +29,8 @@ import { formatDistanceToNow } from "date-fns";
 
 import { useGetDashboardStatsQuery } from "../redux/slices/api/taskApiSlice";
 
+import { setDashboardLoaderShown } from "../redux/slices/authSlice";
+
 import Chart from "../components/Chart"
 import UserInfoDash from "../components/UserInfoDash"
 import SocialMedia from "../components/SocialMedia";
@@ -46,14 +48,16 @@ const Dashboard = () => {
     LightMode,
     user,
     onlineUsers,
+    dashboardLoaderShown,
   } = useSelector((state) => state.auth);
 
   // Dashboard Loader state
-  const [showLoader, setShowLoader] = useState(true);
 
   const [page, setPage] = useState(1);
 
   const admin = user.isAdmin
+
+  const dispatch = useDispatch();
   
 
   const {
@@ -1098,7 +1102,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (!isLoading) {
       const timer = setTimeout(() => {
-        setShowLoader(false);
+        dispatch(setDashboardLoaderShown(false));
       }, 2000);
 
       return () => clearTimeout(timer);
@@ -1106,7 +1110,7 @@ const Dashboard = () => {
   }, [isLoading]);
 
 
-  if (showLoader || isLoading) {
+  if (dashboardLoaderShown || isLoading) {
     return <DashboardLoader />;
   }
 

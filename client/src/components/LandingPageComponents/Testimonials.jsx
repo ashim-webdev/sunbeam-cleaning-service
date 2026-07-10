@@ -62,11 +62,13 @@ export default function Testimonials() {
         {/* Header */}
         <div className="text-center mb-14">
           <div className="inline-flex items-center gap-2 glass-blue rounded-full px-4 py-2 mb-5">
-            <span className="text-sm font-600 text-brand-600">Customer Stories</span>
+            <span className="text-sm font-600 text-blue-700">Customer Stories</span>
           </div>
-          <h2 className="text-5xl font-800 tracking-tight text-slate-900 mb-5">
+          <h2 className="text-5xl font-800 text-slate-900 mb-5">
             Loved by{' '}
-            <span className="gradient-text italic">Thousands of Clients</span>
+            <span className="pr-2">
+              <span className="gradient-text italic "> Thousands of Clients</span>
+            </span>
           </h2>
           <p className="text-lg text-slate-500 max-w-xl mx-auto">
             Don't take our word for it, hear directly from the people we serve every day.

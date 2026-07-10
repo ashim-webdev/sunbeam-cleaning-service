@@ -196,7 +196,7 @@ const Navbar = ({ isScrolled, isSearchPanelOpen, setIsSearchPanelOpen }) => {
                     className={`
                         ${LightMode 
                           ? "border border-gray-300 bg-white"
-                          : "bg-black/90 border border-white placeholder-white/40 text-white"
+                          : "bg-black/90 border border-white placeholder-white/60 text-white"
                         }
                         input_nav lowercase w-full md:w-60 lg:w-70 transition-colors ease-in-out duration-300
                       `} 
@@ -496,7 +496,7 @@ const Navbar = ({ isScrolled, isSearchPanelOpen, setIsSearchPanelOpen }) => {
                       className={`
                           ${LightMode 
                             ? "border border-gray-300 bg-white"
-                            : "bg-black/90 border border-white placeholder-white/40 text-white"
+                            : "bg-black/90 border border-white placeholder-white/60 text-white"
                           }
                           input_nav lowercase w-full transition-colors ease-in-out duration-300
                         `} 

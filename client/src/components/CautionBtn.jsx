@@ -1,5 +1,6 @@
 import React from "react";
 import "./components.css";
+import { Link } from "react-router-dom";
 
 const CautionBtn = () => {
   return (
@@ -33,40 +34,42 @@ const CautionBtn = () => {
           <div className="tooltip-glow" />
 
           <div className="tooltip-header">
-            <div className="tooltip-icon animate-pulse">
-              <svg
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                className="info-icon animate-vibrate"
-              >
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-              </svg>
+            <div className="flex justify-center items-center gap-4 mb-4">
+              <div className="tooltip-icon">
+                <svg
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  className="info-icon animate-vibrate"
+                >
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                </svg>
+              </div>
+
+              <h3 className="">Members Only</h3>
             </div>
 
-            <div>
-              <h3 className="">Restricted Access
-                <i className="fa-solid fa-exclamation text-red-600 animate-ping"></i>
-                <i className="fa-solid fa-exclamation text-red-600 animate-ping"></i>
-                <i className="fa-solid fa-exclamation text-red-600 animate-ping"></i>
-              </h3>
-              <p className="">Reserved for authorized staff members only.</p>
+            <div className="flex justify-start items-center">
+              <p className="text-center">This portal is for subscribed members, administrators, and employees. If you're visiting to book a one-time cleaning service, you don't need to create an account or sign in.</p>
             </div>
           </div>
 
           <div className="features">
-            <FeatureItem text="Admins" />
+            <FeatureItem text="Subscribed Members" />
+            <FeatureItem text="Administrators" />
             <FeatureItem text="Employees" />
-            <FeatureItem text="Internal Staff Members" />
           </div>
 
-          <div className="tooltip-footer">
-            <span>Please Return to the main website to <br /> continue browsing or booking our services</span>
-            <a className="mr-2" href="#">
-              <button className="GoToBtn ClickAnimationNoti shadow-inner hover:shadow-innerGRN">
-                <svg height="1.2em" className="arrow text-2xl font-bold" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M201.4 297.4C188.9 309.9 188.9 330.2 201.4 342.7L361.4 502.7C373.9 515.2 394.2 515.2 406.7 502.7C419.2 490.2 419.2 469.9 406.7 457.4L269.3 320L406.6 182.6C419.1 170.1 419.1 149.8 406.6 137.3C394.1 124.8 373.8 124.8 361.3 137.3L201.3 297.3z"/></svg>
-                <p className="text">Back to Home</p>
-              </button>
-            </a>
+          <div className="tooltip-footer flex justify-center items-center gap-2">
+            <span>Need a one-time cleaning? Return to the main website to book your service... No account required.</span>
+
+            <span className="mr-2">
+              <Link to="/" className="tooltip-link">
+                <button className="GoToBtn ClickAnimationNoti shadow-inner hover:shadow-innerGRN">
+                  <svg height="1.2em" className="arrow text-2xl font-bold" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M201.4 297.4C188.9 309.9 188.9 330.2 201.4 342.7L361.4 502.7C373.9 515.2 394.2 515.2 406.7 502.7C419.2 490.2 419.2 469.9 406.7 457.4L269.3 320L406.6 182.6C419.1 170.1 419.1 149.8 406.6 137.3C394.1 124.8 373.8 124.8 361.3 137.3L201.3 297.3z"/></svg>
+                  <p className="text">Back to Home</p>
+                </button>
+              </Link>
+            </span>
           </div>
 
           <div className="tooltip-arrow" />

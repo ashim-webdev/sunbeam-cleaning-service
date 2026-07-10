@@ -89,7 +89,7 @@
 /* Header */
 .tooltip-header {
   position: relative;
-  display: flex;
+  display: flex-column;
   gap: 16px;
   padding-bottom: 16px;
   border-bottom: 1px solid rgba(75, 85, 99, 0.5);
@@ -159,7 +159,7 @@
 .check-icon {
   width: 16px;
   height: 16px;
-  color: rgba(1, 81, 1, 0.997);
+  color: white;
 }
 
 .feature-item span {

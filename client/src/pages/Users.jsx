@@ -465,7 +465,7 @@ const Users = () => {
           <Button
             label='Add New User'
             icon={<IoMdAdd className='text-lg' />}
-            className='ClickAnimationNoti flex flex-row-reverse gap-1 items-center bg-blue-600 text-white rounded-md 2xl:py-2.5 shadow-darkSM hover:shadow-inner transition-colors duration-300 ease-in-out'
+            className='ClickAnimationNoti flex flex-row-reverse gap-1 items-center gradient-bg text-white rounded-md 2xl:py-2.5 shadow-darkSM hover:shadow-inner transition-colors duration-300 ease-in-out'
             onClick={() =>{
               setOpen(true)
               setSelected(null)

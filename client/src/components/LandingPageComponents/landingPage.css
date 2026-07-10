@@ -15,14 +15,14 @@
 
 @layer utilities {
   .gradient-text {
-    background: linear-gradient(135deg, #4F86FF 0%, #2B62F5 100%);
+    background: linear-gradient(135deg, #074ad0 0%, #04326D 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .gradient-bg {
-    background: linear-gradient(135deg, #4F86FF 0%, #2B62F5 100%);
+    background: linear-gradient(135deg, #04326D 0%, #074ad0 100%);
   }
 
   .glass {
@@ -94,7 +94,7 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(135deg, #4F86FF, #2B62F5);
+  background: linear-gradient(135deg, #074ad0, #04326D);
   border-radius: 2px;
   transition: width 0.3s ease;
 }

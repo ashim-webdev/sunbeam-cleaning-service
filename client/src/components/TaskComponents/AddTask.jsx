@@ -589,7 +589,7 @@ const AddTask = ({ open, setOpen, task }) => {
                   label='Submit'
                   type='submit'
                   disable={isLoading || isUpdating}
-                  className='ClickAnimationNoti bg-blue-600 px-5 shadow-inner hover:shadow-innerWH transition-colors duration-200 ease-in-out text-sm rounded-sm font-semibold text-white hover:bg-blue-700  sm:w-auto'
+                  className='ClickAnimationNoti gradient-bg px-5 shadow-inner hover:shadow-innerWH transition-colors duration-200 ease-in-out text-sm rounded-sm font-semibold text-white hover:bg-blue-700  sm:w-auto'
                 />
 
                 <Button

@@ -25,8 +25,8 @@ export default function Hero() {
           <div className="relative z-10">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 glass-blue rounded-full px-4 py-2 mb-8">
-              <span className="w-2 h-2 rounded-full bg-brand-400 animate-pulse-slow" />
-              <span className="text-sm font-600 text-brand-600">#1 Trusted Cleaning Service</span>
+              <span className="w-2 h-2 rounded-full bg-blue-700 animate-pulse-slow" />
+              <span className="text-sm font-600 text-blue-700">#1 Trusted Cleaning Service</span>
             </div>
 
             {/* Headline */}
@@ -42,7 +42,7 @@ export default function Hero() {
                 >
                   <path
                     d="M2 10C60 4 160 1 298 6"
-                    stroke="#6FA9FF"
+                    stroke="#0049C5"
                     strokeWidth="4"
                     strokeLinecap="round"
                   />
@@ -61,7 +61,7 @@ export default function Hero() {
             <div className="flex flex-col gap-3 mb-10">
               {['100% Satisfaction Guarantee', 'Eco-Friendly Products', 'Same-Day Availability'].map((item) => (
                 <div key={item} className="flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-brand-400 flex-shrink-0" />
+                  <CheckCircle2 className="w-5 h-5 text-blue-800 flex-shrink-0" />
                   <span className="text-sm font-500 text-slate-600">{item}</span>
                 </div>
               ))}
@@ -81,7 +81,7 @@ export default function Hero() {
               <button className="group flex items-center gap-3">
                 <div className="relative">
                   <div className="w-14 h-14 rounded-full glass-blue border-2 border-brand-300 flex items-center justify-center transition-all group-hover:border-brand-400 group-hover:shadow-blue">
-                    <Play className="w-5 h-5 text-brand-500 translate-x-0.5" fill="currentColor" />
+                    <Play className="w-5 h-5 text-blue-700 translate-x-0.5" fill="currentColor" />
                   </div>
                   <div className="absolute inset-0 rounded-full border-2 border-brand-300 animate-ping opacity-30" />
                 </div>
@@ -123,7 +123,7 @@ export default function Hero() {
             {/* Main illustration frame */}
             <div className="relative w-full max-w-[520px]">
               {/* Hero image */}
-              <div className="relative rounded-[2.5rem] overflow-hidden shadow-float float-1">
+              <div className="relative rounded-[2.5rem] overflow-hidden shadow-float float-1 border border-blue-700">
                 <img
                   src="https://images.pexels.com/photos/6195121/pexels-photo-6195121.jpeg?auto=compress&cs=tinysrgb&w=900"
                   alt="Professional cleaning service"
@@ -141,7 +141,7 @@ export default function Hero() {
                   </div>
                   <div>
                     <div className="text-xl font-800 text-slate-900">4K+</div>
-                    <div className="text-xs text-slate-500 font-500">Happy Clients</div>
+                    <div className="text-xs text-slate-700 font-500">Happy Clients</div>
                   </div>
                 </div>
               </div>
@@ -149,12 +149,12 @@ export default function Hero() {
               {/* Floating stat card – bottom right */}
               <div className="absolute sm:-right-8 -right-4 bottom-14 glass rounded-2xl px-5 py-4 shadow-float float-3 min-w-[170px]">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Droplets className="w-5 h-5 text-emerald-500" />
+                  <div className="w-10 h-10 gradient-bg rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Droplets className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <div className="text-xl font-800 text-slate-900">100%</div>
-                    <div className="text-xs text-slate-500 font-500">Eco-Friendly</div>
+                    <div className="text-xs text-slate-700 font-500">Eco-Friendly</div>
                   </div>
                 </div>
               </div>
@@ -162,12 +162,12 @@ export default function Hero() {
               {/* Floating rating pill – bottom left */}
               <div className="absolute sm:-left-6 -left-4 bottom-28 glass rounded-2xl px-4 py-3 shadow-float float-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center">
-                    <Star className="w-4 h-4 text-amber-400" fill="currentColor" />
+                  <div className="w-9 h-9 gradient-bg rounded-xl flex items-center justify-center">
+                    <Star className="w-4 h-4 text-white" fill="currentColor" />
                   </div>
                   <div>
                     <div className="text-base font-800 text-slate-900">4.9</div>
-                    <div className="text-xs text-slate-500 font-500">Rating</div>
+                    <div className="text-xs text-slate-700 font-500">Rating</div>
                   </div>
                 </div>
               </div>
@@ -180,7 +180,7 @@ export default function Hero() {
                   </div>
                   <div>
                     <div className="text-base font-800 text-slate-900">Same Day</div>
-                    <div className="text-xs text-slate-500 font-500">Service</div>
+                    <div className="text-xs text-slate-700 font-500">Service</div>
                   </div>
                 </div>
               </div>

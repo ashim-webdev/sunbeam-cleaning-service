@@ -117,7 +117,7 @@ const Pagination = ({ page, setPage, totalPages }) => {
                 transition-all duration-300 ease-in-out
                 ${
                   page === p
-                    ? `${LightMode ? "shadow-darkSM" : "shadow-lightSM"}  bg-blue-700 text-white border border-white scale-105`
+                    ? `${LightMode ? "shadow-darkSM" : "shadow-lightSM"}  gradient-bg text-white border border-white scale-105`
                     : "hover:bg-blue-700 hover:text-white hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out"
                 }
               `}

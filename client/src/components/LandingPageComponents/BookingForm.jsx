@@ -207,17 +207,20 @@ export default function BookingForm() {
       {/* Header */}
       <div className="text-center mb-5">
         <div className="inline-flex items-center gap-2 glass-blue rounded-full px-4 py-2 mb-5">
-          <span className="text-sm font-600 text-brand-600 flex items-center gap-2">
+          <span className="text-sm font-600 text-blue-700 flex items-center gap-2">
             <FaBroom size={20} />
-            <span className="font-mono text-[10px] font-bold text-brand-700 uppercase tracking-widest">
+            <span className="font-mono text-[10px] font-bold text-blue-700 uppercase tracking-widest">
               Book our service
             </span>
           </span>
         </div>
 
-        <h2 className="text-5xl font-800 tracking-tight text-slate-900 mb-5">
+        <h2 className="text-5xl font-800 text-slate-900 mb-5">
           Schedule Your
-          <span className="gradient-text italic"> Cleaning Service</span>
+
+          <span className="pr-2">
+            <span className="gradient-text italic "> Cleaning Service</span>
+          </span>
         </h2>
 
         <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">

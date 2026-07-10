@@ -355,7 +355,7 @@ const ProfileCard = ({
                     <Button
                       label='Edit'
                       icon={<UserPen size={18} />}
-                      className='ClickAnimation flex flex-row-reverse gap-2 items-center bg-blue-600 text-white rounded-md py-2 px-5 shadow-darkSM hover:shadow-inner transition-all duration-300 ease-in-out'
+                      className='ClickAnimation flex flex-row-reverse gap-2 items-center gradient-bg text-white rounded-md py-2 px-5 shadow-darkSM hover:shadow-inner transition-all duration-300 ease-in-out'
                       onClick={(e) => {
                         e.stopPropagation()
                         editClick(freshUser)

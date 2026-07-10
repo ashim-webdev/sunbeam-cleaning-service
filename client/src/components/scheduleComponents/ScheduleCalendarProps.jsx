@@ -254,7 +254,7 @@ export default function ScheduleCalendar({ role }) {
               setNewSelection(null);
               setIsEditOpen(true);
             }}
-            className="ClickAnimationNoti flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-800 transition-colors shadow-sm text-sm font-medium"
+            className="ClickAnimationNoti flex items-center gap-2 px-4 py-2 gradient-bg text-white rounded-lg cursor-pointer hover:bg-blue-800 transition-colors shadow-sm text-sm font-medium"
           >
             <Plus size={18} />
             <span className="-mr-1 hidden md:block">Add</span>

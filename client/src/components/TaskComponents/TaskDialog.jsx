@@ -338,7 +338,7 @@ const items = [
 
 
 
-  const activeHover = LightMode ? "bg-blue-600/90 text-white  hover:shadow-dark" : " text-white bg-blue-600/90 hover:shadow-light "
+  const activeHover = LightMode ? "gradient-bg text-white  hover:shadow-dark" : " text-white gradient-bg hover:shadow-light "
   const text = LightMode ? "text-black" : "text-white"
   
   const threeDotStyles = "transition-all duration-300 ease-in-out outline-none cursor-pointer hover:scale-110 hover:text-blue-600 inline-flex w-full justify-center sm:text-2xl text-xl rounded-md  px-1 py-0.5 font-medium"

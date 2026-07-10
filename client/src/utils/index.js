@@ -49,9 +49,15 @@ export const TASK_TYPE = {
 };
 
 export const TASK_HEADER = {
-  todo: "bg-blue-600/70",
-  "in progress": "bg-yellow-600/70",
-  completed: "bg-green-600/70",
+  todo: "bg-blue-900/80",
+  "in progress": "bg-yellow-900/80",
+  completed: "bg-green-900/80",
+};
+
+export const TASK_HEADER_DARK = {
+  todo: "bg-blue-800/70",
+  "in progress": "bg-yellow-800/70",
+  completed: "bg-green-800/70",
 };
 
 export const TASK_ICON = {

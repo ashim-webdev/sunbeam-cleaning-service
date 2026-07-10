@@ -12,6 +12,10 @@ import "../components/LandingPageComponents/landingPage.css"
 import BeforeAfterSlider from '../components/LandingPageComponents/BeforeAfterSlider';
 import BookingForm from '../components/LandingPageComponents/BookingForm';
 
+
+
+
+
 export default function LandingPage() {
   return (
     <div className="landingPage min-h-screen overflow-hidden relative">
@@ -23,7 +27,7 @@ export default function LandingPage() {
         <Features />
         <BookingForm />
         {/* <WhyChooseUs /> */}
-        {/* <Pricing /> */}
+        <Pricing />
         {/* <Gallery /> */}
         <Testimonials />
         <CtaBanner />

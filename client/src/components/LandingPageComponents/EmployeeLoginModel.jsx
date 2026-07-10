@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { TriangleAlert } from "lucide-react";
 
@@ -23,6 +24,20 @@ export default function EmployeeLoginModal({ isOpen, onClose }) {
     window.location.href = "/log-in";
   };
 
+
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isOpen]);
+
   return (
     <AnimatePresence>
       <motion.div
@@ -36,7 +51,7 @@ export default function EmployeeLoginModal({ isOpen, onClose }) {
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0 }}
           transition={{ duration: 0.25 }}
-          className="bg-white rounded-3xl p-8 w-full max-w-lg shadow-2xl"
+          className="bg-white border border-blue-600 rounded-3xl p-8 w-full max-w-lg shadow-2xl"
         >
           <div className="text-center">
 
@@ -44,11 +59,11 @@ export default function EmployeeLoginModal({ isOpen, onClose }) {
               <TriangleAlert size={50} className="text-red-500" />
             </div>
 
-            <h2 className="text-2xl font-bold text-slate-800">
+            <h2 className="text-2xl font-bold text-gray-900">
               Employee Login
             </h2>
 
-            <p className="text-slate-600 mt-4 leading-7">
+            <p className="text-slate-800 mt-4 leading-7">
               This sign in page is reserved for
               <span className="font-semibold">
                 {" "}authorized employees and administrators{" "}
@@ -56,7 +71,7 @@ export default function EmployeeLoginModal({ isOpen, onClose }) {
               of Sunbeam Cleaning Services.
             </p>
 
-            <p className="text-slate-600 mt-3">
+            <p className="text-slate-800 mt-3">
               If you're looking to book a cleaning service,
               simply continue to our booking form below.
             </p>
@@ -65,21 +80,21 @@ export default function EmployeeLoginModal({ isOpen, onClose }) {
 
               <button
                 onClick={handleBooking}
-                className="cursor-pointer w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+                className="gradient-bg cursor-pointer w-full py-3 rounded-xl text-white font-semibold hover:scale-103 transition-all"
               >
                 Book a Cleaning
               </button>
 
               <button
                 onClick={handleEmployee}
-                className="cursor-pointer w-full py-3 rounded-xl border border-slate-300 font-semibold hover:bg-slate-100 transition"
+                className="gradient-text cursor-pointer w-full py-3 rounded-xl border border-blue-700 font-semibold hover:bg-blue-100 hover:scale-103 transition-all"
               >
                 I'm an Employee
               </button>
 
               <button
                 onClick={onClose}
-                className="cursor-pointer text-slate-500 hover:text-black mt-2"
+                className="cursor-pointer text-slate-700 hover:text-black mt-2"
               >
                 Cancel
               </button>
